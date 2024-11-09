@@ -1,0 +1,11 @@
+git add .
+git commit -m "Khalaf"
+git pull
+ng build --configuration production --base-href /eTameer/
+
+
+
+npm i —force
+
+
+ng s -o
