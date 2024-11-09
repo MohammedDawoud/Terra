@@ -1,0 +1,751 @@
+@tailwind base;
+@tailwind utilities;
+@tailwind components;
+@layer base {
+  h2 {
+    @apply m-0;
+  }
+}
+/* You can add global styles to this file, and also import other style files */
+@import "https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap";
+@import "https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap";
+
+@import "/node_modules/tree-ngx/scss/main.scss";
+
+// ng-select
+// @import "~@ng-select/ng-select/themes/material.theme.css";
+@import "~@ng-select/ng-select/themes/default.theme.css";
+@import "/node_modules/@angular/material/prebuilt-themes/indigo-pink.css";
+
+// tel
+@import "../node_modules/intl-tel-input/build/css/intlTelInput.css";
+
+// fonts
+@import url("https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900;1000&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap");
+
+/* Importing Bootstrap SCSS file. */
+@import "node_modules/bootstrap/scss/bootstrap";
+@import "node_modules/bootstrap-icons/font/bootstrap-icons.scss";
+
+// ngx-datatables
+@import "../node_modules/@swimlane/ngx-datatable/index.css";
+@import "../node_modules/@swimlane/ngx-datatable/themes/material.scss";
+@import "../node_modules/@swimlane/ngx-datatable/assets/icons.css";
+
+@import "../node_modules/ngx-bootstrap/datepicker/bs-datepicker.scss";
+@import '~ngx-print-element/styles.css';
+@import '~leaflet/dist/leaflet.css';
+
+
+:root {
+  --green-color: rgba(52, 236, 120, 0.8);
+  --red-color: rgb(248, 85, 85);
+  --yellow-color: rgb(241, 194, 55);
+  --black-color: rgb(77, 77, 77);
+  --orange-color: orange;
+  --yellow-color: yellow;
+  --babyblue-color: rgb(32, 205, 228);
+}
+
+.theme-green {
+  .bs-datepicker-head {
+    background-color: var(--base-color) !important;
+  }
+  .bs-datepicker-body {
+    table {
+      td {
+        span {
+          color: var(--base-color) !important;
+          &.selected {
+            background-color: var(--base-color) !important;
+            color: #fff !important;
+          }
+        }
+      }
+    }
+  }
+}
+
+bs-datepicker-container,
+bs-daterangepicker-container {
+  z-index: 1000000000000000;
+}
+::ng-deep {
+  bs-datepicker-container,
+  bs-daterangepicker-container {
+    z-index: 1000000000000000;
+  }
+  .theme-green {
+    .bs-datepicker-head {
+      background-color: var(--base-color) !important;
+    }
+    .bs-datepicker-body {
+      table {
+        td {
+          span {
+            color: var(--base-color) !important;
+            &.selected {
+              background-color: var(--base-color) !important;
+            }
+          }
+        }
+      }
+    }
+  }
+  // .modal-dialog {
+  //   &:not(.deleteModal) {
+  //     --bs-modal-width: 1263px;
+  //   }
+  // }
+}
+:host ::ng-deep #table {
+  font-family: "Montserrat", sans-serif;
+}
+
+*:not(i, img) {
+  padding: 0px;
+  margin: 0px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  font-family: var(--english-font) !important;
+
+  &::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+  }
+
+  &::-webkit-scrollbar-track {
+    // background-color: var(--second-color);
+    height: 40px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    // width: 6px;
+    // margin: auto;
+    // height: 40px;
+    // background-color: var(--base-color);
+    @apply bg-base h-10 m-auto w-1.5 rounded-full;
+  }
+}
+label {
+  font-weight: 600;
+  margin-bottom: 8px;
+  // width: 100%;
+  text-align: start;
+  width: max-content;
+}
+html,
+body {
+  height: 100%;
+  font-size: var(--base-font-size) !important;
+}
+
+body {
+  margin: 0;
+  // overflow: hidden;
+}
+
+.material-icons {
+  font-family: "Material Icons" !important;
+}
+
+.modal {
+  z-index: 100000000000 !important;
+  // top: 24px;
+  &.ngxModal {
+    max-width: 1200px;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0px 30px 20px #00000033;
+    border-radius: 8px;
+    height: auto;
+    .modal-header {
+      @apply bg-base;
+
+      button {
+        &:focus-visible {
+          outline: none;
+        }
+      }
+    }
+    &.center {
+      max-width: 600px;
+      left: 50%;
+      top: 50%;
+      transform: translateX(-50%);
+    }
+
+    .modal-body,
+    .modal-footer {
+      background-color: white;
+    }
+  }
+}
+
+.modal-backdrop {
+  z-index: 999999960 !important;
+  top: 0px;
+}
+.custome-table {
+  @apply w-full rounded-t-lg overflow-hidden;
+  thead {
+    tr {
+      @apply bg-base text-white;
+    }
+  }
+  td,
+  th {
+    @apply px-3 py-2 border text-sm text-center;
+    vertical-align: middle;
+  }
+}
+
+::ng-deep {
+  .modal {
+    z-index: 10000;
+  }
+  .modal-backdrop {
+    z-index: 10000;
+  }
+
+  .mat-paginator-container {
+    justify-content: space-between !important;
+    padding: 15px 10px 0px !important;
+  }
+  .mat-paginator-range-actions {
+    direction: inherit !important;
+  }
+  .mat-paginator-range-label {
+    direction: initial;
+  }
+  .noPrint {
+    @media print {
+      display: none !important;
+    }
+  }
+}
+
+.bg-base {
+  background-color: var(--base-color) !important;
+  &.active {
+    background-color: #0053a1;
+  }
+}
+
+// ****-************-**********-***********-**********-***************-*************
+/* based on angular-toastr css   */
+
+/* position */
+.toast-center-center {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.toast-top-center {
+  top: 0;
+  right: 0;
+  width: 100%;
+}
+
+.toast-bottom-center {
+  bottom: 0;
+  right: 0;
+  width: 100%;
+}
+
+.toast-top-full-width {
+  top: 0;
+  right: 0;
+  width: 100%;
+}
+
+.toast-bottom-full-width {
+  bottom: 0;
+  right: 0;
+  width: 100%;
+}
+
+.toast-top-left {
+  top: 12px;
+  left: 12px;
+}
+
+.toast-top-right {
+  top: 12px;
+  right: 12px;
+}
+
+.toast-bottom-right {
+  right: 12px;
+  bottom: 12px;
+}
+
+.toast-bottom-left {
+  bottom: 12px;
+  left: 12px;
+}
+
+/* toast styles */
+.toast-title {
+  font-weight: bold;
+}
+
+.toast-message {
+  word-wrap: break-word;
+}
+
+.toast-message a,
+.toast-message label {
+  color: #ffffff;
+}
+
+.toast-message a:hover {
+  color: #cccccc;
+  text-decoration: none;
+}
+
+.toast-close-button {
+  position: relative;
+  right: -0.3em;
+  top: -0.3em;
+  float: right;
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #ffffff;
+  text-shadow: 0 1px 0 #ffffff;
+  /* opacity: 0.8; */
+}
+
+.toast-close-button:hover,
+.toast-close-button:focus {
+  color: #000000;
+  text-decoration: none;
+  cursor: pointer;
+  opacity: 0.4;
+}
+
+/*Additional properties for button version
+ iOS requires the button element instead of an anchor tag.
+ If you want the anchor version, it requires `href="#"`.*/
+button.toast-close-button {
+  padding: 0;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+}
+
+.toast-container {
+  pointer-events: none;
+  position: fixed;
+  z-index: 999999999999;
+}
+
+.toast-container * {
+  box-sizing: border-box;
+}
+
+.toast-container .ngx-toastr {
+  position: relative;
+  overflow: hidden;
+  margin: 0 0 6px;
+  padding: 15px 15px 15px 50px;
+  width: 300px;
+  border-radius: 3px 3px 3px 3px;
+  background-position: 15px center;
+  background-repeat: no-repeat;
+  background-size: 24px;
+  box-shadow: 0 0 12px #999999;
+  color: #ffffff;
+}
+
+.toast-container .ngx-toastr:hover {
+  box-shadow: 0 0 12px #000000;
+  opacity: 1;
+  cursor: pointer;
+}
+
+/* https://github.com/FortAwesome/Font-Awesome-Pro/blob/master/advanced-options/raw-svg/regular/info-circle.svg */
+.toast-info {
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJyB3aWR0aD0nNTEyJyBoZWlnaHQ9JzUxMic+PHBhdGggZmlsbD0ncmdiKDI1NSwyNTUsMjU1KScgZD0nTTI1NiA4QzExOS4wNDMgOCA4IDExOS4wODMgOCAyNTZjMCAxMzYuOTk3IDExMS4wNDMgMjQ4IDI0OCAyNDhzMjQ4LTExMS4wMDMgMjQ4LTI0OEM1MDQgMTE5LjA4MyAzOTIuOTU3IDggMjU2IDh6bTAgMTEwYzIzLjE5NiAwIDQyIDE4LjgwNCA0MiA0MnMtMTguODA0IDQyLTQyIDQyLTQyLTE4LjgwNC00Mi00MiAxOC44MDQtNDIgNDItNDJ6bTU2IDI1NGMwIDYuNjI3LTUuMzczIDEyLTEyIDEyaC04OGMtNi42MjcgMC0xMi01LjM3My0xMi0xMnYtMjRjMC02LjYyNyA1LjM3My0xMiAxMi0xMmgxMnYtNjRoLTEyYy02LjYyNyAwLTEyLTUuMzczLTEyLTEydi0yNGMwLTYuNjI3IDUuMzczLTEyIDEyLTEyaDY0YzYuNjI3IDAgMTIgNS4zNzMgMTIgMTJ2MTAwaDEyYzYuNjI3IDAgMTIgNS4zNzMgMTIgMTJ2MjR6Jy8+PC9zdmc+");
+}
+
+/* https://github.com/FortAwesome/Font-Awesome-Pro/blob/master/advanced-options/raw-svg/regular/times-circle.svg */
+.toast-error {
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJyB3aWR0aD0nNTEyJyBoZWlnaHQ9JzUxMic+PHBhdGggZmlsbD0ncmdiKDI1NSwyNTUsMjU1KScgZD0nTTI1NiA4QzExOSA4IDggMTE5IDggMjU2czExMSAyNDggMjQ4IDI0OCAyNDgtMTExIDI0OC0yNDhTMzkzIDggMjU2IDh6bTEyMS42IDMxMy4xYzQuNyA0LjcgNC43IDEyLjMgMCAxN0wzMzggMzc3LjZjLTQuNyA0LjctMTIuMyA0LjctMTcgMEwyNTYgMzEybC02NS4xIDY1LjZjLTQuNyA0LjctMTIuMyA0LjctMTcgMEwxMzQuNCAzMzhjLTQuNy00LjctNC43LTEyLjMgMC0xN2w2NS42LTY1LTY1LjYtNjUuMWMtNC43LTQuNy00LjctMTIuMyAwLTE3bDM5LjYtMzkuNmM0LjctNC43IDEyLjMtNC43IDE3IDBsNjUgNjUuNyA2NS4xLTY1LjZjNC43LTQuNyAxMi4zLTQuNyAxNyAwbDM5LjYgMzkuNmM0LjcgNC43IDQuNyAxMi4zIDAgMTdMMzEyIDI1Nmw2NS42IDY1LjF6Jy8+PC9zdmc+");
+}
+
+/* https://github.com/FortAwesome/Font-Awesome-Pro/blob/master/advanced-options/raw-svg/regular/check.svg */
+.toast-success {
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJyB3aWR0aD0nNTEyJyBoZWlnaHQ9JzUxMic+PHBhdGggZmlsbD0ncmdiKDI1NSwyNTUsMjU1KScgZD0nTTE3My44OTggNDM5LjQwNGwtMTY2LjQtMTY2LjRjLTkuOTk3LTkuOTk3LTkuOTk3LTI2LjIwNiAwLTM2LjIwNGwzNi4yMDMtMzYuMjA0YzkuOTk3LTkuOTk4IDI2LjIwNy05Ljk5OCAzNi4yMDQgMEwxOTIgMzEyLjY5IDQzMi4wOTUgNzIuNTk2YzkuOTk3LTkuOTk3IDI2LjIwNy05Ljk5NyAzNi4yMDQgMGwzNi4yMDMgMzYuMjA0YzkuOTk3IDkuOTk3IDkuOTk3IDI2LjIwNiAwIDM2LjIwNGwtMjk0LjQgMjk0LjQwMWMtOS45OTggOS45OTctMjYuMjA3IDkuOTk3LTM2LjIwNC0uMDAxeicvPjwvc3ZnPg==");
+}
+
+/* https://github.com/FortAwesome/Font-Awesome-Pro/blob/master/advanced-options/raw-svg/regular/exclamation-triangle.svg */
+.toast-warning {
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1NzYgNTEyJyB3aWR0aD0nNTc2JyBoZWlnaHQ9JzUxMic+PHBhdGggZmlsbD0ncmdiKDI1NSwyNTUsMjU1KScgZD0nTTU2OS41MTcgNDQwLjAxM0M1ODcuOTc1IDQ3Mi4wMDcgNTY0LjgwNiA1MTIgNTI3Ljk0IDUxMkg0OC4wNTRjLTM2LjkzNyAwLTU5Ljk5OS00MC4wNTUtNDEuNTc3LTcxLjk4N0wyNDYuNDIzIDIzLjk4NWMxOC40NjctMzIuMDA5IDY0LjcyLTMxLjk1MSA4My4xNTQgMGwyMzkuOTQgNDE2LjAyOHpNMjg4IDM1NGMtMjUuNDA1IDAtNDYgMjAuNTk1LTQ2IDQ2czIwLjU5NSA0NiA0NiA0NiA0Ni0yMC41OTUgNDYtNDYtMjAuNTk1LTQ2LTQ2LTQ2em0tNDMuNjczLTE2NS4zNDZsNy40MTggMTM2Yy4zNDcgNi4zNjQgNS42MDkgMTEuMzQ2IDExLjk4MiAxMS4zNDZoNDguNTQ2YzYuMzczIDAgMTEuNjM1LTQuOTgyIDExLjk4Mi0xMS4zNDZsNy40MTgtMTM2Yy4zNzUtNi44NzQtNS4wOTgtMTIuNjU0LTExLjk4Mi0xMi42NTRoLTYzLjM4M2MtNi44ODQgMC0xMi4zNTYgNS43OC0xMS45ODEgMTIuNjU0eicvPjwvc3ZnPg==");
+}
+
+.toast-container.toast-top-center .ngx-toastr,
+.toast-container.toast-bottom-center .ngx-toastr {
+  width: 300px;
+  margin-inline-end: auto;
+  margin-inline-start: auto;
+}
+
+.toast-container.toast-top-full-width .ngx-toastr,
+.toast-container.toast-bottom-full-width .ngx-toastr {
+  width: 96%;
+  margin-inline-end: auto;
+  margin-inline-start: auto;
+}
+
+.ngx-toastr {
+  background-color: #030303;
+  pointer-events: auto;
+}
+
+.toast-success {
+  background-color: #51a351;
+}
+
+.toast-error {
+  background-color: #bd362f;
+}
+
+.toast-info {
+  background-color: #2f96b4;
+}
+
+.toast-warning {
+  background-color: #f89406;
+}
+
+.toast-progress {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 4px;
+  background-color: #000000;
+  opacity: 0.4;
+}
+
+/* Responsive Design */
+@media all and (max-width: 240px) {
+  .toast-container .ngx-toastr.div {
+    padding: 8px 8px 8px 50px;
+    width: 11em;
+  }
+
+  .toast-container .toast-close-button {
+    right: -0.2em;
+    top: -0.2em;
+  }
+}
+
+@media all and (min-width: 241px) and (max-width: 480px) {
+  .toast-container .ngx-toastr.div {
+    padding: 8px 8px 8px 50px;
+    width: 18em;
+  }
+
+  .toast-container .toast-close-button {
+    right: -0.2em;
+    top: -0.2em;
+  }
+}
+
+@media all and (min-width: 481px) and (max-width: 768px) {
+  .toast-container .ngx-toastr.div {
+    padding: 15px 15px 15px 50px;
+    width: 25em;
+  }
+}
+
+.confirm-msg {
+  font-size: 22px;
+  letter-spacing: 0.5px;
+  color: var(--gray-color);
+}
+.btn-close {
+  &:focus {
+    box-shadow: none;
+  }
+  &:focus-visible {
+    outline: none;
+  }
+}
+
+.dropdown-item {
+  &:active {
+    background-color: transparent !important;
+  }
+}
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+img {
+  display: inline-block !important;
+}
+
+.mat-table {
+  text-align: center;
+  vertical-align: middle;
+  min-width: max-content;
+  width: 100%;
+  .mat-header-row {
+    background: var(--base-color);
+    .mat-header-cell {
+      color: #fff;
+      padding: 15px !important;
+      min-width: max-content;
+      font-weight: 500;
+      font-size: 15px;
+      text-align: center;
+      &:not(:last-of-type) {
+        border-inline-end: 1px solid white;
+      }
+    }
+    .mat-sort-header-container {
+      justify-content: center;
+    }
+    .mat-sort-header-arrow {
+      color: #f7f7f7;
+      margin-inline-start: 6px;
+    }
+  }
+
+  .mat-row {
+    .mat-cell {
+      &:first-of-type {
+        padding-inline-start: 0px !important;
+      }
+      &:last-of-type {
+        padding-inline-end: 0px !important;
+      }
+    }
+  }
+
+  .mat-paginator-container {
+    justify-content: space-between !important;
+    padding: 15px 10px 0px !important;
+  }
+}
+.controler {
+  > button {
+    @apply flex items-center gap-2;
+  }
+}
+.modal-dialog {
+  &.edit,
+  &.addClient,
+  &.sendEmails {
+    margin: 0 auto;
+    --bs-modal-width: 1263px;
+  }
+  &.delete {
+    @apply flex items-center h-4/5 justify-center;
+  }
+}
+.upload {
+  display: block;
+
+  img {
+    max-width: 100%;
+    max-height: 250px;
+    object-fit: fill;
+  }
+
+  file-upload {
+    padding: 20px;
+  }
+
+  .icon {
+    line-height: 30px;
+    text-align: center;
+    border-radius: 4px;
+    float: left;
+    // margin-inline-end: 20px;
+  }
+
+  .upload-input {
+    > div {
+      @apply flex flex-col items-center justify-center gap-2;
+    }
+  }
+  svg {
+    fill: #909293;
+    height: 20px;
+  }
+
+  .upload-text {
+    overflow: hidden;
+    width: auto;
+    font-size: 14px;
+    padding-left: unset !important;
+    padding-inline-start: 20px !important;
+  }
+
+  .list-visible .upload-input {
+    display: none;
+  }
+
+  .overlay {
+    position: relative;
+
+    & > .delete-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #fafafa;
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      cursor: pointer;
+      z-index: 10;
+      width: 40px;
+      height: 40px;
+      text-align: center;
+      font-size: 20px;
+      line-height: 40px;
+    }
+  }
+}
+
+.ng-select {
+  min-width: 200px;
+}
+
+// dosnt appare in modal
+bs-datepicker-container,
+bs-daterangepicker-container {
+  z-index: 99999999000;
+}
+
+textarea {
+  &:focus-visible {
+    outline: none;
+  }
+}
+
+::ng-deep {
+  .mat-progress-bar-fill {
+    &::after {
+      background-color: var(--base-color) !important;
+    }
+  }
+}
+
+.text-start,
+.text-right {
+  text-align: start !important;
+}
+
+.text-end,
+.text-left {
+  text-align: end !important;
+}
+.bg-green {
+  background-color: var(--green-color) !important;
+}
+.text-gren {
+  color: rgb(180 255 208 / 80%) !important;
+}
+.bg-red {
+  background-color: rgb(255 159 159) !important ;
+}
+.bg-yellow {
+  background-color: #ffffa7 !important ;
+}
+.bg-black {
+  background-color: rgb(77 77 77 / 65%) !important;
+}
+
+.text-orange {
+  color: var(--orange-color) !important ;
+}
+.text-yellow {
+  color: var(--yellow-color) !important ;
+}
+.text-babyblue {
+  color: var(--babyblue-color) !important ;
+}
+
+.ngx-datatable {
+  .datatable-body-cell {
+    .actions {
+      gap: 12px;
+    }
+  }
+}
+
+::ng-deep {
+  .ngx-datatable {
+    .datatable-body-cell {
+      .actions {
+        gap: 12px;
+      }
+    }
+  }
+}
+.logoUrlfile-uploadORG {
+  width: 360px;
+  height: 240px;
+  object-fit: contain;
+  background-color: #fff;
+  padding: 16px !important;
+  display: flex !important;
+  align-items: center;
+  .upload-input {
+    cursor: pointer;
+    display: inline-block;
+    color: #646464;
+    position: inherit !important;
+    top: 0 !important;
+    left: 0 !important;
+    transform: translate(0, 0) !important;
+    width: 346px;
+    height: 220px;
+    object-fit: contain;
+    background-color: #fff;
+    padding: 10px;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    margin: 0 !important;
+    overflow: hidden;
+  }
+}
+.logoUrlchange {
+  .upload-input {
+    width: 0 !important;
+  }
+  .upload-list {
+    width: 100% !important;
+    height: 100%!important;
+    .overlay {
+    height: 100%!important;
+    img{
+      height: 100%;
+    }
+    }
+  }
+}
+.hijri-gregorianReciept{
+  label[for=input-birth-Date] ,
+  .input-group-append{
+    display: none;
+  }
+}

@@ -1,0 +1,81 @@
+<div class="news">
+  <div class="container">
+    <h2
+      [translate]="'name'"
+      [translateParams]="{
+        ar: 'أحدث الأخبار',
+        en: 'Latest News',
+      }"
+    ></h2>
+    <div class="row">
+      <ng-container *ngFor="let item of news">
+        <div class="col-md-6 col-lg-4">
+          <div class="blog">
+            <div>
+              <div class="blog_image">
+                <a title="Watch full">
+                  <img
+                    width="370"
+                    height="193"
+                    src="{{ environmenturl+item?.newsImg }}"
+                    class="img-responsive"
+                    alt="news image"
+                  />
+                </a>
+              </div>
+            </div>
+            <div class="blog_content position-relative">
+              <a
+                class="blog_title h3"
+                [translate]="'name'"
+                [translateParams]="{
+              ar: item?.newsTitleAr,
+              en: item?.newsTitleEn,
+            }"
+              >
+              </a>
+              <div class="blog_unit" *ngIf="item?.date">
+                <div class="date-d">{{ item.date | date : "dd" }}</div>
+                <div class="date-m date-m-plugin">
+                  {{ item.date | date : "MMMM" }}
+                </div>
+              </div>
+
+              <div class="blog_desc">
+                <p
+                  [translate]="'name'"
+                  [translateParams]="{
+              ar: item?.newsBodyAr,
+              en: item?.newsBodyEn,
+            }"
+                ></p>
+              </div>
+
+              <!-- <div class="short_separator"></div> -->
+
+              <!-- <div class="blog_tags">
+                <span
+                  class="post_list_tags_label"
+                  [translate]="'name'"
+                  [translateParams]="{
+              ar:'الفئة: ',
+              en: 'Category: ',
+            }"
+                ></span>
+                <a
+                  href="javascript:void(0)"
+                  [translate]="'name'"
+                  [translateParams]="{
+                ar: item?.category.ar,
+                en: item?.category.en,
+              }"
+                >
+                </a>
+              </div> -->
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</div>

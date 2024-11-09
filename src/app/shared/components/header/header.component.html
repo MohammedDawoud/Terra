@@ -1,0 +1,375 @@
+<div class="header py-2 px-2 bg-white">
+  <nav class="navbar">
+    <div
+      class="container-fluid justify-content-between align-items-center p-0 flex-nowrap"
+    >
+      <a href="javascript:void(0)" class="typed-item">
+        <ngx-typed-js
+          [strings]="options.strings"
+          [shuffle]="false"
+          [typeSpeed]="options.typeSpeed"
+          [loop]="true"
+        >
+          <span class="typing"></span>
+        </ngx-typed-js>
+
+        <!-- <img
+          src="/assets/images/TameerCloud-logo.png"
+          alt="TameerCloud-logo"
+          style="width: 90px !important; height: 50px !important"
+        /> -->
+      </a>
+      <div
+        class="d-flex justify-content-end justify-content-md-between gap-2 items-center items pm-2"
+        id="navbarSupportedContent"
+      >
+        <!-- date -->
+        <div class="d-none d-xl-block">
+          <div
+            class="rounded-2xl flex items-center gap-2 h-full p-3"
+            style="background: #f6f6f6"
+          >
+            <!-- <i class="fas fa-location-dot text-base" [matMenuTriggerFor]="branchMenu"></i> -->
+            <i class="fas fa-calendar"></i>
+
+            <span>
+              {{ date | hijriDate }}
+            </span>
+          </div>
+        </div>
+
+        <!-- time -->
+        <!-- <div class="d-none d-xxl-block">
+          <div
+            class="rounded-2xl bg-blue-50 flex items-center gap-2 h-full p-3"
+          >
+            <i class="fas fa-clock"></i>
+            <span>{{ time | date : "hh:mm a" }}</span>
+          </div>
+        </div> -->
+
+        <!-- branch -->
+        <div class="d-none d-lg-block">
+          <div class="d-none d-md-block">
+            <div
+              class="rounded-2xl bg-orange-50 flex items-center gap-2 h-full p-3"
+              [matMenuTriggerFor]="menu2"
+            >
+              <i class="fas fa-location-dot"></i>
+              <!-- <span
+                [translate]="'name'"
+                [translateParams]="{
+                  ar: selectedBranch.name?.ar,
+                  en: selectedBranch.name?.en
+                }"
+              >
+              </span> -->
+              <span class="text-amber-700">{{ headerObj.selectedBranch }}</span>
+              <br />
+
+              <i class="fas fa-chevron-down"></i>
+            </div>
+            <mat-menu mat-menu #menu2="matMenu" overlapTrigger="false">
+              <span>
+                <button
+                  mat-menu-item
+                  *ngFor="let branch of headerObj?.BranchesDropDown"
+                  (click)="
+                    headerObj.selectedBranch = branch.branchName;
+                    ChangeBranch(branch.branchId)
+                  "
+                >
+                  <span class="flag-name">
+                    {{ branch.branchName }}
+                  </span>
+                </button>
+              </span>
+            </mat-menu>
+          </div>
+        </div>
+
+        <!-- year -->
+        <div class="d-none d-md-block">
+          <div
+            class="rounded-2xl bg-orange-50 flex items-center gap-2 h-full p-2"
+            [matMenuTriggerFor]="menu3"
+          >
+            <div class="flex items-start gap-2">
+              <i class="fas fa-location text-amber-700"></i>
+              <div>
+                <span class="text-amber-700">{{ headerObj.selectedYear }}</span>
+                <br />
+                <span
+                  [translate]="'name'"
+                  [translateParams]="{
+                    ar: 'السنه المالية',
+                    en: 'Financial Year'
+                  }"
+                >
+                </span>
+              </div>
+            </div>
+            <i class="fas fa-chevron-down"></i>
+          </div>
+          <mat-menu mat-menu #menu3="matMenu" overlapTrigger="false">
+            <span>
+              <button
+                mat-menu-item
+                *ngFor="let year of headerObj?.YearsDropDown"
+                (click)="headerObj.selectedYear = year.name; ChangeYear(year)"
+              >
+                <span class="flag-name">{{ year.name }}</span>
+              </button>
+            </span>
+          </mat-menu>
+
+          <!-- <div
+            class="rounded-2xl bg-zinc-50 flex items-center gap-2 h-full p-2"
+            [matMenuTriggerFor]="yearMenu"
+          >
+            <div class="flex items-start gap-2">
+              <i class="fas fa-location text-amber-700"></i>
+              <div>
+                <span class="text-amber-700">2022</span> <br />
+                <span
+                  [translate]="'name'"
+                  [translateParams]="{
+                    ar: 'السنه المالية',
+                    en: 'Financial Year'
+                  }"
+                >
+                </span>
+              </div>
+            </div>
+            <i class="fas fa-chevron-down"></i>
+          </div>
+          <mat-menu mat-menu #yearMenu="matMenu" overlapTrigger="false">
+            <span>
+              <button mat-menu-item>2022</button>
+              <button mat-menu-item>2021</button>
+              <button mat-menu-item>2023</button>
+            </span>
+          </mat-menu> -->
+        </div>
+
+        <!-- Icons -->
+        <div class="d-none d-md-flex rounded-2xl items-center gap-8 p-3 icons">
+          <div ngbDropdown class="d-inline-block h-100">
+            <button
+              type="button"
+              class="profile-btn"
+              id="dropdownBasic1"
+              ngbDropdownToggle
+            >
+              <div class="relative">
+                <span class="absolute">{{ Supportrequestscount }}</span>
+                <i class="fa-regular fa-file text-base"></i>
+              </div>
+            </button>
+            <div
+              ngbDropdownMenu
+              class="border-0 p-3"
+              aria-labelledby="dropdownBasic1"
+            >
+              <div class="head">
+                {{ "tickets" | translate }}
+              </div>
+              <div class="dropdownItems">
+                <ng-container *ngFor="let item of Supportrequests">
+                  <button
+                    ngbDropdownItem
+                    (click)="RadReplay(item.supportRequestsReplayId)"
+                    [routerLink]="['/dash/support']"
+                  >
+                    <!-- <i class="fa-solid fa-headset"></i> -->
+                    <div class="row" style="width: 100%">
+                      <p class="col-6">
+                        {{ item.contacttxt?.slice(0, 100) + "..." }}
+                      </p>
+                      <!-- <p class="col-6">
+                        {{ item.contactDate | date : "MMM dd" }}
+                      </p> -->
+                    </div>
+                  </button>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+
+          <div ngbDropdown class="d-inline-block h-100">
+            <button
+              type="button"
+              class="profile-btn"
+              id="dropdownBasic1"
+              ngbDropdownToggle
+              (click)="GetUnReadUserNotification()"
+            >
+              <div class="relative">
+                <span class="absolute">{{ UserNotificationscount }}</span>
+                <i class="fa fa-bell text-base"></i>
+              </div>
+            </button>
+
+            <div
+              ngbDropdownMenu
+              class="border-0 p-3"
+              aria-labelledby="dropdownBasic1"
+            >
+              <div class="head">
+                {{ "alerts" | translate }}
+              </div>
+              <div class="dropdownItems">
+                <ng-container *ngFor="let item of UserNotifications">
+                  <button ngbDropdownItem (click)="redirect()">
+                    <!-- <i class="fa-regular fa-bell"></i> -->
+                    <p>{{ item.name?.slice(0, 70) + "..." }}</p>
+                    <!-- <p>{{ item.createdAt | date : "MMM dd" }}</p> -->
+                  </button>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Last Online -->
+        <div
+          class="d-none d-xxl-block rounded-2xl bg-blue-100 items-center gap-2 p-3"
+        >
+          <span
+            style="margin-inline-end: 10px"
+            [translate]="'name'"
+            [translateParams]="{
+              ar: 'اخر ظهور',
+              en: 'Last Online'
+            }"
+          >
+          </span>
+          <i class="fas fa-clock"></i>
+          <!-- <span>{{ time | date : "hh:mm a" }}</span> -->
+          <span>{{ lastLoginDate | date : "dd-MM-yyyy , hh:mm a" }}</span>
+        </div>
+
+        <!-- lang -->
+        <div class="hiddenz">
+          <div
+            class="rounded-2xl bg-orange-50 flex items-center gap-2 h-full p-3"
+            [matMenuTriggerFor]="menu"
+          >
+            <img src="{{ flag.image }}" alt="" class="w-6 rounded-md" />
+            <span>{{ flag.name }}</span>
+            <i class="fas fa-chevron-down"></i>
+          </div>
+          <mat-menu mat-menu #menu="matMenu" overlapTrigger="false">
+            <span>
+              <button
+                mat-menu-item
+                *ngFor="let flag of flags"
+                (click)="changeLang(flag, flag.lang)"
+              >
+                <img
+                  [src]="flag.image"
+                  width="18"
+                  class="mat-elevation-z1 mx-2"
+                /><span class="flag-name">{{ flag.name }}</span>
+              </button>
+            </span>
+          </mat-menu>
+        </div>
+
+        <!-- user info -->
+        <div class="hiddenz userBox">
+          <div ngbDropdown class="d-inline-block h-100">
+            <button
+              type="button"
+              class="profile-btn"
+              id="dropdownBasic1"
+              ngbDropdownToggle
+            >
+              <div
+                class="cont flex items-center gap-2 p-2 relative rounded-full"
+              >
+                <img
+                  src="{{ logoUrl | img }}"
+                  alt="personal-img"
+                  class="img-fluid"
+                  width="50px"
+                  height="50px"
+                />
+                <span class="d-sm-inline-block">{{ userG?.fullName }}</span>
+                <i class="fas fa-chevron-down"></i>
+              </div>
+            </button>
+            <div
+              ngbDropdownMenu
+              class="border-0 p-3"
+              aria-labelledby="dropdownBasic1"
+            >
+              <button ngbDropdownItem [routerLink]="['/dash/admin-profile']">
+                {{ "profile" | translate }}
+              </button>
+
+              <button
+                ngbDropdownItem
+                [routerLink]="['/dash/support']"
+                class="flex gap-2"
+              >
+                <span>{{ "Support Request" | translate }}</span>
+              </button>
+              <button
+                ngbDropdownItem
+                [routerLink]="['/dash/guide']"
+                class="flex gap-2"
+              >
+                <span>{{ "User's Guide" | translate }}</span>
+              </button>
+
+              <button
+                ngbDropdownItem
+                class="btn btn-danger"
+                (click)="openModal(logoutAlertModal)"
+              >
+                {{ "logout" | translate }}
+                <i class="fa fa-arrow-right-from-bracket"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+</div>
+
+<!-- Logout alert -->
+<ng-template #logoutAlertModal let-modal>
+  <div class="modal-body text-center">
+    <div>
+      <img
+        src="{{ OrganizationData?.logoUrl | img }}"
+        alt=""
+        style="max-height: 180px; object-fit: cover; margin-bottom: 20px"
+      />
+      <p>{{ "Are you sure you want to log out?" | translate }}</p>
+    </div>
+    <hr class="my-3" />
+    <div class="flex gap-2 justify-center">
+      <button
+        type="button"
+        mat-raised-button
+        class="btn btn-light"
+        (click)="modal.dismiss()"
+      >
+        {{ "Back" | translate }}
+      </button>
+      <button
+        type="button"
+        mat-raised-button
+        class="bg-base text-white"
+        (click)="logout(); modal.dismiss()"
+      >
+        {{ "Yes" | translate }}
+      </button>
+    </div>
+  </div>
+</ng-template>

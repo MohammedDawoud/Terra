@@ -1,0 +1,211 @@
+<div
+  class="vertival-sidebar {{ lang == 'ar' ? 'ar' : 'en' }} {{
+    isOpen ? 'open' : 'close'
+  }} {{ scrolled ? 'scrolled' : '' }}"
+  (hover)="isOpen = true; setSidebarState(); stopPropagation($event)"
+>
+  <div class="sidebar-container position-relative" style="z-index: 1">
+    <div
+      class="sidebar-header d-flex justify-content-center align-items-center {{
+        !isOpen ? 'btn-only' : ''
+      }}"
+    >
+      <div>
+        <ngx-typed-js
+          *ngIf="scrolled && isOpen"
+          [strings]="options.strings"
+          [shuffle]="false"
+          [typeSpeed]="options.typeSpeed"
+          [loop]="true"
+        >
+          <span class="typing"></span>
+        </ngx-typed-js>
+
+        <button
+          [@toggle-btn-animation]="isOpen"
+          type="button"
+          (click)="isOpen = !isOpen; setSidebarState(); stopPropagation($event)"
+          class="btn toggle-sidebar fs-4"
+        >
+          <i class="fa fa-align-center custom"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="sidebar-content">
+      <mat-sidenav #sidenav class="example-sidenav" mode="side" opened="true">
+        <mat-nav-list>
+          <ng-container *ngFor="let item of menu; let i = index">
+            <ng-container *ngIf="item.type == 'single' && item.show">
+              <a class="aClass"
+                [routerLinkActive]="'activeLink'"
+                [routerLink]="item.link"
+                (click)="activeIndex = i"
+              >
+              <mat-icon mat-list-icon>
+                <img src="{{ item.icon }}" alt="icon" class="icon" />
+              </mat-icon>
+              <span
+              *ngIf="isOpen"
+              class="full-width"
+              [translate]="'name'"
+              [translateParams]="{ ar: item.name?.ar, en: item.name?.en }"
+            >
+            </span>
+              </a>
+            </ng-container>
+
+            <ng-container *ngIf="item.type == 'multiple' && item.show">
+              <a class="aClass"
+                (click)="showSubmenu = !showSubmenu; activeIndex = i"
+                class="parent {{ linkName == item.link ? 'activeLink' : '' }}"
+              >
+              <mat-icon mat-list-icon>
+                <img src="{{ item.icon }}" alt="icon" class="icon" />
+              </mat-icon>
+
+                <span
+                  class="full-width"
+                  *ngIf="isOpen"
+                  [translate]="'name'"
+                  [translateParams]="{ ar: item.name?.ar, en: item.name?.en }"
+                >
+                </span>
+                <mat-icon
+                  class="menu-button"
+                  [ngClass]="{ rotated: showSubmenu && activeIndex == i }"
+                  >expand_more</mat-icon
+                >
+              </a>
+
+              <div
+                class="submenu showSubmenu {{
+                  showSubmenu && activeIndex == i ? 'd-block' : 'd-none'
+                }}"
+                [ngClass]="{ expanded: showSubmenu && activeIndex == i }"
+                *ngIf="showSubmenu && activeIndex == i"
+              >
+                <ng-container
+                  *ngFor="let child of item?.children; let childIndex = index"
+                >
+                  <ng-container *ngIf="child.type == 'single' && child.show">
+                    <a class="aClass"
+                      [routerLink]="child.link"
+                      [routerLinkActive]="'activeLink'"
+                      (click)="activeIndex = i"
+                    >
+                    <mat-icon mat-list-icon>
+                      <img src="{{ child.icon }}" alt="icon" class="icon" />
+                    </mat-icon>
+                      <span
+                        *ngIf="isOpen"
+                        class="full-width"
+                        [translate]="'name'"
+                        [translateParams]="{
+                          ar: child.name?.ar,
+                          en: child.name?.en
+                        }"
+                      >
+                      </span>
+
+                    </a>
+                  </ng-container>
+
+                  <ng-container *ngIf="child.type == 'multiple'&& child.show">
+                    <a class="aClass"
+                      (click)="
+                        showSubSubMenu = !showSubSubMenu;
+                        activeChildIndex = childIndex
+                      "
+                      class="parent {{
+                        linkName == child.link ? 'activeLink' : ''
+                      }}"
+                    >
+                    <mat-icon mat-list-icon>
+                      <img src="{{ child.icon }}" alt="icon" class="icon" />
+                    </mat-icon>
+                      <span
+                        class="full-width"
+                        *ngIf="isOpen"
+                        [translate]="'name'"
+                        [translateParams]="{
+                          ar: child.name?.ar,
+                          en: child.name?.en
+                        }"
+                      >
+                      </span>
+
+                      <mat-icon
+                        class="menu-button"
+                        [ngClass]="{
+                          rotated:
+                            showSubSubMenu && activeChildIndex == childIndex
+                        }"
+                        >expand_more</mat-icon
+                      >
+                      </a>
+
+                    <div
+                      class="submenu  showSubSubMenu {{
+                        showSubSubMenu && activeChildIndex == childIndex
+                          ? 'd-block'
+                          : 'd-none'
+                      }}"
+                      [ngClass]="{
+                        expanded:
+                          showSubSubMenu && activeChildIndex == childIndex
+                      }"
+                      *ngIf="showSubSubMenu && activeChildIndex == childIndex"
+                    >
+                      <ng-container *ngFor="let xchild of child?.children">
+                        <ng-container *ngIf="xchild.type == 'single' && xchild.show">
+                          <a class="aClass"
+                            [routerLink]="xchild.link"
+                            [routerLinkActive]="'activeLink'"
+                            (click)="activeChildIndex = childIndex"
+                          >
+                          <mat-icon mat-list-icon>
+                            <img
+                              src="{{ xchild.icon }}"
+                              alt="icon"
+                              class="icon"
+                            />
+                          </mat-icon>
+                            <span
+                              *ngIf="isOpen"
+                              class="full-width"
+                              [translate]="'name'"
+                              [translateParams]="{
+                                ar: xchild.name?.ar,
+                                en: xchild.name?.en
+                              }"
+                            >
+                            </span>
+
+                          </a>
+                        </ng-container>
+                      </ng-container>
+                    </div>
+                  </ng-container>
+                </ng-container>
+              </div>
+            </ng-container>
+          </ng-container>
+        </mat-nav-list>
+      </mat-sidenav>
+    </div>
+  </div>
+</div>
+
+<div
+  id="overlay"
+  class="overlay d-block d-xl-none"
+  *ngIf="isOpen"
+  (click)="closeSideBar()"
+></div>
+<div
+  id="overlay"
+  class="overlay d-block d-xl-none"
+  *ngIf="isOpen"
+  (click)="closeSideBar()"
+></div>

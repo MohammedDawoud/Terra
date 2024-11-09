@@ -1,0 +1,131 @@
+.error-text {
+  color: red;
+}
+
+.modal-form {
+  @apply max-h-[65vh] p-2 overflow-auto;
+
+  hr {
+    @apply my-3;
+  }
+  .separator-title {
+    @apply my-3  bg-base bg-opacity-10 text-xl font-bold rounded-lg px-3 py-2;
+    color: rgb(10 109 202);
+  }
+}
+.mat-tab-body-content {
+  overflow: hidden;
+}
+::ng-deep .cpanel-users .mat-tab-body-content {
+  overflow: hidden;
+}
+
+.stats {
+  padding-inline: 15px;
+  .box {
+    width: 110px;
+    height: 124px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    font-weight: 600;
+    border-radius: 5px;
+    img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      margin: 0 0 10px !important;
+    }
+    span {
+      font-size: 13px;
+      text-align: center;
+      font-weight: bold;
+    }
+  }
+}
+
+.data-table {
+  table {
+    tr {
+      th {
+        padding: 10px;
+        font-size: 15px;
+        font-weight: 500;
+        letter-spacing: 0.25px;
+      }
+    }
+  }
+}
+
+// .users {
+//   ::ng-deep {
+//     .node-root {
+//       max-height: 75px;
+//       overflow: auto;
+//     }
+//   }
+// }
+
+.users .tree {
+  max-height: 60vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: block !important;
+}
+
+.tree-icon {
+  font-size: 18px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  line-height: 24px;
+  color: var(--base-color);
+  align-items: center;
+  justify-content: center;
+}
+
+::ng-deep {
+  .node-name {
+    color: var(--gray-color);
+    letter-spacing: 0.5px;
+    font-size: 16px;
+    padding: 6px 14px !important;
+    cursor: pointer;
+
+    &.markSelected {
+      border: none !important;
+      @apply bg-green-100 text-base;
+    }
+  }
+
+  .collapsible-wrapper {
+    border-inline-start: 1px dashed #ccc;
+    margin-inline-start: 25px;
+    .node-name {
+      font-size: 14px;
+      color: var(--gray-color);
+      letter-spacing: 0.5px;
+      cursor: pointer;
+
+      &.markSelected {
+        border: none !important;
+        @apply bg-green-100 text-base;
+      }
+    }
+    node-icon-wrapper {
+      position: relative;
+
+      &::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        inset-inline-start: 0;
+        width: 90%;
+        height: 1px;
+        border: 1px dashed #ccc;
+      }
+    }
+  }
+}

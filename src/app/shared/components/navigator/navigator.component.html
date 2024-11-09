@@ -1,0 +1,37 @@
+<div class="flex gap-2 text-neutral-500 text-lg">
+  <button
+    class="flex items-center gap-2 mb-2"
+    *ngIf="title?.main?.link"
+    routerLink="{{ title.main.link }}"
+  >
+    <span
+      [translate]="'name'"
+      [translateParams]="{
+        ar: title?.main.name.ar,
+        en: title?.main.name.en
+      }"
+    ></span>
+    <img class="w-5" src="assets/icons/r-arrow.svg" alt="right arrow" />
+  </button>
+  <span
+    [translate]="'name'"
+    [translateParams]="{
+      ar: title?.sub.ar,
+      en: title?.sub.en
+    }"
+  ></span>
+  <img
+    *ngIf="title?.child"
+    class="w-5"
+    src="assets/icons/r-arrow.svg"
+    alt="right arrow"
+  />
+  <span
+    *ngIf="title?.child"
+    [translate]="'name'"
+    [translateParams]="{
+      ar: title?.child?.ar,
+      en: title?.child?.en
+    }"
+  ></span>
+</div>

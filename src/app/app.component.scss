@@ -1,0 +1,18 @@
+h1 {
+  color: var(--second-color);
+}
+
+.pages-content {
+  &.dash-view {
+    background-color: var(--gray-bg-color);
+    body {
+      background-color: var(--gray-bg-color);
+    }
+  }
+}
+
+::ng-deep{
+  .cdk-overlay-container{
+    z-index: 10000000000;
+  }
+}

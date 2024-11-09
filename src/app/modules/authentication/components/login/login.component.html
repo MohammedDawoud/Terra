@@ -1,0 +1,228 @@
+<div class="login d-flex justify-content-center align-items-center">
+  <div class="container">
+    <div class="row">
+      <!-- col-md-6 -->
+      <div class="col-lg-6 mb-5 mb-md-0 main">
+        <div class="login-info rounded bg-body">
+          <div class="head text-center">
+            <img *ngIf="environmentPho"
+              src="{{environmentPho}}"
+              alt="logo"
+              class="d-inline-block mb-3 img-fluid"
+            />
+            <!-- <h2>{{ "authTitle1" | translate }}</h2>
+            <p>{{ "authTitle2" | translate }}</p> -->
+          </div>
+          <form #form="ngForm">
+            <div class="form-input">
+              <img
+                src="/assets/images/ic_perm_identity_24px.png"
+                alt="user icon"
+              />
+
+              <input
+                type="text"
+                name="user_name"
+                placeholder="{{ 'userName' | translate }}"
+                ngModel
+                #name="ngModel"
+                required
+                minlength="1"
+                onCopy="return false" onDrag="return false" onDrop="return false" onPaste="return false"
+                autocomplete="off"
+                (keypress)="keyPress($event)"
+                [(ngModel)]="datalogin.username"
+              />
+              <span
+                class="text-danger"
+                *ngIf="name.hasError('required') && name.touched"
+                >{{ "requiredError" | translate }}</span
+              >
+              <span
+                class="text-danger"
+                *ngIf="
+                  name.hasError('minlength') &&
+                  !name.hasError('required') &&
+                  name.touched
+                "
+                >{{ "userNameError" | translate }}</span
+              >
+            </div>
+
+            <div class="form-input">
+              <img src="/assets/images/ic_lock_open_24px.png" alt="lock icon" />
+
+              <input
+                [type]="text ? 'text' : 'password'"
+                name="password"
+                placeholder="{{ 'password' | translate }}"
+                ngModel
+                #password="ngModel"
+                required
+                minlength="1"
+                [(ngModel)]="datalogin.password"
+
+                autocomplete="off"
+              />
+              <i
+                class="fa fa-{{ text ? 'eye' : 'eye-slash' }}"
+                (click)="text = !text"
+              ></i>
+              <span
+                class="text-danger"
+                *ngIf="password.hasError('required') && password.touched"
+                >{{ "requiredError" | translate }}</span
+              >
+              <span
+                class="text-danger"
+                *ngIf="
+                  password.hasError('minlength') &&
+                  !password.hasError('required') &&
+                  password.touched
+                "
+                >{{ "passwordError" | translate }}</span
+              >
+            </div>
+
+            <div class="row qr m-0 position-relative">
+              <div class="col-7 col-lg-8 mb-0 ps-0">
+                <div class="form-input">
+                  <img
+                    src="/assets/images/qr-code-scan.png"
+                    alt="qr-code icon"
+                  />
+
+                  <input
+                    type="text"
+                    name="parCode"
+                    placeholder="{{ 'code' | translate }}"
+                    ngModel
+                    #parCode="ngModel"
+                    required
+                    minlength="4"
+                    onCopy="return false" onDrag="return false" onDrop="return false" onPaste="return false"
+                    autocomplete="off"
+                  />
+                </div>
+              </div>
+              <div class="col-5 col-lg-4 mb-0 pe-0">
+                <div class="qrcode d-flex align-items-center">
+                  <div class="qrcode-value">
+                    <span>{{ qrCodeCheckValue[0] }}</span>
+                    <span>{{ qrCodeCheckValue[1] }}</span>
+                    <span>{{ qrCodeCheckValue[2] }}</span>
+                    <span>{{ qrCodeCheckValue[3] }}</span>
+                  </div>
+                  <i
+                    style="cursor: pointer"
+                    class="fa fa-refresh"
+                    (click)="refreshQrCode(); parCode.reset()"
+                  ></i>
+                </div>
+              </div>
+
+              <span
+                class="text-danger"
+                style="bottom: 4px"
+                *ngIf="!parCode.value && parCode.touched"
+                >{{ "requiredError" | translate }}</span
+              >
+              <span
+                class="text-danger"
+                style="bottom: 4px"
+                *ngIf="
+                  parCode.value != qrCodeCheckValue &&
+                  parCode.touched &&
+                  parCode.dirty
+                "
+                >{{ "codeError" | translate }}</span
+              >
+            </div>
+
+            <div class="form-input remember">
+              <span class="unchecked"></span>
+              <span class="checked" *ngIf="datalogin.remember">
+                <i class="fa fa-check"></i>
+              </span>
+              <input
+                type="checkbox"
+                name="remember_me"
+                id="checkBox"
+                [(ngModel)]="datalogin.remember"
+                #remember_me="ngModel"
+                ngModel
+              />
+              <label for="checkBox" class="d-inline-block ms-2">{{
+                "remember" | translate
+              }}</label>
+            </div>
+
+            <button
+              class="btn btn-outline-secondary login-btn"
+              [disabled]="form.invalid || parCode.value != qrCodeCheckValue"
+              (click)="login(form.value)"
+            >
+              {{ "Login" | translate }}
+            </button>
+
+            <!-- <a href="https://web.whatsapp.com/send?text=www.google.com" data-text="Take a look at this awesome website:" class="wa_btn wa_btn_s" style="display:inline">Share1</a>
+            <hr/>
+            <a href="whatsapp://send?text=www.google.com" data-text="Take a look at this awesome website:" class="wa_btn wa_btn_s" style="display:inline">Share1</a> -->
+
+
+            <div class="actions-btns mt-4 mb-0 text-center flex items-center justify-between flex-wrap">
+              <p
+                class="mb-4"
+                [routerLink]="'/auth/forget-password'"
+                style="color: var(--base-color)"
+              >
+                <i class="fa fa-lock"></i>
+                {{ "forgetPass" | translate }}
+              </p>
+              <p
+                class="mb-4"
+                [routerLink]="'/auth/retrive-password'"
+                style="color: var(--base-color)"
+              >
+                <i class="fa fa-lock"></i>
+                {{ "retrivePass" | translate }}
+              </p>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div
+        class="col-lg-6 d-flex justify-content-center align-items-start text-center info"
+      >
+        <div class="login-logo rounded">
+          <!-- <h3>{{ "loginHeader" | translate }}</h3> -->
+          <h3>{{environmentName}}</h3>
+          <div class="bannarNew">
+            <img
+              src="/assets/images/login-img.png"
+              alt="bannar"
+              class="img-fluid"
+            />
+          </div>
+          <div class="apps text-center mt-4" style="display: none;">
+            <h3 class="mb-4">{{ "downloadApp" | translate }}</h3>
+            <div class="links">
+              <a
+                href="https://play.google.com/store/apps/details?id=bayanatech.tam" target="_blank"
+                class="d-inline-block me-4 mb-3 mb-md-0"
+              >
+                <img src="/assets/images/google-play.png" alt=""/>
+              </a>
+              <a
+                href="https://apps.apple.com/us/app/taamer-cloud/id1665435495" target="_blank"
+                class="d-inline-block"
+              >
+                <img src="/assets/images/app-store.png" alt=""/>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

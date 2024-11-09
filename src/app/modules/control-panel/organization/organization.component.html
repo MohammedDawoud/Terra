@@ -1,0 +1,1574 @@
+<div class="organization">
+  <div class="container-fluid">
+    <app-navigator [title]="title"></app-navigator>
+    <div class="info mt-4">
+      <tabset>
+        <tab heading="{{ 'Head office data' | translate }}">
+          <div class="content">
+            <form [formGroup]="mainInfoForm" class="row">
+              <div class="col-md-6 col-lg-4 mb-3">
+                <div class="form-group">
+                  <label
+                    for="nameAr"
+                    class="text-right col-form-label block mx-2"
+                  >
+                    {{ "Establishment Name (Arabic)" | translate }}
+                    <span class="text-danger">*</span>
+                  </label>
+                  <input
+                    formControlName="nameAr"
+                    autocomplete="off"
+                    class="form-control"
+                    type="text"
+                    id="nameAr"
+                    name="nameAr"
+                  />
+                  <div
+                    class="fieldrequired"
+                    *ngIf="
+                      mainInfoForm.controls['nameAr']?.hasError('required') &&
+                      mainInfoForm.controls['nameAr'].touched
+                    "
+                  >
+                    {{ "This field is required" | translate }}
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-lg-4 mb-3">
+                <div class="form-group">
+                  <label
+                    for="nameEn"
+                    class="text-right col-form-label block mx-2"
+                  >
+                    {{ "Establishment name (English)" | translate }}
+                    <span class="text-danger">*</span>
+                  </label>
+                  <input
+                    formControlName="nameEn"
+                    autocomplete="off"
+                    class="form-control"
+                    type="text"
+                    id="nameEn"
+                    name="nameEn"
+                  />
+                  <div
+                    class="fieldrequired"
+                    *ngIf="
+                      mainInfoForm.get('nameEn')?.hasError('required') &&
+                      mainInfoForm.get('nameEn')?.touched
+                    "
+                  >
+                    {{ "This field is required" | translate }}
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-lg-2 mb-3">
+                <div class="form-group">
+                  <label
+                    for="mobile"
+                    class="text-right col-form-label block mx-2"
+                  >
+                    {{ "phone" | translate }}
+                    <span class="text-danger">*</span>
+                  </label>
+                  <input
+                    formControlName="mobile"
+                    autocomplete="off"
+                    class="form-control"
+                    type="text"
+                    id="mobile"
+                    name="mobile"
+                  />
+                  <div
+                    class="fieldrequired"
+                    *ngIf="
+                      mainInfoForm.get('mobile')?.hasError('required') &&
+                      mainInfoForm.get('mobile')?.touched
+                    "
+                  >
+                    {{ "This field is required" | translate }}
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-lg-2 mb-3">
+                <div class="form-group">
+                  <label for="fax" class="text-right col-form-label block mx-2">
+                    {{ "fax" | translate }}
+                    <span class="text-danger">*</span>
+                  </label>
+                  <input
+                    formControlName="fax"
+                    autocomplete="off"
+                    class="form-control"
+                    type="text"
+                    id="fax"
+                    name="fax"
+                  />
+                  <div
+                    class="fieldrequired"
+                    *ngIf="
+                      mainInfoForm.get('fax')?.hasError('required') &&
+                      mainInfoForm.get('fax')?.touched
+                    "
+                  >
+                    {{ "This field is required" | translate }}
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-lg-4 mb-3">
+                <div class="row p-0">
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label
+                        for="postalCodeFinal"
+                        class="text-right col-form-label block mx-2"
+                      >
+                        {{ "Postal code" | translate }}
+                        <span class="text-danger">*</span>
+                      </label>
+                      <input
+                        formControlName="postalCodeFinal"
+                        autocomplete="off"
+                        class="form-control"
+                        type="text"
+                        id="postalCodeFinal"
+                        name="postalCodeFinal"
+                      />
+                      <div
+                        class="fieldrequired"
+                        *ngIf="
+                          mainInfoForm
+                            .get('postalCodeFinal')
+                            ?.hasError('required') &&
+                          mainInfoForm.get('postalCodeFinal')?.touched
+                        "
+                      >
+                        {{ "This field is required" | translate }}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label
+                        for="country"
+                        class="text-right col-form-label block mx-2"
+                      >
+                        {{ "Country" | translate }}
+                        <span class="text-danger">*</span>
+                      </label>
+                      <input
+                        formControlName="country"
+                        autocomplete="off"
+                        class="form-control"
+                        type="text"
+                        id="country"
+                        name="country"
+                      />
+                      <div
+                        class="fieldrequired"
+                        *ngIf="
+                          mainInfoForm.get('country')?.hasError('required') &&
+                          mainInfoForm.get('country')?.touched
+                        "
+                      >
+                        {{ "This field is required" | translate }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-lg-4 mb-3">
+                <div class="row p-0">
+                  <div class="col-12">
+                    <div class="form-group">
+                      <label class="col-form-label mx-2">
+                        {{ "Region" | translate }}
+                        <span class="text-danger">*</span></label
+                      >
+                      <div class="flex">
+                        <ng-select
+                          class="w-full p-0"
+                          placeholder="{{ 'Chose' | translate }}"
+                          name="cityId"
+                          formControlName="cityId"
+                          style="min-width: unset !important"
+                          
+                        >
+                          <ng-option
+                            *ngFor="let user of nationalitysourceselected"
+                            [value]="user.id"
+                            >{{ user.name }}</ng-option
+                          >
+                        </ng-select>
+                      </div>
+                      <div
+                        class="fieldrequired"
+                        *ngIf="
+                          mainInfoForm.get('cityId')?.hasError('required') &&
+                          mainInfoForm.get('cityId')?.touched
+                        "
+                      >
+                        {{ "This field is required" | translate }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-lg-4 mb-3">
+                <div class="row p-0">
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label
+                        for="neighborhood"
+                        class="text-right col-form-label block mx-2"
+                      >
+                        {{ "Neighborhood" | translate }}
+                        <span class="text-danger">*</span>
+                      </label>
+                      <input
+                        formControlName="neighborhood"
+                        autocomplete="off"
+                        class="form-control"
+                        type="text"
+                        id="neighborhood"
+                        name="neighborhood"
+                      />
+                      <div
+                        class="fieldrequired"
+                        *ngIf="
+                          mainInfoForm
+                            .get('neighborhood')
+                            ?.hasError('required') &&
+                          mainInfoForm.get('neighborhood')?.touched
+                        "
+                      >
+                        {{ "This field is required" | translate }}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label
+                        for="streetName"
+                        class="text-right col-form-label block mx-2"
+                      >
+                        {{ "Street name" | translate }}
+                        <span class="text-danger">*</span>
+                      </label>
+                      <input
+                        formControlName="streetName"
+                        autocomplete="off"
+                        class="form-control"
+                        type="text"
+                        id="streetName"
+                        name="streetName"
+                      />
+                      <div
+                        class="fieldrequired"
+                        *ngIf="
+                          mainInfoForm
+                            .get('streetName')
+                            ?.hasError('required') &&
+                          mainInfoForm.get('streetName')?.touched
+                        "
+                      >
+                        {{ "This field is required" | translate }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-lg-4 mb-3">
+                <div class="row p-0">
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label
+                        for="buildingNumber"
+                        class="text-right col-form-label block mx-2"
+                      >
+                        {{ "BuildingNumber" | translate }}
+                        <span class="text-danger">*</span>
+                      </label>
+                      <input
+                        formControlName="buildingNumber"
+                        autocomplete="off"
+                        class="form-control"
+                        type="text"
+                        id="buildingNumber"
+                        name="buildingNumber"
+                      />
+                      <div
+                        class="fieldrequired"
+                        *ngIf="
+                          mainInfoForm
+                            .get('buildingNumber')
+                            ?.hasError('required') &&
+                          mainInfoForm.get('buildingNumber')?.touched
+                        "
+                      >
+                        {{ "This field is required" | translate }}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label
+                        for="externalPhone"
+                        class="text-right col-form-label block mx-2"
+                      >
+                        {{ "Additional Phone" | translate }}
+                        <span class="text-danger">*</span>
+                      </label>
+                      <input
+                        formControlName="externalPhone"
+                        autocomplete="off"
+                        class="form-control"
+                        type="text"
+                        id="externalPhone"
+                        name="externalPhone"
+                      />
+                      <div
+                        class="fieldrequired"
+                        *ngIf="
+                          mainInfoForm
+                            .get('externalPhone')
+                            ?.hasError('required') &&
+                          mainInfoForm.get('externalPhone')?.touched
+                        "
+                      >
+                        {{ "This field is required" | translate }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-lg-4 mb-3">
+                <div class="row p-0">
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label
+                        for="taxCode"
+                        class="text-right col-form-label block mx-2"
+                      >
+                        {{ "Commerial Registration" | translate }}
+                        <span class="text-danger">*</span>
+                      </label>
+                      <input
+                        formControlName="taxCode"
+                        autocomplete="off"
+                        class="form-control"
+                        type="text"
+                        id="taxCode"
+                        name="taxCode"
+                      />
+                      <div
+                        class="fieldrequired"
+                        *ngIf="
+                          mainInfoForm.get('taxCode')?.hasError('required') &&
+                          mainInfoForm.get('taxCode')?.touched
+                        "
+                      >
+                        {{ "This field is required" | translate }}
+                      </div>
+                      <div
+                        *ngIf="
+                          mainInfoForm.get('taxCode')?.hasError('pattern') &&
+                          mainInfoForm.get('taxCode')?.touched
+                        "
+                        class="fieldrequired"
+                      >
+                        Invalid pattern.
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- check -->
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label
+                        for="postalCode"
+                        class="text-right col-form-label block mx-2"
+                      >
+                        {{ "Commercial Register" | translate }}
+                        <span class="text-danger">*</span>
+                      </label>
+                      <input
+                        formControlName="postalCode"
+                        autocomplete="off"
+                        class="form-control"
+                        type="text"
+                        id="postalCode"
+                        name="postalCode"
+                      />
+                      <div
+                        class="fieldrequired"
+                        *ngIf="
+                          mainInfoForm
+                            .get('postalCode')
+                            ?.hasError('required') &&
+                          mainInfoForm.get('postalCode')?.touched
+                        "
+                      >
+                        {{ "This field is required" | translate }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-lg-4 mb-3">
+                <div class="form-group">
+                  <label
+                    for="email"
+                    class="text-right col-form-label block mx-2"
+                  >
+                    {{ "Office customer correspondence email" | translate }}
+                    <span class="text-danger">*</span>
+                  </label>
+                  <div class="flex">
+                    <input
+                      formControlName="email"
+                      autocomplete="off"
+                      class="form-control"
+                      type="email"
+                      id="email"
+                      name="email"
+                    />
+                    <div
+                      class="fieldrequired"
+                      *ngIf="
+                        mainInfoForm.get('email')?.hasError('required') &&
+                        mainInfoForm.get('email')?.touched
+                      "
+                    >
+                      {{ "This field is required" | translate }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-lg-4 mb-3">
+                <div class="form-group">
+                  <label
+                    for="address"
+                    class="text-right col-form-label block mx-2"
+                  >
+                    {{ "Address" | translate }}
+                  </label>
+                  <input
+                    formControlName="address"
+                    autocomplete="off"
+                    class="form-control"
+                    type="text"
+                    id="address"
+                    name="address"
+                  />
+                </div>
+              </div>
+
+              <div class="col-md-6 col-lg-4 mb-3">
+                <div class="form-group">
+                  <label
+                    for="webSite"
+                    class="text-right col-form-label block mx-2"
+                  >
+                    {{ "Location" | translate }}
+                  </label>
+                  <input
+                    formControlName="webSite"
+                    autocomplete="off"
+                    class="form-control"
+                    type="text"
+                    id="webSite"
+                    name="webSite"
+                  />
+                </div>
+              </div>
+
+              <div class="col-md-6 col-lg-2 mb-3">
+                <div class="form-group">
+                  <label
+                    for="BankName"
+                    class="text-right col-form-label block mx-2"
+                  >
+                    {{ "BankName" | translate }}
+                    <span class="text-danger">*</span>
+                  </label>
+                  <ng-select
+                    formControlName="bankId"
+                    autocomplete="off"
+                    id="BankName"
+                    name="BankName"
+                  >
+                    <ng-option
+                      *ngFor="let item of bankselect"
+                      [value]="item.id"
+                      >{{ item.name }}</ng-option
+                    >
+                  </ng-select>
+                  <div
+                    class="fieldrequired"
+                    *ngIf="
+                      mainInfoForm.get('bankId')?.hasError('required') &&
+                      mainInfoForm.get('bankId')?.touched
+                    "
+                  >
+                    {{ "This field is required" | translate }}
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-lg-2 mb-3">
+                <div class="form-group">
+                  <label
+                    for="BankAccount"
+                    class="text-right col-form-label block mx-2"
+                  >
+                    {{ "Bank account" | translate }}
+                    <span class="text-danger">*</span>
+                  </label>
+                  <input
+                    formControlName="accountBank"
+                    autocomplete="off"
+                    class="form-control"
+                    type="text"
+                    id="accountBank"
+                    name="BankAccount"
+                  />
+
+                  <div
+                    class="fieldrequired"
+                    *ngIf="
+                      mainInfoForm.get('accountBank')?.hasError('required') &&
+                      mainInfoForm.get('accountBank')?.touched
+                    "
+                  >
+                    {{ "This field is required" | translate }}
+                  </div>
+                </div>
+              </div>
+
+              <!-- check -->
+
+
+              <div class="col-md-6 col-lg-3 mb-3">
+                <div class="form-group">
+                  <label for="as" class="text-right col-form-label block mx-2">
+                    {{ "as" | translate }}
+                  </label>
+                  <input
+                    formControlName="as"
+                    autocomplete="off"
+                    class="form-control"
+                    type="text"
+                    id="as"
+                    name="as"
+                  />
+                </div>
+              </div>
+
+              <div class="col-md-6 col-lg-2 mb-3">
+                <div class="form-group">
+                  <label
+                    for="NationalId"
+                    class="text-right col-form-label block mx-2"
+                  >
+                    {{ "NationalId" | translate }}
+                  </label>
+                  <input
+                    formControlName="NationalId"
+                    autocomplete="off"
+                    class="form-control"
+                    type="text"
+                    id="NationalId"
+                    name="NationalId"
+                  />
+                </div>
+              </div>
+
+              <div class="col-md-6 col-lg-2 mb-3">
+                <div class="form-group">
+                  <label
+                    for="BankName2"
+                    class="text-right col-form-label block mx-2"
+                  >
+                    {{ "BankName" | translate }}
+                    <!-- <span class="text-danger">*</span> -->
+                  </label>
+                  <ng-select
+                    formControlName="bankId2"
+                    autocomplete="off"
+                    id="BankName2"
+                    name="BankName2"
+                  >
+                    <ng-option
+                      *ngFor="let item of bankselect"
+                      [value]="item.id"
+                      >{{ item.name }}</ng-option
+                    >
+                  </ng-select>
+                  <!-- <div class="fieldrequired" *ngIf="
+                      mainInfoForm.get('bankId2')?.hasError('required') &&
+                      mainInfoForm.get('bankId2')?.touched
+                    ">
+                    {{ "This field is required" | translate }}
+                  </div> -->
+                </div>
+              </div>
+
+              <div class="col-md-6 col-lg-2 mb-3">
+                <div class="form-group">
+                  <label
+                    for="BankAccount2"
+                    class="text-right col-form-label block mx-2"
+                  >
+                    {{ ("Bank account" | translate) + " 2" }}
+                    <!-- <span class="text-danger">*</span> -->
+                  </label>
+                  <input
+                    formControlName="accountBank2"
+                    autocomplete="off"
+                    class="form-control"
+                    type="text"
+                    id="BankAccount2"
+                    name="BankAccount2"
+                  />
+                </div>
+                <!-- <div class="fieldrequired" *ngIf="
+                    mainInfoForm.get('accountBank2')?.hasError('required') &&
+                    mainInfoForm.get('accountBank2')?.touched
+                  ">
+                  {{ "This field is required" | translate }}
+                </div> -->
+              </div>
+
+              <!-- <div class="col-md-6 col-lg-3 mb-3">
+                <div class="form-group">
+                  <label
+                    for="EngineeringLicense"
+                    class="text-right col-form-label block mx-2"
+                  >
+                    {{ "EngineeringLicense" | translate }}
+                  </label>
+                  <input
+                    formControlName="engineering_License"
+                    autocomplete="off"
+                    class="form-control"
+                    type="text"
+                    id="EngineeringLicense"
+                    name="EngineeringLicense"
+                  />
+                </div>
+              </div>
+
+              <div class="col-md-6 col-lg-3 mb-3">
+                <div class="form-group">
+                  <label
+                    for="IssuedOn"
+                    class="text-right col-form-label block mx-2"
+                  >
+                    {{ "IssuedOn" | translate }}
+                  </label>
+                  <input
+                    formControlName="engineering_LicenseDate"
+                    autocomplete="off"
+                    class="form-control"
+                    id="IssuedOn"
+                    name="IssuedOn"
+                    bsDatepicker
+                  />
+                </div>
+              </div> -->
+
+              <div class="col-md-6 mb-3">
+                <div
+                  class="box rounded p-3"
+                  style="border: 4px solid var(--base-color)"
+                >
+                  <p
+                    class="text-red-500 fw-bold"
+                    style="letter-spacing: 0.5px; line-height: 1.7em"
+                  >
+                    {{ "branchsHint" | translate }}
+                  </p>
+                  <mat-slide-toggle
+                    name="activeBranches"
+                    formControlName="OrgDataIsRequired"
+                    (change)="Changeorgisreq($event)"
+                    color="primary"
+                    ><span
+                      [translate]="'name'"
+                      [translateParams]="{
+                        ar: 'تفعيل الفروع؟',
+                        en: 'Active Branches?'
+                      }"
+                    ></span
+                  ></mat-slide-toggle>
+                </div>
+              </div>
+
+              <div class="col-12 my-3">
+                <div class="row p-0">
+                  <div class="col-md-6 mb-4 mb-md-0">
+                    <p class="bg-red-100 p-1">
+                      {{
+                        "Please: Choose the representative of the facility authorized to sign the employee contracts and
+                      the facility's customer contracts" | translate
+                      }}
+                    </p>
+                    <!-- <div class="form-input-group flex gap-2 items-center">
+                      <input
+                        type="checkbox"
+                        class="form-check-input"
+                        formControlName="isFooter"
+                        name="showInfoInReport"
+                      />
+                      <label for="showInfoInReport" class="m-0">{{
+                        "Show the establishment data at the end of the reportsbranchsHint"
+                          | translate
+                      }}</label>
+                    </div> -->
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12 my-3">
+                <div class="row p-0 items-center">
+                  <div
+                    class="col-md-4"
+                    *ngIf="
+                      mainInfoForm.controls['oRGlogoUrl'].value != null &&
+                      mainInfoForm.controls['oRGlogoUrl'].value != ''
+                    "
+                  >
+                    <img
+                      src="{{
+                        environmenturl +
+                          mainInfoForm.controls['oRGlogoUrl'].value
+                      }}"
+                      alt=""
+                      class="img-fluid"
+                      style="
+                        width: 340px;
+                        height: 200px;
+                        object-fit: contain;
+                        background-color: #fff;
+                        padding: 10px;
+                      "
+                    />
+                  </div>
+                  <div class="col-md-8">
+                    <div class="upload">
+                      <file-upload
+                        [control]="control"
+                        class="logoUrlfile-uploadORG"
+                        [ngClass]="{
+                          logoUrlchange:
+                            mainInfoForm.controls['logoUrl'].value == null &&
+                            this.imageFileOutput != null
+                        }"
+                      >
+                        <ng-template
+                          let-isFileDragDropAvailable="isFileDragDropAvailable"
+                          #placeholder
+                          let-file="file"
+                        >
+                          <div
+                            *ngIf="
+                              control.size === 0 &&
+                              mainInfoForm.controls['logoUrl'].value == null
+                            "
+                          >
+                            <div class="icon">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                height="1em"
+                                viewBox="0 0 640 512"
+                              >
+                                <path
+                                  d="M144 480C64.5 480 0 415.5 0 336c0-62.8 40.2-116.2 96.2-135.9c-.1-2.7-.2-5.4-.2-8.1c0-88.4 71.6-160 160-160c59.3 0 111 32.2 138.7 80.2C409.9 102 428.3 96 448 96c53 0 96 43 96 96c0 12.2-2.3 23.8-6.4 34.6C596 238.4 640 290.1 640 352c0 70.7-57.3 128-128 128H144zm79-217c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l39-39V392c0 13.3 10.7 24 24 24s24-10.7 24-24V257.9l39 39c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-80-80c-9.4-9.4-24.6-9.4-33.9 0l-80 80z"
+                                />
+                              </svg>
+                            </div>
+
+                            <div class="upload-text">
+                              {{ "Add Image" | translate }}
+                            </div>
+                          </div>
+                          <div
+                            class="overlay"
+                            *ngIf="
+                              mainInfoForm.controls['logoUrl'].value != null
+                            "
+                          >
+                            <span
+                              class="delete-button"
+                              (click)="
+                                control.clear();
+                                mainInfoForm.controls['logoUrl'].setValue(null)
+                              "
+                            >
+                              <svg viewBox="0 0 448 512">
+                                <path
+                                  d="M32 464a48 48 0 0 0 48 48h288a48 48 0 0 0 48-48V128H32zm272-256a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zM432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16z"
+                                ></path>
+                              </svg>
+                            </span>
+                            <img
+                              *ngIf="
+                                mainInfoForm.controls['logoUrl'].value != null
+                              "
+                              src="{{
+                                environmenturl +
+                                  mainInfoForm.controls['logoUrl'].value
+                              }}"
+                            />
+                          </div>
+                        </ng-template>
+                        <ng-template
+                          let-i="index"
+                          *ngIf="mainInfoForm.controls['logoUrl'].value == null"
+                          let-file="file"
+                          let-control="control"
+                          #item
+                        >
+                          <div class="overlay">
+                            <span
+                              class="delete-button"
+                              (click)="control.clear()"
+                            >
+                              <svg viewBox="0 0 448 512">
+                                <path
+                                  d="M32 464a48 48 0 0 0 48 48h288a48 48 0 0 0 48-48V128H32zm272-256a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zM432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16z"
+                                ></path>
+                              </svg>
+                            </span>
+                            <img
+                              *ngIf="control.valid"
+                              [src]="uploadedFile | async"
+                            />
+                          </div>
+                        </ng-template>
+                      </file-upload>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+
+            <div
+              class="modal-footer justify-content-end my-3"
+              style="border-top: none"
+            >
+              <button
+                type="button"
+                class="btn submit-btn bg-red text-white py-2 px-3 mt-0"
+                (click)="open(Maintenance, null, 'Maintenance')"
+              >
+                {{ "Maintenance" | translate }}
+              </button>
+              <button
+                type="button"
+                class="btn submit-btn bg-base text-white py-2 px-3 mt-0"
+                (click)="saveMainInfo()"
+                [disabled]="
+                  this.mainInfoForm.controls['organizationId'].value == null ||
+                  this.mainInfoForm.controls['nameAr'].value == null ||
+                  this.mainInfoForm.controls['nameEn'].value == null ||
+                  this.mainInfoForm.controls['mobile'].value == null ||
+                  this.mainInfoForm.controls['fax'].value == null ||
+                  this.mainInfoForm.controls['postalCode'].value == null ||
+                  this.mainInfoForm.controls['country'].value == null ||
+                  this.mainInfoForm.controls['cityId'].value == null ||
+                  this.mainInfoForm.controls['neighborhood'].value == null ||
+                  this.mainInfoForm.controls['streetName'].value == null ||
+                  this.mainInfoForm.controls['buildingNumber'].value == null ||
+                  this.mainInfoForm.controls['externalPhone'].value == null ||
+                  this.mainInfoForm.controls['taxCode'].value == null ||
+                  this.mainInfoForm.controls['postalCodeFinal'].value == null ||
+                  this.mainInfoForm.controls['email'].value == null ||
+                  this.mainInfoForm.controls['bankId'].value == null ||
+                  this.mainInfoForm.controls['accountBank'].value == null
+                "
+              >
+                {{ "Save" | translate }}
+              </button>
+              <button
+                type="button"
+                class="btn btn-light py-2 px-3 mt-0"
+                (click)="goDash()"
+              >
+                {{ "close" | translate }}
+              </button>
+            </div>
+          </div>
+        </tab>
+
+        <tab heading="{{ 'Set and prepare branch data' | translate }}">
+          <div class="content">
+
+            <div class="tables-data mt-3 overflow-hidden">
+              <!-- table -->
+              <input
+                (keyup)="applyFilter($event)"
+                class="form-control mb-3"
+                style="max-width: 300px"
+                #input
+                placeholder="{{ 'search' | translate }}"
+              />
+              <div class="overflow-auto">
+                <table
+                  mat-table
+                  [dataSource]="dataSource"
+                  matSort
+                  class="mat-elevation-z8 rounded-t-lg overflow-hidden w-max"
+                >
+                  <!-- Name column -->
+                  <ng-container matColumnDef="Name">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                      <span>{{ "Name" | translate }}</span>
+                    </th>
+                    <td mat-cell *matCellDef="let element">
+                      <span>{{ element?.branchName }}</span>
+                    </td>
+                  </ng-container>
+                  <!-- CommercialRegister column -->
+                  <ng-container matColumnDef="CommercialRegister">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                      <span>{{ "Commercial Register" | translate }}</span>
+                    </th>
+                    <td mat-cell *matCellDef="let element">
+                      <span>{{ element?.postalCode }}</span>
+                    </td>
+                  </ng-container>
+                  <!-- CommerialRegistration column -->
+                  <ng-container matColumnDef="CommerialRegistration">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                      <span>{{ "Commerial Registration" | translate }}</span>
+                    </th>
+                    <td mat-cell *matCellDef="let element">
+                      <span>{{ element?.taxCode }}</span>
+                    </td>
+                  </ng-container>
+                  <!-- city/region column -->
+                  <ng-container matColumnDef="city/region">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                      <span>{{ "city/region" | translate }}</span>
+                    </th>
+                    <td mat-cell *matCellDef="let element">
+                      <span>{{ element?.cityName }}</span>
+                    </td>
+                  </ng-container>
+                  <!-- coins column -->
+                  <ng-container matColumnDef="coins">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                      <span>{{ "coins" | translate }}</span>
+                    </th>
+                    <td mat-cell *matCellDef="let element">
+                      <span>{{ element?.currencyName }}</span>
+                    </td>
+                  </ng-container>
+                  <!-- operations Column -->
+                  <ng-container matColumnDef="operations">
+                    <th mat-header-cell *matHeaderCellDef>
+                      {{ "operations" | translate }}
+                    </th>
+                    <td mat-cell *matCellDef="let element">
+                      <div class="flex gap-1 justify-center py-2">
+                      </div>
+                    </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+
+                  <tr
+                    mat-row
+                    *matRowDef="let row; columns: displayedColumns"
+                    class="duration-300 hover:bg-slate-100"
+                  ></tr>
+
+                  <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell" colspan="4">
+                      {{ "noResult" | translate }} "{{ input.value }}"
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <mat-paginator [pageSizeOptions]="[10, 25]"> </mat-paginator>
+            </div>
+          </div>
+        </tab>
+      </tabset>
+    </div>
+  </div>
+</div>
+
+<!-- Maintenance -->
+<ng-template #Maintenance let-modal>
+  <div class="modal-header bg-base text-white">
+    <h4 class="modal-title mb-0" id="modal-basic-title">
+      {{ "Maintenance" | translate }}
+    </h4>
+    <button type="button" class="m-0" (click)="modal.dismiss('Cross click')">
+      <i class="fa fa-close"></i>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-9 mb-3">
+        <div class="form-group">
+          <label class="text-right col-form-label block">
+            {{ "(1) - Modify IsMain in Accounts" | translate }}
+          </label>
+        </div>
+      </div>
+      <div class="col-3 mb-3">
+        <div class="form-group">
+          <button
+            type="button"
+            class="btn submit-btn bg-base text-white py-2 px-3 mt-0"
+            (click)="MaintenanceFunc(1)"
+          >
+            {{ "maintenance" | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-9 mb-3">
+        <div class="form-group">
+          <label class="text-right col-form-label block">
+            {{
+              "(2) - Modifying the order of codes in the accounts to adjust the balance"
+                | translate
+            }}
+          </label>
+        </div>
+      </div>
+      <div class="col-3 mb-3">
+        <div class="form-group">
+          <button
+            type="button"
+            class="btn submit-btn bg-base text-white py-2 px-3 mt-0"
+            (click)="MaintenanceFunc(2)"
+          >
+            {{ "maintenance" | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<!-- Add option -->
+<ng-template #addOption let-modal>
+  <div class="modal-header bg-base text-white">
+    <h4
+      class="modal-title mb-0"
+      id="modal-basic-title"
+      [translate]="'name'"
+      [translateParams]="{ ar: 'اضافة جديدة', en: 'Add New' }"
+    ></h4>
+    <button type="button" class="m-0" (click)="modal.dismiss('Cross click')">
+      <i class="fa fa-close"></i>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form #addOptionForm="ngForm">
+      <div class="row">
+        <div class="col-lg-6 mb-4 mb-lg-0">
+          <div class="form-input-group">
+            <label for="" class="block mb-3">{{ "nameAr" | translate }}</label>
+            <input
+              type="text"
+              placeholder="{{ 'nameAr' | translate }}"
+              class="form-control"
+              ngModel
+              name="nameAr"
+              required
+            />
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="form-input-group">
+            <label for="" class="block mb-3">{{ "nameEn" | translate }}</label>
+            <input
+              type="text"
+              placeholder="{{ 'nameEn' | translate }}"
+              class="form-control"
+              ngModel
+              name="nameEn"
+              required
+            />
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer justify-content-center" style="border-top: none">
+    <button
+      type="button"
+      class="btn btn-light py-2 px-3 mt-0"
+      (click)="modal.dismiss('Cross click')"
+    >
+      {{ "close" | translate }}
+    </button>
+    <button
+      type="button"
+      class="btn submit-btn bg-base text-white py-2 px-3 mt-0"
+      [disabled]="addOptionForm.invalid"
+      (click)="saveOption(addOptionForm.value)"
+    >
+      {{ "Save" | translate }}
+    </button>
+
+    <div
+      class="d-block w-100 mt-4"
+      style="
+        border-top: 2px solid #d5dadf;
+        padding-top: 24px;
+        border-radius: 3px;
+      "
+    >
+      <div class="w-100 mb-3">
+        <input
+          type="text"
+          class="form-control pull-right"
+          placeholder="{{ 'search' | translate }}"
+          (keyup)="updateFilter($event)"
+        />
+      </div>
+
+      <ngx-datatable
+        style="max-height: 300px; overflow-y: auto"
+        #table
+        class="striped w-100"
+        [columnMode]="'flex'"
+        [headerHeight]="50"
+        [footerHeight]="50"
+        [rowHeight]="'auto'"
+        [limit]="100"
+        [rows]="rows"
+      >
+        <!-- Column: Editing Mode-->
+        <ngx-datatable-column [flexGrow]="0.5">
+          <ng-template
+            let-value="value"
+            let-row="row"
+            let-rowIndex="rowIndex"
+            ngx-datatable-cell-template
+          >
+            <!-- Pencil icon -->
+            <i
+              class="fa fa-pencil"
+              title="Modify"
+              style="cursor: pointer"
+              *ngIf="!this.isEditable[rowIndex]"
+              (click)="this.isEditable[rowIndex] = !this.isEditable[rowIndex]"
+            ></i>
+
+            <!-- Save/Delete icons -->
+            <div class="actions">
+              <i
+                class="fa fa-edit text-success"
+                *ngIf="this.isEditable[rowIndex]"
+                title="Save"
+                (click)="save(row, rowIndex)"
+              ></i>
+              <i
+                class="fa fa-trash text-danger"
+                *ngIf="this.isEditable[rowIndex]"
+                title="Delete"
+                (click)="delete(row, rowIndex)"
+              ></i>
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column
+          [flexGrow]="1.5"
+          name="{{ 'nameAr' | translate }}"
+        >
+          <ng-template
+            ngx-datatable-cell-template
+            let-rowIndex="rowIndex"
+            let-row="row"
+          >
+            <div class="form-input-group">
+              <input
+                type="text"
+                name="activity_name"
+                [(ngModel)]="row.name_ar"
+                [disabled]="!isEditable[rowIndex]"
+              />
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column
+          [flexGrow]="1.5"
+          name="{{ 'nameEn' | translate }}"
+        >
+          <ng-template
+            ngx-datatable-cell-template
+            let-rowIndex="rowIndex"
+            let-row="row"
+          >
+            <div class="form-input-group">
+              <input
+                type="text"
+                name="activity_name_en"
+                [(ngModel)]="row.name_en"
+                [disabled]="!isEditable[rowIndex]"
+              />
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+      </ngx-datatable>
+    </div>
+  </div>
+</ng-template>
+
+<!-- latestNewsModal -->
+<ng-template #latestNewsModal let-modal>
+  <div class="modal-header bg-base text-white">
+    <h4 class="modal-title mb-0" id="modal-basic-title">
+      {{ "latest news" | translate }}
+    </h4>
+    <button type="button" class="m-0" (click)="modal.dismiss('Cross click')">
+      <i class="fa fa-close"></i>
+    </button>
+  </div>
+
+  <div class="modal-body text-center">
+    <form [formGroup]="NewsModalForm">
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <div class="form-group">
+            <label class="text-right col-form-label block">
+              {{ "The address is Arabic" | translate }}
+              <span class="text-danger">*</span>
+            </label>
+            <input
+              class="form-control"
+              type="text"
+              [placeholder]="'The address is Arabic' | translate"
+              name="addressAr"
+              formControlName="NewsTitleAr"
+              autocomplete="off"
+              (blur)="
+                this.NewsModalForm.controls['NewsTitleAr'].value.length < 10
+                  ? (NewsTitleArError = true)
+                  : (NewsTitleArError = false)
+              "
+            />
+            <!-- this.NewsModalForm.controls['NewsTitleAr'].value.length != 10 && -->
+            <div
+              class="fieldrequired"
+              *ngIf="
+                (NewsModalForm.get('NewsTitleAr')?.hasError('required') &&
+                  NewsModalForm.get('NewsTitleAr')?.touched) ||
+                NewsTitleArError == true
+              "
+            >
+              {{ "This field is required length 10" | translate }}
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 mb-3">
+          <div class="form-group">
+            <label class="text-right col-form-label block">
+              {{ "The address is English" | translate }}
+              <span class="text-danger">*</span>
+            </label>
+            <input
+              class="form-control"
+              type="text"
+              [placeholder]="'The address is English' | translate"
+              name="addressEn"
+              formControlName="NewsTitleEn"
+              autocomplete="off"
+              (blur)="
+                this.NewsModalForm.controls['NewsTitleEn'].value.length < 10
+                  ? (NewsTitleEnError = true)
+                  : (NewsTitleEnError = false)
+              "
+            />
+            <!-- this.NewsModalForm.controls['NewsTitleEn'].value.length != 10 && -->
+            <div
+              class="fieldrequired"
+              *ngIf="
+                (NewsModalForm.get('NewsTitleEn')?.hasError('required') &&
+                  NewsModalForm.get('NewsTitleEn')?.touched) ||
+                NewsTitleEnError == true
+              "
+            >
+              {{ "This field is required length 10" | translate }}
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 mb-3">
+          <div class="form-group">
+            <label class="text-right col-form-label block">
+              {{ "The text is Arabic" | translate }}
+              <span class="text-danger">*</span>
+            </label>
+            <input
+              class="form-control"
+              type="text"
+              [placeholder]="'The text is Arabic' | translate"
+              name="textAr"
+              formControlName="NewsBodyAr"
+              autocomplete="off"
+              (blur)="
+                this.NewsModalForm.controls['NewsBodyAr'].value.length < 10
+                  ? (NewsBodyArError = true)
+                  : (NewsBodyArError = false)
+              "
+            />
+            <!-- this.NewsModalForm.controls['NewsBodyAr'].value.length != 10 && -->
+            <div
+              class="fieldrequired"
+              *ngIf="
+                (NewsModalForm.get('NewsBodyAr')?.hasError('required') &&
+                  NewsModalForm.get('NewsBodyAr')?.touched) ||
+                NewsBodyArError == true
+              "
+            >
+              {{ "This field is required length 10" | translate }}
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 mb-3">
+          <div class="form-group">
+            <label class="text-right col-form-label block">
+              {{ "The text is English" | translate }}
+              <span class="text-danger">*</span>
+            </label>
+            <input
+              class="form-control"
+              type="text"
+              [placeholder]="'The text is English' | translate"
+              name="textEn"
+              formControlName="NewsBodyEn"
+              autocomplete="off"
+              (blur)="
+                this.NewsModalForm.controls['NewsBodyEn'].value.length < 10
+                  ? (NewsBodyEnError = true)
+                  : (NewsBodyEnError = false)
+              "
+            />
+            <!-- this.NewsModalForm.controls['NewsBodyEn'].value.length != 10 && -->
+            <div
+              class="fieldrequired"
+              *ngIf="
+                (NewsModalForm.get('NewsBodyEn')?.hasError('required') &&
+                  NewsModalForm.get('NewsBodyEn')?.touched) ||
+                NewsBodyEnError == true
+              "
+            >
+              {{ "This field is required length 10" | translate }}
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 mb-3">
+          <div class="upload">
+            <file-upload [control]="controlNewsModaImage">
+              <ng-template
+                let-isFileDragDropAvailable="isFileDragDropAvailable"
+                #placeholder
+                let-file="file"
+                *ngIf="this.NewsModalimageFileOutput == null"
+              >
+                <div
+                  *ngIf="NewsModalForm.controls['UploadedImage'].value == null"
+                >
+                  <div class="icon">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      height="0.5em"
+                      viewBox="0 0 640 512"
+                    >
+                      <path
+                        d="M144 480C64.5 480 0 415.5 0 336c0-62.8 40.2-116.2 96.2-135.9c-.1-2.7-.2-5.4-.2-8.1c0-88.4 71.6-160 160-160c59.3 0 111 32.2 138.7 80.2C409.9 102 428.3 96 448 96c53 0 96 43 96 96c0 12.2-2.3 23.8-6.4 34.6C596 238.4 640 290.1 640 352c0 70.7-57.3 128-128 128H144zm79-217c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l39-39V392c0 13.3 10.7 24 24 24s24-10.7 24-24V257.9l39 39c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-80-80c-9.4-9.4-24.6-9.4-33.9 0l-80 80z"
+                      />
+                    </svg>
+                  </div>
+
+                  <div class="upload-text">
+                    {{ "Determine the image of the news" | translate }}
+                  </div>
+                </div>
+                <div
+                  class="overlay"
+                  *ngIf="NewsModalForm.controls['UploadedImage'].value != null"
+                >
+                  <span
+                    class="delete-button"
+                    (click)="
+                      controlNewsModaImage.clear();
+                      NewsModalForm.controls['UploadedImage'].setValue(null)
+                    "
+                  >
+                    <svg viewBox="0 0 448 512">
+                      <path
+                        d="M32 464a48 48 0 0 0 48 48h288a48 48 0 0 0 48-48V128H32zm272-256a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zM432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16z"
+                      ></path>
+                    </svg>
+                  </span>
+                  <img
+                    src="{{
+                      environmenturl +
+                        NewsModalForm.controls['UploadedImage'].value
+                    }}"
+                  />
+                </div>
+              </ng-template>
+
+              <ng-template
+                let-i="index"
+                *ngIf="this.NewsModalimageFileOutput != null"
+                let-file="file"
+                let-control="control"
+                #item
+              >
+                <div class="overlay">
+                  <span
+                    class="delete-button"
+                    (click)="
+                      control.clear();
+                      NewsModalForm.controls['UploadedImage'].setValue(null)
+                    "
+                  >
+                    <svg viewBox="0 0 448 512">
+                      <path
+                        d="M32 464a48 48 0 0 0 48 48h288a48 48 0 0 0 48-48V128H32zm272-256a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zM432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16z"
+                      ></path>
+                    </svg>
+                  </span>
+                  <img
+                    *ngIf="control.valid"
+                    [src]="uploadedFileImgNewsModal | async"
+                  />
+                </div>
+              </ng-template>
+            </file-upload>
+          </div>
+        </div>
+      </div>
+    </form>
+    <div class="modal-footer justify-content-end mt-3" style="border-top: none">
+      <button
+        type="button"
+        class="btn submit-btn bg-base text-white py-2 px-3 mt-0"
+        (click)="
+          intialNewsModalForm();
+          controlNewsModaImage.clear();
+          NewsBodyArError = false;
+          NewsBodyEnError = false;
+          NewsTitleArError = false;
+          this.uploadedFileImgNewsModal.next('');
+          this.NewsModalimageFileOutput = null;
+          NewsTitleEnError = false
+        "
+      >
+        {{ "new" | translate }}
+      </button>
+      <button
+        type="button"
+        class="btn submit-btn bg-base text-white py-2 px-3 mt-0"
+        (click)="saveNews()"
+        [disabled]="
+          this.NewsModalForm.controls['NewsTitleAr'].value == null ||
+          this.NewsModalForm.controls['NewsTitleEn'].value == null ||
+          this.NewsModalForm.controls['NewsBodyAr'].value == null ||
+          this.NewsModalForm.controls['NewsBodyEn'].value == null ||
+          NewsBodyArError == true ||
+          NewsBodyEnError == true ||
+          NewsTitleArError == true ||
+          NewsTitleEnError == true
+        "
+      >
+        {{ "save" | translate }}
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline-secondary py-2 px-3 mt-0"
+        (click)="modal.dismiss(); controlNewsModaImage.clear()"
+      >
+        {{ "close" | translate }}
+      </button>
+    </div>
+
+    <div class="tables-data mt-3 overflow-hidden">
+      <div class="overflow-auto">
+        <table
+          mat-table
+          [dataSource]="AllNewsList"
+          matSort
+          class="mat-elevation-z8 rounded-t-lg overflow-hidden w-max"
+        >
+          <!-- nameAr column -->
+          <ng-container matColumnDef="nameAr">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              <span>{{ "nameAr" | translate }}</span>
+            </th>
+            <td mat-cell *matCellDef="let element">
+              <span>{{ element?.newsTitleAr }}</span>
+            </td>
+          </ng-container>
+          <!-- nameEn column -->
+          <ng-container matColumnDef="nameEn">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              <span>{{ "nameEn" | translate }}</span>
+            </th>
+            <td mat-cell *matCellDef="let element">
+              <span>{{ element?.newsTitleEn }}</span>
+            </td>
+          </ng-container>
+          <!-- operations Column -->
+          <ng-container matColumnDef="operations">
+            <th mat-header-cell *matHeaderCellDef>
+              {{ "operations" | translate }}
+            </th>
+            <td mat-cell *matCellDef="let element">
+              <div class="flex gap-1 justify-center py-2">
+                <button
+                  class="p-2 bg-green-100 hover:bg-green-500 rounded-lg duration-300 hover:text-white w-10"
+                  (click)="editNewsModal(element)"
+                >
+                  <i class="fa fa-edit"></i>
+                </button>
+
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="newsDisplayedColumns"></tr>
+
+          <tr
+            mat-row
+            *matRowDef="let row; columns: newsDisplayedColumns"
+            class="duration-300 hover:bg-slate-100"
+          ></tr>
+
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" colspan="4">
+              {{ "noResult" | translate }} "{{ input.value }}"
+            </td>
+          </tr>
+        </table>
+      </div>
+      <mat-paginator [pageSizeOptions]="[10, 25]"> </mat-paginator>
+    </div>
+  </div>
+</ng-template>
+

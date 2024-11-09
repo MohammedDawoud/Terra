@@ -1,0 +1,270 @@
+<div class="pages-header">
+  <div class="upper-div container-fluid">
+    <div class="info">
+      <p>
+        <i class="fa fa-phone"></i>
+        {{orgphone}}
+      </p>
+      <span></span>
+      <p>
+        <i class="fa fa-envelope"></i>
+        {{orgmail}}
+      </p>
+    </div>
+
+    <div class="block">
+      <button mat-button mat-raised-button [matMenuTriggerFor]="menu">
+        <img src="{{ flag.image }}" alt="" width="24px" class="mx-2" />
+        <span>{{ flag.name }}</span>
+      </button>
+      <mat-menu mat-menu #menu="matMenu" overlapTrigger="false">
+        <span>
+          <button
+            mat-menu-item
+            *ngFor="let flag of flags"
+            (click)="changeLang(flag, flag.lang)"
+          >
+            <img
+              [src]="flag.image"
+              width="18"
+              class="mat-elevation-z1 mx-2"
+            /><span class="flag-name">{{ flag.name }}</span>
+          </button>
+        </span>
+      </mat-menu>
+    </div>
+  </div>
+
+  <nav class="navbar navbar-expand-sm navbar-light">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="javascript:void(0)">
+        <img
+          src="{{Qrcode}}"
+          alt="logo"
+          class="img-fluid logo"
+        />
+      </a>
+      <div
+        class="navbar-collapse d-flex"
+        id="navbarID"
+        (window:resize)="onResize($event)"
+      >
+        <div class="navbar-nav d-none d-lg-flex">
+          <a
+            data-hover="الرئيسية"
+            class="nav-link"
+            [routerLink]="['/auth/login']"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            {{ "Login" | translate }}
+          </a>
+
+          <!-- <a
+            class="nav-link"
+            [routerLink]="['/electronic-services']"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            {{ "Electronic services" | translate }}
+          </a>
+
+          <a
+            class="nav-link"
+            [routerLink]="['/quotation-request']"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            {{ "Quotation request" | translate }}
+          </a>
+
+          <a
+            class="nav-link"
+            [routerLink]="['/news']"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            {{ "Latest news" | translate }}
+          </a> -->
+          <!-- <a
+            class="nav-link"
+            [routerLink]="['/accept-offer-price']"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            {{ "Acceptance of the price offer" | translate }}
+          </a> -->
+
+          <a
+            class="nav-link"
+            [routerLink]="['/contact-us']"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            {{ "Contact us" | translate }}
+          </a>
+        </div>
+        <div class="social-links d-none d-lg-flex">
+          <ul class="list-unstyled">
+            <li>
+              <a href="javascript:void(0)">
+                <i class="fa-brands fa-facebook-f"></i>
+              </a>
+            </li>
+            <li>
+              <a href="javascript:void(0)">
+                <i class="fa-brands fa-google-plus-g"></i>
+              </a>
+            </li>
+            <li>
+              <a href="javascript:void(0)">
+                <i class="fa-brands fa-twitter"></i>
+              </a>
+            </li>
+            <li>
+              <a href="javascript:void(0)">
+                <i class="fa-brands fa-instagram"></i>
+              </a>
+            </li>
+            <li>
+              <a href="javascript:void(0)">
+                <i class="fa-brands fa-linkedin-in"></i>
+              </a>
+            </li>
+            <li>
+              <a href="javascript:void(0)">
+                <i class="fa-brands fa-snapchat"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+        <button
+          class="menu-toggle  d-block d-lg-none ms-2  {{
+            isOpen ? 'is-opened' : 'is-closed'
+          }}"
+          aria-controls="primary-menu"
+          aria-expanded="false"
+          (click)="isOpen = !isOpen"
+        >
+          <div class="toggleIcon"><span></span></div>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div
+    class="offcanvas offcanvas-start {{
+      lang == 'ar' ? 'offset-rtl' : 'offset-ltr'
+    }} {{ isOpen ? 'show' : '' }}"
+    tabindex="-1"
+    id="offcanvasExample"
+    aria-labelledby="offcanvasExampleLabel"
+  >
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="offcanvasExampleLabel">
+        <img
+          src="/assets/images/logo_image.png"
+          alt="logo"
+          class="img-fluid logo"
+        />
+      </h5>
+      <button
+        type="button"
+        class="btn-close text-reset"
+        data-bs-dismiss="offcanvas"
+        aria-label="Close"
+        (click)="isOpen = !isOpen"
+      ></button>
+    </div>
+    <div class="offcanvas-body">
+      <ul class="list-unstyled">
+        <li (click)="closeSideBar()">
+          <a
+            [routerLink]="['/auth/login']"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            {{ "Login" | translate }}
+          </a>
+        </li>
+        <!-- <li (click)="closeSideBar()">
+          <a
+            [routerLink]="['/electronic-services']"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            {{ "Electronic services" | translate }}
+          </a>
+        </li>
+        <li (click)="closeSideBar()">
+          <a
+            [routerLink]="['/quotation-request']"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            {{ "Quotation request" | translate }}
+          </a>
+        </li>
+        <li (click)="closeSideBar()">
+          <a
+            [routerLink]="['/news']"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            {{ "Latest news" | translate }}
+          </a>
+        </li> -->
+        <li (click)="closeSideBar()">
+          <a
+            [routerLink]="['/contact-us']"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            {{ "Contact us" | translate }}
+          </a>
+        </li>
+      </ul>
+
+      <div class="social-links mt-4">
+        <ul class="list-unstyled">
+          <li>
+            <a href="javascript:void(0)">
+              <i class="fa-brands fa-facebook-f"></i>
+            </a>
+          </li>
+          <li>
+            <a href="javascript:void(0)">
+              <i class="fa-brands fa-google-plus-g"></i>
+            </a>
+          </li>
+          <li>
+            <a href="javascript:void(0)">
+              <i class="fa-brands fa-twitter"></i>
+            </a>
+          </li>
+          <li>
+            <a href="javascript:void(0)">
+              <i class="fa-brands fa-instagram"></i>
+            </a>
+          </li>
+          <li>
+            <a href="javascript:void(0)">
+              <i class="fa-brands fa-linkedin-in"></i>
+            </a>
+          </li>
+          <li>
+            <a href="javascript:void(0)">
+              <i class="fa-brands fa-snapchat"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div
+    *ngIf="isOpen"
+    class="offcanvas-overlay"
+    (click)="isOpen = !isOpen"
+  ></div>
+</div>

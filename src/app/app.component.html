@@ -1,0 +1,65 @@
+<!-- [@layout-animation]="outlet.isActivated ? outlet.activatedRoute : ''" -->
+<div
+  id="content"
+  class="pages-content position-relative {{ isDash ? 'dash-view' : '' }}"
+>
+  <app-pages-header *ngIf="!isDash"></app-pages-header>
+  <router-outlet
+    #outlet="outlet"
+    (activate)="onActivate($event)"
+  ></router-outlet>
+
+  <!-- Footer -->
+  <app-footer *ngIf="!isDash"></app-footer>
+  <!-- /Footer -->
+</div>
+
+<!-- session alert -->
+<ng-template #sessionAlertModal let-modal>
+  <div class="modal-body text-center">
+    <div class="flex items-center gap-2">
+      <p style="font-weight: bold;"
+        [translate]="'name'"
+        [translateParams]="{
+          ar: 'جلسة العمل ستنتهي خلال',
+          en: 'The session will expire during'
+        }"
+      ></p>
+      <p style="color: red;font-weight: bold;font-size: 20px;">{{ countdown }}</p>
+      <p style="font-weight: bold;"
+        [translate]="'name'"
+        [translateParams]="{
+          ar: 'لمضي وقت طويل دون استخدام !',
+          en: 'a long time without use!'
+        }"
+      ></p>
+    </div>
+    <hr class="my-3" />
+    <div class="flex gap-2 justify-center">
+      <button
+        type="button"
+        mat-raised-button
+        class="bg-base text-white"
+        (click)="extentSession(); modal.dismiss()"
+      >
+        {{ "Session continuation" | translate }}
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<!-- session end -->
+<ng-template #sessionEnd let-modal>
+  <div class="modal-body text-center">
+    <div class="flex gap-2 justify-center">
+      <button
+        type="button"
+        mat-raised-button
+        color="warn"
+        (click)="endSession(); modal.dismiss()"
+      >
+        {{ "Session End" | translate }}
+      </button>
+    </div>
+  </div>
+</ng-template>

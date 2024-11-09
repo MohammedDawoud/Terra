@@ -1,0 +1,35 @@
+<div
+  class="main-body leftmenu"
+  [ngClass]="mainSidebarOpen"
+  (scroll)="scroll($event)"
+>
+  <div class="header-sidebar d-flex flex-row-reverse position-relative">
+    <!-- Header -->
+    <!-- (sideBarState)=getSidebarState($event) -->
+
+    <app-header class="w-full"></app-header>
+    <!-- /Header -->
+
+    <!-- Sidemenu -->
+    <!-- [sideBar]="sideBarState" -->
+
+    <app-vertical-sidebar [scrolled]="scrolled"></app-vertical-sidebar>
+    <!-- /Sidemenu -->
+  </div>
+
+  <!-- Main Content -->
+  <!--  [@layout-animation]="
+          routingOutlet.isActivated ? routingOutlet.activatedRoute : ''
+        " -->
+  <div
+    id="mainContent"
+    class="main-content side-content pt-0 {{ isOpen ? '' : 'full-screen' }} "
+  >
+    <div class="container-fluid">
+      <div class="inner-body" id="content">
+        <router-outlet #routingOutlet="outlet"></router-outlet>
+      </div>
+    </div>
+  </div>
+  <!-- /Main Content -->
+</div>

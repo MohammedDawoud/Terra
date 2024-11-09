@@ -1,0 +1,5 @@
+img {
+  &:lang(en) {
+    transform: rotateX(180deg);
+  }
+}

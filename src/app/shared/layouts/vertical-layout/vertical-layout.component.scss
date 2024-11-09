@@ -1,0 +1,33 @@
+.main-body {
+  position: relative;
+  height: 100vh;
+  overflow-y: scroll;
+  .main-content {
+
+    top: 75px;
+    background-color: var(--gray-bg-color);
+    position: absolute;
+    //  top: 180px;
+    padding-top: 20px !important;
+    inset-inline-end: 0px;
+    width: calc(100% - 310px);
+    overflow: auto;
+    transition: all 0.4s ease-in-out;
+
+    &.dark {
+      background-color: #343a40 !important;
+      color: #fff !important;
+    }
+
+    @media (max-width: 1200px) {
+      width: 100%;
+      //     inset-inline-start: 0px;;
+      inset-inline-start: 0px;
+    }
+  }
+
+  .full-screen {
+    inset-inline-start: 80px !important;
+    width: calc(100% - 80px) !important;
+  }
+}

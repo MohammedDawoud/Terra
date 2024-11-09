@@ -1,0 +1,428 @@
+.pages-header {
+  .upper-div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px 30px;
+    flex-wrap: wrap;
+
+    @media (max-width: 575px) {
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 0px 10px ;
+    }
+    .info {
+      display: flex;
+      align-items: center;
+      @media (max-width: 575px) {
+        font-size: 14px;
+      }
+      p {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0;
+        letter-spacing: 0.5px;
+        i {
+          color: var(--base-color);
+          margin-inline-end: 5px;
+        }
+      }
+      span {
+        width: 1.5px;
+        height: 14px;
+        background: var(--base-color);
+        margin: 0px 10px;
+      }
+    }
+
+    .block {
+      button {
+        box-shadow: none !important;
+      }
+      img{
+        display: inline-block !important;
+      }
+      ::ng-deep{
+        img{
+          display: inline-block !important;
+        }
+      }
+    }
+  }
+}
+.navbar .container-fluid {
+  // align-items: start;
+  align-items: center;
+}
+
+.navbar .navbar-brand {
+  margin: 0px;
+  padding: 0px;
+  margin-inline-end: 20px;
+}
+
+.navbar .navbar-brand img {
+  width: 90px !important;
+}
+
+.navbar .navbar-collapse {
+  justify-content: space-between;
+  align-items: start;
+  padding-inline-start: 50px;
+  padding-top: 5px;
+  flex-basis: unset !important
+}
+
+.social-links ul {
+  display: flex;
+  align-items: center;
+}
+
+.social-links ul li a {
+  display: flex !important;
+  width: 24px;
+  height: 24px;
+  background: #fff;
+  color: var(--base-color) !important;
+  align-items: center;
+  justify-content: center;
+  margin: 0px 3px;
+  border-radius: 3px;
+  text-decoration: none;
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: -14px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    opacity: 0;
+    background-color: #fff;
+    transition: all 0.3s ease-in-out;
+  }
+  &:hover {
+    &::after {
+      bottom: -10px;
+      opacity: 1;
+    }
+  }
+}
+
+.navbar .navbar-collapse .nav-link {
+  position: relative;
+  padding: 0px 5px 14px !important;
+  font-size: 15px;
+  margin-inline-end: 36px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+.navbar .navbar-collapse .nav-link:last-of-type {
+  margin-inline-end: 0px;
+}
+
+.navbar .navbar-collapse .nav-link::before {
+  content: "";
+  position: absolute;
+  bottom: 0px;
+  inset-inline-start: 0px;
+  width: 0px;
+  height: 2px;
+  background-color: #fff;
+  transition: all 0.3s ease-in-out;
+}
+
+.navbar .navbar-collapse a.active::before,
+.navbar .navbar-collapse a:hover::before {
+  width: 100%;
+}
+
+.dropdown-toggle::after {
+  display: none;
+}
+
+.navbar-toggler:focus {
+  box-shadow: none;
+}
+
+@media (min-width: 992px) and (max-width: 1200px) {
+  .navbar .container {
+    max-width: 98%;
+  }
+  .navbar .navbar-collapse .nav-link {
+    font-size: 14px;
+    margin-inline-end: 30px;
+  }
+}
+
+@media (max-width: 991px) {
+  .btns button {
+    display: block;
+  }
+
+  .navbar .navbar-collapse {
+    justify-content: end !important;
+  }
+
+  .navbar > .container {
+    flex-wrap: unset !important;
+  }
+}
+
+.navbar {
+  background-color: var(--base-color) !important;
+  padding: 5px 15px;
+}
+
+.navbar .navbar-toggler {
+  border: none;
+  outline: none;
+  background-color: transparent;
+}
+
+.navbar .navbar-toggler .fa {
+  color: var(--base-color) !important;
+  font-size: 30px;
+  font-weight: 200 !important;
+}
+
+.navbar .navbar-collapse a.active,
+.navbar .navbar-collapse .nav-link:hover {
+  color: #fefefe;
+}
+
+.small-devices .navbar-collapse .nav-link {
+  color: #fff;
+}
+.small-devices .navbar-collapse a.active,
+.small-devices .navbar-collapse .nav-link:hover {
+  color: #fff;
+}
+
+ul.dropdown-menu.text-end {
+  top: 55px !important;
+  inset-inline-start: 20px !important;
+}
+
+@media (min-width: 992px) {
+  ul.dropdown-menu.text-end {
+    width: 200px !important;
+  }
+}
+
+.menu-toggle {
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 0;
+  display: block;
+}
+
+.toggleIcon {
+  position: relative;
+  margin: auto;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+}
+
+.toggleIcon span {
+  position: absolute;
+  display: block;
+  width: 36px;
+  height: 3px;
+  background-color: #fff;
+  border-radius: 2px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%) translateY(-50%);
+  transform-origin: 50% 50%;
+  transition: 0.5s, transform 0.5s, background-color 0.5s;
+}
+
+.toggleIcon span::before,
+.toggleIcon span::after {
+  display: block;
+  position: absolute;
+  content: "";
+  background-color: #fff;
+  border-radius: 2px;
+  width: 36px;
+  height: 3px;
+  transform: translateY(-10px);
+  transition: 0.5s, transform 0.5s, background-color 0.5s;
+}
+
+.toggleIcon span::after {
+  transform: translateY(10px);
+}
+
+.toggleIcon:hover span,
+.toggleIcon:hover span::before,
+.toggleIcon:hover span::after {
+  background-color: #fff;
+}
+
+.toggleIcon:hover span::before {
+  transform: translateY(-13px);
+}
+
+.toggleIcon:hover span::after {
+  transform: translateY(13px);
+}
+
+.menu-toggle.is-opened .toggleIcon {
+  transform: rotate(360deg);
+}
+
+.menu-toggle.is-opened .toggleIcon span {
+  background: transparent;
+}
+
+.menu-toggle.is-opened .toggleIcon span::before {
+  background-color: #fff;
+  transform: translateY(0) rotate(45deg);
+}
+
+.menu-toggle.is-opened .toggleIcon span::after {
+  background-color: #fff;
+  transform: translateY(0) rotate(-45deg);
+}
+
+.offcanvas.offcanvas-start {
+  z-index: 11111;
+  max-width: 300px;
+}
+
+.offcanvas.offcanvas-start.offset-rtl {
+  inset-inline-start: 0px !important;
+  transform: translateX(100%);
+}
+.offcanvas.offcanvas-start.offset-ltr {
+  inset-inline-end: 0px !important;
+  transform: translateX(-100%);
+}
+
+.offcanvas.show:not(.hiding),
+.offcanvas.showing {
+  inset-inline-start: 0px !important;
+  transform: translateX(0%);
+}
+
+.offcanvas-overlay {
+  position: fixed !important;
+  width: 100%;
+  height: 100vh;
+  background: #00000024;
+  inset: 0;
+  z-index: 1111;
+}
+.offcanvas-header .btn-close {
+  position: absolute;
+  top: 20px;
+  inset-inline-end: 15px;
+}
+.offcanvas-header .btn-close:focus {
+  box-shadow: none;
+}
+.offcanvas-body,
+.offcanvas-header {
+  padding: 0px;
+}
+
+.offcanvas-body ul li a {
+  display: block;
+  padding: 16px 10px;
+  font-size: 20px;
+  text-decoration: none;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  color: #000;
+}
+.offcanvas-body ul li a.active {
+  color: var(--base-color);
+  background-color: #00000008;
+  border-inline-end: 5px solid var(--base-color);
+}
+
+::ng-deep .block .mat-menu-trigger {
+  height: 50px;
+  font-size: 18px;
+  color: var(--base-color);
+  @media (max-width: 575px) {
+    font-size: 14px;
+  }
+}
+
+::ng-deep .btn.btn-danger span.mat-button-wrapper {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+::ng-deep .btn.btn-danger.auth-btn.register.mat-raised-button {
+  width: 50px !important;
+  height: 50px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+}
+.logout {
+  width: 40px;
+  min-width: 40px;
+  border: 2px solid #cc3d31;
+  height: 40px;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  font-size: 20px !important;
+  color: #cf4c42 !important;
+}
+
+::ng-deep .logout:hover {
+  color: #fff !important;
+  background-color: #cc3d31 !important;
+}
+
+::ng-deep .navbar .mat-raised-button {
+  line-height: unset !important;
+}
+
+.userBtn,
+.langBtn {
+  height: 40px !important;
+}
+.langBtn,
+.userBtn,
+.logout {
+  width: max-content !important;
+  padding: 0;
+  box-shadow: none !important;
+  background: transparent !important;
+  --mdc-protected-button-container-color: transparent !important;
+  color: #fff !important;
+  border-color: transparent !important;
+}
+
+.offcanvas-title {
+  width: 100%;
+}
+
+.offcanvas-title img {
+  width: 200px;
+  display: block;
+  margin: 10px auto;
+}
+.offcanvas-body .social-links a {
+  margin: 0 5px !important;
+  &::after {
+    background-color: var(--base-color) !important;
+  }
+}

@@ -25,7 +25,7 @@ module.exports = function (config) {
       suppressAll: true // removes the duplicated traces
     },
     coverageReporter: {
-      dir: require('path').join(__dirname, './coverage/haseeb_cloud'),
+      dir: require('path').join(__dirname, './coverage/terra_cloud'),
       subdir: '.',
       reporters: [
         { type: 'html' },

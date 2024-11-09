@@ -1,0 +1,1258 @@
+<div class="add-search pb-4">
+  <app-navigator [title]="title"></app-navigator>
+
+  <div class="tables-data mt-3 overflow-hidden">
+    <div class="btn-group gap-2 flex-wrap">
+      <label
+        class="btn btn-primary"
+        [(ngModel)]="data.type"
+        (click)="setCustomersType(0)"
+        btnRadio="0"
+        tabindex="0"
+        role="button"
+        ><i class="fa-solid fa-users"></i>
+        <span
+          class="text-sm"
+          [translate]="'name'"
+          [translateParams]="{
+            ar: 'كل العملاء ',
+            en: 'All Customer Badge'
+          }"
+        ></span>
+        <span class="text-xs">{{ allCount }}</span></label
+      >
+
+      <label
+        class="btn btn-primary"
+        value=""
+        id="allCustomers"
+        [(ngModel)]="data.type"
+        (click)="setCustomersType(1)"
+        btnRadio="1"
+        tabindex="0"
+        role="button"
+        (change)="checkValue(data2.filter.isChecked ? 'A' : 'B')"
+      >
+        <i class="fa fa-user-group text-sm"></i>
+
+        <span
+          class="text-sm"
+          [translate]="'name'"
+          [translateParams]="{
+            ar: 'المواطنون',
+            en: 'Citizens'
+          }"
+        ></span>
+        <span class="text-xs">{{ CitizensCount }}</span></label
+      >
+      <label
+        class="btn btn-primary"
+        [(ngModel)]="data.type"
+        (click)="setCustomersType(2)"
+        btnRadio="2"
+        tabindex="0"
+        role="button"
+      >
+        <i class="fa fa-building text-sm"></i>
+        <span
+          class="text-sm"
+          [translate]="'name'"
+          [translateParams]="{
+            ar: ' مستثمرون وشركات',
+            en: ' Investor Company Badge  '
+          }"
+        ></span>
+        <span class="text-xs">{{ InvestorCompanyCount }}</span></label
+      >
+      <label
+        class="btn btn-primary"
+        [(ngModel)]="data.type"
+        (click)="setCustomersType(3)"
+        btnRadio="3"
+        tabindex="0"
+        role="button"
+      >
+        <i class="fa fa-city"></i>
+        <span
+          class="text-sm"
+          [translate]="'name'"
+          [translateParams]="{
+            ar: 'جهة حكومية',
+            en: 'Government Badge'
+          }"
+        ></span>
+        <span class="text-xs">{{ governmentCount }}</span></label
+      >
+    </div>
+
+    <!-- buttons -->
+    <div class="flex justify-between gap-2 items-center my-3 flex-wrap">
+      <div class="w-fit">
+        <input
+          class="form-control"
+          (keyup)="applyFilter($event)"
+          placeholder="{{ 'search' | translate }}"
+          #input
+        />
+      </div>
+
+      <!---------------------------------------------------------------------------->
+      <div class="flex gap-2 controler">
+        <button
+          *ngIf="userG?.userPrivileges.includes(121001)"
+          class="flex gap-1 btn btn-primary"
+          (click)="openModal(dataModal, null, 'addClient')"
+        >
+          <span
+            class="hidden md:block"
+            [translate]="'name'"
+            [translateParams]="{
+              ar: 'عميل جديد ',
+              en: 'New Customer '
+            }"
+          ></span>
+          <i class="fa-solid fa-user-plus"></i>
+        </button>
+        <button
+          *ngIf="userG?.userPrivileges.includes(121004)"
+          class="flex gap-1 btn btn-secondary"
+          id="Searchbtn"
+          (click)="searchBox.open = !searchBox.open; resetandRefresh()"
+        >
+          <span
+            class="hidden md:block"
+            [translate]="'name'"
+            [translateParams]="{
+              ar: 'بحث',
+              en: 'Search'
+            }"
+          >
+          </span>
+          <i class="fa-solid fa-user-tag"></i>
+        </button>
+        <button
+          *ngIf="userG?.userPrivileges.includes(121009)"
+          class="flex gap-1 btn btn-warning"
+          (click)="exportData()"
+        >
+          <span
+            class="hidden md:block"
+            [translate]="'name'"
+            [translateParams]="{
+              ar: 'تصدير ملف إكسل',
+              en: 'Export To Excel'
+            }"
+          ></span>
+          <i class="fa-solid fa-file-export"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- search box -->
+
+    <form
+      class="flex flex-wrap gap-2 items-end my-3"
+      #searchForm="ngForm"
+      *ngIf="searchBox.open"
+    >
+      <div class="flex-grow">
+        <label
+          [translate]="'name'"
+          [translateParams]="{
+            ar: 'نوع البحث',
+            en: 'Search Type'
+          }"
+        >
+        </label>
+        <ng-select
+          class="w-full p-0 mt-2.5"
+          (change)="onChange($event)"
+          placeholder="{{ 'Chose' | translate }}"
+        >
+          <ng-option [value]="1">
+            {{ "Customer Name" | translate }}
+          </ng-option>
+
+          <!-- <ng-option [value]="2">
+            {{ "Email" | translate }}
+          </ng-option> -->
+
+          <ng-option [value]="3">
+            {{ "Mobile Number" | translate }}
+          </ng-option>
+        </ng-select>
+      </div>
+
+      <div class="max-w-xs" *ngIf="searchBox.searchType == 1">
+        <label class="col-form-label"> {{ "Customer Name" | translate }}</label>
+
+        <ng-select
+          #CustomerName
+          [items]="load_CustomerName"
+          bindLabel="name"
+          bindValue="id"
+          [clearable]="true"
+          class="w-full p-0"
+          [(ngModel)]="data2.filter.search_CustomerName"
+          placeholder="{{ 'Chose' | translate }}"
+          (change)="RefreshData()"
+          [ngModelOptions]="{ standalone: true }"
+        >
+        </ng-select>
+      </div>
+
+      <!-- <div class="max-w-xs" *ngIf="searchBox.searchType == 2">
+        <label class="col-form-label"> {{ "Email" | translate }}</label>
+
+        <ng-select #ProjectType [items]="load_CustomerMail" bindLabel="customerMail" bindValue="customerMail" [clearable]="true"
+          class="w-full p-0" [(ngModel)]="data2.filter.search_customerEmail" [ngModelOptions]="{ standalone: true }"
+          (change)="RefreshData()" placeholder="{{ 'Chose' | translate }}" >
+        </ng-select>
+      </div> -->
+
+      <div class="max-w-xs" *ngIf="searchBox.searchType == 3">
+        <label class="col-form-label"> {{ "Mobile Number" | translate }}</label>
+
+        <ng-select
+          #ProjectManeger
+          [items]="load_CustomerMobile"
+          bindLabel="customerMobile"
+          bindValue="customerMobile"
+          [clearable]="true"
+          class="w-full p-0"
+          [(ngModel)]="data2.filter.search_customerMobile"
+          [ngModelOptions]="{ standalone: true }"
+          (change)="RefreshData()"
+          placeholder="{{ 'Chose' | translate }}"
+        >
+        </ng-select>
+      </div>
+
+      <!-- <button class="flex gap-1 btn btn-secondary" style="display: flex" id="SearchRefresh" (click)="RefreshData()">
+        <span class="hidden md:block" [translate]="'name'" [translateParams]="{
+            ar: 'بحث',
+            en: 'Search'
+          }">
+        </span>
+        <i class="fa-solid fa-user-tag"></i>
+      </button> -->
+    </form>
+
+    <!-- table -->
+    <div class="overflow-auto">
+      <table
+        mat-table
+        [dataSource]="dataSource"
+        matSort
+        class="mat-elevation-z8 rounded-t-lg overflow-hidden w-max"
+      >
+        <!-- name Column -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'اسم العميل',
+                en: 'Client'
+              }"
+            ></span>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.customerName }}
+          </td>
+        </ng-container>
+
+        <!-- nationalId Column -->
+        <ng-container matColumnDef="nationalId">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'رقم الهوية',
+                en: 'National Number'
+              }"
+            ></span>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.customerNationalId }}
+          </td>
+        </ng-container>
+
+        <!-- customerType Column -->
+        <ng-container matColumnDef="customerType">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'نوع العميل',
+                en: 'CustomerType'
+              }"
+            ></span>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.customerTypeName }}
+          </td>
+        </ng-container>
+        <!-- email Column -->
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'البريد الالكتروني',
+                en: 'Email'
+              }"
+            ></span>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.customerEmail }}
+          </td>
+        </ng-container>
+        <!-- phone Column -->
+        <ng-container matColumnDef="phone">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'رقم الهاتف',
+                en: 'Phone Number'
+              }"
+            ></span>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.customerPhone }}
+          </td>
+        </ng-container>
+        <!-- mobile Column -->
+        <ng-container matColumnDef="mobile">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'رقم الجوال',
+                en: 'Mobile Number'
+              }"
+            ></span>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.customerMobile }}
+          </td>
+        </ng-container>
+        <!-- operations Column -->
+        <ng-container matColumnDef="operations">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            [translate]="'name'"
+            [translateParams]="{
+              ar: 'خيارات',
+              en: 'Operations'
+            }"
+          ></th>
+          <td mat-cell *matCellDef="let element">
+            <div class="flex gap-1 justify-center py-2">
+              <button
+                *ngIf="userG?.userPrivileges.includes(121003)"
+                class="min-w-max p-2 bg-orange-100 hover:bg-orange-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+                (click)="openModal(dataModal, element, 'editClient')"
+              >
+                <i class="fa-regular fa-pen-to-square"></i>
+              </button>
+              <button
+                *ngIf="userG?.userPrivileges.includes(121002)"
+                class="min-w-max p-2 bg-red-100 hover:bg-red-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+                (click)="openModal(deleteModal, element, 'delete')"
+              >
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Symbol Column -->
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+
+        <tr
+          mat-row
+          *matRowDef="let row; columns: displayedColumns"
+          class="duration-300 hover:bg-slate-100"
+        ></tr>
+        <!-- Row shown when there is no matching data. -->
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell" colspan="4">
+            {{ "No result found for " }} "{{ input.value }}"
+          </td>
+        </tr>
+      </table>
+    </div>
+    <mat-paginator [pageSizeOptions]="[10, 25, 100, dataSource.data.length]">
+    </mat-paginator>
+  </div>
+
+  <!-- modals  -->
+  <ng-template #dataModal>
+    <div
+      style="background-color: var(--base-color)"
+      class="modal-header text-white flex justify-between items-center"
+    >
+      <h4 class="m-0">
+        <span class="text-2xl">{{ modalDetails.type | translate }}</span>
+      </h4>
+      <button
+        type="button"
+        class="text-2xl text-white m-0"
+        (click)="modal?.hide()"
+      >
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <ng-container>
+        <form class="modal-form" addForm="ngForm">
+          <div class="mb-3" *ngIf="!(modalDetails.customerId > 0)">
+            <div class="form-inline d-flex align-items-center col-span-4">
+              <div
+                class="btn-group gap-2 flex-wrap"
+                [ngModelOptions]="{ standalone: true }"
+                btnRadioGroup
+                [(ngModel)]="modalDetails.customerTypeId"
+                (click)="TablClick()"
+              >
+                <label class="btn bg-base text-white mb-0" btnRadio="1">
+                  <i class="fa fa-user-group text-sm"></i>
+                  <span
+                    class="text-sm"
+                    [translate]="'name'"
+                    [translateParams]="{
+                      ar: 'مواطن',
+                      en: 'Citizen'
+                    }"
+                  ></span>
+                </label>
+                <label class="btn bg-base text-white mb-0" btnRadio="2">
+                  <i class="fa fa-building text-sm"></i>
+                  <span
+                    class="text-sm"
+                    [translate]="'name'"
+                    [translateParams]="{
+                      ar: ' مستثمرون وشركات',
+                      en: ' Investor Company Badge  '
+                    }"
+                  ></span>
+                </label>
+                <label class="btn bg-base text-white mb-0" btnRadio="3">
+                  <i class="fa fa-city"></i>
+                  <span
+                    class="text-sm"
+                    [translate]="'name'"
+                    [translateParams]="{
+                      ar: 'جهة حكومية',
+                      en: 'Government Badge'
+                    }"
+                  ></span>
+                </label>
+              </div>
+            </div>
+          </div>
+          <div>
+            <!-- name -->
+            <div class="form-group">
+              <label for="CustomerNameArtxt3" class="col-form-label">
+                <ng-container *ngIf="modalDetails.customerTypeId == 1">
+                  {{ "Client Name (Arabic)" | translate }}
+                </ng-container>
+                <ng-container *ngIf="modalDetails.customerTypeId == 2">
+                  {{ "Company Name (Arabic)" | translate }}
+                </ng-container>
+                <ng-container *ngIf="modalDetails.customerTypeId == 3">
+                  {{ "Entity Name (Arabic)" | translate }}
+                </ng-container>
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                id="customerNameAr"
+                autocomplete="off"
+                #customerNameAr="ngModel"
+                required
+                class="form-control {{
+                  customerNameAr.invalid && !customerNameAr.touched
+                    ? 'errorInput'
+                    : ''
+                }}"
+                name="customerNameAr"
+                [placeholder]="
+                  ('Write' | translate) +
+                  ' ' +
+                  ((modalDetails.customerTypeId == 1
+                    ? 'Client Name (Arabic)'
+                    : modalDetails.customerTypeId == 2
+                    ? 'Company Name (Arabic)'
+                    : 'Entity Name (Arabic)'
+                  ) | translate)
+                "
+                [(ngModel)]="modalDetails.customerNameAr"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="CustomerNameEntxt3" class="col-form-label">
+                <ng-container *ngIf="modalDetails.customerTypeId == 1">
+                  {{ "Client Name (English)" | translate }}
+                </ng-container>
+                <ng-container *ngIf="modalDetails.customerTypeId == 2">
+                  {{ "Company Name (English)" | translate }}
+                </ng-container>
+                <ng-container *ngIf="modalDetails.customerTypeId == 3">
+                  {{ "Entity Name (English)" | translate }}
+                </ng-container>
+              </label>
+              <div style="display: inline-flex; width: 100%">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="customerNameEn"
+                  autocomplete="off"
+                  #customerNameEn="ngModel"
+                  #CustomerNameEnValue
+                  required
+                  class="form-control {{
+                    customerNameEn.invalid && !customerNameEn.touched
+                      ? 'errorInput'
+                      : ''
+                  }}"
+                  name="customerNameEn"
+                  [placeholder]="
+                    ('Write' | translate) +
+                    ' ' +
+                    ((modalDetails.customerTypeId == 1
+                      ? 'Client Name (Arabic)'
+                      : modalDetails.customerTypeId == 2
+                      ? 'Company Name (Arabic)'
+                      : 'Entity Name (Arabic)'
+                    ) | translate)
+                  "
+                  [(ngModel)]="modalDetails.customerNameEn"
+                />
+
+                <a
+                  class="btn"
+                  id="CopyCustomerName2"
+                  (click)="
+                    modalDetails.customerNameEn = modalDetails.customerNameAr
+                  "
+                  ><i class="fa fa-copy"></i
+                ></a>
+              </div>
+            </div>
+
+            <!-- governate only -->
+            <div class="form-group" *ngIf="modalDetails.customerTypeId == 3">
+              <label for="ResponsiblePersontxt" class="col-form-label">{{
+                "Responsible Person" | translate
+              }}</label>
+              <input
+                type="text"
+                class="form-control"
+                id="responsiblePerson"
+                autocomplete="off"
+                #responsiblePerson="ngModel"
+                required
+                class="form-control {{
+                  responsiblePerson.invalid && !responsiblePerson.touched
+                    ? 'errorInput'
+                    : ''
+                }}"
+                name="responsiblePerson"
+                placeholder="{{ 'Write' | translate }} {{
+                  'Responsible Person' | translate
+                }} "
+                [(ngModel)]="modalDetails.responsiblePerson"
+              />
+            </div>
+            <!-- copmpany  only -->
+
+            <ng-container *ngIf="modalDetails.customerTypeId == 2">
+              <div class="form-group">
+                <label for="GeneralManager" class="col-form-label">{{
+                  "General Manager" | translate
+                }}</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="generalManager"
+                  autocomplete="off"
+                  #generalManager="ngModel"
+                  required
+                  class="form-control {{
+                    generalManager.invalid && !generalManager.touched
+                      ? 'errorInput'
+                      : ''
+                  }}"
+                  name="generalManager"
+                  placeholder="{{ 'Write' | translate }} {{
+                    'General Manager' | translate
+                  }} "
+                  [(ngModel)]="modalDetails.generalManager"
+                />
+              </div>
+              <div class="form-group">
+                <label for="CommercialActivitytxt" class="col-form-label">
+                  {{ "Commercial Activity" | translate }}</label
+                >
+
+                <input
+                  type="text"
+                  class="form-control"
+                  id="commercialActivity"
+                  autocomplete="off"
+                  #commercialActivity="ngModel"
+                  required
+                  class="form-control {{
+                    commercialActivity.invalid && !commercialActivity.touched
+                      ? 'errorInput'
+                      : ''
+                  }}"
+                  name="commercialActivity"
+                  placeholder="{{ 'Write' | translate }} {{
+                    'Commercial Activity' | translate
+                  }} "
+                  [(ngModel)]="modalDetails.commercialActivity"
+                />
+              </div>
+              <div class="form-group">
+                <label for="CommercialRegistertxt" class="col-form-label">{{
+                  "Commercial Register" | translate
+                }}</label>
+
+                <input
+                  type="text"
+                  class="form-control"
+                  id="commercialRegister"
+                  autocomplete="off"
+                  #commercialRegister="ngModel"
+                  required
+                  class="form-control {{
+                    commercialRegister.invalid && !commercialRegister.touched
+                      ? 'errorInput'
+                      : ''
+                  }}"
+                  name="commercialRegister"
+                  placeholder="{{ 'Write' | translate }} {{
+                    'Commercial Register' | translate
+                  }} "
+                  [(ngModel)]="modalDetails.commercialRegister"
+                />
+              </div>
+            </ng-container>
+
+            <!-- citizens only  -->
+            <ng-container *ngIf="modalDetails.customerTypeId == 1">
+              <div class="form-group">
+                <label for="CustomerNationalIdtxt" class="col-form-label">{{
+                  "NationalId" | translate
+                }}</label>
+                <!-- (blur)="modalDetails.customerNationalId != null?CustomerNationalIdIsRequired=false:CustomerNationalIdIsRequired=true" -->
+                <input
+                  type="text"
+                  class="form-control"
+                  id="customerNationalId"
+                  autocomplete="off"
+                  #customerNationalId="ngModel"
+                  maxlength="10"
+                  required
+                  class="form-control {{
+                    CustomerNationalIdIsRequired == true &&
+                    modalDetails.customerNationalId == null
+                      ? 'errorInput'
+                      : ''
+                  }}"
+                  name="customerNationalId"
+                  placeholder="{{ 'Write' | translate }} {{
+                    'NationalId' | translate
+                  }} "
+                  [(ngModel)]="modalDetails.customerNationalId"
+                />
+              </div>
+              <div class="inline-flex gap-1 w-full items-end">
+                <div class="flex-grow">
+                  <label class="col-form-label">
+                    {{ "Issuer" | translate }}</label
+                  >
+                  <ng-select
+                    class="w-full p-0"
+                    placeholder="{{ 'Issuer' | translate }}"
+                    [(ngModel)]="modalDetails.nationalIdSource"
+                    [ngModelOptions]="{ standalone: true }"
+                  >
+                    <ng-option
+                      *ngFor="let city of City_Cus"
+                      [value]="city.id"
+                      >{{ city.name }}</ng-option
+                    >
+                  </ng-select>
+                </div>
+              </div>
+            </ng-container>
+            <!-- Branch  -->
+            <div>
+              <label class="col-form-label">
+                {{ "Customer Branch" | translate }}</label
+              >
+
+              <ng-select
+                style="min-width: max-content"
+                id="branchId"
+                #branchId="ngModel"
+                required
+                class="w-full p-0 {{
+                  branchId.invalid && branchId.touched ? 'errorInput' : ''
+                }}"
+                [disabled]="load_BranchUserId?.length == 1"
+                (change)="getBranchAccount(modalDetails.branchId)"
+                [clearable]="false"
+                name="branchId"
+                placeholder=" {{ 'Customer Branch' | translate }}"
+                [(ngModel)]="modalDetails.branchId"
+                [ngModelOptions]="{ standalone: true }"
+              >
+                <ng-option
+                  *ngFor="let branch of load_BranchUserId"
+                  [value]="branch.id"
+                  >{{ branch.name }}</ng-option
+                >
+              </ng-select>
+            </div>
+            <div class="form-group">
+              <label for="example-text-input" class="col-form-label"
+                >{{ "Branch Account" | translate }}
+                <!-- <span class="text-danger">*</span> -->
+              </label>
+              <!-- <input class="form-control" disabled
+                 type="text"name="name" readonly autocomplete="off"
+                placeholder="{{ 'Branch Account' | translate }}"  [(ngModel)]="modalDetails.accountName"
+                id="accountName"
+                #accountName="ngModel"
+                class="w-full p-0 {{
+                  accountName.invalid && !accountName.touched
+                    ? 'errorInput'
+                    : ''
+                }}"
+                /> -->
+              <input
+                type="text"
+                class="form-control"
+                id="accountName"
+                autocomplete="off"
+                #accountName="ngModel"
+                disabled
+                readonly
+                required
+                class="form-control {{
+                  accountName.invalid && !accountName.touched
+                    ? 'errorInput'
+                    : ''
+                }}"
+                name="accountName"
+                placeholder="{{ 'Branch Account' | translate }} "
+                [(ngModel)]="modalDetails.accountName"
+              />
+            </div>
+
+            <!-- contact  -->
+            <div class="form-group">
+              <label for="CustomerPhonetxt3" class="col-form-label">
+                {{ "Phone Number" | translate }}
+              </label>
+              <input
+                type="text"
+                autocomplete="off"
+                class="form-control"
+                maxlength="10"
+                id="CustomerPhonetxt3"
+                name="CustomerPhonetxt3"
+                placeholder="{{ 'Phone Number' | translate }} "
+                [(ngModel)]="modalDetails.customerPhone"
+              />
+            </div>
+            <div class="form-group">
+              <label for="CustomerMobiletxt3" class="col-form-label">
+                {{ "Mobile Number" | translate }}
+              </label>
+              <!-- customerMobile.invalid && !customerMobile.touched -->
+              <!-- (blur)="modalDetails.customerMobile != null?CustomerphoneIsRequired=false:CustomerphoneIsRequired=true" -->
+              <input
+                type="text"
+                class="form-control"
+                id="customerMobile"
+                autocomplete="off"
+                #customerMobile="ngModel"
+                maxlength="10"
+                required
+                class="form-control {{
+                  CustomerphoneIsRequired == true &&
+                  modalDetails.customerMobile == null
+                    ? 'errorInput'
+                    : ''
+                }}"
+                name="customerMobile"
+                placeholder="{{ 'Write' | translate }} {{
+                  'Mobile Number' | translate
+                }} "
+                [(ngModel)]="modalDetails.customerMobile"
+              />
+            </div>
+            <div class="form-group">
+              <label for="CustomerExternalTelephonetxt3" class="col-form-label">
+                {{ "Additional Phone" | translate }}
+              </label>
+              <input
+                type="text"
+                autocomplete="off"
+                class="form-control"
+                id="CustomerExternalTelephonetxt3"
+                name="CustomerExternalTelephonetxt3"
+                placeholder=" {{ 'Additional Phone' | translate }}"
+                [(ngModel)]="modalDetails.externalPhone"
+              />
+            </div>
+            <div class="form-group">
+              <label for="CustomerEmailtxt3" class="col-form-label">
+                {{ "Email" | translate }}
+              </label>
+              <!-- customerEmail.invalid && !customerEmail.touched -->
+              <!-- (blur)="modalDetails.customerEmail != null?CustomerMailIsRequired=false:CustomerMailIsRequired=true" -->
+              <input
+                type="email"
+                class="form-control"
+                id="customerEmail"
+                autocomplete="off"
+                #customerEmail="ngModel"
+                required
+                class="form-control {{
+                  CustomerMailIsRequired == true &&
+                  modalDetails.customerEmail == null
+                    ? 'errorInput'
+                    : ''
+                }}"
+                name="customerEmail"
+                placeholder=" {{ 'Email' | translate }}"
+                [(ngModel)]="modalDetails.customerEmail"
+              />
+            </div>
+
+            <div class="form-group" *ngIf="!(modalDetails.customerTypeId == 2)">
+              <label
+                for="CustomerCommertialRegistrytxt3"
+                class="col-form-label"
+              >
+                {{ "Commerial Registration" | translate }}</label
+              >
+              <input
+                class="form-control"
+                type="text"
+                id="CustomerCommertialRegistrytxt3"
+                name="CustomerCommertialRegistrytxt3"
+                autocomplete="off"
+                placeholder="{{ 'Commerial Registration' | translate }}"
+                [(ngModel)]="modalDetails.commercialRegister"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="CustomerPostalCodetxt3" class="col-form-label">
+                {{ "Postal Code" | translate }}
+              </label>
+              <input
+                class="form-control"
+                type="text"
+                id="CustomerPostalCodetxt3"
+                name="CustomerPostalCodetxt3"
+                autocomplete="off"
+                placeholder="{{ 'Postal Code' | translate }}"
+                [(ngModel)]="modalDetails.postalCodeFinal"
+                placeholder="Postal Code"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="CustomerCountrytxt3" class="col-form-label">
+                {{ "Country" | translate }}
+              </label>
+              <input
+                class="form-control"
+                type="text"
+                id="CustomerCountrytxt3"
+                name="CustomerCountrytxt3"
+                autocomplete="off"
+                placeholder="{{ 'Country' | translate }}"
+                [(ngModel)]="modalDetails.country"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="CustomerNeighborhoodtxt3" class="col-form-label">
+                {{ "Neighborhood" | translate }}
+              </label>
+              <input
+                class="form-control"
+                type="text"
+                id="CustomerNeighborhoodtxt3"
+                name="CustomerNeighborhoodtxt3"
+                autocomplete="off"
+                placeholder="{{ 'Neighborhood' | translate }}"
+                [(ngModel)]="modalDetails.neighborhood"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="CustomerStreetNametxt3" class="col-form-label">
+                {{ "Street Name" | translate }}
+              </label>
+              <input
+                class="form-control"
+                type="text"
+                id="CustomerStreetNametxt3"
+                name="CustomerStreetNametxt3"
+                autocomplete="off"
+                placeholder="{{ 'Street Name' | translate }}"
+                [(ngModel)]="modalDetails.streetName"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="CustomerBuildingNumbertxt3" class="col-form-label">
+                {{ "BuildingNumber" | translate }}
+              </label>
+              <input
+                class="form-control"
+                type="text"
+                id="CustomerBuildingNumbertxt3"
+                name="CustomerBuildingNumbertxt3"
+                autocomplete="off"
+                placeholder="{{ 'BuildingNumber' | translate }}"
+                [(ngModel)]="modalDetails.buildingNumber"
+              />
+            </div>
+
+            <div class="form-group" *ngIf="!(modalDetails.customerTypeId == 2)">
+              <label for="CustomerAddresstxt3" class="col-form-label">
+                {{ "Address" | translate }}
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                id="CustomerAddresstxt3"
+                autocomplete="off"
+                autocomplete="off"
+                name="CustomerAddresstxt3"
+                placeholder="{{ 'Address' | translate }}"
+                [(ngModel)]="modalDetails.customerAddress"
+              />
+            </div>
+            <div class="form-group" *ngIf="modalDetails.customerTypeId == 2">
+              <label for="CompAddresstxt" class="col-form-label">
+                {{ "Address" | translate }}
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                id="CompAddresstxt"
+                autocomplete="off"
+                autocomplete="off"
+                name="CompAddresstxt"
+                placeholder="{{ 'Address' | translate }}"
+                [(ngModel)]="modalDetails.compAddress"
+              />
+            </div>
+            <div class="form-group" *ngIf="modalDetails.customerTypeId == 2">
+              <label for="CustomerAddresstxt3" class="col-form-label">
+                {{ "Commerial Registration" | translate }}
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                id="CustomerAddresstxt3"
+                autocomplete="off"
+                autocomplete="off"
+                name="CustomerAddresstxt3"
+                placeholder="{{ 'Commerial Registration' | translate }}"
+                [(ngModel)]="modalDetails.customerAddress"
+              />
+            </div>
+
+            <div>
+              <label class="col-form-label">
+                {{ "Area" | translate }}
+              </label>
+              <ng-select
+                class="w-full p-0"
+                placeholder="{{ 'Area' | translate }}"
+                [(ngModel)]="modalDetails.cityId"
+                [ngModelOptions]="{ standalone: true }"
+              >
+                <ng-option *ngFor="let city of City_Cus" [value]="city.id">{{
+                  city.name
+                }}</ng-option>
+              </ng-select>
+            </div>
+          </div>
+          <div>
+            <div class="form-group col-span-4">
+              <label for="example-text-input" class="col-form-label">{{
+                "Notes" | translate
+              }}</label>
+              <textarea
+                class="form-control autosizeme"
+                style="
+                  border: 1px solid #b0b1b2;
+                  border-radius: 6px !important;
+                  padding: 5px 6px;
+                "
+                cols="30"
+                rows="4"
+                id="Notestxt3"
+                autocomplete="off"
+                name="Notestxt3"
+                placeholder="Notes"
+                [(ngModel)]="modalDetails.notes"
+              ></textarea>
+            </div>
+          </div>
+          <!-- <div>
+            <div class="col-span-4 w-fit form-check my-3">
+              <label class="form-check-label" for="AgencData">{{
+                "Agency Data" | translate
+              }}</label>
+              <input
+                [(ngModel)]="modalDetails.agencData"
+                [ngModelOptions]="{ standalone: true }"
+                [checked]="modalDetails.AgencData || modalDetails.AgentName"
+                type="checkbox"
+                class="form-check-input"
+                id="AgencData"
+              />
+            </div>
+          </div>
+          <ng-container
+            *ngIf="modalDetails.agencData || modalDetails.agentName"
+          >
+            <div [@fade]>
+              <div class="form-group">
+                <label for="AgentNametxt1" class="col-form-label">
+                  {{ "Agent Name" | translate }}
+                  <span class="text-danger">*</span>
+                </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="AgentNametxt1"
+                  [(ngModel)]="modalDetails.agentName"
+                  autocomplete="off"
+                  name="AgentNametxt1"
+                  placeholder="{{ 'Agent Name' | translate }}"
+                />
+              </div>
+              <div>
+                <label class="col-form-label">
+                  {{ "Agent Type" | translate }}
+                </label>
+                <ng-select
+                  class="w-full p-0"
+                  placeholder="{{ 'Agent Type' | translate }}"
+                  [(ngModel)]="modalDetails.agentType"
+                  [ngModelOptions]="{ standalone: true }"
+                >
+                  <ng-option
+                    [value]="1"
+                    [translate]="'name'"
+                    [translateParams]="{
+                      ar: 'مندوب',
+                      en: 'Delegate'
+                    }"
+                  ></ng-option>
+                  <ng-option
+                    [value]="2"
+                    [translate]="'name'"
+                    [translateParams]="{
+                      ar: 'وكيل',
+                      en: 'Agent'
+                    }"
+                  ></ng-option>
+                </ng-select>
+              </div>
+              <div
+                class="form-group"
+                [@fade]
+                *ngIf="modalDetails.agentType == 2"
+              >
+                <label for="AgentNumbertxt" class="col-form-label">{{
+                  "Agent Number" | translate
+                }}</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  autocomplete="off"
+                  id="AgentNumbertxt"
+                  name="AgentNumbertxt"
+                  placeholder="{{ 'Agent Number' | translate }}"
+                  maxlength="10"
+                  [(ngModel)]="modalDetails.agentNumber"
+                />
+              </div>
+            </div>
+            <div class="upload">
+              <file-upload [control]="control">
+                <ng-template
+                  let-isFileDragDropAvailable="isFileDragDropAvailable"
+                  #placeholder
+                >
+                  <div *ngIf="control.size === 0">
+                    <div class="icon">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="1em"
+                        viewBox="0 0 640 512"
+                      >
+                        <path
+                          d="M144 480C64.5 480 0 415.5 0 336c0-62.8 40.2-116.2 96.2-135.9c-.1-2.7-.2-5.4-.2-8.1c0-88.4 71.6-160 160-160c59.3 0 111 32.2 138.7 80.2C409.9 102 428.3 96 448 96c53 0 96 43 96 96c0 12.2-2.3 23.8-6.4 34.6C596 238.4 640 290.1 640 352c0 70.7-57.3 128-128 128H144zm79-217c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l39-39V392c0 13.3 10.7 24 24 24s24-10.7 24-24V257.9l39 39c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-80-80c-9.4-9.4-24.6-9.4-33.9 0l-80 80z"
+                        />
+                      </svg>
+                    </div>
+
+                    <div class="upload-text">
+                      {{ "Add Image" | translate }}
+                    </div>
+                  </div>
+                </ng-template>
+
+                <ng-template
+                  let-i="index"
+                  let-file="file"
+                  let-control="control"
+                  #item
+                >
+                  <div class="overlay">
+                    <span
+                      class="delete-button"
+                      (click)="control.removeFile(file)"
+                    >
+                      <svg viewBox="0 0 448 512">
+                        <path
+                          d="M32 464a48 48 0 0 0 48 48h288a48 48 0 0 0 48-48V128H32zm272-256a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zM432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16z"
+                        ></path>
+                      </svg>
+                    </span>
+                    <img *ngIf="control.valid" [src]="uploadedFile | async" />
+                  </div>
+                </ng-template>
+              </file-upload>
+            </div>
+         
+            <div>
+              <button
+                type="button"
+                class="btn bg-base text-white mb-3"
+                (click)="ShowAgentFile(modalDetails?.attachmentUrl)"
+              >
+                {{ "show" | translate }}
+              </button>
+            </div>
+          
+          </ng-container> -->
+        </form>
+        <div
+          class="flex flex-wrap items-end border-t justify-between pt-2 border-neutral-300"
+        >
+          <div
+            *ngIf="modalDetails.addUser != null && modalDetails.addUser != ''"
+            class="flex gap-2 items-center"
+          >
+            <img
+              class="w-20 aspect-square rounded-full object-cover"
+              *ngIf="modalDetails?.addedcustomerImg"
+              [src]="ShowImg(modalDetails?.addedcustomerImg)"
+              alt=""
+            />
+            <div class="flex flex-col gap-2">
+              <span>{{ "Data Entry" | translate }}</span>
+              <div class="flex flex-col">
+                <span>{{ modalDetails?.addUser }}</span>
+                <span>{{
+                  modalDetails?.addDate | date : " hh:mm yyyy-MM-dd"
+                }}</span>
+              </div>
+            </div>
+          </div>
+          <div>
+            <span class="text-red-500">{{
+              "required inputs" | translate
+            }}</span>
+            <div
+              class="flex gap-2 items-center mt-2"
+              *ngIf="phoneIsRequired == true"
+            >
+              <i class="fa-solid fa-mobile-screen text-base w-10"></i>
+              <span>{{ "Phone Number" | translate }}</span>
+            </div>
+            <div class="flex gap-2" *ngIf="MailIsRequired == true">
+              <i class="fa-solid fa-at text-base w-10"></i>
+              <span>{{ "Email" | translate }}</span>
+            </div>
+            <div class="flex gap-2" *ngIf="NationalIdIsRequired == true">
+              <i class="fa-solid fa-id-card w-10 text-base"></i>
+              <span>{{ "NationalId" | translate }}</span>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <button
+              class="btn bg-base text-white"
+              (click)="addCustomer()"
+              [disabled]="disableButtonSave_Customer"
+            >
+              {{ "save" | translate }}
+            </button>
+            <button (click)="modal?.hide()" class="btn btn-secondary">
+              {{ "Back" | translate }}
+            </button>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </ng-template>
+
+  <!-- confirm delete -->
+  <ng-template #deleteModal>
+    <div class="modal-body text-center">
+      <p
+        [translate]="'name'"
+        [translateParams]="{
+          ar: 'هل تريد بالتأكيد حذف هذا الصف',
+          en: 'Are you sure to delete this row ?'
+        }"
+      ></p>
+      <div class="flex gap-2 justify-center">
+        <button
+          type="button"
+          mat-raised-button
+          color="warn"
+          (click)="confirm()"
+        >
+          {{ "Yes" | translate }}
+        </button>
+        <button
+          type="button"
+          (click)="decline()"
+          mat-raised-button
+          color="basic"
+        >
+          {{ "No" | translate }}
+        </button>
+      </div>
+    </div>
+  </ng-template>
+
+
+</div>
+

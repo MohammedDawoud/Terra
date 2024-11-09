@@ -1,0 +1,1772 @@
+<div class="add-search pb-4">
+  <app-navigator [title]="title"></app-navigator>
+
+  <div class="mt-3">
+    <div class="flex gap-2">
+      <div class="w-10 btn btn-primary text-center leading-5">
+        <i class="fa-solid fa-key"></i>
+      </div>
+      <span class="text-xl text-blue-600 font-bold">
+        {{ lang == "ar" ? OrganizationData?.nameAr : OrganizationData?.nameEn }}
+      </span>
+    </div>
+    <!-- buttons -->
+
+    <div class="flex justify-between gap-2 items-center my-3 flex-wrap">
+      <div class="w-fit">
+        <input
+          class="form-control"
+          (keyup)="applyFilter($event)"
+          placeholder="{{ 'search' | translate }}"
+          #input
+        />
+      </div>
+      <div class="overflow-auto mt-3">
+        <table
+          class="min-w-max overflow-hidden rounded-t-lg table table-bordered"
+        >
+          <thead>
+            <tr class="bg-base text-white">
+              <th
+                class="invoice-title uppercase text-center"
+                [translate]="'name'"
+                [translateParams]="{
+                  ar: 'بعض ملاحظات الدعم	',
+                  en: 'Support Notes'
+                }"
+              ></th>
+            </tr>
+          </thead>
+          <tbody id="tabledetails">
+            <tr
+              *ngFor="let licence of allLicences"
+              class="text-black text-center"
+            >
+              <td>{{ licence.lic_Note_Cust }}</td>
+            </tr>
+            <!-- <tr class="text-black text-center">
+                <td>nawd awd awdnwakd</td>
+              </tr> -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="flex gap-2 controler">
+        <button
+          (click)="open(dataModal, '', 'xl', '', 'adduser')"
+          class="flex gap-1 btn btn-success"
+        >
+          <span
+            class="hidden md:block"
+            [translate]="'name'"
+            [translateParams]="{
+              ar: '  مستخدم جديد   ',
+              en: 'New User'
+            }"
+          >
+          </span>
+          <i class="fa-solid fa-plus"></i>
+        </button>
+      </div>
+
+      <div class="flex gap-2 controler">
+
+        <!-- <button
+          (click)="open(dataModal, '', 'xl', '', 'adduser')"
+          class="flex gap-1 btn btn-primary"
+        >
+          <span
+            class="hidden md:block"
+            [translate]="'name'"
+            [translateParams]="{
+              ar: '  مستخدم جديد   ',
+              en: 'New User'
+            }"
+          >
+          </span>
+          <i class="fa-solid fa-plus"></i>
+        </button> -->
+
+      </div>
+    </div>
+
+    <!-- table -->
+    <div class="overflow-auto mt-3 data-table">
+      <table
+        class="min-w-max overflow-hidden rounded-t-lg table table-bordered"
+        style="vertical-align: middle"
+      >
+        <thead>
+          <tr class="bg-base text-white">
+            <th
+              class="invoice-title uppercase text-center"
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'رقم العقد	',
+                en: 'Contract Number'
+              }"
+            ></th>
+            <th
+              class="invoice-title uppercase text-center"
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'عدد المستخدمين	',
+                en: 'User Count'
+              }"
+            ></th>
+            <!-- <th
+              class="invoice-title uppercase text-center"
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'عدد المستنفذ	',
+                en: 'Depleted User Count'
+              }"
+            ></th>
+            <th
+              class="invoice-title uppercase text-center"
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'عدد المتبقي	',
+                en: 'Remaining User Count'
+              }"
+            ></th>
+            <th
+              class="invoice-title uppercase text-center"
+              [translate]="'name'"
+              [translateParams]="{
+                ar: ' غير المرخص	',
+                en: 'Unlicensed User Count'
+              }"
+            ></th> -->
+            <th
+              class="invoice-title uppercase text-center"
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'بداية اتفقاقية الدعم الفني',
+                en: 'Suport Start Date'
+              }"
+            ></th>
+            <th
+              class="invoice-title uppercase text-center"
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'انتهاءاتفاقيةالدعم الفنى	',
+                en: 'Day'
+              }"
+            ></th>
+            <th
+              class="invoice-title uppercase text-center"
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'بريد المسئول	',
+                en: 'Email'
+              }"
+            ></th>
+            <th
+              class="invoice-title uppercase text-center"
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'جوال		',
+                en: 'Mobile'
+              }"
+            ></th>
+            <th
+              class="invoice-title uppercase text-center"
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'تاريخ إنتهاء الدومين		',
+                en: 'End Domain Date'
+              }"
+            ></th>
+            <th
+              class="invoice-title uppercase text-center"
+              *ngIf="userG?.isAdmin"
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'إعدادات	',
+                en: 'Setting'
+              }"
+            ></th>
+          </tr>
+        </thead>
+        <tbody id="tabledetails">
+          <tr
+            *ngFor="let licence of allLicences"
+            class="text-black text-center"
+          >
+            <td>{{ licence.licenceContractNo }}</td>
+            <td>{{ licence.noOfUsers }}</td>
+            <!-- Add more columns here based on your data structure -->
+            <td *ngIf="licence.subscrip_Hosting == true">بدون</td>
+
+            <td *ngIf="licence.subscrip_Hosting != true">
+              {{ licence.support_Start_Date }}
+            </td>
+
+            <td *ngIf="licence.subscrip_Hosting == true">بدون</td>
+
+            <td *ngIf="licence.subscrip_Hosting != true">
+              {{ licence.support_Expiry_Date }}
+            </td>
+            <td>{{ licence.email }}</td>
+            <td>{{ licence.mobile }}</td>
+            <!-- <td>{{ licence.hosting_Expiry_Date }}</td> -->
+
+            <td *ngIf="licence.subscrip_Domain == true">بدون</td>
+
+            <td *ngIf="licence.subscrip_Domain != true">
+              {{ licence.hosting_Expiry_Date }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- notes -->
+    <div class="row">
+      <div class="col-lg-6">
+        <div class="stats row items-center gap-8 flex-wrap">
+          <div class="box text-center bg-red-100 col-md-6 col-xl-3">
+            <img
+              src="/assets/images/user.jpg"
+              class="d-block m-auto img-fluid"
+            />
+            <div>
+              <span style="margin-inline-end: 5px">{{
+                "Exhausted number" | translate
+              }}</span>
+              <span>{{ numberOfUsers?.noOfUsersUsed }}</span>
+            </div>
+          </div>
+          <div class="box text-center bg-green-100 col-md-6 col-xl-3">
+            <img
+              src="/assets/images/user.jpg"
+              class="d-block m-auto img-fluid"
+            />
+            <div>
+              <span style="margin-inline-end: 5px">{{
+                "remaining number" | translate
+              }}</span>
+              <span>{{ numberOfUsers?.theRestOfUsers }}</span>
+            </div>
+          </div>
+          <div
+            class="box text-center bg-yellow-100 col-md-6 col-xl-3"
+            *ngIf="numberOfUsers?.noOfUnauthorized > 0"
+          >
+            <img
+              src="/assets/images/not.png"
+              class="d-block m-auto img-fluid"
+            />
+            <div>
+              <span style="margin-inline-end: 5px">{{
+                "Unlicensed" | translate
+              }}</span>
+              <span>{{ numberOfUsers?.noOfUnauthorized }}</span>
+            </div>
+          </div>
+          <div
+            class="box text-center bg-purple-100 col-md-6 col-xl-3"
+            *ngIf="checkdate()"
+          >
+            <img
+              src="/assets/images/checkhand.png"
+              class="d-block m-auto img-fluid"
+            />
+            <span style="margin-inline-end: 5px">{{
+              "Support contract expired" | translate
+            }}</span>
+          </div>
+
+          <!------------------------------->
+          <div class="box text-center bg-yellow-100 col-md-6 col-xl-3" style="display: none;">
+            <img
+              src="/assets/icons/pending@2x.png"
+              class="d-block m-auto img-fluid"
+              style="width: 27px"
+            />
+          </div>
+
+          <div class="box text-center bg-yellow-100 col-md-6 col-xl-3" style="display: none;">
+            <img
+              src="/assets/icons/status-resolved-1@2x.png"
+              class="d-block m-auto img-fluid"
+              style="width: 27px"
+            />
+          </div>
+
+          <div class="box text-center bg-yellow-100 col-md-6 col-xl-3" style="display: none;">
+            <img
+              src="/assets/icons/stop-circle@2x.png"
+              class="d-block m-auto img-fluid"
+              style="width: 27px"
+            />
+          </div>
+          <!------------------------------->
+        </div>
+      </div>
+
+      <!-- <div class="col-lg-6" style="margin-top: -5px;">
+        <div class="flex gap-4 flex-wrap my-3">
+           <div
+            class="rounded-2xl bg-white shadow-lg flex items-center py-1 px-1 flex-col gap-1"
+          >
+            <img class="h-14" src="/assets/icons/pending@2x.png" alt="" />
+            <span
+              class="text-lg font-semi-bold"
+              [translate]="'name'"
+              [translateParams]="{
+                ar: ' المستخدم عليه مهام',
+                en: 'Tasks On User'
+              }"
+            >
+            </span>
+            <div class="py-2 px-3 bg-blue-100 text-blue-600 rounded-full">
+              {{ taskCount }}
+              مهمة
+            </div>
+          </div>
+          <div
+            class="rounded-2xl bg-white shadow-lg flex items-center py-1 px-1 flex-col gap-1"
+          >
+            <img
+              class="h-14"
+              src="/assets/icons/status-resolved-1@2x.png"
+              alt=""
+            />
+            <span
+              class="text-lg font-semi-bold"
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'المستخدم مسؤل عن مشاريع',
+                en: 'project On User'
+              }"
+            >
+            </span>
+            <div class="py-2 px-3 bg-green-100 text-green-600 rounded-full">
+              {{ projectCounts }}
+              {{ "project" | translate }}
+            </div>
+          </div>
+          <div
+            class="rounded-2xl bg-white shadow-lg flex items-center py-1 px-1 flex-col gap-1"
+          >
+            <img class="h-14" src="/assets/icons/stop-circle@2x.png" alt="" />
+            <span
+              class="text-lg font-semi-bold"
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'المستخدم موجود في سير',
+                en: 'User In Project'
+              }"
+            >
+            </span>
+            <div class="py-2 px-3 bg-zinc-100 text-zinc-600 rounded-full">
+              {{ setting }} سير
+            </div>
+          </div>
+        </div>
+      </div> -->
+
+      <div class="col-lg-6">
+        <div
+          class="flex justify-between gap-2 items-center my-3 flex-wrap"
+          style="font-size: small"
+        >
+          <span class="p-3 rounded-lg bg-red-200">
+            <p>عزيزي مسؤل النظام</p>
+            <p>
+              يرجي الانتباه للنقاط التالية، حيث انها في غاية الاهمية وتسهل عليك
+              العمل
+            </p>
+            <p>
+              اولا: في حال رغبتك في ايقاف/حذف حساب مستخدم ،يتوجب عليك نقل جميع
+              المهام المرتبطة بالمستخدم،حتي يسمح لك تنفيذ الاجراء
+            </p>
+            <p>
+              ثانيا: اذا كان المستخدم [مسؤل عن مشاريع ومرتبط بها] ،يجب عليك نقل
+              تلك المشاريع لمستخدم اخر حتي تتمكن من تنفيذ الاجراء
+            </p>
+            <p>
+              ثالثا: لا يسمح النظام بإيقاف/حذف حساب مستخدم (لديه عهده ماليه/او
+              عينية/ او عليه سلفه ماليه)، حتي يتم تسويتها مع القسم المالي / HR
+            </p>
+            <p>
+              اخيرا: احرص علي حذف / او ايقاف الحسابات الخاصه بالموظفين الذين
+              تركو العمل في المنشأة /أو المجازين،لضمان عدم الدخول الغير مسموح به
+            </p>
+          </span>
+
+          <!-- <span>بمجرد فتح هذه الشاشة يظهر للادارة أن المستخدم اطلع علي التنبيه / او التعميم،كذلك فان حذفك للتعميم يخفيه من شاشتك فقط،لكنه يبقي في شاشة الادارة </span> -->
+        </div>
+        <!-- <div class="overflow-auto mt-3">
+          <table
+            class="min-w-max overflow-hidden rounded-t-lg table table-bordered"
+          >
+            <thead>
+              <tr class="bg-base text-white">
+                <th
+                  class="invoice-title uppercase text-center"
+                  [translate]="'name'"
+                  [translateParams]="{
+                    ar: 'بعض ملاحظات الدعم	',
+                    en: 'Support Notes'
+                  }"
+                ></th>
+              </tr>
+            </thead>
+            <tbody id="tabledetails">
+              <tr
+                *ngFor="let licence of allLicences"
+                class="text-black text-center"
+              >
+                <td>{{ licence.lic_Note_Cust }}</td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div> -->
+      </div>
+    </div>
+    <div *ngIf="username" style="margin-top: 16px; margin-right: 100px">
+      <p><span>اسم المستخدم : </span> {{ username }}</p>
+    </div>
+
+    <!-- users -->
+    <div class="overflow-auto mt-3">
+      <table
+        mat-table
+        [dataSource]="data.users"
+        matSort
+        class="mat-elevation-z8 rounded-t-lg overflow-hidden w-max"
+      >
+        <ng-container matColumnDef="UserId">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'م',
+                en: '#'
+              }"
+            ></span>
+          </th>
+          <td mat-cell *matCellDef="let element; let i = index">
+            {{ i + 1 }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="UserName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'المستخدم',
+                en: 'User'
+              }"
+            ></span>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <div class="w-20 p-3">
+              <img
+                class="aspect-square rounded-full object-cover"
+                src="{{ element.imgUrl | img }}"
+                alt=""
+              />
+            </div>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="FullName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'اسم الموظف',
+                en: 'Employee'
+              }"
+            ></span>
+          </th>
+          <td class="max-w-xs" mat-cell *matCellDef="let element">
+            {{ element.fullName }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="JobName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'الوظيفة',
+                en: 'Job'
+              }"
+            ></span>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.jobName }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="DepartmentName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'القسم',
+                en: 'Department'
+              }"
+            ></span>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.departmentName }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="GroupName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'المجموعة',
+                en: 'Group'
+              }"
+            ></span>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.groupName }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="BranchName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'الفرع',
+                en: 'Branch'
+              }"
+            ></span>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.branchName }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="Status">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'حالة الحساب',
+                en: 'Account Status'
+              }"
+            ></span>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ (element.status == 1) ? "نشط" : "غير نشط" }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="LastLoginDate">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'آخر دخول',
+                en: 'Last login'
+              }"
+            ></span>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.lastLoginDate }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="appStatus">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'حالة التطبيق',
+                en: 'App Status'
+              }"
+            ></span>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <span
+              class="{{
+                element.isActivated == true ? 'text-green-500' : 'text-red-500'
+              }} fw-bold"
+              >{{ element.isActivated == true ? "مفعل" : "غير مفعل" }}</span
+            >
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="DeviceId">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'معرف الجهاز',
+                en: 'Device ID'
+              }"
+            ></span>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.deviceId }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="DeviceType">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'نظام التشغيل',
+                en: 'OS'
+              }"
+            ></span>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <span *ngIf="element.deviceType == 0"></span>
+            <span *ngIf="element.deviceType == 1">اندرويد</span>
+            <span *ngIf="element.deviceType == 2">ايفون</span>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="operations">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            [translate]="'name'"
+            [translateParams]="{
+              ar: 'خيارات',
+              en: 'Operations'
+            }"
+          ></th>
+          <td mat-cell *matCellDef="let element">
+            <div class="flex gap-1 justify-center py-2">
+              <button
+                (click)="open(dataModal, element, 'xl', '', 'edit')"
+                class="min-w-max p-2 bg-orange-100 hover:bg-orange-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+              >
+                <!--  -->
+                <i class="fa-regular fa-pen-to-square"></i>
+              </button>
+              <button
+                (click)="
+                  open(deleteModal, element, 'xl', '', 'deleteModalUser')
+                "
+                class="min-w-max p-2 bg-red-100 hover:bg-red-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+              >
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: displayedColumns"
+          class="duration-300 hover:bg-slate-100"
+          (click)="GetUserDataById(row.userId, row.fullName)"
+        ></tr>
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell" colspan="4">
+            {{ "No result found for " }} "{{ input.value }}"
+          </td>
+        </tr>
+      </table>
+    </div>
+    <mat-paginator [pageSizeOptions]="[10, 25]"> </mat-paginator>
+  </div>
+</div>
+
+<ng-template #dataModal let-modal>
+  <div
+    style="background-color: var(--base-color)"
+    class="modal-header text-white flex justify-between items-center"
+  >
+    <h4 class="m-0">
+      <span class="text-2xl" *ngIf="adduser == false">
+        {{ "Edit User Details" | translate }}
+      </span>
+      <span class="text-2xl" *ngIf="adduser == true">
+        {{ "Add User Details" | translate }}
+      </span>
+    </h4>
+    <button
+      type="button"
+      class="text-2xl text-white m-0"
+      (click)="modal.dismiss()"
+    >
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+  <div class="modal-body cpanel-users users">
+    <form class="modal-form" [formGroup]="userForm">
+      <mat-tab-group #stepper linear>
+        <!-- personal data -->
+        <mat-tab [dir]="'dir' | translate">
+          <ng-template mat-tab-label>
+            <span>
+              {{ "Personal data" | translate }}
+            </span>
+          </ng-template>
+          <div class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+            <div>
+              <label class="col-form-label"
+                >{{ "nameAr" | translate }}
+                <span class="text-danger">*</span></label
+              >
+              <input
+                type="text"
+                id="FullNameAr"
+                name="FullNameAr"
+                class="form-control"
+                autocomplete="off"
+                placeholder="{{ 'nameAr' | translate }}"
+                formControlName="FullNameAr"
+              />
+
+              <div
+                *ngIf="
+                  userForm.get('FullNameAr')?.hasError('required') &&
+                  userForm.get('FullNameAr')?.touched
+                "
+                class="error-text"
+              >
+                This field is required.
+              </div>
+              <div
+                *ngIf="
+                  userForm.get('FullNameAr')?.hasError('pattern') &&
+                  userForm.get('FullNameAr')?.touched
+                "
+                class="error-text"
+              >
+                Invalid pattern.
+              </div>
+            </div>
+            <div>
+              <label class="col-form-label" for="empNameEntxt">{{
+                "nameEn" | translate
+              }}</label>
+              <span class="text-danger">*</span>
+              <div class="flex">
+                <input
+                  type="text"
+                  id="FullName"
+                  autocomplete="off"
+                  name="FullName"
+                  class="form-control"
+                  placeholder="{{ 'nameEn' | translate }} "
+                  formControlName="FullName"
+                />
+                <a
+                  class="btn"
+                  id="CopyCustomerName2"
+                  (click)="getCopy(userForm.get('FullNameAr')?.value)"
+                  ><i class="fa fa-copy"></i
+                ></a>
+              </div>
+              <div
+                *ngIf="
+                  userForm.get('FullName')?.hasError('required') &&
+                  userForm.get('FullName')?.touched
+                "
+                class="error-text"
+              >
+                This field is required.
+              </div>
+              <div
+                *ngIf="
+                  userForm.get('FullName')?.hasError('pattern') &&
+                  userForm.get('FullName')?.touched
+                "
+                class="error-text"
+              >
+                Invalid pattern.
+              </div>
+            </div>
+            <div>
+              <label class="col-form-label">{{ "userName" | translate }}</label>
+              <span class="text-danger">*</span>
+              <input
+                type="text"
+                class="form-control"
+                autocomplete="off"
+                placeholder="{{ 'userName' | translate }} "
+                formControlName="UserName"
+                (keypress)="keyPress($event)"
+              />
+              <div
+                *ngIf="
+                  userForm.get('UserName')?.hasError('required') &&
+                  userForm.get('UserName')?.touched
+                "
+                class="error-text"
+              >
+                This field is required.
+              </div>
+            </div>
+            <div>
+              <label class="col-form-label">{{ "Email" | translate }}</label>
+              <span class="text-danger">*</span>
+              <input
+                type="Email"
+                class="form-control"
+                autocomplete="off"
+                onCopy="return false"
+                onDrag="return false"
+                onDrop="return false"
+                onPaste="return false"
+                placeholder="{{ 'Email' | translate }} "
+                formControlName="Email"
+              />
+              <div
+                *ngIf="
+                  userForm.get('Email')?.hasError('required') &&
+                  userForm.get('Email')?.touched
+                "
+                class="error-text"
+              >
+                This field is required.
+              </div>
+              <div
+                *ngIf="
+                  userForm.get('Email')?.hasError('pattern') &&
+                  userForm.get('Email')?.touched
+                "
+                class="error-text"
+              >
+                Invalid pattern.
+              </div>
+            </div>
+            <div>
+              <label class="col-form-label">{{
+                "Confirm Email" | translate
+              }}</label>
+              <span class="text-danger">*</span>
+              <input
+                type="email"
+                autocomplete="off"
+                onCopy="return false"
+                onDrag="return false"
+                onDrop="return false"
+                onPaste="return false"
+                class="form-control"
+                placeholder="{{ 'Confirm Email' | translate }} "
+                formControlName="confirmEmail"
+              />
+              <div
+                *ngIf="
+                  userForm.get('confirmEmail')?.hasError('required') &&
+                  userForm.get('confirmEmail')?.touched
+                "
+                class="error-text"
+              >
+                This field is required.
+              </div>
+              <div
+                *ngIf="
+                  userForm.get('confirmEmail')?.hasError('pattern') &&
+                  userForm.get('confirmEmail')?.touched
+                "
+                class="error-text"
+              >
+                Invalid pattern.
+              </div>
+              <!-- Add this div to display the error message -->
+              <div
+                *ngIf="userForm.hasError('emailMismatch')"
+                class="text-danger"
+              >
+                Email and Confirm Email must match.
+              </div>
+            </div>
+            <div>
+              <label class="col-form-label">{{ "Mobile" | translate }}</label>
+              <input
+                type="tel"
+                class="form-control"
+                autocomplete="off"
+                placeholder="{{ 'Mobile' | translate }} "
+                formControlName="Mobile"
+              />
+              <div
+                *ngIf="
+                  userForm.get('Mobile')?.hasError('required') &&
+                  userForm.get('Mobile')?.touched
+                "
+                class="error-text"
+              >
+                This field is required.
+              </div>
+              <div
+                *ngIf="
+                  userForm.get('Mobile')?.hasError('pattern') &&
+                  userForm.get('Mobile')?.touched
+                "
+                class="error-text"
+              >
+                Invalid pattern.
+              </div>
+            </div>
+
+            <div class="flex gap-2 items-end">
+              <div class="flex-grow">
+                <label class="col-form-label">
+                  {{ "Group" | translate }}<span class="text-danger">*</span>
+                </label>
+                <!-- <ng-select
+                  class="w-full p-0"
+                  placeholder="{{ 'Group' | translate }}"
+                  formControlName="GroupId"
+                >
+                  <ng-option
+                    *ngFor="let group of groupOptions"
+                    [value]="group.id"
+                    >{{ group.name }}</ng-option
+                  >
+                </ng-select> -->
+
+                <ng-select
+                  [items]="groupOptions"
+                  bindLabel="name"
+                  bindValue="id"
+                  [clearable]="true"
+                  class="w-full p-0"
+                  autocomplete="off"
+                  placeholder="{{ 'Group' | translate }}"
+                  formControlName="GroupId"
+                  (change)="getPrivilegesGroup()"
+                >
+                </ng-select>
+              </div>
+              <button
+                (click)="open(addNewGroup, '', 'lg')"
+                class="btn bg-base text-white mt-3"
+                type="type"
+              >
+                <i class="fa fa-plus"></i>
+              </button>
+            </div>
+            <div>
+              <label class="col-form-label">
+                {{ "Branch" | translate }}
+                <span class="text-danger">*</span></label
+              >
+
+              <!-- <ng-select
+                [items]="branchOptions"
+                bindLabel="name"
+                bindValue="id"
+                [clearable]="true"
+                class="w-full p-0"
+                placeholder="{{ 'Branch' | translate }}"
+                (change)="onSelectBranch()"
+                formControlName="BranchId"
+              >
+              </ng-select> -->
+
+              <ng-select
+                [items]="branchOptions"
+                bindLabel="name"
+                bindValue="id"
+                [clearable]="true"
+                class="w-full p-0"
+                placeholder="{{ 'Branch' | translate }}"
+                (change)="onSelectBranch()"
+                autocomplete="off"
+                formControlName="BranchId"
+              >
+                <!-- [compareWith]="compareBranches" -->
+              </ng-select>
+            </div>
+
+            <div class="flex gap-2 items-end">
+              <div class="flex-grow">
+                <label class="col-form-label">
+                  {{ "Department" | translate
+                  }}<span class="text-danger">*</span>
+                </label>
+
+                <!-- <ng-select
+                  class="w-full p-0"
+                  placeholder="{{ 'Department' | translate }}"
+                  formControlName="DepartmentId"
+                >
+                  <ng-option
+                    *ngFor="let department of departmentOptions"
+                    [value]="department.id"
+                    >{{ department.name }}</ng-option
+                  >
+                </ng-select> -->
+                <ng-select
+                  [items]="branchlist"
+                  bindLabel="{{
+                    this.lang == 'ar' ? 'departmentNameAr' : 'departmentNameEn'
+                  }}"
+                  bindValue="departmentId"
+                  autocomplete="off"
+                  [clearable]="true"
+                  class="w-full p-0"
+                  placeholder="{{ 'Department' | translate }}"
+                  formControlName="DepartmentId"
+                >
+                </ng-select>
+              </div>
+              <button
+                (click)="open(departments, '', 'lg')"
+                class="btn bg-base text-white mt-3"
+                type="type"
+              >
+                <i class="fa fa-plus"></i>
+              </button>
+            </div>
+
+            <div class="flex gap-2 items-end">
+              <div class="flex-grow">
+                <label class="col-form-label">
+                  {{ "Job" | translate }}
+                  <span class="text-danger">*</span>
+                </label>
+                <!-- <ng-select
+                  class="w-full p-0"
+                  placeholder="{{ 'Job' | translate }}"
+                  formControlName="JobId"
+                >
+                  <ng-option *ngFor="let job of jobOptions" [value]="job.id">{{
+                    job.name
+                  }}</ng-option>
+                </ng-select> -->
+
+                <ng-select
+                  [items]="jobOptions"
+                  bindLabel="name"
+                  bindValue="id"
+                  autocomplete="off"
+                  [clearable]="true"
+                  class="w-full p-0"
+                  placeholder="{{ 'Job' | translate }}"
+                  formControlName="JobId"
+                >
+                </ng-select>
+              </div>
+
+              <button
+                (click)="open(jobs, '', 'lg')"
+                class="btn bg-base text-white mt-3"
+                type="type"
+              >
+                <i class="fa fa-plus"></i>
+              </button>
+            </div>
+
+            <!-- <div>
+              <label class="col-form-label">{{
+                "Specific for Engineer" | translate
+              }}</label>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="{{ 'fullNameAr' | translate }}"
+                autocomplete="off"
+                formControlName="SupEngineerName"
+              />
+            </div> -->
+
+            <!-- <div>
+              <label class="col-form-label">{{
+                "ID Number" | translate
+              }}</label>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="{{ 'ID Number' | translate }}"
+                autocomplete="off"
+                formControlName="SupEngineerNationalId"
+              />
+      
+            </div> -->
+            <!-- <div>
+              <label class="col-form-label"
+                >{{ "Cirtificate Number" | translate }}
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="{{ 'Cirtificate Number' | translate }}"
+                formControlName="SupEngineerCert"
+                autocomplete="off"
+              />
+
+              
+            </div> -->
+
+            <div>
+              <label class="col-form-label">
+                {{ "Work" | translate }}
+                <span class="text-danger">*</span></label
+              >
+              <!-- <ng-select
+                class="w-full p-0"
+                placeholder="{{ 'Work' | translate }}"
+                formControlName="TimeId"
+              >
+                <ng-option
+                  *ngFor="let jattendanceob of attendanceTimeOptions"
+                  [value]="jattendanceob.id"
+                  >{{ jattendanceob.name }}</ng-option
+                >
+              </ng-select> -->
+
+              <ng-select
+                [items]="attendanceTimeOptions"
+                bindLabel="name"
+                bindValue="id"
+                autocomplete="off"
+                [clearable]="true"
+                class="w-full p-0"
+                placeholder="{{ 'Work' | translate }}"
+                formControlName="TimeId"
+              >
+              </ng-select>
+              <div
+                *ngIf="
+                  userForm.get('TimeId')?.hasError('required') &&
+                  userForm.get('TimeId')?.touched
+                "
+                class="error-text"
+              >
+                This field is required.
+              </div>
+            </div>
+
+            <div>
+              <label class="col-form-label">
+                {{ "User branches" | translate }}</label
+              >
+
+              <!-- <tree-ngx [nodeItems]="branchOptions" class="{{ 'dir' | translate }}"
+                  (selectedItems)="selectedTask1 = $event" [options]="options" (click)="selectTAsk();"></tree-ngx> -->
+
+              <!-- <tree-ngx [nodeItems]="branchOptions" class="{{ 'dir' | translate }}"
+                  (selectedItems)="selectedTask1 = $event" [options]="options" (click)="selectTask();">
+                  <ng-template #nodeCollapsibleTemplate let-expanded="expanded">
+                    <span *ngIf="!expanded">
+                      <i class="fa-solid fa-folder-plus tree-icon"></i>
+                    </span>
+                    <span *ngIf="expanded">
+                      <i class="fa-solid fa-folder-minus tree-icon"></i>
+                    </span>
+                  </ng-template>
+                </tree-ngx> -->
+              <div *ngFor="let branch of branchOptions">
+                <label *ngIf="selectedBranchId !== branch.id">
+                  <input
+                    type="checkbox"
+                    [value]="branch.id"
+                    autocomplete="off"
+                    (change)="onCheckboxChange(branch)"
+                    [checked]="branch.checked"
+                  />
+                  {{ branch.name }}
+                </label>
+              </div>
+            </div>
+
+            <div>
+              <label class="col-form-label">{{ "Notes" | translate }} </label>
+              <textarea
+                class="form-control"
+                rows="1"
+                formControlName="Notes"
+              ></textarea>
+            </div>
+            <div *ngIf="DeviceId != 0">
+              <div
+                class="form-group"
+                style="
+                  display: flex;
+                  align-items: center;
+                  border-inline-start: 3px solid #ccc;
+                "
+              >
+                <i
+                  class="fa fa-mobile"
+                  style="font-size: 70px; margin: 8px"
+                ></i>
+                <div>
+                  <label class="col-form-label"
+                    >{{
+                      "The user's mobile ID associated with the system"
+                        | translate
+                    }}
+                  </label>
+                  <label class="col-form-label">{{ DeviceId }}</label>
+                  <label class="col-form-label">
+                    {{ "Operating System :" | translate }}
+                    {{ DeviceType }}</label
+                  >
+                </div>
+                <button
+                  (click)="DeleteDeviceId()"
+                  class="min-w-max p-2 bg-red-100 hover:bg-red-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+                >
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex gap-2 items-end mt-3">
+            <mat-slide-toggle
+              (change)="CheckStatus($event)"
+              color="primary"
+              [checked]="true"
+              formControlName="Status"
+            >
+              <span
+                [translate]="'name'"
+                [translateParams]="{
+                  ar: 'الحساب نشط',
+                  en: 'Active Account'
+                }"
+              ></span>
+            </mat-slide-toggle>
+
+            <mat-slide-toggle
+              color="primary"
+              (change)="CheckExpireD($event)"
+              formControlName="CheckExpireDate"
+              ><span
+                [translate]="'name'"
+                [translateParams]="{
+                  ar: 'اغلاق الحساب',
+                  en: 'Close Account'
+                }"
+              ></span
+            ></mat-slide-toggle>
+            <div class="form-group">
+              <label class="col-form-label">{{
+                "Reactive Account Date" | translate
+              }}</label>
+              <input
+                class="form-control"
+                name="ExpireDate"
+                type="text"
+                formControlName="ExpireDate"
+                bsDatepicker
+                autocomplete="off"
+                [bsConfig]="{ adaptivePosition: true }"
+              />
+              <!-- <input
+                placeholder="{{ 'Chose Date' | translate }} "
+                type="datetime-local"
+                class="form-control"
+                formControlName="ExpireDate"
+              /> -->
+            </div>
+          </div>
+        </mat-tab>
+
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <span>
+              {{ "User Permissions" | translate }}
+            </span>
+          </ng-template>
+          <div class="overflow-auto px-10">
+            <tree-ngx
+              [nodeItems]="AccountngxTree"
+              class="{{ 'dir' | translate }}"
+              (selectedItems)="selectedTask1 = $event"
+              [options]="options"
+            >
+              <ng-template
+                #nodeNameTemplate
+                let-node="node"
+                let-context="context"
+              >
+                <span
+                  *ngIf="
+                    node.id == 151315 ||
+                    node.id == 111316 ||
+                    node.id == 151316 ||
+                    node.id == 1118
+                  "
+                  style="
+                    background-color: #ea5252;
+                    font-weight: 700;
+                    color: black;
+                  "
+                  [class.active]="context.active"
+                  >{{ node.text | translate }}
+                </span>
+                <span
+                  *ngIf="
+                    node.id != 151315 &&
+                    node.id != 111316 &&
+                    node.id != 151316 &&
+                    node.id != 1118
+                  "
+                  [class.active]="context.active"
+                  >{{ node.text | translate }}
+                </span>
+              </ng-template>
+
+              <ng-template #nodeCollapsibleTemplate let-expanded="expanded">
+                <span *ngIf="!expanded">
+                  <i class="fa-solid fa-folder-plus tree-icon"></i>
+                </span>
+                <span *ngIf="expanded">
+                  <i class="fa-solid fa-folder-minus tree-icon"></i>
+                </span>
+              </ng-template>
+            </tree-ngx>
+          </div>
+        </mat-tab>
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <span>
+              {{ "Notifications Permissions" | translate }}
+            </span>
+          </ng-template>
+          <div class="overflow-auto px-10">
+            <tree-ngx
+              [nodeItems]="NotifAccountngxTree"
+              class="{{ 'dir' | translate }}"
+              (selectedItems)="selectedTask2 = $event"
+              [options]="options"
+            >
+              <ng-template #nodeCollapsibleTemplate let-expanded="expanded">
+                <span *ngIf="!expanded">
+                  <i class="fa-solid fa-folder-plus tree-icon"></i>
+                </span>
+                <span *ngIf="expanded">
+                  <i class="fa-solid fa-folder-minus tree-icon"></i>
+                </span>
+              </ng-template>
+            </tree-ngx>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </form>
+    <div
+      class="flex gap-2 justify-between items-end flex-wrap pt-3 border-t border-neutral-300 col-span-1 md:col-span-2 mt-2"
+    >
+      <div class="flex gap-2 items-center">
+        <!-- <img
+          class="w-20 aspect-square rounded-full object-cover"
+          src="{{ logoUrl| img }}"
+          alt=""
+        />
+        <div class="flex flex-col gap-2">
+          <span>{{ "Data Entry" | translate }}</span>
+          <div class="flex flex-col">
+            <span>{{ fullNameuser }}</span>
+          </div>
+        </div> -->
+      </div>
+
+      <!-- {{datamod | json}} -->
+      <button
+        [disabled]="
+          userForm.controls['FullName'].value == null ||
+          userForm.controls['FullNameAr'].value == null ||
+          userForm.controls['JobId'].value == null ||
+          userForm.controls['TimeId'].value == null ||
+          userForm.controls['DepartmentId'].value == null ||
+          userForm.controls['Email'].value == null ||
+          userForm.controls['confirmEmail'].value == null ||
+          userForm.controls['Mobile'].value == null ||
+          userForm.controls['GroupId'].value == null ||
+          userForm.controls['BranchId'].value == null ||
+          userForm.controls['UserName'].value == null ||
+          userForm.get('UserName')?.hasError('required')
+        "
+        class="btn bg-base text-white"
+        type="submit"
+        (click)="onSave(modal)"
+      >
+        {{ "Save" | translate }}
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<!-- confirm delete Modal -->
+<ng-template #deleteModalDeleteProjectPhasesTasks let-modal>
+  <div class="modal-body text-center">
+    <p
+      [translate]="'name'"
+      [translateParams]="{
+        ar: 'هل تريد بالتأكيد حذف هذا الصف',
+        en: 'Are you sure to delete this row ?'
+      }"
+    ></p>
+    <div class="flex gap-2 justify-center">
+      <button
+        type="button"
+        mat-raised-button
+        color="warn"
+        (click)="deleteUser()"
+      >
+        {{ "Yes" | translate }}
+      </button>
+      <button
+        type="button"
+        (click)="modal.dismiss()"
+        mat-raised-button
+        color="basic"
+      >
+        {{ "No" | translate }}
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<!-- confirm delete Modal -->
+<ng-template #deleteModal let-modal>
+  <div class="modal-body text-center">
+    <p
+      [translate]="'name'"
+      [translateParams]="{
+        ar: 'هل تريد بالتأكيد حذف هذا الصف',
+        en: 'Are you sure to delete this row ?'
+      }"
+    ></p>
+    <div class="flex gap-2 justify-center">
+      <button
+        type="button"
+        mat-raised-button
+        color="warn"
+        (click)="deleteUser()"
+      >
+        {{ "Yes" | translate }}
+      </button>
+      <button
+        type="button"
+        (click)="modal.dismiss()"
+        mat-raised-button
+        color="basic"
+      >
+        {{ "No" | translate }}
+      </button>
+    </div>
+  </div>
+</ng-template>
+<!-- addNewGroup   -->
+<ng-template #addNewGroup let-modal>
+  <div
+    style="background-color: var(--base-color)"
+    class="modal-header text-white flex justify-between items-center"
+  >
+    <h4 class="modal-title mb-0" id="modal-basic-title">
+      <span
+        class="text-2xl"
+        [translate]="'name'"
+        [translateParams]="{
+          ar: 'إضافة مجموعة جديدة',
+          en: 'Add new group'
+        }"
+      >
+      </span>
+    </h4>
+    <button
+      type="button"
+      class="text-white m-0"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    >
+      <i class="fa fa-close"></i>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <form class="modal-form" #form="ngForm">
+      <div class="grid md:grid-cols-2 gap-3">
+        <div class="form-group">
+          <label class="text-right col-form-label block">
+            {{ "nameAr" | translate }}
+            <span class="text-danger">*</span></label
+          >
+          <input
+            class="form-control"
+            [(ngModel)]="GroupsnameAr"
+            [ngModelOptions]="{ standalone: true }"
+            type="text"
+            [placeholder]="('Write' | translate) + ' ' + ('nameAr' | translate)"
+          />
+        </div>
+        <div class="form-group">
+          <label class="text-right col-form-label block">
+            {{ "nameEn" | translate }}
+            <span class="text-danger">*</span></label
+          >
+          <input
+            class="form-control"
+            [(ngModel)]="GroupsnameEn"
+            type="text"
+            [ngModelOptions]="{ standalone: true }"
+            [placeholder]="('Write' | translate) + ' ' + ('nameEn' | translate)"
+          />
+        </div>
+      </div>
+      <div class="max-h-80 overflow-auto mt-2 col-span-1 md:col-span-2">
+        <table class="custome-table">
+          <thead>
+            <tr class="text-center">
+              <th>{{ "nameAr" | translate }}</th>
+              <th>{{ "nameEn" | translate }}</th>
+              <th
+                [translate]="'name'"
+                [translateParams]="{
+                  ar: 'خيارات',
+                  en: 'Operations'
+                }"
+              ></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let group of groupListTable">
+              <td>{{ group.nameAr }}</td>
+              <td>{{ group.nameEn }}</td>
+              <!-- <td>Name English test</td> You can replace this with the appropriate English name -->
+              <td class="flex gap-2 justify-center">
+                <button
+                  (click)="updateGroups(group)"
+                  class="min-w-max p-2 bg-orange-100 hover:bg-orange-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+                >
+                  <i class="fa-regular fa-pen-to-square"></i>
+                </button>
+                <button
+                  (click)="DeleteGroups(group.groupId)"
+                  class="p-2 bg-red-100 hover:bg-red-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+                >
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </form>
+    <div
+      class="flex gap-2 justify-end pt-3 border-t border-neutral-300 col-span-1 md:col-span-2 mt-2"
+    >
+      <button
+        class="btn bg-base text-white"
+        type="submit"
+        (click)="SaveGroups()"
+      >
+        {{ "Save" | translate }}
+      </button>
+      <button (click)="modal.dismiss()" class="btn btn-secondary">
+        {{ "Back" | translate }}
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<!-- addNewjobs  -->
+<ng-template #jobs let-modal>
+  <div
+    style="background-color: var(--base-color)"
+    class="modal-header text-white flex justify-between items-center"
+  >
+    <h4 class="m-0">
+      <span class="text-2xl">
+        {{ "Jobs" | translate }}
+      </span>
+    </h4>
+    <button
+      type="button"
+      class="text-2xl text-white m-0"
+      (click)="modal.dismiss()"
+    >
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form class="modal-form" #form="ngForm">
+      <div class="grid md:grid-cols-2 gap-3">
+        <div class="form-group">
+          <label class="text-right col-form-label block">
+            {{ "nameAr" | translate }}
+            <span class="text-danger">*</span></label
+          >
+          <input
+            class="form-control"
+            type="text"
+            [(ngModel)]="JobNameAr"
+            [ngModelOptions]="{ standalone: true }"
+            [placeholder]="('Write' | translate) + ' ' + ('nameAr' | translate)"
+          />
+        </div>
+        <div class="form-group">
+          <label class="text-right col-form-label block">
+            {{ "nameEn" | translate }}
+            <span class="text-danger">*</span></label
+          >
+          <input
+            class="form-control"
+            type="text"
+            [(ngModel)]="JobNameEn"
+            [ngModelOptions]="{ standalone: true }"
+            [placeholder]="('Write' | translate) + ' ' + ('nameEn' | translate)"
+          />
+        </div>
+      </div>
+
+      <div class="max-h-80 overflow-auto mt-2 col-span-1 md:col-span-2">
+        <table class="custome-table">
+          <thead>
+            <tr class="text-center">
+              <th>{{ "nameAr" | translate }}</th>
+              <th>{{ "nameEn" | translate }}</th>
+              <th
+                [translate]="'name'"
+                [translateParams]="{
+                  ar: 'خيارات',
+                  en: 'Operations'
+                }"
+              ></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let job of jobOptionsList">
+              <td>{{ job.jobNameAr }}</td>
+              <td>{{ job.jobNameEn }}</td>
+              <!-- <td>Name English test</td> You can replace this with the appropriate English name -->
+              <td class="flex gap-2 justify-center">
+                <button
+                  (click)="updatejob(job)"
+                  class="min-w-max p-2 bg-orange-100 hover:bg-orange-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+                >
+                  <i class="fa-regular fa-pen-to-square"></i>
+                </button>
+                <button
+                  (click)="Deletejobs(job.jobId)"
+                  class="p-2 bg-red-100 hover:bg-red-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+                >
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </form>
+    <div
+      class="flex gap-2 justify-end pt-3 border-t border-neutral-300 col-span-1 md:col-span-2 mt-2"
+    >
+      <button class="btn bg-base text-white" type="submit" (click)="Savejob()">
+        {{ "Save" | translate }}
+      </button>
+      <button (click)="modal.dismiss()" class="btn btn-secondary">
+        {{ "Back" | translate }}
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<!-- addNewdepartments   -->
+<ng-template #departments let-modal>
+  <div
+    style="background-color: var(--base-color)"
+    class="modal-header text-white flex justify-between items-center"
+  >
+    <h4 class="m-0">
+      <span class="text-2xl">
+        {{ "Departments" | translate }}
+      </span>
+    </h4>
+    <button
+      type="button"
+      class="text-2xl text-white m-0"
+      (click)="modal.dismiss()"
+    >
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form class="modal-form" #form="ngForm">
+      <div class="grid md:grid-cols-2 gap-3">
+        <div class="form-group">
+          <label class="text-right col-form-label block">
+            {{ "nameAr" | translate }}
+            <span class="text-danger">*</span></label
+          >
+          <input
+            class="form-control"
+            type="text"
+            [(ngModel)]="departmentNameAr"
+            [ngModelOptions]="{ standalone: true }"
+            [placeholder]="('Write' | translate) + ' ' + ('nameAr' | translate)"
+          />
+        </div>
+        <div class="form-group">
+          <label class="text-right col-form-label block">
+            {{ "nameEn" | translate }}
+            <span class="text-danger">*</span></label
+          >
+          <input
+            class="form-control"
+            type="text"
+            [(ngModel)]="departmentNameEn"
+            [ngModelOptions]="{ standalone: true }"
+            [placeholder]="('Write' | translate) + ' ' + ('nameEn' | translate)"
+          />
+        </div>
+      </div>
+
+      <div class="max-h-80 overflow-auto mt-2 col-span-1 md:col-span-2">
+        <table class="custome-table">
+          <thead>
+            <tr class="text-center">
+              <th>{{ "nameAr" | translate }}</th>
+              <th>{{ "nameEn" | translate }}</th>
+              <th
+                [translate]="'name'"
+                [translateParams]="{
+                  ar: 'خيارات',
+                  en: 'Operations'
+                }"
+              ></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let branch of branchlist">
+              <td>{{ branch.departmentNameAr }}</td>
+              <td>{{ branch.departmentNameEn }}</td>
+              <!-- <td>Name English test</td> You can replace this with the appropriate English name -->
+              <td class="flex gap-2 justify-center">
+                <button
+                  (click)="updatebranch(branch)"
+                  class="min-w-max p-2 bg-orange-100 hover:bg-orange-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+                >
+                  <i class="fa-regular fa-pen-to-square"></i>
+                </button>
+                <button
+                  (click)="Deletebranch(branch.departmentId)"
+                  class="p-2 bg-red-100 hover:bg-red-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+                >
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </form>
+    <div
+      class="flex gap-2 justify-end pt-3 border-t border-neutral-300 col-span-1 md:col-span-2 mt-2"
+    >
+      <button
+        class="btn bg-base text-white"
+        type="submit"
+        (click)="Savebranch()"
+      >
+        {{ "Save" | translate }}
+      </button>
+      <button (click)="modal.dismiss()" class="btn btn-secondary">
+        {{ "Back" | translate }}
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+
+
+
