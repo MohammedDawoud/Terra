@@ -1,7 +1,7 @@
 export const environment = {
   production: true,
-  apiEndPoint: 'https://terra.tameercloud.com/api/',
-  PhotoURL: 'https://terra.tameercloud.com',
+  apiEndPoint: 'https://api.terracloud.com/api/',
+  PhotoURL: 'https://api.terracloud.com',
   printConfig: {
     printMode: 'template', // template
     popupProperties:

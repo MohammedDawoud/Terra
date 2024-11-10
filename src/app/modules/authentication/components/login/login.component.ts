@@ -72,18 +72,19 @@ export class LoginComponent implements OnInit {
     this.api.GetOrganizationDataLogin().subscribe({
       next: (res: any) => {
         debugger
-        this.authenticationService.allowWithoutToken = '';
-        if(this.lang == 'ar'){ this.environmentName=res.result.nameAr;}
-        else{ this.environmentName=res.result.nameEn;}
-        localStorage.setItem('environmentName', this.environmentName);
-        this.environmentPho = environment.PhotoURL + res.result.logoUrl;
-        localStorage.setItem('environmentPho', this.environmentPho);
+        if(res.result!=null){
+          this.authenticationService.allowWithoutToken = '';
+          if(this.lang == 'ar'){ this.environmentName=res.result.nameAr;}
+          else{ this.environmentName=res.result.nameEn;}
+          localStorage.setItem('environmentName', this.environmentName);
+          this.environmentPho = environment.PhotoURL + res.result.logoUrl;
+          localStorage.setItem('environmentPho', this.environmentPho);
+        }
       },
       error: (error) => {
         this.authenticationService.allowWithoutToken = '';
       },
     });
-   // this.getqrcode();
   }
 
   datalogin: any = {
@@ -123,13 +124,5 @@ export class LoginComponent implements OnInit {
   refreshQrCode() {
     this.qrCodeCheckValue = Math.floor(1000 + Math.random() * 9000).toString();
   }
-  Qrcode: any;
-  getqrcode() {
-    this.api.GenerateCompanyQR().subscribe({
-      next: (res: any) => {
-        this.Qrcode =environment.PhotoURL+ res.result;
-      }
-    });
-  }
-  
+
 }

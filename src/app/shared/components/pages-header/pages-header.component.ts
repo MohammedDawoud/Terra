@@ -53,17 +53,17 @@ export class PagesHeaderComponent implements OnInit {
     this.api.GetOrganizationDataLogin().subscribe(
       {
         next: (res: any) => {
-          this.authenticationService.allowWithoutToken = ""
-          this.orgphone = res.result.mobile;
-          this.orgmail = res.result.email;
-          this.orgname = res.result.orgName;
+          if(res.result!=null){
+            this.authenticationService.allowWithoutToken = ""
+            this.orgphone = res.result.mobile;
+            this.orgmail = res.result.email;
+            this.orgname = res.result.orgName;
+          }      
         },
         error: (error) => {
           this.authenticationService.allowWithoutToken = ""
         },
       })
-
-    this.getqrcode();
   }
 
   setLanguageOnInit() {
@@ -131,15 +131,5 @@ export class PagesHeaderComponent implements OnInit {
     setTimeout(() => {
       this.isOpen = false;
     }, 500);
-  }
-
-
-    Qrcode: any;
-  getqrcode() {
-    this.api.GenerateCompanyQR().subscribe({
-      next: (res: any) => {
-        this.Qrcode =environment.PhotoURL+ res.result;
-      }
-    });
   }
 }
