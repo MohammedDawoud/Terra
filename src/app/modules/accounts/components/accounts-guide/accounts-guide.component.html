@@ -6,21 +6,6 @@
     <div class="row">
       <div class="col-md-5 col-8">
         <div class="tree">
-          <!-- <tree-ngx
-            [nodeItems]="nodeItems"
-            class="{{ 'dir' | translate }}"
-            (selectedItems)="selectedTask1 = $event"
-            [options]="options"
-          >
-            <ng-template #nodeCollapsibleTemplate let-expanded="expanded">
-              <span *ngIf="!expanded">
-                <i class="fa-solid fa-folder-plus tree-icon"></i>
-              </span>
-              <span *ngIf="expanded">
-                <i class="fa-solid fa-folder-minus tree-icon"></i>
-              </span>
-            </ng-template>
-          </tree-ngx> -->
           <tree-ngx
           [nodeItems]="AccountngxTree"
           class="{{ 'dir' | translate }}"
@@ -54,37 +39,6 @@
                 name="accountCode"autocomplete="off"
                 [(ngModel)]="acountCode"
                 placeholder="{{ 'account code' | translate }}"
-              />
-            </div>
-          </div>
-
-          <div class="col-lg-3 mb-0 mb-md-3">
-            <div class="form-group">
-              <label class="col-form-label"> {{ "debtor" | translate }}</label>
-              <input
-                type="text "
-                readonly
-                class="w-full p-2 inputType bg-green-400  text-white"autocomplete="off"
-                name="debtor"
-                placeholder="{{ 'debtor' | translate }}"
-                [(ngModel)]="debtor"
-              />
-            </div>
-          </div>
-
-          <div class="col-lg-3 mb-0 mb-md-3">
-            <div class="form-group">
-              <label class="col-form-label">
-                {{ "Creditor" | translate }}</label
-              >
-
-              <input
-                readonly
-                type="text "autocomplete="off"
-                class="w-full p-2 inputType bg-red-400 text-white"
-                name="Creditor"
-                placeholder="{{ 'Creditor' | translate }}"
-                [(ngModel)]="Creditor"
               />
             </div>
           </div>
@@ -123,40 +77,6 @@
               />
             </div>
           </div>
-
-          <div class="col-xxl-3 col-lg-4 col-md-5 mb-0 mb-md-3">
-            <div class="form-group">
-              <label class="col-form-label">
-                {{ "debtorEditorial" | translate }}</label
-              >
-
-              <input
-                type="number"
-                class="w-full p-2 inputType"
-                name="debtorEditorial"
-                placeholder="{{ 'debtor' | translate }}"autocomplete="off"
-                [(ngModel)]="debtorEditorial"
-                [disabled]="selectItemOftree==true || disabledcreate== true"
-              />
-            </div>
-          </div>
-
-          <div class="col-xxl-3 col-lg-4 col-md-5 mb-0 mb-md-3">
-            <div class="form-group">
-              <label class="col-form-label">
-                {{ "CreditorEditorial" | translate }}</label
-              >
-
-              <input
-                type="number"
-                class="w-full p-2 inputType"
-                name="CreditorEditorial"autocomplete="off"
-                placeholder="{{ 'Creditor' | translate }}"
-                [(ngModel)]="CreditorEditorial"
-                [disabled]="selectItemOftree==true || disabledcreate== true"
-              />
-            </div>
-          </div>
           <!-- 3 -->
           <div class="col-xxl-3 col-lg-4 col-md-5 mb-0 mb-md-3">
             <div class="form-group">
@@ -191,52 +111,6 @@
               />
             </div>
           </div>
-
-          <div class="col-xxl-3 col-lg-4 col-md-5 mb-0 mb-md-3">
-            <div class="form-group">
-              <label for="date" class="text-right col-form-label block">
-                {{ "debtorEditorialDate" | translate }}
-              </label>
-              <input
-              placeholder="{{ 'Chose' | translate }}"
-              name="date"
-              type="text"
-              class="form-control"
-              bsDatepicker
-              #dpr="bsDatepicker"
-              autocomplete="off"
-              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
-              [(ngModel)]="depitDate"
-              [ngModelOptions]="{ standalone: true }"
-              [disabled]="selectItemOftree==true"autocomplete="off"
-            />
-            </div>
-          </div>
-
-          <div class="col-xxl-3 col-lg-4 col-md-5 mb-0 mb-md-3">
-            <div class="form-group">
-              <label for="date" class="text-right col-form-label block">
-                {{ "CreditorEditorialDate" | translate }}
-              </label>
-              <input
-              placeholder="{{ 'Chose' | translate }}"
-              name="date"
-              type="text"
-              class="form-control"
-              bsDatepicker
-              #dpr="bsDatepicker"
-              autocomplete="off"
-              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
-              [(ngModel)]="creditDate"
-              [ngModelOptions]="{ standalone: true }"
-              [disabled]="selectItemOftree==true"autocomplete="off"
-            />
-            </div>
-          </div>
-
-
-
-
           <!-- 4-->
           <div class="col-xxl-4 col-lg-5 col-md-5 mb-0 mb-md-3">
             <div class="form-group">
@@ -285,31 +159,10 @@
                 name="accountLevel"
                 placeholder="{{ 'accountLevel' | translate }}"
                 [(ngModel)]="accountLevel"
-                [disabled]="selectItemOftree==true || disabledcreate== true"
               />
             </div>
           </div>
           <!-- 5 -->
-
-          <div class="col-xxl-4 col-lg-5 col-md-5 mb-0 mb-md-3">
-            <div class="form-group">
-              <label class="col-form-label">
-                {{ "AccountDepreciationCompound" | translate }}</label
-              >
-              <ng-select
-                class="w-full p-0"
-                placeholder="{{ 'Chose' | translate }}"
-                ngModel
-                name="AccountDepreciationCompound"
-                [(ngModel)]="AccountIdAhlak"
-                [disabled]="selectItemOftree==true"
-              >
-                <ng-option *ngFor="let user of AccountIdAhlakSelectList" [value]="user.id">{{
-                  user.name
-                }}</ng-option>
-              </ng-select>
-            </div>
-          </div>
 
           <div class="col-xxl-4 col-lg-5 col-md-5 mb-0 mb-md-3">
             <div class="form-check form-switch position-relative my-4 flex-col">
@@ -383,13 +236,6 @@
           <p style="color: red;font-weight: bold;margin-bottom: 1px;" class="p-1 bg-red-100">
             1- عميل جديد : إضافة عميل جديد : يتم إضافة عميل جديد وحذف عميل موجود مسبقا من شاشة العملاء و ليس من الدليل
           </p>
-          <p style="color: red;font-weight: bold;margin-bottom: 1px;" class="p-1 bg-red-100">
-            2- موظف جديد : إضافة موظف جديد : يتم إضافة موظف جديد وحذف موظف موجود مسبقا من شاشة الموظفين وليس من الدليل حيث يقوم النظام عند إضافة موظف جديد بفتح حساب للموظف وحساب للعهد وحساب للسلف تلقائيا في الدليل
-          </p>
-          <p style="color: red;font-weight: bold;margin-left: 15%;" class="p-1 bg-red-100">
-            3- مورد جديد : إضافة مورد جديد وحذف مورد موجود مسبقا من شاشة المشتريات و ليس من الدليل
-          </p>
-
 
         </div>
         <!-- all buttons  -->
@@ -458,7 +304,7 @@
     <table
       *ngIf="showTable"
       mat-table
-      [dataSource]="projectsDataSource"
+      [dataSource]="accountsDataSource"
       matSort
       class="mat-elevation-z8 rounded-t-lg overflow-hidden w-max"
     >
@@ -562,15 +408,15 @@
         </td>
       </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="projectDisplayedColumns"></tr>
+      <tr mat-header-row *matHeaderRowDef="accountDisplayedColumns"></tr>
 
-      <tr mat-row *matRowDef="let row; columns: projectDisplayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: accountDisplayedColumns"></tr>
     </table>
 
     <div *ngIf="!showTable" class="text-center">No Data Available in Table</div>
   </div>
 
-  <mat-paginator *ngIf="showTable" [pageSizeOptions]="[10, 25,projectsDataSource.data.length]">
+  <mat-paginator *ngIf="showTable" [pageSizeOptions]="[10, 25,accountsDataSource.data.length]">
   </mat-paginator>
 
   <div id="report" [ngStyle]="{ direction: lang == 'ar' ? 'rtl' : 'ltr' }" style="position: absolute;">

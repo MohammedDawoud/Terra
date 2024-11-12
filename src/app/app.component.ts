@@ -121,7 +121,7 @@ export class AppComponent implements OnInit, AfterContentChecked {
           ev.url.includes('reports') ||
           ev.url.includes('communications')
         ) {
-          this.ChangeOnlineStatus(true);
+          //this.ChangeOnlineStatus(true);
         }        
       }
     });

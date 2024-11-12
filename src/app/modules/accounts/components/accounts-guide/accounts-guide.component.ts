@@ -28,7 +28,6 @@ import { NgxPrintElementService } from 'ngx-print-element';
   styleUrls: ['./accounts-guide.component.scss'],
 })
 export class AccountsGuideComponent implements OnInit {
-  nodeItems: any;
   selectedTask1: any;
 
   options = {
@@ -38,45 +37,6 @@ export class AccountsGuideComponent implements OnInit {
   };
   accountCode: any;
 
-  // data in runningTasksModal
-  accountingEntries = [
-    {
-      date: '2023-07-01',
-      bondNumber: '123',
-      bondType: 'Type A',
-      registrationNumber: '456',
-      accountCode: '789',
-      accountName: 'Account A',
-      statement: 'Statement A',
-      debtor: 100,
-      creditor: 50,
-    },
-    {
-      date: '2023-07-02',
-      bondNumber: '456',
-      bondType: 'Type B',
-      registrationNumber: '789',
-      accountCode: '012',
-      accountName: 'Account B',
-      statement: 'Statement B',
-      debtor: 200,
-      creditor: 150,
-    },
-  ];
-
-  get totalDebtor() {
-    return this.accountingEntries.reduce(
-      (total, entry) => total + entry.debtor,
-      0
-    );
-  }
-
-  get totalCreditor() {
-    return this.accountingEntries.reduce(
-      (total, entry) => total + entry.creditor,
-      0
-    );
-  }
 
   projects: any;
   @ViewChild('SmartFollower') smartModal: any;
@@ -95,7 +55,6 @@ export class AccountsGuideComponent implements OnInit {
   };
 
   selectedUser: any;
-  users: any;
 
   closeResult = '';
 
@@ -111,57 +70,8 @@ export class AccountsGuideComponent implements OnInit {
 
   openBox: any = false;
   boxId: any;
-  displayedColumns: string[] = [
-    'offer_id',
-    'date',
-    'customer',
-    'price',
-    'user',
-    'project_id',
-    'project-duration',
-    'operations',
-  ];
-  // dataSource: MatTableDataSource<any>;
-  dataSource: MatTableDataSource<any> = new MatTableDataSource([{}]);
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
-
-  delayedProjects: any;
-  latedProjects: any;
-
-  currentDate: any;
-
-  selectedProject: any;
-  selectedRow: any;
-
-  selectAllValue = false;
-
-  selectedUserPermissions: any = {
-    userName: '',
-    watch: null,
-    add: null,
-    edit: null,
-    delete: null,
-  };
-  userPermissions: any = [];
-
-  userPermissionsColumns: string[] = [
-    'userName',
-    'watch',
-    'add',
-    'edit',
-    'delete',
-    'operations',
-  ];
-  projectGoalsColumns: string[] = [
-    'serial',
-    'requirements',
-    'name',
-    'duration',
-    'choose',
-  ];
-  projectDisplayedColumns: string[] = [
+  accountDisplayedColumns: string[] = [
     'accountCode',
     'accountNameAR',
     'accountNameLat',
@@ -171,18 +81,17 @@ export class AccountsGuideComponent implements OnInit {
     'MainAccount',
     'operations',
   ];
+  // dataSource: MatTableDataSource<any>;
+  dataSource: MatTableDataSource<any> = new MatTableDataSource([{}]);
 
-  projectUsersColumns: string[] = ['name', 'responsibility'];
-  projectTasksColumns: string[] = ['taskName', 'name', 'duration'];
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
-  userPermissionsDataSource = new MatTableDataSource();
 
-  projectGoalsDataSource = new MatTableDataSource();
+  currentDate: any;
+  selectedRow: any;
 
-  projectUsersDataSource = new MatTableDataSource();
-  projectTasksDataSource = new MatTableDataSource();
-
-  projectsDataSource = new MatTableDataSource();
+  selectAllValue = false;
 
   modalDetails: any = {
     accountCode: null,
@@ -208,97 +117,6 @@ export class AccountsGuideComponent implements OnInit {
     projectGoals: null,
   };
 
-  rows = [
-    { id: 1, name_ar: 'اسم النشاط 1', name_en: 'test test' },
-    { id: 2, name_ar: 'اسم النشاط 2', name_en: 'test test' },
-    { id: 3, name_ar: 'اسم النشاط 3', name_en: 'test test' },
-    { id: 1, name_ar: 'اسم النشاط', name_en: 'test test' },
-    { id: 2, name_ar: 'اسم النشاط', name_en: 'test test' },
-    { id: 3, name_ar: 'اسم النشاط', name_en: 'test test' },
-    { id: 1, name_ar: 'اسم النشاط', name_en: 'test test' },
-    { id: 2, name_ar: 'اسم النشاط', name_en: 'test test' },
-    { id: 3, name_ar: 'اسم النشاط', name_en: 'test test' },
-    { id: 1, name_ar: 'اسم النشاط', name_en: 'test test' },
-    { id: 2, name_ar: 'اسم النشاط', name_en: 'test test' },
-    { id: 3, name_ar: 'اسم النشاط', name_en: 'test test' },
-  ];
-  temp: any = [
-    { id: 1, name_ar: 'اسم النشاط 1', name_en: 'test test' },
-    { id: 2, name_ar: 'اسم النشاط 2', name_en: 'test test' },
-    { id: 3, name_ar: 'اسم النشاط 3', name_en: 'test test' },
-    { id: 1, name_ar: 'اسم النشاط', name_en: 'test test' },
-    { id: 2, name_ar: 'اسم النشاط', name_en: 'test test' },
-    { id: 3, name_ar: 'اسم النشاط', name_en: 'test test' },
-    { id: 1, name_ar: 'اسم النشاط', name_en: 'test test' },
-    { id: 2, name_ar: 'اسم النشاط', name_en: 'test test' },
-    { id: 3, name_ar: 'اسم النشاط', name_en: 'test test' },
-    { id: 1, name_ar: 'اسم النشاط', name_en: 'test test' },
-    { id: 2, name_ar: 'اسم النشاط', name_en: 'test test' },
-    { id: 3, name_ar: 'اسم النشاط', name_en: 'test test' },
-  ];
-
-  projectGoals: any = [
-    {
-      serial: 'adawd',
-      requirements: 'adawd',
-      name: 'adawd',
-      duration: 'adawd',
-      choose: true,
-    },
-    {
-      serial: 'adawd',
-      requirements: 'adawd',
-      name: 'adawd',
-      duration: 'adawd',
-      choose: false,
-    },
-    {
-      serial: 'adawd',
-      requirements: 'adawd',
-      name: 'adawd',
-      duration: 'adawd',
-      choose: false,
-    },
-  ];
-
-  projectUsers: any = [
-    {
-      name: 'adawd',
-      image: '/assets/images/login-img.png',
-      responsibility: 'adawd',
-    },
-    {
-      name: 'adawd',
-      image: '/assets/images/login-img.png',
-      responsibility: 'adawd',
-    },
-    {
-      name: 'adawd',
-      image: '/assets/images/login-img.png',
-      responsibility: 'adawd',
-    },
-  ];
-
-  projectTasks: any = [
-    {
-      name: 'adawd',
-      image: '/assets/images/login-img.png',
-      taskName: 'adawd',
-      duration: 4,
-    },
-    {
-      name: 'adawd',
-      image: '/assets/images/login-img.png',
-      taskName: 'adawd',
-      duration: 4,
-    },
-    {
-      name: 'adawd',
-      image: '/assets/images/login-img.png',
-      taskName: 'adawd',
-      duration: 4,
-    },
-  ];
   lang: any = 'ar';
 
   startDate = new Date();
@@ -320,439 +138,13 @@ export class AccountsGuideComponent implements OnInit {
       this.lang = res;
     });
   }
-
+  accountsDataSource = new MatTableDataSource();
   ngOnInit(): void {
-    this.nodeItems = [
-      {
-        id: '0',
-        name: 'Heros',
-        children: [
-          {
-            id: '1',
-            name: 'Batman',
-            item: {
-              phrase: 'I am the batman',
-            },
-          },
-          {
-            id: '2',
-            name: 'Superman',
-            item: {
-              phrase: 'Man of steel',
-            },
-          },
-        ],
-      },
-      {
-        id: '3',
-        name: 'Villains',
-        children: [
-          {
-            id: '4',
-            name: 'Joker',
-            item: {
-              phrase: 'Why so serius',
-            },
-          },
-          {
-            id: '5',
-            name: 'Lex luthor',
-            item: {
-              phrase: 'I am the villain of this story',
-            },
-          },
-        ],
-      },
-      {
-        id: '0',
-        name: 'Heros',
-        children: [
-          {
-            id: '1',
-            name: 'Batman',
-            item: {
-              phrase: 'I am the batman',
-            },
-          },
-          {
-            id: '2',
-            name: 'Superman',
-            item: {
-              phrase: 'Man of steel',
-            },
-          },
-        ],
-      },
-      {
-        id: '3',
-        name: 'Villains',
-        children: [
-          {
-            id: '4',
-            name: 'Joker',
-            item: {
-              phrase: 'Why so serius',
-            },
-          },
-          {
-            id: '5',
-            name: 'Lex luthor',
-            item: {
-              phrase: 'I am the villain of this story',
-            },
-          },
-        ],
-      },
-      {
-        id: '0',
-        name: 'Heros',
-        children: [
-          {
-            id: '1',
-            name: 'Batman',
-            item: {
-              phrase: 'I am the batman',
-            },
-          },
-          {
-            id: '2',
-            name: 'Superman',
-            item: {
-              phrase: 'Man of steel',
-            },
-          },
-        ],
-      },
-      {
-        id: '3',
-        name: 'Villains',
-        children: [
-          {
-            id: '4',
-            name: 'Joker',
-            item: {
-              phrase: 'Why so serius',
-            },
-          },
-          {
-            id: '5',
-            name: 'Lex luthor',
-            item: {
-              phrase: 'I am the villain of this story',
-            },
-          },
-        ],
-      },
-      {
-        id: '0',
-        name: 'Heros',
-        children: [
-          {
-            id: '1',
-            name: 'Batman',
-            item: {
-              phrase: 'I am the batman',
-            },
-          },
-          {
-            id: '2',
-            name: 'Superman',
-            item: {
-              phrase: 'Man of steel',
-            },
-          },
-        ],
-      },
-      {
-        id: '3',
-        name: 'Villains',
-        children: [
-          {
-            id: '4',
-            name: 'Joker',
-            item: {
-              phrase: 'Why so serius',
-            },
-          },
-          {
-            id: '5',
-            name: 'Lex luthor',
-            item: {
-              phrase: 'I am the villain of this story',
-            },
-          },
-        ],
-      },
-      {
-        id: '0',
-        name: 'Heros',
-        children: [
-          {
-            id: '1',
-            name: 'Batman',
-            item: {
-              phrase: 'I am the batman',
-            },
-          },
-          {
-            id: '2',
-            name: 'Superman',
-            item: {
-              phrase: 'Man of steel',
-            },
-          },
-        ],
-      },
-      {
-        id: '3',
-        name: 'Villains',
-        children: [
-          {
-            id: '4',
-            name: 'Joker',
-            item: {
-              phrase: 'Why so serius',
-            },
-          },
-          {
-            id: '5',
-            name: 'Lex luthor',
-            item: {
-              phrase: 'I am the villain of this story',
-            },
-          },
-        ],
-      },
-      {
-        id: '0',
-        name: 'Heros',
-        children: [
-          {
-            id: '1',
-            name: 'Batman',
-            item: {
-              phrase: 'I am the batman',
-            },
-          },
-          {
-            id: '2',
-            name: 'Superman',
-            item: {
-              phrase: 'Man of steel',
-            },
-          },
-        ],
-      },
-      {
-        id: '3',
-        name: 'Villains',
-        children: [
-          {
-            id: '4',
-            name: 'Joker',
-            item: {
-              phrase: 'Why so serius',
-            },
-          },
-          {
-            id: '5',
-            name: 'Lex luthor',
-            item: {
-              phrase: 'I am the villain of this story',
-            },
-          },
-        ],
-      },
-      {
-        id: '0',
-        name: 'Heros',
-        children: [
-          {
-            id: '1',
-            name: 'Batman',
-            item: {
-              phrase: 'I am the batman',
-            },
-          },
-          {
-            id: '2',
-            name: 'Superman',
-            item: {
-              phrase: 'Man of steel',
-            },
-          },
-        ],
-      },
-      {
-        id: '3',
-        name: 'Villains',
-        children: [
-          {
-            id: '4',
-            name: 'Joker',
-            item: {
-              phrase: 'Why so serius',
-            },
-          },
-          {
-            id: '5',
-            name: 'Lex luthor',
-            item: {
-              phrase: 'I am the villain of this story',
-            },
-          },
-        ],
-      },
-    ];
 
-    this.users = [
-      { id: 1, Name: 'محمود نافع' },
-      { id: 2, Name: 'محمود نافع' },
-    ];
-
-    this.delayedProjects = [
-      {
-        user: 'adwawd',
-        customerName: 'adawdv',
-        projectStatus: 4,
-        startDate: new Date(),
-        endDate: new Date(),
-      },
-    ];
-    this.latedProjects = [
-      {
-        user: 'adwawd',
-        customerName: 'adawdv',
-        projectStatus: 0,
-        startDate: new Date(),
-        endDate: new Date(),
-      },
-    ];
-
-    this.projects = [
-      {
-        accountCode: '000056',
-        accountNameAR: '2023-06-13',
-        accountNameLat: 'أجل',
-        accountLevel: '2023-06-13',
-        AccountClas: 50,
-        accountType: 50,
-        MainAccount: 50,
-        progress: 50,
-      },
-      {
-        accountCode: '000057',
-        accountNameAR: '2023-06-13',
-        accountNameLat: 'أجل',
-        accountLevel: '2023-06-13',
-        AccountClas: 50,
-        accountType: 50,
-        MainAccount: 50,
-        progress: 50,
-      },
-      {
-        accountCode: '000058',
-        accountNameAR: '2023-06-13',
-        accountNameLat: 'أجل',
-        accountLevel: '2023-06-13',
-        AccountClas: 50,
-        accountType: 50,
-        MainAccount: 50,
-        progress: 50,
-      },
-      {
-        accountCode: '000059',
-        accountNameAR: '2023-06-13',
-        accountNameLat: 'أجل',
-        accountLevel: '2023-06-13',
-        AccountClas: 50,
-        accountType: 50,
-        MainAccount: 50,
-        progress: 50,
-      },
-      {
-        accountCode: '000060',
-        accountNameAR: '2023-06-13',
-        accountNameLat: 'أجل',
-        accountLevel: '2023-06-13',
-        AccountClas: 50,
-        accountType: 50,
-        MainAccount: 50,
-        progress: 50,
-      },
-    ];
-
-    this.userPermissions = [
-      {
-        userName: 'adawdawd',
-        watch: false,
-        add: true,
-        edit: true,
-        delete: false,
-      },
-      {
-        userName: 'adawdawd',
-        watch: false,
-        add: true,
-        edit: true,
-        delete: false,
-      },
-      {
-        userName: 'adawdawd',
-        watch: false,
-        add: true,
-        edit: true,
-        delete: true,
-      },
-      {
-        userName: 'adawdawd',
-        watch: false,
-        add: false,
-        edit: true,
-        delete: false,
-      },
-      {
-        userName: 'adawdawd',
-        watch: false,
-        add: true,
-        edit: true,
-        delete: false,
-      },
-      {
-        userName: 'adawdawd',
-        watch: true,
-        add: true,
-        edit: true,
-        delete: false,
-      },
-      {
-        userName: 'adawdawd',
-        watch: true,
-        add: true,
-        edit: true,
-        delete: true,
-      },
-    ];
-
-    this.projectsDataSource = new MatTableDataSource();
-
-    this.userPermissionsDataSource = new MatTableDataSource(
-      this.userPermissions
-    );
-
-    this.projectGoalsDataSource = new MatTableDataSource(this.projectGoals);
-
-    this.projectUsersDataSource = new MatTableDataSource(this.projectUsers);
-
-    this.projectTasksDataSource = new MatTableDataSource(this.projectTasks);
-
+    this.accountsDataSource = new MatTableDataSource();
 
     this.GetAccountTree();
     this.GetAllAccounts();
-    this.FillAccountIdAhlakSelect();
-    this.FillCurrencySelect();
-
-
   }
   accId: any = 0;
   acountCode: any;
@@ -821,7 +213,6 @@ export class AccountsGuideComponent implements OnInit {
   ]
 
   onAccountCodeClick(element: any) {
-    this.GetAccCredit_Depit(element.accountId);
     this.accId = element.accountId
     this.acountCode = element.code
     this.MainAccountCode = element.parentAccountCode
@@ -909,43 +300,23 @@ export class AccountsGuideComponent implements OnInit {
         }
       );
   }
-  projectsDataSourceTemp: any = [];
+  accountsDataSourceTemp: any = [];
   GetAllaccountGuideList: any
   GetAllAccounts() {
     this.accountGuideService.GetAllAccounts().subscribe((data: any) => {
       this.GetAllaccountGuideList = data;
-      this.projectsDataSource = new MatTableDataSource(data);
-      this.projectsDataSource.sort = this.sort;
-      this.projectsDataSourceTemp = data;
-      this.projectsDataSource.paginator = this.paginator;
+      this.accountsDataSource = new MatTableDataSource(data);
+      this.accountsDataSource.sort = this.sort;
+      this.accountsDataSourceTemp = data;
+      this.accountsDataSource.paginator = this.paginator;
     });
   }
 
-  AccountIdAhlakSelectList: any
-  FillAccountIdAhlakSelect() {
-    this.accountGuideService.FillAccountIdAhlakSelect().subscribe((data: any) => {
-      this.AccountIdAhlakSelectList = data;
-    });
-  }
-  CurrencySelectList: any
-  FillCurrencySelect() {
-    this.accountGuideService.FillCurrencySelect().subscribe((data: any) => {
-      this.CurrencySelectList = data;
-    });
-  }
-  AccCredit_Depit: any
-  GetAccCredit_Depit(id: any) {
-    this.accountGuideService.GetAccCredit_Depit(id).subscribe((data: any) => {
-      this.debtor = data.depit;
-      this.Creditor = data.credit;
-    });
-  }
   AccountngxTree: any
   AccountngxTreelist: any = []
   selectedTask2: any = []
   GetAccountTree() {
-    this.accountGuideService.GetAccountTree().subscribe(
-      (response: any) => {
+    this.accountGuideService.GetAccountTree().subscribe((response: any) => {
         this.AccountngxTreelist = response
         this.AccountngxTreelist.forEach((element: any) => {
           element.children = []
@@ -1066,7 +437,6 @@ export class AccountsGuideComponent implements OnInit {
   selectedTree() {
     if (this.selectedTask1.length > 0) {
       this.GetAccountById(this.selectedTask1[0].id)
-      this.GetAccCredit_Depit(this.selectedTask1[0].id)
     }
     else {
       this.newAccount()
@@ -1081,7 +451,7 @@ export class AccountsGuideComponent implements OnInit {
       return;
     }
 
-    if (this.accountNameEn == (null || '' || undefined)) {
+    if (this.accountNameEn == null ||this.accountNameEn ==  '' || this.accountNameEn ==  'undefined') {
       this.accountNameEn = this.accountNameAR;
     }
     debugger
@@ -1117,11 +487,8 @@ export class AccountsGuideComponent implements OnInit {
 
       if (data.statusCode == 200) {
         this.toast.success(this.translate.instant(data.reasonPhrase), this.translate.instant('Message'));
-        //this.MaintenanceFunc_WithoutMsg()
         this.GetAccountTree();
         this.GetAllAccounts();
-        this.FillAccountIdAhlakSelect();
-        this.FillCurrencySelect();
       } else {
         this.toast.error(this.translate.instant(data.reasonPhrase), this.translate.instant('Message'));
       }
@@ -1229,9 +596,9 @@ export class AccountsGuideComponent implements OnInit {
 
   applyFilter(event: any) {
     const val = event.target.value.toLowerCase();
-    var tempsource = this.projectsDataSourceTemp;
+    var tempsource = this.accountsDataSourceTemp;
     if (val) {
-      tempsource = this.projectsDataSourceTemp.filter((d: any) => {
+      tempsource = this.accountsDataSourceTemp.filter((d: any) => {
         return (d.code != null ? d.code.toString()?.trim().toLowerCase().indexOf(val) !== -1 || !val:"")
           || (d.nameAr != null ? d.nameAr.toString()?.trim().toLowerCase().indexOf(val) !== -1 || !val:"")
           || (d.nameEn != null ? d.nameEn.toString()?.trim().toLowerCase().indexOf(val) !== -1 || !val:"")
@@ -1242,40 +609,11 @@ export class AccountsGuideComponent implements OnInit {
       });
     }
 
-    this.projectsDataSource = new MatTableDataSource(tempsource);
-    this.projectsDataSource.paginator = this.paginator;
-    this.projectsDataSource.sort = this.sort;
+    this.accountsDataSource = new MatTableDataSource(tempsource);
+    this.accountsDataSource.paginator = this.paginator;
+    this.accountsDataSource.sort = this.sort;
 
   }
-  // applyFilter(event: Event) {
-  //   const filterValue = (event.target as HTMLInputElement).value;
-  //   this.userPermissionsDataSource.filter = filterValue.trim().toLowerCase();
-  // }
-  applyGoalsFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.projectGoalsDataSource.filter = filterValue.trim().toLowerCase();
-  }
-  applyUsersFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.projectUsersDataSource.filter = filterValue.trim().toLowerCase();
-  }
-  applyTasksFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.projectTasksDataSource.filter = filterValue.trim().toLowerCase();
-  }
-
-  setSelectedUserPermissions(index: any) {
-    let data = this.userPermissions[index];
-    this.selectedUserPermissions = data;
-  }
-
-  setValues(event: any) {
-    this.selectedUserPermissions['watch'] = event.target.checked;
-    this.selectedUserPermissions['add'] = event.target.checked;
-    this.selectedUserPermissions['edit'] = event.target.checked;
-    this.selectedUserPermissions['delete'] = event.target.checked;
-  }
-
   changeRequestStatus(event: any) {
     this.Nature = event.target.checked;
   }
@@ -1283,88 +621,6 @@ export class AccountsGuideComponent implements OnInit {
     this.accounStatus = event.target.checked;
   }
 
-  saveOption(data: any) { }
-
-  updateFilter(event: any) {
-    const val = event.target.value.toLowerCase();
-
-    const temp = this.temp.filter(function (d: any) {
-      return d.name_ar.toLowerCase().indexOf(val) !== -1 || !val;
-    });
-
-    this.rows = temp;
-
-    if (this.table) {
-      this.table!.offset = 0;
-    }
-  }
-
-  // Save row
-  save(row: any, rowIndex: any) {
-    this.isEditable[rowIndex] = !this.isEditable[rowIndex];
-  }
-
-  // Delete row
-  delete(row: any, rowIndex: any) {
-    this.isEditable[rowIndex] = !this.isEditable[rowIndex];
-    this.rows.splice(rowIndex, 1);
-    console.log('Row deleted: ' + rowIndex);
-  }
-
-  selectGoalForProject(index: any) { }
-
-  addNewMission() { }
-
-  onSort(event: any) {
-    console.log(event);
-  }
-  // ############### send sms
-
-  data: any = {
-    type: '0',
-    orgEmail: 'asdwd@dwa',
-    numbers: {
-      all: 0,
-      citizens: 0,
-      investor: 0,
-      government: 0,
-    },
-    fileType: {
-      NameAr: '',
-      Id: '',
-      NameEn: '',
-    },
-    files: [],
-    clients: [],
-    branches: [],
-    cities: [],
-    filesTypes: [],
-  };
-  modal?: BsModalRef;
-  sendEMAIL(sms: any) {
-    console.log(sms);
-    this.control.clear();
-    this.modal?.hide();
-  }
-
-  public readonly control = new FileUploadControl(
-    {
-      listVisible: true,
-      // accept: ['image/*'],
-      discardInvalid: true,
-      multiple: false,
-    },
-    [
-      // FileUploadValidators.accept(['image/*']),
-      FileUploadValidators.filesLimit(1),
-    ]
-  );
-  public uploadedFiles: Array<File> = [];
-
-  sendSMS(sms: any) {
-    console.log(sms);
-    this.modal?.hide();
-  }
 
   // selection in table
 
@@ -1372,7 +628,7 @@ export class AccountsGuideComponent implements OnInit {
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
     const numSelected = this.selection.selected.length;
-    const numRows = this.projectsDataSource.data.length;
+    const numRows = this.accountsDataSource.data.length;
     return numSelected === numRows;
   }
   /** Selects all rows if they are not all selected; otherwise clear selection. */
@@ -1383,7 +639,7 @@ export class AccountsGuideComponent implements OnInit {
       return;
     }
 
-    this.selection.select(...this.projectsDataSource.data);
+    this.selection.select(...this.accountsDataSource.data);
   }
 
   /** The label for the checkbox on the passed row */

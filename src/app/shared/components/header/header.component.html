@@ -89,7 +89,7 @@
         </div>
 
         <!-- year -->
-        <div class="d-none d-md-block">
+        <!-- <div class="d-none d-md-block">
           <div
             class="rounded-2xl bg-orange-50 flex items-center gap-2 h-full p-2"
             [matMenuTriggerFor]="menu3"
@@ -122,38 +122,10 @@
               </button>
             </span>
           </mat-menu>
-
-          <!-- <div
-            class="rounded-2xl bg-zinc-50 flex items-center gap-2 h-full p-2"
-            [matMenuTriggerFor]="yearMenu"
-          >
-            <div class="flex items-start gap-2">
-              <i class="fas fa-location text-amber-700"></i>
-              <div>
-                <span class="text-amber-700">2022</span> <br />
-                <span
-                  [translate]="'name'"
-                  [translateParams]="{
-                    ar: 'السنه المالية',
-                    en: 'Financial Year'
-                  }"
-                >
-                </span>
-              </div>
-            </div>
-            <i class="fas fa-chevron-down"></i>
-          </div>
-          <mat-menu mat-menu #yearMenu="matMenu" overlapTrigger="false">
-            <span>
-              <button mat-menu-item>2022</button>
-              <button mat-menu-item>2021</button>
-              <button mat-menu-item>2023</button>
-            </span>
-          </mat-menu> -->
-        </div>
+        </div> -->
 
         <!-- Icons -->
-        <div class="d-none d-md-flex rounded-2xl items-center gap-8 p-3 icons">
+        <!-- <div class="d-none d-md-flex rounded-2xl items-center gap-8 p-3 icons">
           <div ngbDropdown class="d-inline-block h-100">
             <button
               type="button"
@@ -181,14 +153,10 @@
                     (click)="RadReplay(item.supportRequestsReplayId)"
                     [routerLink]="['/dash/support']"
                   >
-                    <!-- <i class="fa-solid fa-headset"></i> -->
                     <div class="row" style="width: 100%">
                       <p class="col-6">
                         {{ item.contacttxt?.slice(0, 100) + "..." }}
                       </p>
-                      <!-- <p class="col-6">
-                        {{ item.contactDate | date : "MMM dd" }}
-                      </p> -->
                     </div>
                   </button>
                 </ng-container>
@@ -221,18 +189,16 @@
               <div class="dropdownItems">
                 <ng-container *ngFor="let item of UserNotifications">
                   <button ngbDropdownItem (click)="redirect()">
-                    <!-- <i class="fa-regular fa-bell"></i> -->
                     <p>{{ item.name?.slice(0, 70) + "..." }}</p>
-                    <!-- <p>{{ item.createdAt | date : "MMM dd" }}</p> -->
                   </button>
                 </ng-container>
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
 
         <!-- Last Online -->
-        <div
+        <!-- <div
           class="d-none d-xxl-block rounded-2xl bg-blue-100 items-center gap-2 p-3"
         >
           <span
@@ -245,11 +211,9 @@
           >
           </span>
           <i class="fas fa-clock"></i>
-          <!-- <span>{{ time | date : "hh:mm a" }}</span> -->
           <span>{{ lastLoginDate | date : "dd-MM-yyyy , hh:mm a" }}</span>
-        </div>
+        </div> -->
 
-        <!-- lang -->
         <div class="hiddenz">
           <div
             class="rounded-2xl bg-orange-50 flex items-center gap-2 h-full p-3"

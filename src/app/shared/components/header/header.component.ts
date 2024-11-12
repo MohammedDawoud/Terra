@@ -133,12 +133,12 @@ export class HeaderComponent implements OnInit {
     this.setLanguageOnInit();
 
     this.userG = this.authenticationService.userGlobalObj;
-    this.adminProfileService
-      .getUserById(this.userG.userId)
-      .subscribe((data) => {
-        this.logoUrl = data.result.imgUrl;
-        this.lastLoginDate = data.result.lastLoginDate;
-      });
+    // this.adminProfileService
+    //   .getUserById(this.userG.userId)
+    //   .subscribe((data) => {
+    //     this.logoUrl = data.result.imgUrl;
+    //     this.lastLoginDate = data.result.lastLoginDate;
+    //   });
     this.api.GetOrganizationDataLogin().subscribe({
       next: (res: any) => {
         this.OrganizationData = res.result;
@@ -146,10 +146,10 @@ export class HeaderComponent implements OnInit {
       error: (error) => {},
     });
 
-    this.GetAllBranchesByUserIdDrop();
-    this.GetAllYearsDrop();
-    this.GetAllOpenSupportResquestsWithReplay();
-    this.GetUnReadUserNotificationcount();
+    //this.GetAllBranchesByUserIdDrop();
+    // this.GetAllYearsDrop();
+    // this.GetAllOpenSupportResquestsWithReplay();
+    // this.GetUnReadUserNotificationcount();
   }
 
   headerObj: any = {
