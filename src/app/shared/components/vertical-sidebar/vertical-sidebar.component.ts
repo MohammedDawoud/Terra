@@ -222,7 +222,18 @@ export class VerticalSidebarComponent implements OnInit {
                     : '/assets/sidebar-icons/Group 40280.png',
                     show: true,
                 // show: this.userG?.userPrivileges.includes(170101),
-              },      
+              },  
+              {
+                name: { ar: 'دليل الحسابات', en: 'Accounts guide' },
+                link: '/accounts/Accounts_guide',
+                type: 'single',
+                icon:
+                  this.lang == 'ar'
+                    ? '/assets/sidebar-icons/Group 40278.png'
+                    : '/assets/sidebar-icons/Group 40280.png',
+                    show: true,
+                // show: this.userG?.userPrivileges.includes(170101),
+              },       
         ],
       },
           {

@@ -146,7 +146,7 @@ export class HeaderComponent implements OnInit {
       error: (error) => {},
     });
 
-    //this.GetAllBranchesByUserIdDrop();
+    this.GetAllBranchesByUserIdDrop();
     // this.GetAllYearsDrop();
     // this.GetAllOpenSupportResquestsWithReplay();
     // this.GetUnReadUserNotificationcount();

@@ -98,6 +98,11 @@ export class AccountGuideService {
     return this.http.post<any>(this.apiEndPoint + 'Account/DeleteAccount?AccountId='+DeletedAccountId,{});
   }
   MaintenanceFunc() {
-    return this.http.post<any>(this.apiEndPoint + 'SystemSettings/MaintenanceFunc?Status=0',{});
+    return this.http.post<any>(this.apiEndPoint + 'Account/MaintenanceFunc?Status=0',{});
+  }
+  TestAcc() {
+    return this.http.get<any>(
+      this.apiEndPoint + 'Account/TestAcc?param=1'
+    );
   }
 }

@@ -2,89 +2,6 @@
   <app-navigator [title]="title"></app-navigator>
 
   <div class="tables-data mt-3 overflow-hidden">
-    <div class="btn-group gap-2 flex-wrap">
-      <label
-        class="btn btn-primary"
-        [(ngModel)]="data.type"
-        (click)="setCustomersType(0)"
-        btnRadio="0"
-        tabindex="0"
-        role="button"
-        ><i class="fa-solid fa-users"></i>
-        <span
-          class="text-sm"
-          [translate]="'name'"
-          [translateParams]="{
-            ar: 'كل العملاء ',
-            en: 'All Customer Badge'
-          }"
-        ></span>
-        <span class="text-xs">{{ allCount }}</span></label
-      >
-
-      <label
-        class="btn btn-primary"
-        value=""
-        id="allCustomers"
-        [(ngModel)]="data.type"
-        (click)="setCustomersType(1)"
-        btnRadio="1"
-        tabindex="0"
-        role="button"
-        (change)="checkValue(data2.filter.isChecked ? 'A' : 'B')"
-      >
-        <i class="fa fa-user-group text-sm"></i>
-
-        <span
-          class="text-sm"
-          [translate]="'name'"
-          [translateParams]="{
-            ar: 'المواطنون',
-            en: 'Citizens'
-          }"
-        ></span>
-        <span class="text-xs">{{ CitizensCount }}</span></label
-      >
-      <label
-        class="btn btn-primary"
-        [(ngModel)]="data.type"
-        (click)="setCustomersType(2)"
-        btnRadio="2"
-        tabindex="0"
-        role="button"
-      >
-        <i class="fa fa-building text-sm"></i>
-        <span
-          class="text-sm"
-          [translate]="'name'"
-          [translateParams]="{
-            ar: ' مستثمرون وشركات',
-            en: ' Investor Company Badge  '
-          }"
-        ></span>
-        <span class="text-xs">{{ InvestorCompanyCount }}</span></label
-      >
-      <label
-        class="btn btn-primary"
-        [(ngModel)]="data.type"
-        (click)="setCustomersType(3)"
-        btnRadio="3"
-        tabindex="0"
-        role="button"
-      >
-        <i class="fa fa-city"></i>
-        <span
-          class="text-sm"
-          [translate]="'name'"
-          [translateParams]="{
-            ar: 'جهة حكومية',
-            en: 'Government Badge'
-          }"
-        ></span>
-        <span class="text-xs">{{ governmentCount }}</span></label
-      >
-    </div>
-
     <!-- buttons -->
     <div class="flex justify-between gap-2 items-center my-3 flex-wrap">
       <div class="w-fit">
@@ -99,7 +16,6 @@
       <!---------------------------------------------------------------------------->
       <div class="flex gap-2 controler">
         <button
-          *ngIf="userG?.userPrivileges.includes(121001)"
           class="flex gap-1 btn btn-primary"
           (click)="openModal(dataModal, null, 'addClient')"
         >
@@ -114,24 +30,6 @@
           <i class="fa-solid fa-user-plus"></i>
         </button>
         <button
-          *ngIf="userG?.userPrivileges.includes(121004)"
-          class="flex gap-1 btn btn-secondary"
-          id="Searchbtn"
-          (click)="searchBox.open = !searchBox.open; resetandRefresh()"
-        >
-          <span
-            class="hidden md:block"
-            [translate]="'name'"
-            [translateParams]="{
-              ar: 'بحث',
-              en: 'Search'
-            }"
-          >
-          </span>
-          <i class="fa-solid fa-user-tag"></i>
-        </button>
-        <button
-          *ngIf="userG?.userPrivileges.includes(121009)"
           class="flex gap-1 btn btn-warning"
           (click)="exportData()"
         >
@@ -147,96 +45,6 @@
         </button>
       </div>
     </div>
-
-    <!-- search box -->
-
-    <form
-      class="flex flex-wrap gap-2 items-end my-3"
-      #searchForm="ngForm"
-      *ngIf="searchBox.open"
-    >
-      <div class="flex-grow">
-        <label
-          [translate]="'name'"
-          [translateParams]="{
-            ar: 'نوع البحث',
-            en: 'Search Type'
-          }"
-        >
-        </label>
-        <ng-select
-          class="w-full p-0 mt-2.5"
-          (change)="onChange($event)"
-          placeholder="{{ 'Chose' | translate }}"
-        >
-          <ng-option [value]="1">
-            {{ "Customer Name" | translate }}
-          </ng-option>
-
-          <!-- <ng-option [value]="2">
-            {{ "Email" | translate }}
-          </ng-option> -->
-
-          <ng-option [value]="3">
-            {{ "Mobile Number" | translate }}
-          </ng-option>
-        </ng-select>
-      </div>
-
-      <div class="max-w-xs" *ngIf="searchBox.searchType == 1">
-        <label class="col-form-label"> {{ "Customer Name" | translate }}</label>
-
-        <ng-select
-          #CustomerName
-          [items]="load_CustomerName"
-          bindLabel="name"
-          bindValue="id"
-          [clearable]="true"
-          class="w-full p-0"
-          [(ngModel)]="data2.filter.search_CustomerName"
-          placeholder="{{ 'Chose' | translate }}"
-          (change)="RefreshData()"
-          [ngModelOptions]="{ standalone: true }"
-        >
-        </ng-select>
-      </div>
-
-      <!-- <div class="max-w-xs" *ngIf="searchBox.searchType == 2">
-        <label class="col-form-label"> {{ "Email" | translate }}</label>
-
-        <ng-select #ProjectType [items]="load_CustomerMail" bindLabel="customerMail" bindValue="customerMail" [clearable]="true"
-          class="w-full p-0" [(ngModel)]="data2.filter.search_customerEmail" [ngModelOptions]="{ standalone: true }"
-          (change)="RefreshData()" placeholder="{{ 'Chose' | translate }}" >
-        </ng-select>
-      </div> -->
-
-      <div class="max-w-xs" *ngIf="searchBox.searchType == 3">
-        <label class="col-form-label"> {{ "Mobile Number" | translate }}</label>
-
-        <ng-select
-          #ProjectManeger
-          [items]="load_CustomerMobile"
-          bindLabel="customerMobile"
-          bindValue="customerMobile"
-          [clearable]="true"
-          class="w-full p-0"
-          [(ngModel)]="data2.filter.search_customerMobile"
-          [ngModelOptions]="{ standalone: true }"
-          (change)="RefreshData()"
-          placeholder="{{ 'Chose' | translate }}"
-        >
-        </ng-select>
-      </div>
-
-      <!-- <button class="flex gap-1 btn btn-secondary" style="display: flex" id="SearchRefresh" (click)="RefreshData()">
-        <span class="hidden md:block" [translate]="'name'" [translateParams]="{
-            ar: 'بحث',
-            en: 'Search'
-          }">
-        </span>
-        <i class="fa-solid fa-user-tag"></i>
-      </button> -->
-    </form>
 
     <!-- table -->
     <div class="overflow-auto">
@@ -352,14 +160,12 @@
           <td mat-cell *matCellDef="let element">
             <div class="flex gap-1 justify-center py-2">
               <button
-                *ngIf="userG?.userPrivileges.includes(121003)"
                 class="min-w-max p-2 bg-orange-100 hover:bg-orange-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
                 (click)="openModal(dataModal, element, 'editClient')"
               >
                 <i class="fa-regular fa-pen-to-square"></i>
               </button>
               <button
-                *ngIf="userG?.userPrivileges.includes(121002)"
                 class="min-w-max p-2 bg-red-100 hover:bg-red-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
                 (click)="openModal(deleteModal, element, 'delete')"
               >
@@ -1020,147 +826,6 @@
               ></textarea>
             </div>
           </div>
-          <!-- <div>
-            <div class="col-span-4 w-fit form-check my-3">
-              <label class="form-check-label" for="AgencData">{{
-                "Agency Data" | translate
-              }}</label>
-              <input
-                [(ngModel)]="modalDetails.agencData"
-                [ngModelOptions]="{ standalone: true }"
-                [checked]="modalDetails.AgencData || modalDetails.AgentName"
-                type="checkbox"
-                class="form-check-input"
-                id="AgencData"
-              />
-            </div>
-          </div>
-          <ng-container
-            *ngIf="modalDetails.agencData || modalDetails.agentName"
-          >
-            <div [@fade]>
-              <div class="form-group">
-                <label for="AgentNametxt1" class="col-form-label">
-                  {{ "Agent Name" | translate }}
-                  <span class="text-danger">*</span>
-                </label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="AgentNametxt1"
-                  [(ngModel)]="modalDetails.agentName"
-                  autocomplete="off"
-                  name="AgentNametxt1"
-                  placeholder="{{ 'Agent Name' | translate }}"
-                />
-              </div>
-              <div>
-                <label class="col-form-label">
-                  {{ "Agent Type" | translate }}
-                </label>
-                <ng-select
-                  class="w-full p-0"
-                  placeholder="{{ 'Agent Type' | translate }}"
-                  [(ngModel)]="modalDetails.agentType"
-                  [ngModelOptions]="{ standalone: true }"
-                >
-                  <ng-option
-                    [value]="1"
-                    [translate]="'name'"
-                    [translateParams]="{
-                      ar: 'مندوب',
-                      en: 'Delegate'
-                    }"
-                  ></ng-option>
-                  <ng-option
-                    [value]="2"
-                    [translate]="'name'"
-                    [translateParams]="{
-                      ar: 'وكيل',
-                      en: 'Agent'
-                    }"
-                  ></ng-option>
-                </ng-select>
-              </div>
-              <div
-                class="form-group"
-                [@fade]
-                *ngIf="modalDetails.agentType == 2"
-              >
-                <label for="AgentNumbertxt" class="col-form-label">{{
-                  "Agent Number" | translate
-                }}</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  autocomplete="off"
-                  id="AgentNumbertxt"
-                  name="AgentNumbertxt"
-                  placeholder="{{ 'Agent Number' | translate }}"
-                  maxlength="10"
-                  [(ngModel)]="modalDetails.agentNumber"
-                />
-              </div>
-            </div>
-            <div class="upload">
-              <file-upload [control]="control">
-                <ng-template
-                  let-isFileDragDropAvailable="isFileDragDropAvailable"
-                  #placeholder
-                >
-                  <div *ngIf="control.size === 0">
-                    <div class="icon">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height="1em"
-                        viewBox="0 0 640 512"
-                      >
-                        <path
-                          d="M144 480C64.5 480 0 415.5 0 336c0-62.8 40.2-116.2 96.2-135.9c-.1-2.7-.2-5.4-.2-8.1c0-88.4 71.6-160 160-160c59.3 0 111 32.2 138.7 80.2C409.9 102 428.3 96 448 96c53 0 96 43 96 96c0 12.2-2.3 23.8-6.4 34.6C596 238.4 640 290.1 640 352c0 70.7-57.3 128-128 128H144zm79-217c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l39-39V392c0 13.3 10.7 24 24 24s24-10.7 24-24V257.9l39 39c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-80-80c-9.4-9.4-24.6-9.4-33.9 0l-80 80z"
-                        />
-                      </svg>
-                    </div>
-
-                    <div class="upload-text">
-                      {{ "Add Image" | translate }}
-                    </div>
-                  </div>
-                </ng-template>
-
-                <ng-template
-                  let-i="index"
-                  let-file="file"
-                  let-control="control"
-                  #item
-                >
-                  <div class="overlay">
-                    <span
-                      class="delete-button"
-                      (click)="control.removeFile(file)"
-                    >
-                      <svg viewBox="0 0 448 512">
-                        <path
-                          d="M32 464a48 48 0 0 0 48 48h288a48 48 0 0 0 48-48V128H32zm272-256a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zM432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16z"
-                        ></path>
-                      </svg>
-                    </span>
-                    <img *ngIf="control.valid" [src]="uploadedFile | async" />
-                  </div>
-                </ng-template>
-              </file-upload>
-            </div>
-         
-            <div>
-              <button
-                type="button"
-                class="btn bg-base text-white mb-3"
-                (click)="ShowAgentFile(modalDetails?.attachmentUrl)"
-              >
-                {{ "show" | translate }}
-              </button>
-            </div>
-          
-          </ng-container> -->
         </form>
         <div
           class="flex flex-wrap items-end border-t justify-between pt-2 border-neutral-300"

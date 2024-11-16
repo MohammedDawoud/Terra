@@ -277,64 +277,64 @@ export class AddSearchComponent implements OnInit {
     sendactivationSupervision:false,
   };
   ngOnInit(): void {
-    this.getData();
+    this.getAllCustomers();
   }
 
   ///////////////////////////////FILTER/////////////////
 
-  onChange(value: any) {
-    this.searchBox.searchType = value;
-    if (this.searchBox.searchType == 1) {
-      this.fill_CustomerName();
-    } else if (this.searchBox.searchType == 3) {
-      this.fill_CustomerMobile();
-    }
-    // else if (this.searchBox.searchType == 2) {
-    //   this.fill_CustomerMail();
-    // }
-  }
+  // onChange(value: any) {
+  //   this.searchBox.searchType = value;
+  //   if (this.searchBox.searchType == 1) {
+  //     this.fill_CustomerName();
+  //   } else if (this.searchBox.searchType == 3) {
+  //     this.fill_CustomerMobile();
+  //   }
+  //   // else if (this.searchBox.searchType == 2) {
+  //   //   this.fill_CustomerMail();
+  //   // }
+  // }
 
-  filterData(array: any[], type?: any) {
-    if (!type) {
-      return array;
-    }
-    return array.filter((ele) => {
-      return ele.customerTypeId == type;
-    });
-  }
+  // filterData(array: any[], type?: any) {
+  //   if (!type) {
+  //     return array;
+  //   }
+  //   return array.filter((ele) => {
+  //     return ele.customerTypeId == type;
+  //   });
+  // }
 
   /////////////////////////////Filter//////////////////
 
-  RefreshData() {
-    this._CustomerVM = new CustomerVM();
-    if (this.searchBox.searchType == 1) {
-      if (this.data2.filter.search_CustomerName == null) {
-        this.getData();
-        return;
-      }
-      this._CustomerVM.customerId = this.data2.filter.search_CustomerName;
-    } else if (this.searchBox.searchType == 2) {
-      if (this.data2.filter.search_customerEmail == null) {
-        this.getData();
-        return;
-      }
-      this._CustomerVM.email = this.data2.filter.search_customerEmail;
-    } else if (this.searchBox.searchType == 3) {
-      if (this.data2.filter.search_customerMobile == null) {
-        this.getData();
-        return;
-      }
-      this._CustomerVM.mainPhoneNo = this.data2.filter.search_customerMobile;
-    }
+  // RefreshData() {
+  //   this._CustomerVM = new CustomerVM();
+  //   if (this.searchBox.searchType == 1) {
+  //     if (this.data2.filter.search_CustomerName == null) {
+  //       this.getAllCustomers();
+  //       return;
+  //     }
+  //     this._CustomerVM.customerId = this.data2.filter.search_CustomerName;
+  //   } else if (this.searchBox.searchType == 2) {
+  //     if (this.data2.filter.search_customerEmail == null) {
+  //       this.getAllCustomers();
+  //       return;
+  //     }
+  //     this._CustomerVM.email = this.data2.filter.search_customerEmail;
+  //   } else if (this.searchBox.searchType == 3) {
+  //     if (this.data2.filter.search_customerMobile == null) {
+  //       this.getAllCustomers();
+  //       return;
+  //     }
+  //     this._CustomerVM.mainPhoneNo = this.data2.filter.search_customerMobile;
+  //   }
 
-    var obj = this._CustomerVM;
-    this.service.SearchFn(obj).subscribe((data) => {
-      this.dataSource = new MatTableDataSource(data);
-      this.dataSourceTemp = data;
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-    });
-  }
+  //   var obj = this._CustomerVM;
+  //   this.service.SearchFn(obj).subscribe((data) => {
+  //     this.dataSource = new MatTableDataSource(data);
+  //     this.dataSourceTemp = data;
+  //     this.dataSource.paginator = this.paginator;
+  //     this.dataSource.sort = this.sort;
+  //   });
+  // }
 
   applyFilter(event: any) {
     const val = event.target.value.toLowerCase();
@@ -363,57 +363,26 @@ export class AddSearchComponent implements OnInit {
     this.dataSource.sort = this.sort;
   }
 
-  checkValue(event: any) {
-    if (event == 'A') {
-      this.getData();
-    } else {
-      this.RefreshData();
-    }
-  }
+  // checkValue(event: any) {
+  //   if (event == 'A') {
+  //     this.getAllCustomers();
+  //   } else {
+  //     this.RefreshData();
+  //   }
+  // }
 
   resetandRefresh() {
     if (this.searchBox.open == false) {
       this.data2.filter.search_CustomerName = null;
       this.data2.filter.search_customerMobile = null;
       this.data.type = 0;
-      this.getData();
+      this.getAllCustomers();
     }
   }
   //------------------ Fill DATA ----------------------------------
 
-  fill_CustomerName() {
-    this.service.FillCustomerNameSelect().subscribe((data) => {
-      this.load_CustomerName = data;
-    });
-  }
-  fill_CustomerMobile() {
-    this.service.FillCustomerMobileSelect().subscribe((data: any) => {
-      this.load_CustomerMobile = data;
-      this.load_CustomerMobile = this.load_CustomerMobile.filter(
-        (x: { customerMobile: any }) => !!x.customerMobile
-      );
-    });
-  }
-  fill_CustomerMail() {
-    this.service.FillCustomerMailSelect().subscribe((data) => {
-      this.load_CustomerMail = data;
-    });
-  }
-
-  getEmailOrganization() {
-    this.service.getEmailOrganization().subscribe((data) => {
-      this.getEmailOrgnize = data.email;
-    });
-  }
-
-  fillFileTypeSelect() {
-    this.service.fillFileTypeSelect().subscribe((data) => {
-      this.load_FileType = data;
-    });
-  }
-
   fillBranchByUserId() {
-    this.service.fillBranchByUserId().subscribe((data) => {
+    this.service.FillBranchByUserIdSelect().subscribe((data) => {
       this.load_BranchUserId = data;
       if (this.load_BranchUserId.length == 1) {
         this.modalDetails.branchId = this.load_BranchUserId[0].id;
@@ -421,12 +390,6 @@ export class AddSearchComponent implements OnInit {
       }
     });
   }
-
-  // getCityAndAreas() {
-  //   this.service.FillCitySelect().subscribe(data => {
-  //     this.load_CityAndAreas = data;
-  //   });
-  // }
 
   City_Cus: any;
   CityTypesPopup_Cus: any;
@@ -442,7 +405,7 @@ export class AddSearchComponent implements OnInit {
   getBranchAccount(BranchId: any) {
     this.objBranchAccount = null;
     this.modalDetails.accountName = null;
-    this.service.getCustMainAccByBranch(BranchId).subscribe({
+    this.service.GetCustMainAccByBranchId(BranchId).subscribe({
       next: (data: any) => {
         //this.modalDetails.CustMainAccByBranchId = data.result;
         this.modalDetails.accountName =
@@ -453,40 +416,6 @@ export class AddSearchComponent implements OnInit {
     });
   }
 
-  setCustomersType(type: any) {
-    // change table cells
-    if (type == '0' || type == '1') {
-      this.displayedColumns = [
-        'name',
-        'nationalId',
-        'customerType',
-        'email',
-        'phone',
-        'mobile',
-        'operations',
-      ];
-    } else {
-      this.displayedColumns = [
-        'name',
-        // 'nationalId',
-        'customerType',
-        'email',
-        'phone',
-        'mobile',
-        'operations',
-      ];
-    }
-    // assign data
-    // const filteredData = this.filterData(this.data.clients, type);
-    // this.dataSource = new MatTableDataSource(filteredData);
-
-    this.service.getAllCustomersByCustomerTypeId(type).subscribe((data) => {
-      this.dataSource = new MatTableDataSource(data);
-      this.dataSourceTemp = data;
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-    });
-  }
 
   //-----------------------OPEN MODAL--------------------------------------------------
 
@@ -495,7 +424,7 @@ export class AddSearchComponent implements OnInit {
     this.FillCitySelect_Cus();
 
     this.resetModal();
-    this.getEmailOrganization();
+    //this.getEmailOrganization();
 
     if (modalType == 'addClient') {
     }
@@ -567,7 +496,6 @@ export class AddSearchComponent implements OnInit {
     if (type === 'deleteModalPerm') {
       this.publicidRow = data.idRow;
     }
-    this.fillFileTypeSelect();
     this.ngbModalService
       .open(content, {
         ariaLabelledBy: 'modal-basic-title',
@@ -736,7 +664,7 @@ export class AddSearchComponent implements OnInit {
           this.translate.instant('Message')
         );
         this.decline();
-        this.getData();
+        this.getAllCustomers();
         this.ngbModalService.dismissAll();
         if (this.modalDetails.type == 'addClient') {
           this.ngbModalService.open(this.optionsModal, {
@@ -834,111 +762,21 @@ export class AddSearchComponent implements OnInit {
     return this.ValidateObjMsg;
   }
 
-  ///////////////////// EPORT DATA/////////////////////////////////////////////
+  exportData(){
 
-  customExportExcel(dataExport: any) {
-    let exportation = JSON.parse(JSON.stringify(dataExport));
-    let itemsToExeclude: string[] = [];
-
-    let excelData: any[] = [];
-    let headers: string[] = [];
-    let objectKeys = Object.keys(dataExport[0]);
-    objectKeys = objectKeys.filter(
-      (item: string) => !itemsToExeclude.includes(item)
-    );
-
-    objectKeys.forEach((element) => {
-      headers.push(element.toUpperCase());
-    });
-
-    exportation.forEach((ele: any) => {
-      // ele = (ele) => {
-      var sorted: any = {},
-        key,
-        a = [];
-
-      for (key in ele) {
-        if (ele.hasOwnProperty(key)) {
-          a.push(key);
-        }
-      }
-      a = a.filter((item: string) => !itemsToExeclude.includes(item));
-
-      // a.sort();
-
-      for (key = 0; key < a.length; key++) {
-        sorted[a[key]] = ele[a[key]];
-      }
-      // return sorted;
-      ele = sorted;
-      // }
-      let props = Object.getOwnPropertyNames(ele).filter((prop) =>
-        exportation.some((ex: any) => ex === prop)
-      );
-      props.forEach((pp) => {
-        delete ele[pp];
-      });
-
-      excelData.push(ele);
-    });
-
-    this.exportationService.exportExcel(
-      excelData,
-      'Customers' + new Date().getTime(),
-      headers
-    );
   }
 
-  exportData() {
-    this.service.getAllCustomers().subscribe((data: any) => {
+  getAllCustomers() {
+    this.service.GetAllCustomers_Branch().subscribe((data: any) => {
       // console.log(data);
 
       this.dataSource = new MatTableDataSource(data);
       this.dataSourceTemp = data;
-      let dataExport = data as CustomerVM[];
-      let x = [];
-
-      for (let index = 0; index < dataExport.length; index++) {
-        x.push({
-          customerName: dataExport[index].nameAr,
-          customerNationalId: dataExport[index].nationalId,
-          customerEmail: dataExport[index].email,
-          customerPhone: dataExport[index].mainPhoneNo,
-          customerMobile: dataExport[index].subMainPhoneNo,
-        });
-      }
-
-      console.log(dataExport);
-      // data as CustomerVM[]
-      this.customExportExcel(x);
-      this.getData();
-    });
-  }
-
-  getData() {
-    this.service.getAllCustomers().subscribe((data: any) => {
-      // console.log(data);
-
-      this.dataSource = new MatTableDataSource(data);
-      this.dataSourceTemp = data;
-
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
       this.allCount = data.length;
-
-      this.CitizensCount = data.filter(
-        (data: { customerTypeId: 1 }) => data.customerTypeId == 1
-      ).length;
-      this.InvestorCompanyCount = data.filter(
-        (data: { customerTypeId: 2 }) => data.customerTypeId == 2
-      ).length;
-      this.governmentCount = data.filter(
-        (data: { customerTypeId: 3 }) => data.customerTypeId == 3
-      ).length;
     });
   }
-
-  ////////////////////RESET MODAL//////////////////////////////
 
   resetModal() {
     this.isSubmit = false;
@@ -1009,25 +847,16 @@ export class AddSearchComponent implements OnInit {
     };
   }
 
-
-  //////////////////DELETE //////////////////////////////
-
   confirm(): void {
-    this.service
-      .deleteCustomer(this.modalDetails.customerId)
-      .subscribe((result) => {
+    this.service.DeleteCustomer(this.modalDetails.customerId).subscribe((result) => {
         if (result.statusCode == 200) {
-          this.toast.success(
-            this.translate.instant(result.reasonPhrase),
-            this.translate.instant('Message')
-          );
+          this.toast.success(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
+          this.getAllCustomers();
+          this.modal?.hide();
         } else {
           this.toast.error(result.reasonPhrase, 'رسالة');
         }
-
-        this.getData();
       });
-    this.modal?.hide();
   }
 
   decline(): void {

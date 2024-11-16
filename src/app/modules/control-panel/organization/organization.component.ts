@@ -1378,12 +1378,6 @@ export class OrganizationComponent implements OnInit {
             this.translate.instant('Message')
           );
         }
-      },
-      (error) => {
-        this.toast.error(
-          this.translate.instant(error.reasonPhrase),
-          this.translate.instant('Message')
-        );
       }
     );
   }

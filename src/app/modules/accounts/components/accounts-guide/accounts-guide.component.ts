@@ -142,7 +142,7 @@ export class AccountsGuideComponent implements OnInit {
   ngOnInit(): void {
 
     this.accountsDataSource = new MatTableDataSource();
-
+    //this.TestAcc();
     this.GetAccountTree();
     this.GetAllAccounts();
   }
@@ -150,21 +150,13 @@ export class AccountsGuideComponent implements OnInit {
   acountCode: any;
   accountNameAR: any;
   accountNameEn: any;
-  creditDate: any;
-  depitDate: any;
-  debtor: any;
-  Creditor: any;
   MainAccountCode: any;
   MainAccountName: any;
-  debtorEditorial: any;
-  CreditorEditorial: any;
   accountLevel: any;
   Nature: any = false;
   accounStatus: any = false;
-  AccountIdAhlak: any;
   Type: any;
   classification: any;
-  CurrencyId: any = "0";
   ParentId: any;
   LevelNode: any = 1;
 
@@ -175,21 +167,13 @@ export class AccountsGuideComponent implements OnInit {
     this.acountCode = null
     this.accountNameAR = null
     this.accountNameEn = null
-    this.creditDate=null;
-    this.depitDate=null;
-    this.debtor = 0
-    this.Creditor = 0
     this.MainAccountCode = null
     this.MainAccountName = null
-    this.debtorEditorial = 0
-    this.CreditorEditorial = 0
     this.accountLevel = null
     this.Nature = null
     this.accounStatus = false
-    this.AccountIdAhlak = null
     this.Type = null
     this.classification = null
-    this.CurrencyId = "0"
     this.ParentId = null
     this.LevelNode = 1
     this.selectItemOftree = false
@@ -214,33 +198,19 @@ export class AccountsGuideComponent implements OnInit {
 
   onAccountCodeClick(element: any) {
     this.accId = element.accountId
-    this.acountCode = element.code
+    this.acountCode = element.accountCode
     this.MainAccountCode = element.parentAccountCode
     this.MainAccountName = element.parentAccountName
     this.accountNameAR = element.nameAr
     this.accountNameEn = element.nameEn
-    if(element.openAccCreditDate)
-    {
-      this.creditDate =this._sharedService.String_TO_date(element.openAccCreditDate)
-    }
-    if(element.openAccDepitDate)
-    {
-      this.depitDate = this._sharedService.String_TO_date(element.openAccDepitDate)
-    }
-    this.debtorEditorial = element.openAccDepit
-    this.CreditorEditorial = element.openAccCredit
     this.Type = element.type
     this.classification = element.classification
-    this.accountLevel = element.level
-    this.AccountIdAhlak = element.accountIdAhlak
-    this.CurrencyId = element.currencyId
-    this.LevelNode = element.level
+    this.accountLevel = element.accountLevel
+    this.LevelNode = element.accountLevel
     this.ParentId = element.parentId
     if (element.nature == 1) { this.Nature = true } else { this.Nature = false }
     if (element.active == 1) { this.accounStatus = true } else { this.accounStatus = false }
     this.selectItemOftree = false
-
-
   }
   ngAfterViewInit() {
     // this.open(this.smartModal, null, 'smartModal');
@@ -268,31 +238,7 @@ export class AccountsGuideComponent implements OnInit {
       })
 
       .result.then(
-        (result) => {
-          if (type == 'edit') {
-            this.modalDetails = {
-              projectNo: null,
-              accountCode: null,
-              projectDuration: null,
-              branch: null,
-              center: null,
-              from: null,
-              to: null,
-              projectType: null,
-              subProjectDetails: null,
-              walk: null,
-              customer: null,
-              buildingType: null,
-              service: null,
-              user: null,
-              region: null,
-              projectDescription: null,
-              offerPriceNumber: null,
-              projectDepartment: null,
-              projectPermissions: null,
-              projectGoals: null,
-            };
-          }
+        (result) => {        
           this.closeResult = `Closed with: ${result}`;
         },
         (reason) => {
@@ -356,16 +302,16 @@ export class AccountsGuideComponent implements OnInit {
         debugger
         if(data.result!=null)
         {
-          this.MainAccountName = data.result.code + "_" + data.result.accountName;
+          this.MainAccountName = data.result.accountCode + "_" + data.result.accountName;
           this.classification = data.result.classification;
           this.Type = data.result.type;
-          // this.accounStatus = data.result.level
+          // this.accounStatus = data.result.accountLevel
           this.Nature = data.result.nature == 1 ? true : false
           if (data.result.accountId) {
             this.GetNewCodeByParentId(data.result.accountId)
           }
           this.ParentId = data.result.accountId;
-          this.LevelNode = data.result.level + 1;
+          this.LevelNode = data.result.accountLevel + 1;
           this.disabledcreate = true;
         }
         else
@@ -373,7 +319,7 @@ export class AccountsGuideComponent implements OnInit {
           this.MainAccountName = null;
           this.classification = null;
           this.Type = null;
-          // this.accounStatus = data.result.level
+          // this.accounStatus = data.result.accountLevel
           this.Nature = false;
           this.ParentId = null;
           this.LevelNode = null;
@@ -388,7 +334,7 @@ export class AccountsGuideComponent implements OnInit {
       this.MainAccountName = null;
       this.classification = null;
       this.Type = null;
-      // this.accounStatus = data.result.level
+      // this.accounStatus = data.result.accountLevel
       this.Nature = false;
       this.ParentId = null;
       this.LevelNode = null;
@@ -397,7 +343,7 @@ export class AccountsGuideComponent implements OnInit {
   }
   GetNewCodeByParentId(id: any) {
     this.accountGuideService.GetNewCodeByParentId(id).subscribe((data: any) => {
-      this.acountCode = data
+      this.acountCode = data.result
     });
   }
   selectItemOftree = false
@@ -406,29 +352,15 @@ export class AccountsGuideComponent implements OnInit {
     this.accountGuideService.GetAccountById(id).subscribe((data: any) => {
       this.selectItemOftree = true
       this.accId = data.result.accountId
-      this.acountCode = data.result.code
+      this.acountCode = data.result.accountCode
       this.MainAccountCode = data.result.parentAccountCode
       this.MainAccountName = data.result.parentAccountName
       this.accountNameAR = data.result.nameAr
       this.accountNameEn = data.result.nameEn
-      if(data.result.openAccCreditDate)
-      {
-        this.creditDate = this._sharedService.String_TO_date(data.result.openAccCreditDate);
-
-      }
-      if(data.result.openAccDepitDate)
-      {
-        this.depitDate = this._sharedService.String_TO_date(data.result.openAccDepitDate);
-      }
-
-      this.debtorEditorial = data.result.openAccDepit
-      this.CreditorEditorial = data.result.openAccCredit
       this.Type = data.result.type
       this.classification = data.result.classification
-      this.accountLevel = data.result.level
-      this.AccountIdAhlak = data.result.accountIdAhlak
-      this.CurrencyId = data.result.currencyId
-      this.LevelNode = data.result.level
+      this.accountLevel = data.result.accountLevel
+      this.LevelNode = data.result.accountLevel
       this.ParentId = data.result.parentId
       if (data.result.nature == 1) { this.Nature = true } else { this.Nature = false }
       if (data.result.active == 1) { this.accounStatus = true } else { this.accounStatus = false }
@@ -445,42 +377,20 @@ export class AccountsGuideComponent implements OnInit {
 
 
   SaveAccount() {
-    if (this.debtorEditorial != "" && this.debtorEditorial != null && this.debtorEditorial != 0 &&
-      this.CreditorEditorial != "" && this.CreditorEditorial != null && this.CreditorEditorial != 0) {
-      this.toast.error(this.translate.instant('Enter the value of the opening balance, credit or debit only'));
-      return;
-    }
-
     if (this.accountNameEn == null ||this.accountNameEn ==  '' || this.accountNameEn ==  'undefined') {
       this.accountNameEn = this.accountNameAR;
     }
-    debugger
-    var CreDate=null;var DepDate=null;
-    if (this.creditDate != null) {
-      CreDate = this._sharedService.date_TO_String(this.creditDate);
-    }
-    if (this.depitDate != null) {
-      DepDate = this._sharedService.date_TO_String(this.depitDate);
-    }
-
-
     const prames = {
-      AccountId: this.accId.toString(),
-      Code: this.acountCode.toString(),
+      AccountId: (this.accId??0).toString(),
+      AccountCode: (this.acountCode??0).toString(),
       NameAr: this.accountNameAR,
       NameEn: this.accountNameEn,
       Nature: this.Nature == true ? 1 : 2,
-      Type: this.Type.toString(),
-      CurrencyId: this.CurrencyId,
-      Classification: this.classification.toString(),
-      AccountIdAhlak: this.AccountIdAhlak?.toString(),
-      OpenAccDepit: Number(this.debtorEditorial) ?? 0,
-      OpenAccCredit: Number(this.CreditorEditorial) ?? 0,
-      OpenAccCreditDate:CreDate,
-      OpenAccDepitDate:DepDate,
+      Type: (this.Type??0).toString(),
+      Classification: (this.classification??0).toString(),
       Active: this.accounStatus,
       ParentId: this.ParentId,
-      Level: this.LevelNode.toString()
+      AccountLevel: (this.LevelNode??1).toString()
     }
 
     this.accountGuideService.SaveAccount(prames).subscribe((data: any) => {
@@ -524,10 +434,10 @@ export class AccountsGuideComponent implements OnInit {
 
     for (let index = 0; index < this.GetAllaccountGuideList.length; index++) {
       x.push({
-        code: this.GetAllaccountGuideList[index].code,
+        accountCode: this.GetAllaccountGuideList[index].accountCode,
         nameAr: this.GetAllaccountGuideList[index].nameAr,
         nameEn: this.GetAllaccountGuideList[index].nameEn,
-        level: this.GetAllaccountGuideList[index].level,
+        accountLevel: this.GetAllaccountGuideList[index].accountLevel,
         classificationName: this.GetAllaccountGuideList[index].classificationName,
         typeName: this.GetAllaccountGuideList[index].typeName,
         parentAccountName: this.GetAllaccountGuideList[index].parentAccountName,
@@ -558,13 +468,19 @@ export class AccountsGuideComponent implements OnInit {
       }else{
         this.toast.error(this.translate.instant(data.reasonPhrase), this.translate.instant('Message'));
       }
-    },
-    (error) => {
-        this.toast.error(this.translate.instant(error.reasonPhrase), this.translate.instant('Message'));
     })
   }
   MaintenanceFunc_WithoutMsg(){
     this.accountGuideService.MaintenanceFunc().subscribe((data: any) => {
+      if (data.statusCode == 200) {
+        // this.toast.success(this.translate.instant(data.reasonPhrase), this.translate.instant('Message'));
+      }else{
+        // this.toast.error(this.translate.instant(data.reasonPhrase), this.translate.instant('Message'));
+      }
+    })
+  }
+  TestAcc(){
+    this.accountGuideService.TestAcc().subscribe((data: any) => {
       if (data.statusCode == 200) {
         // this.toast.success(this.translate.instant(data.reasonPhrase), this.translate.instant('Message'));
       }else{
@@ -599,10 +515,10 @@ export class AccountsGuideComponent implements OnInit {
     var tempsource = this.accountsDataSourceTemp;
     if (val) {
       tempsource = this.accountsDataSourceTemp.filter((d: any) => {
-        return (d.code != null ? d.code.toString()?.trim().toLowerCase().indexOf(val) !== -1 || !val:"")
+        return (d.accountCode != null ? d.accountCode.toString()?.trim().toLowerCase().indexOf(val) !== -1 || !val:"")
           || (d.nameAr != null ? d.nameAr.toString()?.trim().toLowerCase().indexOf(val) !== -1 || !val:"")
           || (d.nameEn != null ? d.nameEn.toString()?.trim().toLowerCase().indexOf(val) !== -1 || !val:"")
-          || (d.level != null ? d.level.toString()?.trim().toLowerCase().indexOf(val) !== -1 || !val:"")
+          || (d.accountLevel != null ? d.accountLevel.toString()?.trim().toLowerCase().indexOf(val) !== -1 || !val:"")
           || (d.classificationName != null ? d.classificationName.toString()?.trim().toLowerCase().indexOf(val) !== -1 || !val:"")
           || (d.typeName != null ? d.typeName.toString()?.trim().toLowerCase().indexOf(val) !== -1 || !val:"")
           || (d.parentAccountName != null ? d.parentAccountName.toString()?.trim().toLowerCase().indexOf(val) !== -1 || !val:"")
@@ -662,5 +578,9 @@ export class AccountsGuideComponent implements OnInit {
     document.body.innerHTML = originalContents;
     window.location.reload();
   }
+
+
+
+  
   // ##################3
 }
