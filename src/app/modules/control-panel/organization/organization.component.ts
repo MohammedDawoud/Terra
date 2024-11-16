@@ -372,6 +372,7 @@ export class OrganizationComponent implements OnInit {
 
   imageFileOutputreq: boolean = false;
   saveMainInfo() {
+    debugger
     // let text = this.mainInfoForm.controls['taxCode'].value;
     // let firstChar = text.charAt(0);
     // let lastChar = text.charAt(text.length - 1);
