@@ -443,7 +443,7 @@ export class AccountsGuideComponent implements OnInit {
         parentAccountName: this.GetAllaccountGuideList[index].parentAccountName,
       })
     }
-    this.accountGuideService.customExportExcel(x, "Accounts guide");
+    this._sharedService.customExportExcel(x, "Accounts guide");
 
   }
 

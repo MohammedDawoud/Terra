@@ -57,6 +57,7 @@ import {
   moveItemInArray,
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
+import { SharedService } from 'src/app/core/services/shared.service';
 
 const hijriSafe = require('hijri-date/lib/safe');
 const HijriDate = hijriSafe.default;
@@ -85,33 +86,20 @@ export class AddSearchComponent implements OnInit {
   _CustomerSMS: any = null;
   modal?: BsModalRef;
   modalDetails: any = {};
-  load_CustomerName: any;
-  load_CustomerMobile: any;
-  load_CustomerMail: any;
   load_BranchAccount: any;
   load_CityAndAreas: any;
   public _CustomerVM: CustomerVM;
   customrRowSelected: any;
   obj: CustomerVM;
   BranchId: number;
-  getEmailOrgnize: any;
-  governmentCount = 0;
-  InvestorCompanyCount = 0;
-  CitizensCount = 0;
   allCount = 0;
-  load_FileType: any;
   load_BranchUserId: any;
   nameAr: any;
   nameEn: any;
   isSubmit: boolean = false;
   modalRef?: BsModalRef;
   subscriptions: Subscription[] = [];
-  messages: string[] = [];
-  load_filesTypes: any;
   customer = new Customer();
-  emailModalDetils: any;
-  uploadModalDetils: any;
-  modalSMSDetails: any;
 
   userG: any = {};
   selectedDateType = DateType.Hijri;
@@ -163,12 +151,12 @@ export class AddSearchComponent implements OnInit {
   isEditable: any = {};
 
   displayedColumns: string[] = [
-    'name',
+    'branchName',
+    'customerCode',
+    'nameAr',
+    'mainPhoneNo',
     'nationalId',
-    'customerType',
-    'email',
-    'phone',
-    'mobile',
+    'statusName',
     'operations',
   ];
   displayedColumn: any = {
@@ -188,15 +176,15 @@ export class AddSearchComponent implements OnInit {
 
   EditModel: any = {
     CustomerId: 0,
-    CustomerName: null,
-    CustomerNameEn: null,
+    nameAr: null,
+    nameEn: null,
   };
 
   constructor(
     private service: CustomerService,
     private modalService: BsModalService,
     private api: RestApiService,
-    private exportationService: ExportationService,
+    private _sharedService: SharedService,
     private changeDetection: ChangeDetectorRef,
     private toast: ToastrService,
     private ngbModalService: NgbModal,
@@ -246,95 +234,11 @@ export class AddSearchComponent implements OnInit {
       amount: 0,
     },
   ];
-
-  serviceDetails: any;
-
   selectAllValue = false;
 
-  userPermissionsColumns: string[] = [
-    'userName',
-    'watch',
-    'add',
-    'edit',
-    'delete',
-    'operations',
-  ];
-  projectGoalsColumns: string[] = [
-    'serial',
-    'requirements',
-    'name',
-    'duration',
-    'choose',
-  ];
-
-  projectGoalsDataSource = new MatTableDataSource();
-
-  projectGoals: any;
-  WhatsAppData: any={
-    sendactivation:false,
-    sendactivationOffer:false,
-    sendactivationProject:false,
-    sendactivationSupervision:false,
-  };
   ngOnInit(): void {
     this.getAllCustomers();
   }
-
-  ///////////////////////////////FILTER/////////////////
-
-  // onChange(value: any) {
-  //   this.searchBox.searchType = value;
-  //   if (this.searchBox.searchType == 1) {
-  //     this.fill_CustomerName();
-  //   } else if (this.searchBox.searchType == 3) {
-  //     this.fill_CustomerMobile();
-  //   }
-  //   // else if (this.searchBox.searchType == 2) {
-  //   //   this.fill_CustomerMail();
-  //   // }
-  // }
-
-  // filterData(array: any[], type?: any) {
-  //   if (!type) {
-  //     return array;
-  //   }
-  //   return array.filter((ele) => {
-  //     return ele.customerTypeId == type;
-  //   });
-  // }
-
-  /////////////////////////////Filter//////////////////
-
-  // RefreshData() {
-  //   this._CustomerVM = new CustomerVM();
-  //   if (this.searchBox.searchType == 1) {
-  //     if (this.data2.filter.search_CustomerName == null) {
-  //       this.getAllCustomers();
-  //       return;
-  //     }
-  //     this._CustomerVM.customerId = this.data2.filter.search_CustomerName;
-  //   } else if (this.searchBox.searchType == 2) {
-  //     if (this.data2.filter.search_customerEmail == null) {
-  //       this.getAllCustomers();
-  //       return;
-  //     }
-  //     this._CustomerVM.email = this.data2.filter.search_customerEmail;
-  //   } else if (this.searchBox.searchType == 3) {
-  //     if (this.data2.filter.search_customerMobile == null) {
-  //       this.getAllCustomers();
-  //       return;
-  //     }
-  //     this._CustomerVM.mainPhoneNo = this.data2.filter.search_customerMobile;
-  //   }
-
-  //   var obj = this._CustomerVM;
-  //   this.service.SearchFn(obj).subscribe((data) => {
-  //     this.dataSource = new MatTableDataSource(data);
-  //     this.dataSourceTemp = data;
-  //     this.dataSource.paginator = this.paginator;
-  //     this.dataSource.sort = this.sort;
-  //   });
-  // }
 
   applyFilter(event: any) {
     const val = event.target.value.toLowerCase();
@@ -344,16 +248,16 @@ export class AddSearchComponent implements OnInit {
         return (
           (d.customerName &&
             d.customerName?.trim().toLowerCase().indexOf(val) !== -1) ||
-          (d.customerNationalId &&
-            d.customerNationalId?.trim().toLowerCase().indexOf(val) !== -1) ||
+          (d.nationalId &&
+            d.nationalId?.trim().toLowerCase().indexOf(val) !== -1) ||
           (d.customerTypeName &&
             d.customerTypeName?.trim().toLowerCase().indexOf(val) !== -1) ||
-          (d.customerEmail &&
-            d.customerEmail?.trim().toLowerCase().indexOf(val) !== -1) ||
-          (d.customerPhone &&
-            d.customerPhone?.trim().toLowerCase().indexOf(val) !== -1) ||
-          (d.customerMobile &&
-            d.customerMobile?.trim().toLowerCase().indexOf(val) !== -1)
+          (d.email &&
+            d.email?.trim().toLowerCase().indexOf(val) !== -1) ||
+          (d.mainPhoneNo &&
+            d.mainPhoneNo?.trim().toLowerCase().indexOf(val) !== -1) ||
+          (d.subMainPhoneNo &&
+            d.subMainPhoneNo?.trim().toLowerCase().indexOf(val) !== -1)
         );
       });
     }
@@ -401,16 +305,37 @@ export class AddSearchComponent implements OnInit {
     });
   }
 
+  Paytype_Cus: any;
+
+  FillPaytypeSelect_Cus() {
+    this.service.FillPayTypeSelect().subscribe((data) => {
+      this.Paytype_Cus = data;
+    });
+  }
+  SocialMedia_Cus: any;
+
+  FillSocialMediaSelect_Cus() {
+    this.service.FillSocialMediaSelect().subscribe((data) => {
+      this.SocialMedia_Cus = data;
+    });
+  }
+
+  GenerateCustomerNumber(){
+    this.service.GenerateCustomerNumber().subscribe(data=>{
+      this.modalDetails.customerCode=data.reasonPhrase;
+    });
+  }
   objBranchAccount: any = null;
   getBranchAccount(BranchId: any) {
+    debugger
     this.objBranchAccount = null;
     this.modalDetails.accountName = null;
-    this.service.GetCustMainAccByBranchId(BranchId).subscribe({
-      next: (data: any) => {
-        //this.modalDetails.CustMainAccByBranchId = data.result;
-        this.modalDetails.accountName =
-          data.result.nameAr + ' - ' + data.result.code;
+    this.service.GetCustMainAccByBranchId(BranchId).subscribe({next: (data: any) => {
+      if(data.result.accountId!=0)
+      {
+        this.modalDetails.accountName =data.result.nameAr + ' - ' + data.result.accountCode;
         this.objBranchAccount = data.result;
+      }    
       },
       error: (error) => {},
     });
@@ -422,24 +347,21 @@ export class AddSearchComponent implements OnInit {
   openModal(template: TemplateRef<any>, data?: any, modalType?: any) {
     this.fillBranchByUserId();
     this.FillCitySelect_Cus();
+    this.FillPaytypeSelect_Cus();
+    this.FillSocialMediaSelect_Cus();
+
 
     this.resetModal();
     //this.getEmailOrganization();
-
+    debugger
     if (modalType == 'addClient') {
+      this.GenerateCustomerNumber();
     }
     console.log('this.modalDetails');
     console.log(this.modalDetails);
 
     if (data) {
-      //  console.log('xxx');
       this.modalDetails = data;
-
-      this.emailModalDetils = data;
-
-      this.modalSMSDetails = data;
-
-      this.modalDetails.country = 'المملكة العربية السعودية';
 
       if (modalType == 'editClient') {
         this.getBranchAccount(this.modalDetails.branchId);
@@ -467,12 +389,6 @@ export class AddSearchComponent implements OnInit {
 
   selection = new SelectionModel<any>(true, []);
 
-  CustomerMailIsRequired: any = false;
-  MailIsRequired: any = false;
-  CustomerNationalIdIsRequired: any = false;
-  NationalIdIsRequired: any = false;
-  CustomerphoneIsRequired: any = false;
-  phoneIsRequired: any = false;
 
   closeResult: any;
   OfferPopupAddorEdit: any = 0; //add offerprice
@@ -490,8 +406,6 @@ export class AddSearchComponent implements OnInit {
     }
     if (data) {
       this.modalDetails = data;
-      this.emailModalDetils = data;
-      this.modalSMSDetails = data;
     }
     if (type === 'deleteModalPerm') {
       this.publicidRow = data.idRow;
@@ -527,8 +441,8 @@ export class AddSearchComponent implements OnInit {
   }
   //dawoud
   TablClick() {
-    this.modalDetails.customerNameAr = null;
-    this.modalDetails.customerNameEn = null;
+    this.modalDetails.nameAr = null;
+    this.modalDetails.nameEn = null;
     this.isSubmit = false;
   }
   ShowImg(pho: any) {
@@ -541,11 +455,6 @@ export class AddSearchComponent implements OnInit {
     }
   }
 
-  urlAgent: any = null;
-  // cleanURL(url:any):SafePipe{
-  //   this.urlAgent=null;
-  //   return this.domSanitizer.bypassSecurityTrustResourceUrl(url);
-  // }
   CustomerIdPublic: any = 0;
   setCustomerid_P(id: any) {
     this.CustomerIdPublic = id;
@@ -553,39 +462,6 @@ export class AddSearchComponent implements OnInit {
     console.log(this.CustomerIdPublic);
   }
 
-  PopupAfterSaveObj_Customer: any = {
-    CustomerId: 0,
-    AccountNo: null,
-    MainAccountNo: null,
-    MainAccountName: null,
-    CustomerName: null,
-    BranchName: null,
-  };
-
-  // EmailValue_Customer: any;PhoneValue_Customer: any;
-  checkedEmail: any;
-  checkedPhone: any;
-  clientAddedCheckedEmail: any = false;
-  clientAddedCheckedPhone: any = false;
-
-  GetCustomersByCustomerId_Cust(id: any, BranchName: any) {
-    this.service.GetCustomersByCustomerId(id).subscribe((data) => {
-      console.log(data);
-      console.log('this.objBranchAccount');
-      console.log(this.objBranchAccount);
-      this.setCustomerid_P(id);
-      this.PopupAfterSaveObj_Customer = {
-        CustomerId: id,
-        AccountNo: data.result.accountCodee,
-        MainAccountNo: this.objBranchAccount.code,
-        MainAccountName: this.objBranchAccount.nameAr,
-        CustomerName: data.result.customerNameAr,
-        BranchName: BranchName,
-        EmailValue_Customer: data.result.customerEmail,
-        PhoneValue_Customer: data.result.customerMobile,
-      };
-    });
-  }
   disableButtonSave_Customer = false;
 
   addCustomer() {
@@ -597,49 +473,18 @@ export class AddSearchComponent implements OnInit {
     }
     var custObj: any = {};
     custObj.customerId = this.modalDetails.customerId;
-    custObj.customerNameAr = this.modalDetails.customerNameAr;
-    custObj.customerNameEn = this.modalDetails.customerNameEn;
-    custObj.customerNationalId = this.modalDetails.customerNationalId;
+    custObj.nameAr = this.modalDetails.nameAr;
+    custObj.nameEn = this.modalDetails.nameEn;
+    custObj.nationalId = this.modalDetails.nationalId;
     custObj.cityId = this.modalDetails.cityId;
-    custObj.customerTypeId = this.modalDetails.customerTypeId ?? 1;
-
+    custObj.customerCode = this.modalDetails.customerCode;
     custObj.branchId = this.modalDetails.branchId;
     custObj.accountId = this.modalDetails.accountId;
-    //this.customer.accountName = this.modalDetails.accountName;
-    //this.customer.addDate = this.modalDetails.addDate;
-
-    custObj.generalManager = this.modalDetails.generalManager;
-    //custObj.attachmentUrl = this.modalDetails.attachmentUrl;
-    custObj.customerMobile = this.modalDetails.customerMobile;
-    custObj.customerPhone = this.modalDetails.customerPhone;
-
-    custObj.customerEmail = this.modalDetails.customerEmail;
-    custObj.commercialActivity = this.modalDetails.commercialActivity;
-
-    custObj.commercialRegDate = this.modalDetails.commercialRegDate;
-    custObj.commercialRegHijriDate = this.modalDetails.commercialRegHijriDate;
-
-    custObj.postalCodeFinal = this.modalDetails.postalCodeFinal;
-    custObj.country = this.modalDetails.country;
-
-    custObj.streetName = this.modalDetails.streetName;
-    custObj.buildingNumber = this.modalDetails.buildingNumber;
-
-    custObj.neighborhood = this.modalDetails.neighborhood;
-    custObj.customerAddress = this.modalDetails.customerAddress;
-
-    //this.customer.commercialRegInvoice = this.modalDetails.commercialRegInvoice;
-    custObj.commercialRegister = this.modalDetails.commercialRegister;
-    custObj.responsiblePerson = this.modalDetails.responsiblePerson;
-
-    custObj.externalPhone = this.modalDetails.externalPhone;
-    custObj.compAddress = this.modalDetails.compAddress;
-
-    custObj.agentName = this.modalDetails.agentName;
-    custObj.agentAttachmentUrl = this.modalDetails.agentAttachmentUrl;
-    custObj.agentNumber = this.modalDetails.agentNumber;
-    custObj.agentType = this.modalDetails.agentType;
-
+    custObj.subMainPhoneNo = this.modalDetails.subMainPhoneNo;
+    custObj.mainPhoneNo = this.modalDetails.mainPhoneNo;
+    custObj.status = this.modalDetails.status;
+    custObj.email = this.modalDetails.email;
+    custObj.address = this.modalDetails.address;
     custObj.notes = this.modalDetails.notes;
     console.log('custObj');
     console.log(custObj);
@@ -649,14 +494,11 @@ export class AddSearchComponent implements OnInit {
       const value = custObj[key] == null ? '' : custObj[key];
       formData.append(key, value);
       formData.append('CustomerId', custObj.customerId.toString());
-      if (this.control?.value.length > 0) {
-        formData.append('UploadedAgentImage', this.control?.value[0]);
-      }
     }
     this.disableButtonSave_Customer = true;
     setTimeout(() => {
       this.disableButtonSave_Customer = false;
-    }, 9000);
+    }, 7000);
     this.service.SaveCustomer(formData).subscribe((result: any) => {
       if (result.statusCode == 200) {
         this.toast.success(
@@ -666,17 +508,6 @@ export class AddSearchComponent implements OnInit {
         this.decline();
         this.getAllCustomers();
         this.ngbModalService.dismissAll();
-        if (this.modalDetails.type == 'addClient') {
-          this.ngbModalService.open(this.optionsModal, {
-            size: 'xl',
-            backdrop: 'static',
-            keyboard: false,
-          });
-          var branname = this.load_BranchUserId.filter(
-            (a: { id: any }) => a.id == this.modalDetails.branchId
-          )[0].name;
-          this.GetCustomersByCustomerId_Cust(result.returnedParm, branname);
-        }
       } else {
         this.toast.error(result.reasonPhrase, 'رسالة');
       }
@@ -687,14 +518,14 @@ export class AddSearchComponent implements OnInit {
     this.ValidateObjMsg = { status: true, msg: null };
 
     if (
-      this.modalDetails.customerNameAr == null ||
-      this.modalDetails.customerNameAr == ''
+      this.modalDetails.nameAr == null ||
+      this.modalDetails.nameAr == ''
     ) {
       this.ValidateObjMsg = { status: false, msg: ' أدخل أسم العميل عربي' };
       return this.ValidateObjMsg;
     } else if (
-      this.modalDetails.customerNameEn == null ||
-      this.modalDetails.customerNameEn == ''
+      this.modalDetails.nameEn == null ||
+      this.modalDetails.nameEn == ''
     ) {
       this.ValidateObjMsg = { status: false, msg: 'أدخل أسم العميل انجليزي' };
       return this.ValidateObjMsg;
@@ -708,20 +539,13 @@ export class AddSearchComponent implements OnInit {
       this.ValidateObjMsg = { status: false, msg: 'لا يوجد حساب لهذا الفرع' };
       return this.ValidateObjMsg;
     }
-    // else if (this.modalDetails.customerMobile==null || this.modalDetails.customerMobile=="") {
-    else if (
-      this.CustomerphoneIsRequired == true &&
-      (this.modalDetails.customerMobile == null ||
-        this.modalDetails.customerMobile == '')
+    else if ((this.modalDetails.mainPhoneNo == null ||this.modalDetails.mainPhoneNo == '')
     ) {
       this.ValidateObjMsg = { status: false, msg: 'ادخل جوال العميل' };
       return this.ValidateObjMsg;
     }
-    // else if (this.modalDetails.customerEmail==null || this.modalDetails.customerEmail=="") {
-    else if (
-      this.CustomerMailIsRequired == true &&
-      (this.modalDetails.customerEmail == null ||
-        this.modalDetails.customerEmail == '')
+    else if ((this.modalDetails.email == null ||
+        this.modalDetails.email == '')
     ) {
       this.ValidateObjMsg = {
         status: false,
@@ -729,41 +553,30 @@ export class AddSearchComponent implements OnInit {
       };
       return this.ValidateObjMsg;
     }
-    if (this.modalDetails.customerTypeId == 1) {
-      // if (this.modalDetails.customerNationalId==null || this.modalDetails.customerNationalId=="" ) {
-      if (
-        this.CustomerNationalIdIsRequired == true &&
-        (this.modalDetails.customerNationalId == null ||
-          this.modalDetails.customerNationalId == '')
-      ) {
-        this.ValidateObjMsg = { status: false, msg: 'ادخل رقم هوية العميل' };
-        return this.ValidateObjMsg;
-      }
-    } else if (this.modalDetails.customerTypeId == 2) {
-      if (!this.modalDetails.generalManager) {
-        this.ValidateObjMsg = { status: false, msg: 'ادخل اسم المدير العام' };
-        return this.ValidateObjMsg;
-      }
-      if (!this.modalDetails.commercialActivity) {
-        this.ValidateObjMsg = { status: false, msg: 'ادخل النشاط التجاري' };
-        return this.ValidateObjMsg;
-      }
-      if (!this.modalDetails.commercialRegister) {
-        this.ValidateObjMsg = { status: false, msg: 'ادخل السجل التجاري' };
-        return this.ValidateObjMsg;
-      }
-    } else if (this.modalDetails.customerTypeId == 3) {
-      if (!this.modalDetails.responsiblePerson) {
-        this.ValidateObjMsg = { status: false, msg: 'ادخل الشخص المسؤول' };
-        return this.ValidateObjMsg;
-      }
-    }
+    if ((this.modalDetails.nationalId == null ||
+      this.modalDetails.nationalId == '')) {
+    this.ValidateObjMsg = { status: false, msg: 'ادخل رقم هوية العميل' };
+    return this.ValidateObjMsg;
+  }
     this.ValidateObjMsg = { status: true, msg: null };
     return this.ValidateObjMsg;
   }
 
-  exportData(){
+  exportData() {
+    let x = [];
 
+    for (let index = 0; index < this.dataSourceTemp.length; index++) {
+      x.push({
+        branchName: this.dataSourceTemp[index].branchName,
+        customerCode: this.dataSourceTemp[index].customerCode,
+        customerName: this.dataSourceTemp[index].nameAr,
+        mainPhoneNo: this.dataSourceTemp[index].mainPhoneNo,
+        nationalId: this.dataSourceTemp[index].nationalId,
+        statusName: this.dataSourceTemp[index].statusName,
+      });
+    }
+    debugger;
+    this._sharedService.customExportExcel(x, 'Customers');
   }
 
   getAllCustomers() {
@@ -783,67 +596,34 @@ export class AddSearchComponent implements OnInit {
     this.control.clear();
     this.modalDetails = {
       CustMainAccByBranchId: {
-        code: '',
+        accountCode: '',
         accountName: null,
         nameAr: '',
         nameEn: '',
       },
-      organizationEmail: '',
       type: 'addClient',
-      agencData: null,
-      customerNameAr: null,
-      customerNameEn: null,
+      nameAr: null,
+      nameEn: null,
       id: null,
-      responsiblePerson: null,
       name: null,
       customerId: 0,
       branchId: null,
       customerCode: null,
       customerName: null,
-      customerNationalId: null,
-      nationalIdSource: null,
-      customerAddress: null,
-      customerEmail: null,
-      customerPhone: null,
-      customerMobile: null,
-      customerTypeId: '1',
+      nationalId: null,
+      address: null,
+      email: null,
+      mainPhoneNo: null,
+      subMainPhoneNo: null,
       notes: null,
-      logoUrl: null,
-      attachmentUrl: null,
-      commercialActivity: null,
-      commercialRegister: null,
-      commercialRegDate: null,
-      commercialRegHijriDate: null,
       accountId: null,
-      projectNo: null,
-      generalManager: null,
-      agentName: null,
-      agentType: null,
-      agentNumber: null,
-      agentAttachmentUrl: null,
       accountName: null,
       addDate: null,
-      customerTypeName: null,
       addUser: [],
-      compAddress: null,
-      postalCodeFinal: null,
-      externalPhone: null,
-      country: null,
-      neighborhood: null,
-      streetName: null,
-      buildingNumber: null,
-      commercialRegInvoice: null,
       cityId: null,
       cityName: null,
-      noOfCustProj: null,
-      noOfCustProjMark: null,
       addedcustomerImg: null,
-      projects: null,
       accountCodee: null,
-      totalRevenue: null,
-      totalExpenses: null,
-      invoices: null,
-      transactions: null,
     };
   }
 

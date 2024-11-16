@@ -36,9 +36,18 @@ export class CustomerService {
     var url=`${environment.apiEndPoint}Customer/GetCustomersByCustomerId?CustomerId=${CustomerId}`;
     return this.http.get<any>(url);
   }
-
+  GenerateCustomerNumber() {
+    var url=`${environment.apiEndPoint}Customer/GenerateCustomerNumber`;
+    return this.http.get<any>(url);
+  }
   FillCitySelect() {
-    return this.http.get<any>(environment.apiEndPoint+'City/FillCitySelect');
+    return this.http.get<any>(environment.apiEndPoint+'Organizations/FillCitySelect');
+  }
+  FillPayTypeSelect() {
+    return this.http.get<any>(environment.apiEndPoint+'Organizations/FillPayTypeSelect');
+  }
+  FillSocialMediaSelect() {
+    return this.http.get<any>(environment.apiEndPoint+'Organizations/FillSocialMediaSelect');
   }
   FillBranchByUserIdSelect(){
     return this.http.get<any>(this.apiEndPoint + 'Branches/FillBranchByUserIdSelect');

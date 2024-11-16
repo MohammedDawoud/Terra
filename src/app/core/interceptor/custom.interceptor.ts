@@ -27,7 +27,6 @@ export class CustomInterceptor implements HttpInterceptor {
 
     }
     else if (request.url != 'https://jsonplaceholder.typicode.com/users') {
-      debugger
       const userG = this.authenticationService.userGlobalObj;
       if (userG?.token) {
         const token = 'bearer ' + userG?.token;
