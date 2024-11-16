@@ -4,7 +4,6 @@ import * as CryptoJS from 'crypto-js';
 import { environment } from 'src/environments/environment';
 import { Observable, Subject } from 'rxjs';
 import { AbstractControl } from '@angular/forms/';
-import { ExportationService } from './exportation-service/exportation.service';
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +14,7 @@ export class SharedService {
 
   private callFunction = new Subject<void>();
   calling$ = this.callFunction.asObservable();
-  constructor(private http: HttpClient,private exportationService: ExportationService) {
+  constructor(private http: HttpClient) {
     this.apiEndPoint = environment.apiEndPoint;
   }
   hijridate: any;
@@ -227,55 +226,6 @@ export class SharedService {
   getAction() {
     return this.action;
   }
-
-
-  customExportExcel(dataExport: any, nameExport: any) {
-
-    let exportation = JSON.parse(JSON.stringify(dataExport));
-    let itemsToExeclude: string[] = []
-
-    let excelData: any[] = [];
-    let headers: string[] = [];
-    let objectKeys = Object.keys(dataExport[0]);
-    objectKeys = objectKeys.filter((item: string) => !itemsToExeclude.includes(item));
-
-    objectKeys.forEach(element => {
-      headers.push(element.toUpperCase());
-    });
-
-    exportation.forEach((ele: any) => {
-      // ele = (ele) => {
-      var sorted: any = {},
-        key, a = [];
-
-      for (key in ele) {
-        if (ele.hasOwnProperty(key)) {
-          a.push(key);
-        }
-      }
-      a = a.filter((item: string) => !itemsToExeclude.includes(item));
-
-      // a.sort();
-
-      for (key = 0; key < a.length; key++) {
-        sorted[a[key]] = ele[a[key]];
-      }
-      // return sorted;
-      ele = sorted;
-      // }
-      let props = Object.getOwnPropertyNames(ele).filter(prop => exportation.some((ex: any) => ex === prop));
-      props.forEach(pp => {
-        delete ele[pp];
-      })
-
-      excelData.push(ele);
-
-    })
-
-    this.exportationService.exportExcel(excelData, nameExport + new Date().getTime(), headers);
-  }
-
-
 }
 
 

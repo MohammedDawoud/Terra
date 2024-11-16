@@ -57,7 +57,6 @@ import {
   moveItemInArray,
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
-import { SharedService } from 'src/app/core/services/shared.service';
 
 const hijriSafe = require('hijri-date/lib/safe');
 const HijriDate = hijriSafe.default;
@@ -184,7 +183,6 @@ export class AddSearchComponent implements OnInit {
     private service: CustomerService,
     private modalService: BsModalService,
     private api: RestApiService,
-    private _sharedService: SharedService,
     private changeDetection: ChangeDetectorRef,
     private toast: ToastrService,
     private ngbModalService: NgbModal,
@@ -576,7 +574,7 @@ export class AddSearchComponent implements OnInit {
       });
     }
     debugger;
-    this._sharedService.customExportExcel(x, 'Customers');
+    this.service.customExportExcel(x, 'Customers');
   }
 
   getAllCustomers() {

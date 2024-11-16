@@ -4048,7 +4048,7 @@
   "Update and activate the directory": "تحديث وتنشيط الدليل",
   "Maintenance": "الصيانة",
   "(1) - Modify IsMain in Accounts": "(1) - IsMain تعديل في الحسابات  ",
-  "(2) - Modifying the order of codes in the accounts to adjust the balance": "(2) - تعديل ترتيب الأكواد في الحسابات لتظبيط الميزان  ",
+  "(2) - Modifying the order of codes in the accounts": "(2) - تعديل ترتيب الأكواد في الحسابات ",
   "Total Attend Dayes": "اجمالي ايام الحضور",
   "Total Absence Dayes": "اجمالي ايام الغياب",
   "Add exchange": "اضافة صرف",

@@ -120,63 +120,31 @@
               </div>
 
               <div class="col-md-6 col-lg-4 mb-3">
-                <div class="row p-0">
-                  <div class="col-lg-6">
-                    <div class="form-group">
-                      <label
-                        for="postalCodeFinal"
-                        class="text-right col-form-label block mx-2"
-                      >
-                        {{ "Postal code" | translate }}
-                        <span class="text-danger">*</span>
-                      </label>
-                      <input
-                        formControlName="postalCodeFinal"
-                        autocomplete="off"
-                        class="form-control"
-                        type="text"
-                        id="postalCodeFinal"
-                        name="postalCodeFinal"
-                      />
-                      <div
-                        class="fieldrequired"
-                        *ngIf="
-                          mainInfoForm
-                            .get('postalCodeFinal')
-                            ?.hasError('required') &&
-                          mainInfoForm.get('postalCodeFinal')?.touched
-                        "
-                      >
-                        {{ "This field is required" | translate }}
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-lg-6">
-                    <div class="form-group">
-                      <label
-                        for="country"
-                        class="text-right col-form-label block mx-2"
-                      >
-                        {{ "Country" | translate }}
-                        <span class="text-danger">*</span>
-                      </label>
-                      <input
-                        formControlName="country"
-                        autocomplete="off"
-                        class="form-control"
-                        type="text"
-                        id="country"
-                        name="country"
-                      />
-                      <div
-                        class="fieldrequired"
-                        *ngIf="
-                          mainInfoForm.get('country')?.hasError('required') &&
-                          mainInfoForm.get('country')?.touched
-                        "
-                      >
-                        {{ "This field is required" | translate }}
-                      </div>
+                <div class="form-group">
+                  <label
+                    for="email"
+                    class="text-right col-form-label block mx-2"
+                  >
+                    {{ "Office customer correspondence email" | translate }}
+                    <span class="text-danger">*</span>
+                  </label>
+                  <div class="flex">
+                    <input
+                      formControlName="email"
+                      autocomplete="off"
+                      class="form-control"
+                      type="email"
+                      id="email"
+                      name="email"
+                    />
+                    <div
+                      class="fieldrequired"
+                      *ngIf="
+                        mainInfoForm.get('email')?.hasError('required') &&
+                        mainInfoForm.get('email')?.touched
+                      "
+                    >
+                      {{ "This field is required" | translate }}
                     </div>
                   </div>
                 </div>
@@ -200,7 +168,7 @@
                           
                         >
                           <ng-option
-                            *ngFor="let user of nationalitysourceselected"
+                            *ngFor="let user of CityList"
                             [value]="user.id"
                             >{{ user.name }}</ng-option
                           >
@@ -211,136 +179,6 @@
                         *ngIf="
                           mainInfoForm.get('cityId')?.hasError('required') &&
                           mainInfoForm.get('cityId')?.touched
-                        "
-                      >
-                        {{ "This field is required" | translate }}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="col-md-6 col-lg-4 mb-3">
-                <div class="row p-0">
-                  <div class="col-lg-6">
-                    <div class="form-group">
-                      <label
-                        for="neighborhood"
-                        class="text-right col-form-label block mx-2"
-                      >
-                        {{ "Neighborhood" | translate }}
-                        <span class="text-danger">*</span>
-                      </label>
-                      <input
-                        formControlName="neighborhood"
-                        autocomplete="off"
-                        class="form-control"
-                        type="text"
-                        id="neighborhood"
-                        name="neighborhood"
-                      />
-                      <div
-                        class="fieldrequired"
-                        *ngIf="
-                          mainInfoForm
-                            .get('neighborhood')
-                            ?.hasError('required') &&
-                          mainInfoForm.get('neighborhood')?.touched
-                        "
-                      >
-                        {{ "This field is required" | translate }}
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-lg-6">
-                    <div class="form-group">
-                      <label
-                        for="streetName"
-                        class="text-right col-form-label block mx-2"
-                      >
-                        {{ "Street name" | translate }}
-                        <span class="text-danger">*</span>
-                      </label>
-                      <input
-                        formControlName="streetName"
-                        autocomplete="off"
-                        class="form-control"
-                        type="text"
-                        id="streetName"
-                        name="streetName"
-                      />
-                      <div
-                        class="fieldrequired"
-                        *ngIf="
-                          mainInfoForm
-                            .get('streetName')
-                            ?.hasError('required') &&
-                          mainInfoForm.get('streetName')?.touched
-                        "
-                      >
-                        {{ "This field is required" | translate }}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="col-md-6 col-lg-4 mb-3">
-                <div class="row p-0">
-                  <div class="col-lg-6">
-                    <div class="form-group">
-                      <label
-                        for="buildingNumber"
-                        class="text-right col-form-label block mx-2"
-                      >
-                        {{ "BuildingNumber" | translate }}
-                        <span class="text-danger">*</span>
-                      </label>
-                      <input
-                        formControlName="buildingNumber"
-                        autocomplete="off"
-                        class="form-control"
-                        type="text"
-                        id="buildingNumber"
-                        name="buildingNumber"
-                      />
-                      <div
-                        class="fieldrequired"
-                        *ngIf="
-                          mainInfoForm
-                            .get('buildingNumber')
-                            ?.hasError('required') &&
-                          mainInfoForm.get('buildingNumber')?.touched
-                        "
-                      >
-                        {{ "This field is required" | translate }}
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-lg-6">
-                    <div class="form-group">
-                      <label
-                        for="externalPhone"
-                        class="text-right col-form-label block mx-2"
-                      >
-                        {{ "Additional Phone" | translate }}
-                        <span class="text-danger">*</span>
-                      </label>
-                      <input
-                        formControlName="externalPhone"
-                        autocomplete="off"
-                        class="form-control"
-                        type="text"
-                        id="externalPhone"
-                        name="externalPhone"
-                      />
-                      <div
-                        class="fieldrequired"
-                        *ngIf="
-                          mainInfoForm
-                            .get('externalPhone')
-                            ?.hasError('required') &&
-                          mainInfoForm.get('externalPhone')?.touched
                         "
                       >
                         {{ "This field is required" | translate }}
@@ -389,71 +227,10 @@
                       </div>
                     </div>
                   </div>
-
-                  <!-- check -->
-                  <div class="col-lg-6">
-                    <div class="form-group">
-                      <label
-                        for="postalCode"
-                        class="text-right col-form-label block mx-2"
-                      >
-                        {{ "Commercial Register" | translate }}
-                        <span class="text-danger">*</span>
-                      </label>
-                      <input
-                        formControlName="postalCode"
-                        autocomplete="off"
-                        class="form-control"
-                        type="text"
-                        id="postalCode"
-                        name="postalCode"
-                      />
-                      <div
-                        class="fieldrequired"
-                        *ngIf="
-                          mainInfoForm
-                            .get('postalCode')
-                            ?.hasError('required') &&
-                          mainInfoForm.get('postalCode')?.touched
-                        "
-                      >
-                        {{ "This field is required" | translate }}
-                      </div>
-                    </div>
-                  </div>
                 </div>
               </div>
 
-              <div class="col-md-6 col-lg-4 mb-3">
-                <div class="form-group">
-                  <label
-                    for="email"
-                    class="text-right col-form-label block mx-2"
-                  >
-                    {{ "Office customer correspondence email" | translate }}
-                    <span class="text-danger">*</span>
-                  </label>
-                  <div class="flex">
-                    <input
-                      formControlName="email"
-                      autocomplete="off"
-                      class="form-control"
-                      type="email"
-                      id="email"
-                      name="email"
-                    />
-                    <div
-                      class="fieldrequired"
-                      *ngIf="
-                        mainInfoForm.get('email')?.hasError('required') &&
-                        mainInfoForm.get('email')?.touched
-                      "
-                    >
-                      {{ "This field is required" | translate }}
-                    </div>
-                  </div>
-                </div>
-              </div>
+
 
               <div class="col-md-6 col-lg-4 mb-3">
                 <div class="form-group">
@@ -473,298 +250,8 @@
                   />
                 </div>
               </div>
-
-              <div class="col-md-6 col-lg-4 mb-3">
-                <div class="form-group">
-                  <label
-                    for="webSite"
-                    class="text-right col-form-label block mx-2"
-                  >
-                    {{ "Location" | translate }}
-                  </label>
-                  <input
-                    formControlName="webSite"
-                    autocomplete="off"
-                    class="form-control"
-                    type="text"
-                    id="webSite"
-                    name="webSite"
-                  />
-                </div>
-              </div>
-
-              <div class="col-md-6 col-lg-2 mb-3">
-                <div class="form-group">
-                  <label
-                    for="BankName"
-                    class="text-right col-form-label block mx-2"
-                  >
-                    {{ "BankName" | translate }}
-                    <span class="text-danger">*</span>
-                  </label>
-                  <ng-select
-                    formControlName="bankId"
-                    autocomplete="off"
-                    id="BankName"
-                    name="BankName"
-                  >
-                    <ng-option
-                      *ngFor="let item of bankselect"
-                      [value]="item.id"
-                      >{{ item.name }}</ng-option
-                    >
-                  </ng-select>
-                  <div
-                    class="fieldrequired"
-                    *ngIf="
-                      mainInfoForm.get('bankId')?.hasError('required') &&
-                      mainInfoForm.get('bankId')?.touched
-                    "
-                  >
-                    {{ "This field is required" | translate }}
-                  </div>
-                </div>
-              </div>
-
-              <div class="col-md-6 col-lg-2 mb-3">
-                <div class="form-group">
-                  <label
-                    for="BankAccount"
-                    class="text-right col-form-label block mx-2"
-                  >
-                    {{ "Bank account" | translate }}
-                    <span class="text-danger">*</span>
-                  </label>
-                  <input
-                    formControlName="accountBank"
-                    autocomplete="off"
-                    class="form-control"
-                    type="text"
-                    id="accountBank"
-                    name="BankAccount"
-                  />
-
-                  <div
-                    class="fieldrequired"
-                    *ngIf="
-                      mainInfoForm.get('accountBank')?.hasError('required') &&
-                      mainInfoForm.get('accountBank')?.touched
-                    "
-                  >
-                    {{ "This field is required" | translate }}
-                  </div>
-                </div>
-              </div>
-
-              <!-- check -->
-
-
-              <div class="col-md-6 col-lg-3 mb-3">
-                <div class="form-group">
-                  <label for="as" class="text-right col-form-label block mx-2">
-                    {{ "as" | translate }}
-                  </label>
-                  <input
-                    formControlName="as"
-                    autocomplete="off"
-                    class="form-control"
-                    type="text"
-                    id="as"
-                    name="as"
-                  />
-                </div>
-              </div>
-
-              <div class="col-md-6 col-lg-2 mb-3">
-                <div class="form-group">
-                  <label
-                    for="NationalId"
-                    class="text-right col-form-label block mx-2"
-                  >
-                    {{ "NationalId" | translate }}
-                  </label>
-                  <input
-                    formControlName="NationalId"
-                    autocomplete="off"
-                    class="form-control"
-                    type="text"
-                    id="NationalId"
-                    name="NationalId"
-                  />
-                </div>
-              </div>
-
-              <div class="col-md-6 col-lg-2 mb-3">
-                <div class="form-group">
-                  <label
-                    for="BankName2"
-                    class="text-right col-form-label block mx-2"
-                  >
-                    {{ "BankName" | translate }}
-                    <!-- <span class="text-danger">*</span> -->
-                  </label>
-                  <ng-select
-                    formControlName="bankId2"
-                    autocomplete="off"
-                    id="BankName2"
-                    name="BankName2"
-                  >
-                    <ng-option
-                      *ngFor="let item of bankselect"
-                      [value]="item.id"
-                      >{{ item.name }}</ng-option
-                    >
-                  </ng-select>
-                  <!-- <div class="fieldrequired" *ngIf="
-                      mainInfoForm.get('bankId2')?.hasError('required') &&
-                      mainInfoForm.get('bankId2')?.touched
-                    ">
-                    {{ "This field is required" | translate }}
-                  </div> -->
-                </div>
-              </div>
-
-              <div class="col-md-6 col-lg-2 mb-3">
-                <div class="form-group">
-                  <label
-                    for="BankAccount2"
-                    class="text-right col-form-label block mx-2"
-                  >
-                    {{ ("Bank account" | translate) + " 2" }}
-                    <!-- <span class="text-danger">*</span> -->
-                  </label>
-                  <input
-                    formControlName="accountBank2"
-                    autocomplete="off"
-                    class="form-control"
-                    type="text"
-                    id="BankAccount2"
-                    name="BankAccount2"
-                  />
-                </div>
-                <!-- <div class="fieldrequired" *ngIf="
-                    mainInfoForm.get('accountBank2')?.hasError('required') &&
-                    mainInfoForm.get('accountBank2')?.touched
-                  ">
-                  {{ "This field is required" | translate }}
-                </div> -->
-              </div>
-
-              <!-- <div class="col-md-6 col-lg-3 mb-3">
-                <div class="form-group">
-                  <label
-                    for="EngineeringLicense"
-                    class="text-right col-form-label block mx-2"
-                  >
-                    {{ "EngineeringLicense" | translate }}
-                  </label>
-                  <input
-                    formControlName="engineering_License"
-                    autocomplete="off"
-                    class="form-control"
-                    type="text"
-                    id="EngineeringLicense"
-                    name="EngineeringLicense"
-                  />
-                </div>
-              </div>
-
-              <div class="col-md-6 col-lg-3 mb-3">
-                <div class="form-group">
-                  <label
-                    for="IssuedOn"
-                    class="text-right col-form-label block mx-2"
-                  >
-                    {{ "IssuedOn" | translate }}
-                  </label>
-                  <input
-                    formControlName="engineering_LicenseDate"
-                    autocomplete="off"
-                    class="form-control"
-                    id="IssuedOn"
-                    name="IssuedOn"
-                    bsDatepicker
-                  />
-                </div>
-              </div> -->
-
-              <div class="col-md-6 mb-3">
-                <div
-                  class="box rounded p-3"
-                  style="border: 4px solid var(--base-color)"
-                >
-                  <p
-                    class="text-red-500 fw-bold"
-                    style="letter-spacing: 0.5px; line-height: 1.7em"
-                  >
-                    {{ "branchsHint" | translate }}
-                  </p>
-                  <mat-slide-toggle
-                    name="activeBranches"
-                    formControlName="OrgDataIsRequired"
-                    (change)="Changeorgisreq($event)"
-                    color="primary"
-                    ><span
-                      [translate]="'name'"
-                      [translateParams]="{
-                        ar: 'تفعيل الفروع؟',
-                        en: 'Active Branches?'
-                      }"
-                    ></span
-                  ></mat-slide-toggle>
-                </div>
-              </div>
-
-              <div class="col-12 my-3">
-                <div class="row p-0">
-                  <div class="col-md-6 mb-4 mb-md-0">
-                    <p class="bg-red-100 p-1">
-                      {{
-                        "Please: Choose the representative of the facility authorized to sign the employee contracts and
-                      the facility's customer contracts" | translate
-                      }}
-                    </p>
-                    <!-- <div class="form-input-group flex gap-2 items-center">
-                      <input
-                        type="checkbox"
-                        class="form-check-input"
-                        formControlName="isFooter"
-                        name="showInfoInReport"
-                      />
-                      <label for="showInfoInReport" class="m-0">{{
-                        "Show the establishment data at the end of the reportsbranchsHint"
-                          | translate
-                      }}</label>
-                    </div> -->
-                  </div>
-                </div>
-              </div>
-
               <div class="col-12 my-3">
                 <div class="row p-0 items-center">
-                  <div
-                    class="col-md-4"
-                    *ngIf="
-                      mainInfoForm.controls['oRGlogoUrl'].value != null &&
-                      mainInfoForm.controls['oRGlogoUrl'].value != ''
-                    "
-                  >
-                    <img
-                      src="{{
-                        environmenturl +
-                          mainInfoForm.controls['oRGlogoUrl'].value
-                      }}"
-                      alt=""
-                      class="img-fluid"
-                      style="
-                        width: 340px;
-                        height: 200px;
-                        object-fit: contain;
-                        background-color: #fff;
-                        padding: 10px;
-                      "
-                    />
-                  </div>
                   <div class="col-md-8">
                     <div class="upload">
                       <file-upload
@@ -885,28 +372,12 @@
                   this.mainInfoForm.controls['nameEn'].value == null ||
                   this.mainInfoForm.controls['mobile'].value == null ||
                   this.mainInfoForm.controls['fax'].value == null ||
-                  this.mainInfoForm.controls['postalCode'].value == null ||
-                  this.mainInfoForm.controls['country'].value == null ||
                   this.mainInfoForm.controls['cityId'].value == null ||
-                  this.mainInfoForm.controls['neighborhood'].value == null ||
-                  this.mainInfoForm.controls['streetName'].value == null ||
-                  this.mainInfoForm.controls['buildingNumber'].value == null ||
-                  this.mainInfoForm.controls['externalPhone'].value == null ||
                   this.mainInfoForm.controls['taxCode'].value == null ||
-                  this.mainInfoForm.controls['postalCodeFinal'].value == null ||
-                  this.mainInfoForm.controls['email'].value == null ||
-                  this.mainInfoForm.controls['bankId'].value == null ||
-                  this.mainInfoForm.controls['accountBank'].value == null
+                  this.mainInfoForm.controls['email'].value == null
                 "
               >
                 {{ "Save" | translate }}
-              </button>
-              <button
-                type="button"
-                class="btn btn-light py-2 px-3 mt-0"
-                (click)="goDash()"
-              >
-                {{ "close" | translate }}
               </button>
             </div>
           </div>
@@ -931,62 +402,32 @@
                   matSort
                   class="mat-elevation-z8 rounded-t-lg overflow-hidden w-max"
                 >
-                  <!-- Name column -->
-                  <ng-container matColumnDef="Name">
+                  <ng-container matColumnDef="code">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>
-                      <span>{{ "Name" | translate }}</span>
+                      <span>{{ "كود الفرع" | translate }}</span>
                     </th>
                     <td mat-cell *matCellDef="let element">
-                      <span>{{ element?.branchName }}</span>
-                    </td>
-                  </ng-container>
-                  <!-- CommercialRegister column -->
-                  <ng-container matColumnDef="CommercialRegister">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
-                      <span>{{ "Commercial Register" | translate }}</span>
-                    </th>
-                    <td mat-cell *matCellDef="let element">
-                      <span>{{ element?.postalCode }}</span>
-                    </td>
-                  </ng-container>
-                  <!-- CommerialRegistration column -->
-                  <ng-container matColumnDef="CommerialRegistration">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
-                      <span>{{ "Commerial Registration" | translate }}</span>
-                    </th>
-                    <td mat-cell *matCellDef="let element">
-                      <span>{{ element?.taxCode }}</span>
-                    </td>
-                  </ng-container>
-                  <!-- city/region column -->
-                  <ng-container matColumnDef="city/region">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
-                      <span>{{ "city/region" | translate }}</span>
-                    </th>
-                    <td mat-cell *matCellDef="let element">
-                      <span>{{ element?.cityName }}</span>
-                    </td>
-                  </ng-container>
-                  <!-- coins column -->
-                  <ng-container matColumnDef="coins">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
-                      <span>{{ "coins" | translate }}</span>
-                    </th>
-                    <td mat-cell *matCellDef="let element">
-                      <span>{{ element?.currencyName }}</span>
-                    </td>
-                  </ng-container>
-                  <!-- operations Column -->
-                  <ng-container matColumnDef="operations">
-                    <th mat-header-cell *matHeaderCellDef>
-                      {{ "operations" | translate }}
-                    </th>
-                    <td mat-cell *matCellDef="let element">
-                      <div class="flex gap-1 justify-center py-2">
-                      </div>
+                      <span>{{ element?.code }}</span>
                     </td>
                   </ng-container>
 
+                  <ng-container matColumnDef="nameAr">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                      <span>{{ "اسم الفرع" | translate }}</span>
+                    </th>
+                    <td mat-cell *matCellDef="let element">
+                      <span>{{ element?.nameAr }}</span>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="nameEn">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                      <span>{{ "اسم الفرع English" | translate }}</span>
+                    </th>
+                    <td mat-cell *matCellDef="let element">
+                      <span>{{ element?.nameEn }}</span>
+                    </td>
+                  </ng-container>
                   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
 
                   <tr
@@ -1048,7 +489,7 @@
         <div class="form-group">
           <label class="text-right col-form-label block">
             {{
-              "(2) - Modifying the order of codes in the accounts to adjust the balance"
+              "(2) - Modifying the order of codes in the accounts"
                 | translate
             }}
           </label>
@@ -1065,174 +506,6 @@
           </button>
         </div>
       </div>
-    </div>
-  </div>
-</ng-template>
-<!-- Add option -->
-<ng-template #addOption let-modal>
-  <div class="modal-header bg-base text-white">
-    <h4
-      class="modal-title mb-0"
-      id="modal-basic-title"
-      [translate]="'name'"
-      [translateParams]="{ ar: 'اضافة جديدة', en: 'Add New' }"
-    ></h4>
-    <button type="button" class="m-0" (click)="modal.dismiss('Cross click')">
-      <i class="fa fa-close"></i>
-    </button>
-  </div>
-  <div class="modal-body">
-    <form #addOptionForm="ngForm">
-      <div class="row">
-        <div class="col-lg-6 mb-4 mb-lg-0">
-          <div class="form-input-group">
-            <label for="" class="block mb-3">{{ "nameAr" | translate }}</label>
-            <input
-              type="text"
-              placeholder="{{ 'nameAr' | translate }}"
-              class="form-control"
-              ngModel
-              name="nameAr"
-              required
-            />
-          </div>
-        </div>
-        <div class="col-lg-6">
-          <div class="form-input-group">
-            <label for="" class="block mb-3">{{ "nameEn" | translate }}</label>
-            <input
-              type="text"
-              placeholder="{{ 'nameEn' | translate }}"
-              class="form-control"
-              ngModel
-              name="nameEn"
-              required
-            />
-          </div>
-        </div>
-      </div>
-    </form>
-  </div>
-  <div class="modal-footer justify-content-center" style="border-top: none">
-    <button
-      type="button"
-      class="btn btn-light py-2 px-3 mt-0"
-      (click)="modal.dismiss('Cross click')"
-    >
-      {{ "close" | translate }}
-    </button>
-    <button
-      type="button"
-      class="btn submit-btn bg-base text-white py-2 px-3 mt-0"
-      [disabled]="addOptionForm.invalid"
-      (click)="saveOption(addOptionForm.value)"
-    >
-      {{ "Save" | translate }}
-    </button>
-
-    <div
-      class="d-block w-100 mt-4"
-      style="
-        border-top: 2px solid #d5dadf;
-        padding-top: 24px;
-        border-radius: 3px;
-      "
-    >
-      <div class="w-100 mb-3">
-        <input
-          type="text"
-          class="form-control pull-right"
-          placeholder="{{ 'search' | translate }}"
-          (keyup)="updateFilter($event)"
-        />
-      </div>
-
-      <ngx-datatable
-        style="max-height: 300px; overflow-y: auto"
-        #table
-        class="striped w-100"
-        [columnMode]="'flex'"
-        [headerHeight]="50"
-        [footerHeight]="50"
-        [rowHeight]="'auto'"
-        [limit]="100"
-        [rows]="rows"
-      >
-        <!-- Column: Editing Mode-->
-        <ngx-datatable-column [flexGrow]="0.5">
-          <ng-template
-            let-value="value"
-            let-row="row"
-            let-rowIndex="rowIndex"
-            ngx-datatable-cell-template
-          >
-            <!-- Pencil icon -->
-            <i
-              class="fa fa-pencil"
-              title="Modify"
-              style="cursor: pointer"
-              *ngIf="!this.isEditable[rowIndex]"
-              (click)="this.isEditable[rowIndex] = !this.isEditable[rowIndex]"
-            ></i>
-
-            <!-- Save/Delete icons -->
-            <div class="actions">
-              <i
-                class="fa fa-edit text-success"
-                *ngIf="this.isEditable[rowIndex]"
-                title="Save"
-                (click)="save(row, rowIndex)"
-              ></i>
-              <i
-                class="fa fa-trash text-danger"
-                *ngIf="this.isEditable[rowIndex]"
-                title="Delete"
-                (click)="delete(row, rowIndex)"
-              ></i>
-            </div>
-          </ng-template>
-        </ngx-datatable-column>
-
-        <ngx-datatable-column
-          [flexGrow]="1.5"
-          name="{{ 'nameAr' | translate }}"
-        >
-          <ng-template
-            ngx-datatable-cell-template
-            let-rowIndex="rowIndex"
-            let-row="row"
-          >
-            <div class="form-input-group">
-              <input
-                type="text"
-                name="activity_name"
-                [(ngModel)]="row.name_ar"
-                [disabled]="!isEditable[rowIndex]"
-              />
-            </div>
-          </ng-template>
-        </ngx-datatable-column>
-
-        <ngx-datatable-column
-          [flexGrow]="1.5"
-          name="{{ 'nameEn' | translate }}"
-        >
-          <ng-template
-            ngx-datatable-cell-template
-            let-rowIndex="rowIndex"
-            let-row="row"
-          >
-            <div class="form-input-group">
-              <input
-                type="text"
-                name="activity_name_en"
-                [(ngModel)]="row.name_en"
-                [disabled]="!isEditable[rowIndex]"
-              />
-            </div>
-          </ng-template>
-        </ngx-datatable-column>
-      </ngx-datatable>
     </div>
   </div>
 </ng-template>

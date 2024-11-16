@@ -13,7 +13,6 @@ import {
 import { RestApiService } from 'src/app/shared/services/api.service';
 import { Router } from '@angular/router';
 import { NodeItem, TreeCallbacks, TreeMode } from 'tree-ngx';
-import { SharedService } from 'src/app/core/services/shared.service';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { FormBuilder } from '@angular/forms';
@@ -127,7 +126,6 @@ export class AccountsGuideComponent implements OnInit {
     private router: Router,
     private accountGuideService: AccountGuideService,
     private print: NgxPrintElementService,
-    private _sharedService: SharedService,
     private toast: ToastrService,
     private translate: TranslateService,
     private fb: FormBuilder, private authenticationService: AuthenticationService
@@ -443,7 +441,7 @@ export class AccountsGuideComponent implements OnInit {
         parentAccountName: this.GetAllaccountGuideList[index].parentAccountName,
       })
     }
-    this._sharedService.customExportExcel(x, "Accounts guide");
+    this.accountGuideService.customExportExcel(x, "Accounts guide");
 
   }
 
