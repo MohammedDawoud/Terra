@@ -28,7 +28,6 @@ import {
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { Customer } from 'src/app/core/Classes/DomainObjects/customer';
 
-import { CustomerVM } from 'src/app/core/Classes/ViewModels/customerVM';
 import { CustomerService } from 'src/app/core/services/customer-services/customer.service';
 import { ExportationService } from 'src/app/core/services/exportation-service/exportation.service';
 import { fade } from 'src/app/shared/animations/toggleBtn.animation';
@@ -87,9 +86,7 @@ export class AddSearchComponent implements OnInit {
   modalDetails: any = {};
   load_BranchAccount: any;
   load_CityAndAreas: any;
-  public _CustomerVM: CustomerVM;
   customrRowSelected: any;
-  obj: CustomerVM;
   BranchId: number;
   allCount = 0;
   load_BranchUserId: any;
@@ -194,7 +191,6 @@ export class AddSearchComponent implements OnInit {
     this.subscription = this.control.valueChanges.subscribe(
       (values: Array<File>) => this.getImage(values[0])
     );
-    this._CustomerVM = new CustomerVM();
   }
 
   //   ngAfterContentChecked() {
@@ -219,19 +215,6 @@ export class AddSearchComponent implements OnInit {
   users: any;
   showPrice: any = false;
   existValue: any = true;
-  showOfferValue: any = false;
-  offerTerms: any = [];
-  offerServices: any = [];
-  offerPayments: any = [
-    {
-      id: 1,
-      statement: '',
-      statementEn: '',
-      status: false,
-      ratio: 0,
-      amount: 0,
-    },
-  ];
   selectAllValue = false;
 
   ngOnInit(): void {
