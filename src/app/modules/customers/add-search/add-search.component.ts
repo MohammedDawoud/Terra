@@ -227,12 +227,14 @@ export class AddSearchComponent implements OnInit {
     if (val) {
       tempsource = this.dataSourceTemp.filter((d: any) => {
         return (
-          (d.customerName &&
-            d.customerName?.trim().toLowerCase().indexOf(val) !== -1) ||
+          (d.branchName &&
+            d.branchName?.trim().toLowerCase().indexOf(val) !== -1) ||
           (d.nationalId &&
             d.nationalId?.trim().toLowerCase().indexOf(val) !== -1) ||
-          (d.customerTypeName &&
-            d.customerTypeName?.trim().toLowerCase().indexOf(val) !== -1) ||
+          (d.customerCode &&
+            d.customerCode?.trim().toLowerCase().indexOf(val) !== -1) ||
+            (d.nameAr &&
+              d.nameAr?.trim().toLowerCase().indexOf(val) !== -1) ||
           (d.email &&
             d.email?.trim().toLowerCase().indexOf(val) !== -1) ||
           (d.mainPhoneNo &&
@@ -525,15 +527,20 @@ export class AddSearchComponent implements OnInit {
       this.ValidateObjMsg = { status: false, msg: 'ادخل جوال العميل' };
       return this.ValidateObjMsg;
     }
-    else if ((this.modalDetails.email == null ||
-        this.modalDetails.email == '')
+    else if ((this.modalDetails.nationalId == null ||this.modalDetails.nationalId == '')
     ) {
-      this.ValidateObjMsg = {
-        status: false,
-        msg: 'ادخل البريد الالكتروني للعميل',
-      };
+      this.ValidateObjMsg = { status: false, msg: 'ادخل رقم هوية العميل' };
       return this.ValidateObjMsg;
     }
+    // else if ((this.modalDetails.email == null ||
+    //     this.modalDetails.email == '')
+    // ) {
+    //   this.ValidateObjMsg = {
+    //     status: false,
+    //     msg: 'ادخل البريد الالكتروني للعميل',
+    //   };
+    //   return this.ValidateObjMsg;
+    // }
     if ((this.modalDetails.nationalId == null ||
       this.modalDetails.nationalId == '')) {
     this.ValidateObjMsg = { status: false, msg: 'ادخل رقم هوية العميل' };
@@ -590,7 +597,6 @@ export class AddSearchComponent implements OnInit {
       customerId: 0,
       branchId: null,
       customerCode: null,
-      customerName: null,
       nationalId: null,
       address: null,
       email: null,

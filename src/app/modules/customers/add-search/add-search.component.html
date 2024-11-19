@@ -293,7 +293,6 @@
                   id="nationalId"
                   autocomplete="off"
                   #nationalId="ngModel"
-                  maxlength="10"
                   required
                   class="form-control {{
                     modalDetails.nationalId == null
@@ -411,11 +410,7 @@
                 autocomplete="off"
                 #email="ngModel"
                 required
-                class="form-control {{
-                  modalDetails.email == null
-                    ? 'errorInput'
-                    : ''
-                }}"
+                class="form-control"
                 name="email"
                 placeholder=" {{ 'Email' | translate }}"
                 [(ngModel)]="modalDetails.email"

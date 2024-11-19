@@ -185,13 +185,24 @@ export class VerticalSidebarComponent implements OnInit {
             show: true,
             // show: this.userG?.userPrivileges.includes(1210),
           },
+        ],
+      },
+      
+      {
+        name: { ar: 'شؤون الموظفين', en: 'Employees Affairs' },
+        link: null,
+        type: 'multiple',
+        icon: '/assets/sidebar-icons/users-line.png',
+        show: true,
+        // show: this.userG?.userPrivileges.includes(12),
+        children: [
           {
-            name: { ar: 'تقارير العملاء', en: 'Reports and statistics' },
-            link: '/customers/CustomerReports',
+            name: { ar: 'الإضافة والبحث', en: 'Search and inquire' },
+            link: '/employees/search',
             type: 'single',
-            icon: '/assets/sidebar-icons/user-avatar.png',
+            icon: '/assets/sidebar-icons/Search Icon-1.png',
             show: true,
-            // show: this.userG?.userPrivileges.includes(1213),
+            // show: this.userG?.userPrivileges.includes(1210),
           },
         ],
       },
@@ -236,28 +247,28 @@ export class VerticalSidebarComponent implements OnInit {
               },       
         ],
       },
-          {
-            name: { ar: 'صلاحيات النظام', en: 'System Permissions' },
-            link: null,
-            type: 'multiple',
-            icon: '/assets/sidebar-icons/security.png',
-            show: true,
-            // show: this.userG?.userPrivileges.includes(1702),
+          // {
+          //   name: { ar: 'صلاحيات النظام', en: 'System Permissions' },
+          //   link: null,
+          //   type: 'multiple',
+          //   icon: '/assets/sidebar-icons/security.png',
+          //   show: true,
+          //   // show: this.userG?.userPrivileges.includes(1702),
 
-            children: [
-              {
-                name: { ar: 'المستخدمين', en: 'Users' },
-                link: '/controlpanel/users',
-                type: 'single',
-                icon:
-                  this.lang == 'ar'
-                    ? '/assets/sidebar-icons/Group 40278.png'
-                    : '/assets/sidebar-icons/Group 40280.png',
-                    show: true,
-                // show: this.userG?.userPrivileges.includes(170201),
-              },
-            ],
-          },
+          //   children: [
+          //     {
+          //       name: { ar: 'المستخدمين', en: 'Users' },
+          //       link: '/controlpanel/users',
+          //       type: 'single',
+          //       icon:
+          //         this.lang == 'ar'
+          //           ? '/assets/sidebar-icons/Group 40278.png'
+          //           : '/assets/sidebar-icons/Group 40280.png',
+          //           show: true,
+          //       // show: this.userG?.userPrivileges.includes(170201),
+          //     },
+          //   ],
+          // },
         ],
       },
     ];

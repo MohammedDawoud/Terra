@@ -30,7 +30,10 @@ export class EmployeeService {
     var url=`${environment.apiEndPoint}Account/GetCustMainAccByBranchId?BranchId=${BranchId}`;
     return this.http.get<any>(url);
   }
-
+  GetEmpMainAccByBranchId(BranchId:any) {
+    var url=`${environment.apiEndPoint}Account/GetEmpMainAccByBranchId?BranchId=${BranchId}`;
+    return this.http.get<any>(url);
+  }
   GetEmployeesByEmployeeId(EmployeeId:any) {
     var url=`${environment.apiEndPoint}Employee/GetEmployeesByEmployeeId?EmployeeId=${EmployeeId}`;
     return this.http.get<any>(url);
@@ -41,6 +44,16 @@ export class EmployeeService {
   }
   FillCitySelect() {
     return this.http.get<any>(environment.apiEndPoint+'Organizations/FillCitySelect');
+  }
+  FillJobSelect() {
+    return this.http.get<any>(environment.apiEndPoint+'Organizations/FillJobSelect');
+  }
+  FillEmployeeselect() {
+    return this.http.get<any>(environment.apiEndPoint+'Employee/FillEmployeeselect');
+  }
+  FillEmployeeselectW(EmployeeId:any) {
+    var url=`${environment.apiEndPoint}Employee/FillEmployeeselectW?EmployeeId=${EmployeeId}`;
+    return this.http.get<any>(url);
   }
   FillPayTypeSelect() {
     return this.http.get<any>(environment.apiEndPoint+'Organizations/FillPayTypeSelect');

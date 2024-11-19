@@ -17,7 +17,7 @@
       <div class="flex gap-2 controler">
         <button
           class="flex gap-1 btn btn-primary"
-          (click)="openModal(dataModal, null, 'addClient')"
+          (click)="openModal(dataModal, null, 'addEmployee')"
         >
           <span
             class="hidden md:block"
@@ -66,13 +66,13 @@
         </ng-container>
 
         <!-- nationalId Column -->
-        <ng-container matColumnDef="customerCode">
+        <ng-container matColumnDef="employeeCode">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
             <span>{{'كود الموظف '}}</span>
 
           </th>
           <td mat-cell *matCellDef="let element">
-            {{ element.customerCode }}
+            {{ element.employeeCode }}
           </td>
         </ng-container>
 
@@ -106,15 +106,11 @@
         </ng-container>
         <ng-container matColumnDef="statusName">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
-            <span>{{'حالة الموظف'}}</span>
+            <span>{{'الوظيفة'}}</span>
           </th>
           <td mat-cell *matCellDef="let element" >
-            <span style="color: #0ea516;font-size: 17px;font-weight: bold;" *ngIf="element.status == true">
-              {{ element.statusName }}
-            </span>
-            <span style="color: #b20b0b;font-size: 17px;font-weight: bold;" *ngIf="element.status == false">
-              {{ element.statusName }}
-            </span>
+            {{ element.jobName }}
+
           </td>
         </ng-container>
         <!-- operations Column -->
@@ -132,7 +128,7 @@
             <div class="flex gap-1 justify-center py-2">
               <button
                 class="min-w-max p-2 bg-orange-100 hover:bg-orange-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
-                (click)="openModal(dataModal, element, 'editClient')"
+                (click)="openModal(dataModal, element, 'editEmployee')"
               >
                 <i class="fa-regular fa-pen-to-square"></i>
               </button>
@@ -191,7 +187,7 @@
 
 
             <div class="form-group">
-              <label for="customerCode" class="col-form-label">
+              <label for="employeeCode" class="col-form-label">
                 <ng-container>
                   {{ "كود الموظف" | translate }}
                 </ng-container>
@@ -199,17 +195,17 @@
               <input
                 type="text"
                 class="form-control"
-                id="customerCode"
+                id="employeeCode"
                 autocomplete="off"
-                #customerCode="ngModel"
+                #employeeCode="ngModel"
                 required
                 class="form-control"
-                name="customerCode"
+                name="employeeCode"
                 disabled
                 placeholder="{{ 'Write' | translate }} {{
                   'كود الموظف' | translate
                 }} "
-                [(ngModel)]="modalDetails.customerCode"
+                [(ngModel)]="modalDetails.employeeCode"
               />
             </div>
 
@@ -217,7 +213,7 @@
             <div class="form-group">
               <label for="nameAr" class="col-form-label">
                 <ng-container>
-                  {{ "Client Name (Arabic)" | translate }}
+                  {{ "اسم الموظف (عربي)" | translate }}
                 </ng-container>
               </label>
               <input
@@ -236,7 +232,7 @@
                 [placeholder]="
                   ('Write' | translate) +
                   ' ' +
-                  (('Client Name (Arabic)') | translate)
+                  (('اسم الموظف (عربي)') | translate)
                 "
                 [(ngModel)]="modalDetails.nameAr"
               />
@@ -245,7 +241,7 @@
             <div class="form-group">
               <label for="nameEn" class="col-form-label">
                 <ng-container>
-                  {{ "Client Name (English)" | translate }}
+                  {{ "اسم الموظف (انجليزي)" | translate }}
                 </ng-container>
                
               </label>
@@ -267,10 +263,9 @@
                   [placeholder]="
                     ('Write' | translate) +
                     ' ' +
-                    (('Client Name (Arabic)') | translate)"
+                    (('اسم الموظف (انجليزي)') | translate)"
                   [(ngModel)]="modalDetails.nameEn"
                 />
-
                 <a
                   class="btn"
                   id="CopyEmployeeName2"
@@ -293,7 +288,6 @@
                   id="nationalId"
                   autocomplete="off"
                   #nationalId="ngModel"
-                  maxlength="10"
                   required
                   class="form-control {{
                     modalDetails.nationalId == null
@@ -311,7 +305,7 @@
             <!-- Branch  -->
             <div>
               <label class="col-form-label">
-                {{ "Employee Branch" | translate }}</label
+                {{ "فرع الموظف" | translate }}</label
               >
 
               <ng-select
@@ -323,7 +317,7 @@
                   branchId.invalid && branchId.touched ? 'errorInput' : ''
                 }}"
                 [disabled]="load_BranchUserId?.length == 1"
-                (change)="getBranchAccount(modalDetails.branchId)"
+                (change)="getBranchAccountE(modalDetails.branchId)"
                 [clearable]="false"
                 name="branchId"
                 placeholder=" {{ 'Employee Branch' | translate }}"
@@ -401,24 +395,20 @@
               />
             </div>
             <div class="form-group">
-              <label for="email" class="col-form-label">
-                {{ "Email" | translate }}
+              <label for="salary" class="col-form-label">
+                {{ "salary" | translate }}
               </label>
               <input
-                type="email"
+                type="salary"
                 class="form-control"
-                id="email"
+                id="salary"
                 autocomplete="off"
                 #email="ngModel"
                 required
-                class="form-control {{
-                  modalDetails.email == null
-                    ? 'errorInput'
-                    : ''
-                }}"
-                name="email"
-                placeholder=" {{ 'Email' | translate }}"
-                [(ngModel)]="modalDetails.email"
+                class="form-control"
+                name="salary"
+                placeholder=" {{ 'salary' | translate }}"
+                [(ngModel)]="modalDetails.salary"
               />
             </div>
 
@@ -437,57 +427,58 @@
               />
             </div>
 
-
             <div class="form-group">
               <label class="col-form-label">
-                {{ "Area" | translate }}
+                {{ "المدير المباشر" | translate }}
               </label>
               <ng-select
                 class="w-full p-0"
-                placeholder="{{ 'Area' | translate }}"
-                [(ngModel)]="modalDetails.cityId"
+                placeholder="{{ 'المدير المباشر' | translate }}"
+                [(ngModel)]="modalDetails.directManagerId"
                 [ngModelOptions]="{ standalone: true }"
               >
-                <ng-option *ngFor="let city of City_Cus" [value]="city.id">{{
-                  city.name
-                }}</ng-option>
-              </ng-select>
-            </div>
-
-            <div class="form-group">
-              <label class="col-form-label">
-                {{ "طريقة الدفع" | translate }}
-              </label>
-              <ng-select
-                class="w-full p-0"
-                placeholder="{{ 'طريقة الدفع' | translate }}"
-                [(ngModel)]="modalDetails.payTypeId"
-                [ngModelOptions]="{ standalone: true }"
-              >
-                <ng-option *ngFor="let item of Paytype_Cus" [value]="item.id">{{
-                  item.name
-                }}</ng-option>
-              </ng-select>
-            </div>
-
-            <div class="form-group">
-              <label class="col-form-label">
-                {{ "عرفتنا عن طريق" | translate }}
-              </label>
-              <ng-select
-                class="w-full p-0"
-                placeholder="{{ 'عرفتنا عن طريق' | translate }}"
-                [(ngModel)]="modalDetails.socialMediaId"
-                [ngModelOptions]="{ standalone: true }"
-              >
-                <ng-option *ngFor="let item of SocialMedia_Cus" [value]="item.id">{{
-                  item.name
+                <ng-option *ngFor="let manager of Managers_Emp" [value]="manager.employeeId">{{
+                  manager.nameAr
                 }}</ng-option>
               </ng-select>
             </div>
 
 
-            <div class="flex gap-2 items-end mt-3">
+            <div class="form-group">
+              <label class="col-form-label">
+                {{ "الوظيفة" | translate }}
+              </label>
+              <ng-select
+                class="w-full p-0"
+                placeholder="{{ 'الوظيفة' | translate }}"
+                [(ngModel)]="modalDetails.jobId"
+                [ngModelOptions]="{ standalone: true }"
+              >
+                <ng-option *ngFor="let job of Job_Emp" [value]="job.id">{{
+                  job.name
+                }}</ng-option>
+              </ng-select>
+            </div>
+
+            <div class="form-group">
+              <label for="appointmentDate" class="text-right col-form-label block">
+                {{ "تاريخ التعيين" | translate }}
+              </label>
+              <input
+                placeholder="{{ 'Chose' | translate }}"
+                name="appointmentDate"
+                type="text"
+                class="form-control"
+                bsDatepicker
+                #dpr="bsDatepicker"
+                autocomplete="off"
+                [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
+                [(ngModel)]="modalDetails.appointmentDate"
+                [ngModelOptions]="{ standalone: true }"
+              />
+            </div>
+
+            <!-- <div class="flex gap-2 items-end mt-3">
               <mat-slide-toggle
                 color="primary"
                 [(ngModel)]="modalDetails.status"
@@ -495,7 +486,7 @@
               >
                 <span>{{'الحساب نشط'}}</span>
               </mat-slide-toggle>
-            </div>
+            </div> -->
 
           </div>
           <div>
@@ -530,8 +521,8 @@
           >
             <img
               class="w-20 aspect-square rounded-full object-cover"
-              *ngIf="modalDetails?.addedcustomerImg"
-              [src]="ShowImg(modalDetails?.addedcustomerImg)"
+              *ngIf="modalDetails?.addedemployeeImg"
+              [src]="ShowImg(modalDetails?.addedemployeeImg)"
               alt=""
             />
             <div class="flex flex-col gap-2">

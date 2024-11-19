@@ -55,6 +55,7 @@ import {
   moveItemInArray,
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
+import { SharedService } from 'src/app/core/services/shared.service';
 
 const hijriSafe = require('hijri-date/lib/safe');
 const HijriDate = hijriSafe.default;
@@ -101,7 +102,7 @@ export class AddSearchComponent implements OnInit {
   title: any = {
     main: {
       name: {
-        ar: 'العملاء',
+        ar: 'شئون الموظفين',
         en: 'Employees',
       },
       link: '/employees',
@@ -181,6 +182,7 @@ export class AddSearchComponent implements OnInit {
     private changeDetection: ChangeDetectorRef,
     private toast: ToastrService,
     private ngbModalService: NgbModal,
+    private _sharedService: SharedService,
     private authenticationService: AuthenticationService,
     private translate: TranslateService,
     private domSanitizer: DomSanitizer
@@ -226,14 +228,14 @@ export class AddSearchComponent implements OnInit {
     if (val) {
       tempsource = this.dataSourceTemp.filter((d: any) => {
         return (
-          (d.employeeName &&
-            d.employeeName?.trim().toLowerCase().indexOf(val) !== -1) ||
+          (d.branchName &&
+            d.branchName?.trim().toLowerCase().indexOf(val) !== -1) ||
           (d.nationalId &&
             d.nationalId?.trim().toLowerCase().indexOf(val) !== -1) ||
-          (d.employeeTypeName &&
-            d.employeeTypeName?.trim().toLowerCase().indexOf(val) !== -1) ||
-          (d.email &&
-            d.email?.trim().toLowerCase().indexOf(val) !== -1) ||
+          (d.employeeCode &&
+            d.employeeCode?.trim().toLowerCase().indexOf(val) !== -1) ||
+          (d.nameAr &&
+            d.nameAr?.trim().toLowerCase().indexOf(val) !== -1) ||
           (d.mainPhoneNo &&
             d.mainPhoneNo?.trim().toLowerCase().indexOf(val) !== -1) ||
           (d.subMainPhoneNo &&
@@ -270,35 +272,30 @@ export class AddSearchComponent implements OnInit {
       this.load_BranchUserId = data;
       if (this.load_BranchUserId.length == 1) {
         this.modalDetails.branchId = this.load_BranchUserId[0].id;
-        this.getBranchAccount(this.modalDetails.branchId);
+        this.getBranchAccountE(this.modalDetails.branchId);
       }
     });
   }
 
-  City_Cus: any;
-  CityTypesPopup_Cus: any;
+  Job_Emp: any;
+  JobTypesPopup_Emp: any;
 
-  FillCitySelect_Cus() {
-    this.service.FillCitySelect().subscribe((data) => {
-      this.City_Cus = data;
-      this.CityTypesPopup_Cus = data;
+  FillJobSelect_Emp() {
+    this.service.FillJobSelect().subscribe((data) => {
+      console.log(data);
+      this.Job_Emp = data;
+      this.JobTypesPopup_Emp = data;
     });
   }
 
-  Paytype_Cus: any;
+  Managers_Emp: any;
 
-  FillPaytypeSelect_Cus() {
-    this.service.FillPayTypeSelect().subscribe((data) => {
-      this.Paytype_Cus = data;
+  FillEmployeeselectW(EmpId:any) {
+    this.service.FillEmployeeselectW(EmpId).subscribe((data) => {
+      this.Managers_Emp = data;
     });
   }
-  SocialMedia_Cus: any;
 
-  FillSocialMediaSelect_Cus() {
-    this.service.FillSocialMediaSelect().subscribe((data) => {
-      this.SocialMedia_Cus = data;
-    });
-  }
 
   GenerateEmployeeNumber(){
     this.service.GenerateEmployeeNumber().subscribe(data=>{
@@ -306,11 +303,11 @@ export class AddSearchComponent implements OnInit {
     });
   }
   objBranchAccount: any = null;
-  getBranchAccount(BranchId: any) {
+  getBranchAccountE(BranchId: any) {
     debugger
     this.objBranchAccount = null;
     this.modalDetails.accountName = null;
-    this.service.GetCustMainAccByBranchId(BranchId).subscribe({next: (data: any) => {
+    this.service.GetEmpMainAccByBranchId(BranchId).subscribe({next: (data: any) => {
       if(data.result.accountId!=0)
       {
         this.modalDetails.accountName =data.result.nameAr + ' - ' + data.result.accountCode;
@@ -326,25 +323,24 @@ export class AddSearchComponent implements OnInit {
 
   openModal(template: TemplateRef<any>, data?: any, modalType?: any) {
     this.fillBranchByUserId();
-    this.FillCitySelect_Cus();
-    this.FillPaytypeSelect_Cus();
-    this.FillSocialMediaSelect_Cus();
-
+    this.FillJobSelect_Emp();
 
     this.resetModal();
     //this.getEmailOrganization();
     debugger
-    if (modalType == 'addClient') {
+    if (modalType == 'addEmployee') {
       this.GenerateEmployeeNumber();
+      this.FillEmployeeselectW(0);
     }
     console.log('this.modalDetails');
     console.log(this.modalDetails);
 
     if (data) {
       this.modalDetails = data;
-
-      if (modalType == 'editClient') {
-        this.getBranchAccount(this.modalDetails.branchId);
+      this.FillEmployeeselectW( this.modalDetails.employeeId);
+      if (modalType == 'editEmployee') {
+        this.modalDetails.appointmentDate = this._sharedService.String_TO_date(this.modalDetails.appointmentDate);
+        this.getBranchAccountE(this.modalDetails.branchId);
         debugger;
         if (data.agentAttachmentUrl != null) {
           this.modalDetails.attachmentUrl =
@@ -456,14 +452,23 @@ export class AddSearchComponent implements OnInit {
     custObj.nameAr = this.modalDetails.nameAr;
     custObj.nameEn = this.modalDetails.nameEn;
     custObj.nationalId = this.modalDetails.nationalId;
-    custObj.cityId = this.modalDetails.cityId;
     custObj.employeeCode = this.modalDetails.employeeCode;
     custObj.branchId = this.modalDetails.branchId;
     custObj.accountId = this.modalDetails.accountId;
     custObj.subMainPhoneNo = this.modalDetails.subMainPhoneNo;
     custObj.mainPhoneNo = this.modalDetails.mainPhoneNo;
-    custObj.status = this.modalDetails.status;
-    custObj.email = this.modalDetails.email;
+    //custObj.status = this.modalDetails.status;
+    custObj.status = true;
+
+    custObj.directManagerId = this.modalDetails.directManagerId;
+    custObj.jobId = this.modalDetails.jobId;
+    custObj.salary = this.modalDetails.salary;
+    custObj.appointmentDate = this.modalDetails.appointmentDate;
+
+    if (this.modalDetails.appointmentDate != null) {
+      custObj.appointmentDate = this._sharedService.date_TO_String(this.modalDetails.appointmentDate);
+    }
+
     custObj.address = this.modalDetails.address;
     custObj.notes = this.modalDetails.notes;
     console.log('custObj');
@@ -501,16 +506,16 @@ export class AddSearchComponent implements OnInit {
       this.modalDetails.nameAr == null ||
       this.modalDetails.nameAr == ''
     ) {
-      this.ValidateObjMsg = { status: false, msg: ' أدخل أسم العميل عربي' };
+      this.ValidateObjMsg = { status: false, msg: ' أدخل أسم الموظف عربي' };
       return this.ValidateObjMsg;
     } else if (
       this.modalDetails.nameEn == null ||
       this.modalDetails.nameEn == ''
     ) {
-      this.ValidateObjMsg = { status: false, msg: 'أدخل أسم العميل انجليزي' };
+      this.ValidateObjMsg = { status: false, msg: 'أدخل أسم الموظف انجليزي' };
       return this.ValidateObjMsg;
     } else if (this.modalDetails.branchId == null) {
-      this.ValidateObjMsg = { status: false, msg: 'اختر فرع العميل' };
+      this.ValidateObjMsg = { status: false, msg: 'اختر فرع الموظف' };
       return this.ValidateObjMsg;
     } else if (
       this.modalDetails.accountName == null ||
@@ -521,21 +526,21 @@ export class AddSearchComponent implements OnInit {
     }
     else if ((this.modalDetails.mainPhoneNo == null ||this.modalDetails.mainPhoneNo == '')
     ) {
-      this.ValidateObjMsg = { status: false, msg: 'ادخل جوال العميل' };
+      this.ValidateObjMsg = { status: false, msg: 'ادخل جوال الموظف' };
       return this.ValidateObjMsg;
     }
-    else if ((this.modalDetails.email == null ||
-        this.modalDetails.email == '')
+    else if ((this.modalDetails.nationalId == null ||
+        this.modalDetails.nationalId == '')
     ) {
       this.ValidateObjMsg = {
         status: false,
-        msg: 'ادخل البريد الالكتروني للعميل',
+        msg: 'ادخل رقم الهوية للموظف',
       };
       return this.ValidateObjMsg;
     }
     if ((this.modalDetails.nationalId == null ||
       this.modalDetails.nationalId == '')) {
-    this.ValidateObjMsg = { status: false, msg: 'ادخل رقم هوية العميل' };
+    this.ValidateObjMsg = { status: false, msg: 'ادخل رقم هوية الموظف' };
     return this.ValidateObjMsg;
   }
     this.ValidateObjMsg = { status: true, msg: null };
@@ -552,7 +557,7 @@ export class AddSearchComponent implements OnInit {
         employeeName: this.dataSourceTemp[index].nameAr,
         mainPhoneNo: this.dataSourceTemp[index].mainPhoneNo,
         nationalId: this.dataSourceTemp[index].nationalId,
-        statusName: this.dataSourceTemp[index].statusName,
+        jobName: this.dataSourceTemp[index].jobName,
       });
     }
     debugger;
@@ -581,7 +586,7 @@ export class AddSearchComponent implements OnInit {
         nameAr: '',
         nameEn: '',
       },
-      type: 'addClient',
+      type: 'addEmployee',
       nameAr: null,
       nameEn: null,
       id: null,
@@ -589,19 +594,19 @@ export class AddSearchComponent implements OnInit {
       employeeId: 0,
       branchId: null,
       employeeCode: null,
-      employeeName: null,
       nationalId: null,
       address: null,
-      email: null,
       mainPhoneNo: null,
       subMainPhoneNo: null,
+      directManagerId: null,
+      jobId: null,
+      salary: null,
+      appointmentDate: null,
       notes: null,
       accountId: null,
       accountName: null,
       addDate: null,
       addUser: [],
-      cityId: null,
-      cityName: null,
       addedemployeeImg: null,
       accountCodee: null,
     };

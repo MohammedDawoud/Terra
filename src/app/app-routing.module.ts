@@ -23,6 +23,14 @@ const routes: Routes = [
       ),canActivate:[AuthGuard],
   },
   {
+    path: 'employees',
+    component: VerticalLayoutComponent,
+    loadChildren: () =>
+      import('src/app/modules/employees/employees.module').then(
+        (m) => m.EmployeesModule
+      ),canActivate:[AuthGuard],
+  },
+  {
     path: 'accounts',
     component: VerticalLayoutComponent,
     loadChildren: () =>
