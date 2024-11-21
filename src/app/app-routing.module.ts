@@ -31,6 +31,14 @@ const routes: Routes = [
       ),canActivate:[AuthGuard],
   },
   {
+    path: 'projects',
+    component: VerticalLayoutComponent,
+    loadChildren: () =>
+      import('src/app/modules/projects/projects.module').then(
+        (m) => m.ProjectsModule
+      ),canActivate:[AuthGuard],
+  },
+  {
     path: 'accounts',
     component: VerticalLayoutComponent,
     loadChildren: () =>

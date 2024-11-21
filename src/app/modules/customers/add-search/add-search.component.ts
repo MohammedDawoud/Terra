@@ -1,4 +1,3 @@
-import { SelectionModel } from '@angular/cdk/collections';
 
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import {
@@ -116,19 +115,6 @@ export class AddSearchComponent implements OnInit {
 
   data: any = {
     type: '0',
-    orgEmail: 'asdwd@dwa',
-    numbers: {
-      all: 0,
-      citizens: 0,
-      investor: 0,
-      government: 0,
-    },
-    fileType: {
-      NameAr: '',
-      Id: '',
-      NameEn: '',
-    },
-    documents: [],
     files: [],
     clients: [],
     branches: [],
@@ -369,9 +355,6 @@ export class AddSearchComponent implements OnInit {
       keyboard: false,
     });
   }
-
-  selection = new SelectionModel<any>(true, []);
-
 
   closeResult: any;
   OfferPopupAddorEdit: any = 0; //add offerprice

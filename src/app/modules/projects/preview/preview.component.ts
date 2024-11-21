@@ -26,7 +26,7 @@ import {
 } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
-import { EmployeeService } from 'src/app/core/services/employee-services/employee.service';
+import { PreviewService } from 'src/app/core/services/project-services/preview.service';
 import { ExportationService } from 'src/app/core/services/exportation-service/exportation.service';
 import { fade } from 'src/app/shared/animations/toggleBtn.animation';
 import { RestApiService } from 'src/app/shared/services/api.service';
@@ -69,18 +69,18 @@ const toHijri = hijriSafe.toHijri;
 // }
 
 @Component({
-  selector: 'app-add-search',
-  templateUrl: './add-search.component.html',
-  styleUrls: ['./add-search.component.scss'],
+  selector: 'app-preview',
+  templateUrl: './preview.component.html',
+  styleUrls: ['./preview.component.scss'],
   animations: [fade],
 })
-export class AddSearchComponent implements OnInit {
+export class PreviewComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   public uploadedFiles: Array<File> = [];
   dataSourceTemp: any = [];
   dataSource: MatTableDataSource<any> = new MatTableDataSource([{}]);
-  _EmployeeSMS: any = null;
+  _PreviewSMS: any = null;
   modal?: BsModalRef;
   modalDetails: any = {};
   load_BranchAccount: any;
@@ -101,14 +101,14 @@ export class AddSearchComponent implements OnInit {
   title: any = {
     main: {
       name: {
-        ar: 'شئون الموظفين',
-        en: 'Employees',
+        ar: 'إدارة المشاريع',
+        en: 'Projects',
       },
-      link: '/employees',
+      link: '/projects/preview',
     },
     sub: {
-      ar: 'الإضافة والبحث',
-      en: 'Search and inquire',
+      ar: 'المعاينات',
+      en: 'Preview',
     },
   };
 
@@ -133,7 +133,7 @@ export class AddSearchComponent implements OnInit {
 
   displayedColumns: string[] = [
     'branchName',
-    'employeeCode',
+    'previewCode',
     'nameAr',
     'mainPhoneNo',
     'nationalId',
@@ -148,21 +148,21 @@ export class AddSearchComponent implements OnInit {
     filter: {
       enable: true,
       date: null,
-      search_EmployeeName: '',
-      search_employeeEmail: '',
-      search_employeeMobile: '',
+      search_PreviewName: '',
+      search_previewEmail: '',
+      search_previewMobile: '',
       isChecked: false,
     },
   };
 
   EditModel: any = {
-    EmployeeId: 0,
+    PreviewId: 0,
     nameAr: null,
     nameEn: null,
   };
 
   constructor(
-    private service: EmployeeService,
+    private service: PreviewService,
     private modalService: BsModalService,
     private api: RestApiService,
     private changeDetection: ChangeDetectorRef,
@@ -205,7 +205,7 @@ export class AddSearchComponent implements OnInit {
   selectAllValue = false;
 
   ngOnInit(): void {
-    this.getAllEmployees();
+    this.getAllPreviews();
   }
 
   applyFilter(event: any) {
@@ -218,8 +218,8 @@ export class AddSearchComponent implements OnInit {
             d.branchName?.trim().toLowerCase().indexOf(val) !== -1) ||
           (d.nationalId &&
             d.nationalId?.trim().toLowerCase().indexOf(val) !== -1) ||
-          (d.employeeCode &&
-            d.employeeCode?.trim().toLowerCase().indexOf(val) !== -1) ||
+          (d.previewCode &&
+            d.previewCode?.trim().toLowerCase().indexOf(val) !== -1) ||
           (d.nameAr &&
             d.nameAr?.trim().toLowerCase().indexOf(val) !== -1) ||
           (d.mainPhoneNo &&
@@ -237,7 +237,7 @@ export class AddSearchComponent implements OnInit {
 
   // checkValue(event: any) {
   //   if (event == 'A') {
-  //     this.getAllEmployees();
+  //     this.getAllPreviews();
   //   } else {
   //     this.RefreshData();
   //   }
@@ -245,10 +245,10 @@ export class AddSearchComponent implements OnInit {
 
   resetandRefresh() {
     if (this.searchBox.open == false) {
-      this.data2.filter.search_EmployeeName = null;
-      this.data2.filter.search_employeeMobile = null;
+      this.data2.filter.search_PreviewName = null;
+      this.data2.filter.search_previewMobile = null;
       this.data.type = 0;
-      this.getAllEmployees();
+      this.getAllPreviews();
     }
   }
   //------------------ Fill DATA ----------------------------------
@@ -258,7 +258,6 @@ export class AddSearchComponent implements OnInit {
       this.load_BranchUserId = data;
       if (this.load_BranchUserId.length == 1) {
         this.modalDetails.branchId = this.load_BranchUserId[0].id;
-        this.getBranchAccountE(this.modalDetails.branchId);
       }
     });
   }
@@ -276,34 +275,18 @@ export class AddSearchComponent implements OnInit {
 
   Managers_Emp: any;
 
-  FillEmployeeselectW(EmpId:any) {
-    this.service.FillEmployeeselectW(EmpId).subscribe((data) => {
+  FillPreviewselectW(EmpId:any) {
+    this.service.FillPreviewselectW(EmpId).subscribe((data) => {
       this.Managers_Emp = data;
     });
   }
 
 
-  GenerateEmployeeNumber(){
-    this.service.GenerateEmployeeNumber().subscribe(data=>{
-      this.modalDetails.employeeCode=data.reasonPhrase;
+  GeneratePreviewNumber(){
+    this.service.GeneratePreviewNumber().subscribe(data=>{
+      this.modalDetails.previewCode=data.reasonPhrase;
     });
   }
-  objBranchAccount: any = null;
-  getBranchAccountE(BranchId: any) {
-    debugger
-    this.objBranchAccount = null;
-    this.modalDetails.accountName = null;
-    this.service.GetEmpMainAccByBranchId(BranchId).subscribe({next: (data: any) => {
-      if(data.result.accountId!=0)
-      {
-        this.modalDetails.accountName =data.result.nameAr + ' - ' + data.result.accountCode;
-        this.objBranchAccount = data.result;
-      }    
-      },
-      error: (error) => {},
-    });
-  }
-
 
   //-----------------------OPEN MODAL--------------------------------------------------
 
@@ -314,19 +297,18 @@ export class AddSearchComponent implements OnInit {
     this.resetModal();
     //this.getEmailOrganization();
     debugger
-    if (modalType == 'addEmployee') {
-      this.GenerateEmployeeNumber();
-      this.FillEmployeeselectW(0);
+    if (modalType == 'addPreview') {
+      this.GeneratePreviewNumber();
+      this.FillPreviewselectW(0);
     }
     console.log('this.modalDetails');
     console.log(this.modalDetails);
 
     if (data) {
       this.modalDetails = data;
-      this.FillEmployeeselectW( this.modalDetails.employeeId);
-      if (modalType == 'editEmployee') {
+      this.FillPreviewselectW( this.modalDetails.previewId);
+      if (modalType == 'editPreview') {
         this.modalDetails.appointmentDate = this._sharedService.String_TO_date(this.modalDetails.appointmentDate);
-        this.getBranchAccountE(this.modalDetails.branchId);
         debugger;
         if (data.agentAttachmentUrl != null) {
           this.modalDetails.attachmentUrl =
@@ -414,16 +396,16 @@ export class AddSearchComponent implements OnInit {
     }
   }
 
-  EmployeeIdPublic: any = 0;
-  setEmployeeid_P(id: any) {
-    this.EmployeeIdPublic = id;
-    console.log('this.EmployeeIdPublic');
-    console.log(this.EmployeeIdPublic);
+  PreviewIdPublic: any = 0;
+  setPreviewid_P(id: any) {
+    this.PreviewIdPublic = id;
+    console.log('this.PreviewIdPublic');
+    console.log(this.PreviewIdPublic);
   }
 
-  disableButtonSave_Employee = false;
+  disableButtonSave_Preview = false;
 
-  addEmployee() {
+  addPreview() {
     debugger;
     var val = this.validateForm();
     if (val.status == false) {
@@ -431,11 +413,11 @@ export class AddSearchComponent implements OnInit {
       return;
     }
     var custObj: any = {};
-    custObj.employeeId = this.modalDetails.employeeId;
+    custObj.previewId = this.modalDetails.previewId;
     custObj.nameAr = this.modalDetails.nameAr;
     custObj.nameEn = this.modalDetails.nameEn;
     custObj.nationalId = this.modalDetails.nationalId;
-    custObj.employeeCode = this.modalDetails.employeeCode;
+    custObj.previewCode = this.modalDetails.previewCode;
     custObj.branchId = this.modalDetails.branchId;
     custObj.accountId = this.modalDetails.accountId;
     custObj.subMainPhoneNo = this.modalDetails.subMainPhoneNo;
@@ -461,20 +443,20 @@ export class AddSearchComponent implements OnInit {
     for (const key of Object.keys(custObj)) {
       const value = custObj[key] == null ? '' : custObj[key];
       formData.append(key, value);
-      formData.append('EmployeeId', custObj.employeeId.toString());
+      formData.append('PreviewId', custObj.previewId.toString());
     }
-    this.disableButtonSave_Employee = true;
+    this.disableButtonSave_Preview = true;
     setTimeout(() => {
-      this.disableButtonSave_Employee = false;
+      this.disableButtonSave_Preview = false;
     }, 7000);
-    this.service.SaveEmployee(formData).subscribe((result: any) => {
+    this.service.SavePreview(formData).subscribe((result: any) => {
       if (result.statusCode == 200) {
         this.toast.success(
           this.translate.instant(result.reasonPhrase),
           this.translate.instant('Message')
         );
         this.decline();
-        this.getAllEmployees();
+        this.getAllPreviews();
         this.ngbModalService.dismissAll();
       } else {
         this.toast.error(result.reasonPhrase, 'رسالة');
@@ -489,16 +471,16 @@ export class AddSearchComponent implements OnInit {
       this.modalDetails.nameAr == null ||
       this.modalDetails.nameAr == ''
     ) {
-      this.ValidateObjMsg = { status: false, msg: ' أدخل أسم الموظف عربي' };
+      this.ValidateObjMsg = { status: false, msg: ' أدخل أسم المعاينة عربي' };
       return this.ValidateObjMsg;
     } else if (
       this.modalDetails.nameEn == null ||
       this.modalDetails.nameEn == ''
     ) {
-      this.ValidateObjMsg = { status: false, msg: 'أدخل أسم الموظف انجليزي' };
+      this.ValidateObjMsg = { status: false, msg: 'أدخل أسم المعاينة انجليزي' };
       return this.ValidateObjMsg;
     } else if (this.modalDetails.branchId == null) {
-      this.ValidateObjMsg = { status: false, msg: 'اختر فرع الموظف' };
+      this.ValidateObjMsg = { status: false, msg: 'اختر فرع المعاينة' };
       return this.ValidateObjMsg;
     } else if (
       this.modalDetails.accountName == null ||
@@ -509,7 +491,7 @@ export class AddSearchComponent implements OnInit {
     }
     else if ((this.modalDetails.mainPhoneNo == null ||this.modalDetails.mainPhoneNo == '')
     ) {
-      this.ValidateObjMsg = { status: false, msg: 'ادخل جوال الموظف' };
+      this.ValidateObjMsg = { status: false, msg: 'ادخل جوال المعاينة' };
       return this.ValidateObjMsg;
     }
     else if ((this.modalDetails.nationalId == null ||
@@ -517,13 +499,13 @@ export class AddSearchComponent implements OnInit {
     ) {
       this.ValidateObjMsg = {
         status: false,
-        msg: 'ادخل رقم الهوية للموظف',
+        msg: 'ادخل رقم الهوية للمعاينة',
       };
       return this.ValidateObjMsg;
     }
     if ((this.modalDetails.nationalId == null ||
       this.modalDetails.nationalId == '')) {
-    this.ValidateObjMsg = { status: false, msg: 'ادخل رقم هوية الموظف' };
+    this.ValidateObjMsg = { status: false, msg: 'ادخل رقم هوية المعاينة' };
     return this.ValidateObjMsg;
   }
     this.ValidateObjMsg = { status: true, msg: null };
@@ -536,19 +518,19 @@ export class AddSearchComponent implements OnInit {
     for (let index = 0; index < this.dataSourceTemp.length; index++) {
       x.push({
         branchName: this.dataSourceTemp[index].branchName,
-        employeeCode: this.dataSourceTemp[index].employeeCode,
-        employeeName: this.dataSourceTemp[index].nameAr,
+        previewCode: this.dataSourceTemp[index].previewCode,
+        previewName: this.dataSourceTemp[index].nameAr,
         mainPhoneNo: this.dataSourceTemp[index].mainPhoneNo,
         nationalId: this.dataSourceTemp[index].nationalId,
         jobName: this.dataSourceTemp[index].jobName,
       });
     }
     debugger;
-    this.service.customExportExcel(x, 'Employees');
+    this.service.customExportExcel(x, 'Previews');
   }
 
-  getAllEmployees() {
-    this.service.GetAllEmployees_Branch().subscribe((data: any) => {
+  getAllPreviews() {
+    this.service.GetAllPreviews_Branch().subscribe((data: any) => {
       // console.log(data);
 
       this.dataSource = new MatTableDataSource(data);
@@ -569,14 +551,14 @@ export class AddSearchComponent implements OnInit {
         nameAr: '',
         nameEn: '',
       },
-      type: 'addEmployee',
+      type: 'addPreview',
       nameAr: null,
       nameEn: null,
       id: null,
       name: null,
-      employeeId: 0,
+      previewId: 0,
       branchId: null,
-      employeeCode: null,
+      previewCode: null,
       nationalId: null,
       address: null,
       mainPhoneNo: null,
@@ -590,16 +572,16 @@ export class AddSearchComponent implements OnInit {
       accountName: null,
       addDate: null,
       addUser: [],
-      addedemployeeImg: null,
+      addedpreviewImg: null,
       accountCodee: null,
     };
   }
 
   confirm(): void {
-    this.service.DeleteEmployee(this.modalDetails.employeeId).subscribe((result) => {
+    this.service.DeletePreview(this.modalDetails.previewId).subscribe((result) => {
         if (result.statusCode == 200) {
           this.toast.success(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
-          this.getAllEmployees();
+          this.getAllPreviews();
           this.modal?.hide();
         } else {
           this.toast.error(result.reasonPhrase, 'رسالة');

@@ -206,6 +206,25 @@ export class VerticalSidebarComponent implements OnInit {
           },
         ],
       },
+            
+      {
+        name: { ar: 'إدارة المشاريع', en: 'Projects' },
+        link: null,
+        type: 'multiple',
+        icon: '/assets/sidebar-icons/settings-services.png',
+        show: true,
+        // show: this.userG?.userPrivileges.includes(12),
+        children: [
+          {
+            name: { ar: 'المعاينات', en: 'Preview' },
+            link: '/projects/preview',
+            type: 'single',
+            icon: '/assets/sidebar-icons/movement.png',
+            show: true,
+            // show: this.userG?.userPrivileges.includes(1210),
+          },
+        ],
+      },
       {
         name: { ar: 'لوحة التحكم', en: 'Control Panel' },
         link: null,
