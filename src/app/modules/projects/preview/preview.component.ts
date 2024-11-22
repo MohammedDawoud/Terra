@@ -55,6 +55,8 @@ import {
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
 import { SharedService } from 'src/app/core/services/shared.service';
+import { CustomerService } from 'src/app/core/services/customer-services/customer.service';
+import { EmployeeService } from 'src/app/core/services/employee-services/employee.service';
 
 const hijriSafe = require('hijri-date/lib/safe');
 const HijriDate = hijriSafe.default;
@@ -170,6 +172,8 @@ export class PreviewComponent implements OnInit {
     private ngbModalService: NgbModal,
     private _sharedService: SharedService,
     private authenticationService: AuthenticationService,
+    private customerService: CustomerService,
+    private employeeService: EmployeeService,
     private translate: TranslateService,
     private domSanitizer: DomSanitizer
   ) {
@@ -206,6 +210,8 @@ export class PreviewComponent implements OnInit {
 
   ngOnInit(): void {
     this.getAllPreviews();
+    this.FillCustomerSelect();
+    this.FillEmployeeselect();
   }
 
   applyFilter(event: any) {
@@ -255,29 +261,25 @@ export class PreviewComponent implements OnInit {
 
   fillBranchByUserId() {
     this.service.FillBranchByUserIdSelect().subscribe((data) => {
+      debugger
       this.load_BranchUserId = data;
       if (this.load_BranchUserId.length == 1) {
         this.modalDetails.branchId = this.load_BranchUserId[0].id;
       }
     });
   }
-
-  Job_Emp: any;
-  JobTypesPopup_Emp: any;
-
-  FillJobSelect_Emp() {
-    this.service.FillJobSelect().subscribe((data) => {
-      console.log(data);
-      this.Job_Emp = data;
-      this.JobTypesPopup_Emp = data;
+  load_Customers: any=[];
+  FillCustomerSelect() {
+    this.customerService.FillCustomerSelect().subscribe((data) => {
+      this.load_Customers = data.result;
+      console.log(this.load_Customers);
     });
   }
 
-  Managers_Emp: any;
-
-  FillPreviewselectW(EmpId:any) {
-    this.service.FillPreviewselectW(EmpId).subscribe((data) => {
-      this.Managers_Emp = data;
+  load_Employees: any=[];
+  FillEmployeeselect() {
+    this.employeeService.FillEmployeeselect().subscribe((data) => {
+      this.load_Employees = data;
     });
   }
 
@@ -291,22 +293,18 @@ export class PreviewComponent implements OnInit {
   //-----------------------OPEN MODAL--------------------------------------------------
 
   openModal(template: TemplateRef<any>, data?: any, modalType?: any) {
-    this.fillBranchByUserId();
-    this.FillJobSelect_Emp();
-
     this.resetModal();
+    this.fillBranchByUserId();
     //this.getEmailOrganization();
     debugger
     if (modalType == 'addPreview') {
       this.GeneratePreviewNumber();
-      this.FillPreviewselectW(0);
     }
     console.log('this.modalDetails');
     console.log(this.modalDetails);
 
     if (data) {
       this.modalDetails = data;
-      this.FillPreviewselectW( this.modalDetails.previewId);
       if (modalType == 'editPreview') {
         this.modalDetails.appointmentDate = this._sharedService.String_TO_date(this.modalDetails.appointmentDate);
         debugger;
@@ -448,7 +446,7 @@ export class PreviewComponent implements OnInit {
     this.disableButtonSave_Preview = true;
     setTimeout(() => {
       this.disableButtonSave_Preview = false;
-    }, 7000);
+    }, 5000);
     this.service.SavePreview(formData).subscribe((result: any) => {
       if (result.statusCode == 200) {
         this.toast.success(

@@ -52,6 +52,9 @@ export class CustomerService {
   FillBranchByUserIdSelect(){
     return this.http.get<any>(this.apiEndPoint + 'Branches/FillBranchByUserIdSelect');
   }
+  FillCustomerSelect(){
+    return this.http.get<any>(this.apiEndPoint + 'Customer/FillCustomerSelect');
+  }
 
   customExportExcel(dataExport: any, nameExport: any) {
 

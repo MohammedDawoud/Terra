@@ -201,7 +201,7 @@
                 [disabled]="load_BranchUserId?.length == 1"
                 [clearable]="false"
                 name="branchId"
-                placeholder=" {{ 'Preview Branch' | translate }}"
+                placeholder=" {{ 'فرع المعاينة' | translate }}"
                 [(ngModel)]="modalDetails.branchId"
                 [ngModelOptions]="{ standalone: true }"
               >
@@ -276,9 +276,9 @@
                 [ngModelOptions]="{ standalone: true }"
               >
                 <ng-option
-                  *ngFor="let cus of load_BranchUserId"
-                  [value]="cus.id"
-                  >{{ cus.name }}</ng-option
+                  *ngFor="let cus of load_Customers"
+                  [value]="cus.customerId"
+                  >{{ cus.customerCode }}</ng-option
                 >
               </ng-select>
             </div>
@@ -297,9 +297,117 @@
                 [ngModelOptions]="{ standalone: true }"
               >
                 <ng-option
-                  *ngFor="let cus of load_BranchUserId"
-                  [value]="cus.id"
-                  >{{ cus.name }}</ng-option
+                  *ngFor="let cus of load_Customers"
+                  [value]="cus.customerId"
+                  >{{ cus.nameAr }}</ng-option
+                >
+              </ng-select>
+            </div>
+            
+            <div class="form-group">
+              <label class="col-form-label">{{ "رقم التليفون" | translate }}</label>
+              <ng-select
+                style="min-width: max-content"
+                id="customerid"
+                #customerid="ngModel"
+                class="w-full p-0"
+                [clearable]="true"
+                name="customerid"
+                placeholder=" {{ 'رقم التليفون' | translate }}"
+                [(ngModel)]="modalDetails.customerid"
+                [ngModelOptions]="{ standalone: true }"
+              >
+                <ng-option
+                  *ngFor="let cus of load_Customers"
+                  [value]="cus.customerId"
+                  >{{ cus.mainPhoneNo }}</ng-option
+                >
+              </ng-select>
+            </div>
+            
+            <div class="form-group">
+              <label class="col-form-label">{{ "رقم التليفون 2" | translate }}</label>
+              <ng-select
+                style="min-width: max-content"
+                id="customerid"
+                #customerid="ngModel"
+                class="w-full p-0"
+                [clearable]="true"
+                name="customerid"
+                placeholder=" {{ 'رقم التليفون 2' | translate }}"
+                [(ngModel)]="modalDetails.customerid"
+                [ngModelOptions]="{ standalone: true }"
+              >
+                <ng-option
+                  *ngFor="let cus of load_Customers"
+                  [value]="cus.customerId"
+                  >{{ cus.subMainPhoneNo }}</ng-option
+                >
+              </ng-select>
+            </div>
+
+            <div class="form-group">
+              <label class="col-form-label">{{ "منطقة العميل" | translate }}</label>
+              <ng-select
+                style="min-width: max-content"
+                id="customerid"
+                #customerid="ngModel"
+                class="w-full p-0"
+                [clearable]="true"
+                disabled
+                name="customerid"
+                placeholder=" {{ 'منطقة العميل' | translate }}"
+                [(ngModel)]="modalDetails.customerid"
+                [ngModelOptions]="{ standalone: true }"
+              >
+                <ng-option
+                  *ngFor="let cus of load_Customers"
+                  [value]="cus.customerId"
+                  >{{ cus.cityName }}</ng-option
+                >
+              </ng-select>
+            </div>
+
+            <div class="form-group">
+              <label class="col-form-label">{{ "العنوان" | translate }}</label>
+              <ng-select
+                style="min-width: max-content"
+                id="customerid"
+                #customerid="ngModel"
+                class="w-full p-0"
+                [clearable]="true"
+                disabled
+                name="customerid"
+                placeholder=" {{ 'العنوان' | translate }}"
+                [(ngModel)]="modalDetails.customerid"
+                [ngModelOptions]="{ standalone: true }"
+              >
+                <ng-option
+                  *ngFor="let cus of load_Customers"
+                  [value]="cus.customerId"
+                  >{{ cus.address }}</ng-option
+                >
+              </ng-select>
+            </div>
+
+            <div class="form-group">
+              <label class="col-form-label">{{ "عرفتنا عن طريق" | translate }}</label>
+              <ng-select
+                style="min-width: max-content"
+                id="customerid"
+                #customerid="ngModel"
+                class="w-full p-0"
+                [clearable]="true"
+                name="customerid"
+                disabled
+                placeholder=" {{ 'عرفتنا عن طريق' | translate }}"
+                [(ngModel)]="modalDetails.customerid"
+                [ngModelOptions]="{ standalone: true }"
+              >
+                <ng-option
+                  *ngFor="let cus of load_Customers"
+                  [value]="cus.customerId"
+                  >{{ cus.socialMediaName }}</ng-option
                 >
               </ng-select>
             </div>
@@ -314,8 +422,8 @@
                 [(ngModel)]="modalDetails.directManagerId"
                 [ngModelOptions]="{ standalone: true }"
               >
-                <ng-option *ngFor="let manager of Managers_Emp" [value]="manager.previewId">{{
-                  manager.nameAr
+                <ng-option *ngFor="let emp of load_Employees" [value]="emp.employeeId">{{
+                  emp.nameAr
                 }}</ng-option>
               </ng-select>
             </div>

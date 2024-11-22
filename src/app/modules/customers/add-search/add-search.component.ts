@@ -444,6 +444,7 @@ export class AddSearchComponent implements OnInit {
     custObj.nationalId = this.modalDetails.nationalId;
     custObj.cityId = this.modalDetails.cityId;
     custObj.customerCode = this.modalDetails.customerCode;
+    custObj.socialMediaId = this.modalDetails.socialMediaId;
     custObj.branchId = this.modalDetails.branchId;
     custObj.accountId = this.modalDetails.accountId;
     custObj.subMainPhoneNo = this.modalDetails.subMainPhoneNo;
@@ -464,7 +465,7 @@ export class AddSearchComponent implements OnInit {
     this.disableButtonSave_Customer = true;
     setTimeout(() => {
       this.disableButtonSave_Customer = false;
-    }, 7000);
+    }, 5000);
     this.service.SaveCustomer(formData).subscribe((result: any) => {
       if (result.statusCode == 200) {
         this.toast.success(
@@ -580,6 +581,7 @@ export class AddSearchComponent implements OnInit {
       customerId: 0,
       branchId: null,
       customerCode: null,
+      socialMediaId:null,
       nationalId: null,
       address: null,
       email: null,

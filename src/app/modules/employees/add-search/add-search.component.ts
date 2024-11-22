@@ -466,7 +466,7 @@ export class AddSearchComponent implements OnInit {
     this.disableButtonSave_Employee = true;
     setTimeout(() => {
       this.disableButtonSave_Employee = false;
-    }, 7000);
+    }, 5000);
     this.service.SaveEmployee(formData).subscribe((result: any) => {
       if (result.statusCode == 200) {
         this.toast.success(
