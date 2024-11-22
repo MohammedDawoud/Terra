@@ -42,6 +42,10 @@ export class PreviewService {
     var url=`${environment.apiEndPoint}Preview/GeneratePreviewNumber`;
     return this.http.get<any>(url);
   }
+  GenerateOrderBarcodeNumber() {
+    var url=`${environment.apiEndPoint}Preview/GenerateOrderBarcodeNumber`;
+    return this.http.get<any>(url);
+  }
   FillCitySelect() {
     return this.http.get<any>(environment.apiEndPoint+'Organizations/FillCitySelect');
   }
@@ -60,6 +64,9 @@ export class PreviewService {
   }
   FillSocialMediaSelect() {
     return this.http.get<any>(environment.apiEndPoint+'Organizations/FillSocialMediaSelect');
+  }
+  FillPreviewTypesSelect() {
+    return this.http.get<any>(environment.apiEndPoint+'Organizations/FillPreviewTypesSelect');
   }
   FillBranchByUserIdSelect(){
     return this.http.get<any>(this.apiEndPoint + 'Branches/FillBranchByUserIdSelect');

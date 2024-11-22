@@ -97,6 +97,10 @@ export class PreviewComponent implements OnInit {
   modalRef?: BsModalRef;
   subscriptions: Subscription[] = [];
 
+
+
+
+  
   userG: any = {};
   selectedDateType = DateType.Hijri;
 
@@ -207,12 +211,26 @@ export class PreviewComponent implements OnInit {
   existValue: any = true;
 
   selectAllValue = false;
+  PreviewStatusList: any;
 
   ngOnInit(): void {
+    this.PreviewStatusList = [
+      { id: 1, name: { ar: 'قيد الإنتظار', en: 'pending' } },
+      { id: 2, name: { ar: 'قيد التشغيل', en: 'in progress' } },
+    ];
     this.getAllPreviews();
     this.FillCustomerSelect();
     this.FillEmployeeselect();
+    this.FillPreviewTypesSelect();
   }
+
+  PreviewTypesList: any;
+  FillPreviewTypesSelect() {
+    this.service.FillPreviewTypesSelect().subscribe((data) => {
+      this.PreviewTypesList = data;
+    });
+  }
+
 
   applyFilter(event: any) {
     const val = event.target.value.toLowerCase();
@@ -289,15 +307,19 @@ export class PreviewComponent implements OnInit {
       this.modalDetails.previewCode=data.reasonPhrase;
     });
   }
+  GenerateOrderBarcodeNumber(){
+    this.service.GenerateOrderBarcodeNumber().subscribe(data=>{
+      this.modalDetails.orderBarcode=data.reasonPhrase;
+    });
+  }
 
   //-----------------------OPEN MODAL--------------------------------------------------
 
   openModal(template: TemplateRef<any>, data?: any, modalType?: any) {
     this.resetModal();
     this.fillBranchByUserId();
-    //this.getEmailOrganization();
     debugger
-    if (modalType == 'addPreview') {
+    if (modalType == 'addPreview') {    
       this.GeneratePreviewNumber();
     }
     console.log('this.modalDetails');
@@ -393,6 +415,19 @@ export class PreviewComponent implements OnInit {
       window.open(file, '_blank');
     }
   }
+
+  TransbarcodeActive:boolean=false;
+  confirmAddPreviewMessage(){
+    this.TransbarcodeActive=true;
+  }
+  declineAddPreviewMessage(){
+    this.TransbarcodeActive=false;
+
+    if(this.allCount==0){
+      this.GenerateOrderBarcodeNumber();
+    }
+  }
+
 
   PreviewIdPublic: any = 0;
   setPreviewid_P(id: any) {
@@ -529,8 +564,6 @@ export class PreviewComponent implements OnInit {
 
   getAllPreviews() {
     this.service.GetAllPreviews_Branch().subscribe((data: any) => {
-      // console.log(data);
-
       this.dataSource = new MatTableDataSource(data);
       this.dataSourceTemp = data;
       this.dataSource.paginator = this.paginator;
