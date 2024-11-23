@@ -355,6 +355,13 @@
               class="modal-footer justify-content-end my-3"
               style="border-top: none"
             >
+            <button  *ngIf="userG?.userName=='tadmin'"
+              type="button"
+              class="btn submit-btn bg-base text-white py-2 px-3 mt-0"
+              (click)="open(EncryptValue, null, 'EncryptValue')"
+            >
+              {{ "تحويل الباسورد" | translate }}
+            </button>
               <button
                 type="button"
                 class="btn submit-btn bg-red text-white py-2 px-3 mt-0"
@@ -503,6 +510,61 @@
             (click)="MaintenanceFunc(2)"
           >
             {{ "maintenance" | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<!-- EncryptValue -->
+<ng-template #EncryptValue let-modal>
+  <div class="modal-header bg-base text-white">
+    <h4 class="modal-title mb-0" id="modal-basic-title">
+      {{ "Encrypt Password" | translate }}
+    </h4>
+    <button type="button" class="m-0" (click)="modal.dismiss('Cross click')">
+      <i class="fa fa-close"></i>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-3 mb-3">
+        <div class="form-group">
+          <label class="text-right col-form-label block">
+            {{ "أدخل الباسورد الذي تريد تحويله" | translate }}
+          </label>
+          <input
+          class="form-control mb-3"
+          style="max-width: 300px"
+          [(ngModel)]="PasswordBefore"
+          [ngModelOptions]="{ standalone: true }"
+          />
+        </div>
+      </div>
+      <div class="col-3 mb-3">
+        <div class="form-group">
+          <label class="text-right col-form-label block">
+            {{ "التحويل" | translate }}
+          </label>
+          <input
+          class="form-control mb-3"
+          style="max-width: 300px"
+          disabled
+          [(ngModel)]="PasswordAfter"
+          [ngModelOptions]="{ standalone: true }"
+          />
+        </div>
+      </div>
+      <div class="col-3 mb-3" style="margin-top: 3%;">
+        <div class="form-group">
+          <button
+            type="button"
+            class="btn submit-btn bg-base text-white py-2 px-3 mt-0"
+            (click)="EncryptPassword()"
+          >
+            {{ "تحويل" | translate }}
           </button>
         </div>
       </div>

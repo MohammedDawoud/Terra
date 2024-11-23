@@ -89,7 +89,7 @@ export class PreviewComponent implements OnInit {
   load_CityAndAreas: any;
   customrRowSelected: any;
   BranchId: number;
-  allCount = 0;
+  allPreviewCount = 0;
   load_BranchUserId: any;
   nameAr: any;
   nameEn: any;
@@ -139,11 +139,11 @@ export class PreviewComponent implements OnInit {
 
   displayedColumns: string[] = [
     'branchName',
+    'orderBarcode',
     'previewCode',
-    'nameAr',
-    'mainPhoneNo',
-    'nationalId',
-    'statusName',
+    'customerName',
+    'chairpersonName',
+    'previewStatustxt',
     'operations',
   ];
   displayedColumn: any = {
@@ -319,8 +319,12 @@ export class PreviewComponent implements OnInit {
     this.resetModal();
     this.fillBranchByUserId();
     debugger
-    if (modalType == 'addPreview') {    
+    if (modalType == 'addPreview1') {    
       this.GeneratePreviewNumber();
+    }
+    if (modalType == 'addPreview2') {    
+      this.GeneratePreviewNumber();
+      this.GenerateOrderBarcodeNumber();
     }
     console.log('this.modalDetails');
     console.log(this.modalDetails);
@@ -422,10 +426,7 @@ export class PreviewComponent implements OnInit {
   }
   declineAddPreviewMessage(){
     this.TransbarcodeActive=false;
-
-    if(this.allCount==0){
-      this.GenerateOrderBarcodeNumber();
-    }
+    this.GenerateOrderBarcodeNumber();
   }
 
 
@@ -445,38 +446,27 @@ export class PreviewComponent implements OnInit {
       this.toast.error(val.msg, 'رسالة');
       return;
     }
-    var custObj: any = {};
-    custObj.previewId = this.modalDetails.previewId;
-    custObj.nameAr = this.modalDetails.nameAr;
-    custObj.nameEn = this.modalDetails.nameEn;
-    custObj.nationalId = this.modalDetails.nationalId;
-    custObj.previewCode = this.modalDetails.previewCode;
-    custObj.branchId = this.modalDetails.branchId;
-    custObj.accountId = this.modalDetails.accountId;
-    custObj.subMainPhoneNo = this.modalDetails.subMainPhoneNo;
-    custObj.mainPhoneNo = this.modalDetails.mainPhoneNo;
-    //custObj.status = this.modalDetails.status;
-    custObj.status = true;
-
-    custObj.directManagerId = this.modalDetails.directManagerId;
-    custObj.jobId = this.modalDetails.jobId;
-    custObj.salary = this.modalDetails.salary;
-    custObj.appointmentDate = this.modalDetails.appointmentDate;
-
-    if (this.modalDetails.appointmentDate != null) {
-      custObj.appointmentDate = this._sharedService.date_TO_String(this.modalDetails.appointmentDate);
+    var prevObj: any = {};
+    prevObj.previewId = this.modalDetails.previewId;
+    prevObj.branchId = this.modalDetails.branchId;
+    prevObj.orderBarcode = this.modalDetails.orderBarcode;
+    prevObj.previewCode = this.modalDetails.previewCode;
+    prevObj.customerId = this.modalDetails.customerId;
+    prevObj.directManagerId = this.modalDetails.directManagerId;
+    prevObj.previewTypeId = this.modalDetails.previewTypeId;
+    prevObj.previewStatus = this.modalDetails.previewStatus;
+    prevObj.notes = this.modalDetails.notes;
+    if (this.modalDetails.date != null) {
+      prevObj.date = this._sharedService.date_TO_String(this.modalDetails.date);
     }
-
-    custObj.address = this.modalDetails.address;
-    custObj.notes = this.modalDetails.notes;
-    console.log('custObj');
-    console.log(custObj);
+    console.log('prevObj');
+    console.log(prevObj);
 
     const formData = new FormData();
-    for (const key of Object.keys(custObj)) {
-      const value = custObj[key] == null ? '' : custObj[key];
+    for (const key of Object.keys(prevObj)) {
+      const value = prevObj[key] == null ? '' : prevObj[key];
       formData.append(key, value);
-      formData.append('PreviewId', custObj.previewId.toString());
+      formData.append('PreviewId', prevObj.previewId.toString());
     }
     this.disableButtonSave_Preview = true;
     setTimeout(() => {
@@ -485,9 +475,7 @@ export class PreviewComponent implements OnInit {
     this.service.SavePreview(formData).subscribe((result: any) => {
       if (result.statusCode == 200) {
         this.toast.success(
-          this.translate.instant(result.reasonPhrase),
-          this.translate.instant('Message')
-        );
+          this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
         this.decline();
         this.getAllPreviews();
         this.ngbModalService.dismissAll();
@@ -501,46 +489,39 @@ export class PreviewComponent implements OnInit {
     this.ValidateObjMsg = { status: true, msg: null };
 
     if (
-      this.modalDetails.nameAr == null ||
-      this.modalDetails.nameAr == ''
+      this.modalDetails.branchId == null ||
+      this.modalDetails.branchId == ''
     ) {
-      this.ValidateObjMsg = { status: false, msg: ' أدخل أسم المعاينة عربي' };
+      this.ValidateObjMsg = { status: false, msg: 'أختر فرع المعاينة' };
       return this.ValidateObjMsg;
     } else if (
-      this.modalDetails.nameEn == null ||
-      this.modalDetails.nameEn == ''
+      this.modalDetails.orderBarcode == null ||
+      this.modalDetails.orderBarcode == ''
     ) {
-      this.ValidateObjMsg = { status: false, msg: 'أدخل أسم المعاينة انجليزي' };
+      this.ValidateObjMsg = { status: false, msg: 'أدخل باركود العمليات' };
       return this.ValidateObjMsg;
-    } else if (this.modalDetails.branchId == null) {
-      this.ValidateObjMsg = { status: false, msg: 'اختر فرع المعاينة' };
+    } else if (this.modalDetails.previewCode == null || this.modalDetails.previewCode == '') {
+      this.ValidateObjMsg = { status: false, msg: 'اختر كود المعاينة' };
       return this.ValidateObjMsg;
     } else if (
-      this.modalDetails.accountName == null ||
-      this.modalDetails.accountName == ''
+      this.modalDetails.customerId == null ||
+      this.modalDetails.customerId == ''
     ) {
-      this.ValidateObjMsg = { status: false, msg: 'لا يوجد حساب لهذا الفرع' };
+      this.ValidateObjMsg = { status: false, msg: 'اختر عميل' };
       return this.ValidateObjMsg;
     }
-    else if ((this.modalDetails.mainPhoneNo == null ||this.modalDetails.mainPhoneNo == '')
+    else if ((this.modalDetails.directManagerId == null ||this.modalDetails.directManagerId == '')
     ) {
-      this.ValidateObjMsg = { status: false, msg: 'ادخل جوال المعاينة' };
+      this.ValidateObjMsg = { status: false, msg: 'اختر القائم بالمعاينة' };
       return this.ValidateObjMsg;
     }
-    else if ((this.modalDetails.nationalId == null ||
-        this.modalDetails.nationalId == '')
-    ) {
+    else if ((this.modalDetails.date == null ||this.modalDetails.date == '')) {
       this.ValidateObjMsg = {
         status: false,
-        msg: 'ادخل رقم الهوية للمعاينة',
+        msg: 'ادخل تاريخ المعاينة',
       };
       return this.ValidateObjMsg;
     }
-    if ((this.modalDetails.nationalId == null ||
-      this.modalDetails.nationalId == '')) {
-    this.ValidateObjMsg = { status: false, msg: 'ادخل رقم هوية المعاينة' };
-    return this.ValidateObjMsg;
-  }
     this.ValidateObjMsg = { status: true, msg: null };
     return this.ValidateObjMsg;
   }
@@ -551,11 +532,11 @@ export class PreviewComponent implements OnInit {
     for (let index = 0; index < this.dataSourceTemp.length; index++) {
       x.push({
         branchName: this.dataSourceTemp[index].branchName,
+        orderBarcode: this.dataSourceTemp[index].orderBarcode,
         previewCode: this.dataSourceTemp[index].previewCode,
-        previewName: this.dataSourceTemp[index].nameAr,
-        mainPhoneNo: this.dataSourceTemp[index].mainPhoneNo,
-        nationalId: this.dataSourceTemp[index].nationalId,
-        jobName: this.dataSourceTemp[index].jobName,
+        customerName: this.dataSourceTemp[index].customerName,
+        chairpersonName: this.dataSourceTemp[index].chairpersonName,
+        previewStatus: this.dataSourceTemp[index].previewStatustxt,
       });
     }
     debugger;
@@ -568,7 +549,7 @@ export class PreviewComponent implements OnInit {
       this.dataSourceTemp = data;
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
-      this.allCount = data.length;
+      this.allPreviewCount = data.length;
     });
   }
 

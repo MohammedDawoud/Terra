@@ -573,4 +573,16 @@ export class OrganizationComponent implements OnInit {
     this.subscription?.unsubscribe();
   }
 
+  PasswordBefore:any=null;
+  PasswordAfter:any=null;
+  EncryptPassword(){
+    if(!(this.PasswordBefore=="" || this.PasswordBefore==null))
+    {
+      this.organizationService.EncryptPassword(this.PasswordBefore).subscribe((result: any) => {
+        debugger
+        this.PasswordAfter = result.reasonPhrase;
+      });
+    }
+  }
+
 }

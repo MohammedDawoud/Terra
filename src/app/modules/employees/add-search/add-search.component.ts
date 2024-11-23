@@ -446,7 +446,6 @@ export class AddSearchComponent implements OnInit {
     custObj.directManagerId = this.modalDetails.directManagerId;
     custObj.jobId = this.modalDetails.jobId;
     custObj.salary = this.modalDetails.salary;
-    custObj.appointmentDate = this.modalDetails.appointmentDate;
 
     if (this.modalDetails.appointmentDate != null) {
       custObj.appointmentDate = this._sharedService.date_TO_String(this.modalDetails.appointmentDate);

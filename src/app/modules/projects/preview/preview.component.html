@@ -15,9 +15,9 @@
 
       <!---------------------------------------------------------------------------->
       <div class="flex gap-2 controler">
-        <button
+        <button *ngIf="allPreviewCount==0"
           class="flex gap-1 btn btn-primary"
-          (click)="openModal(dataModal, null, 'addPreview')">
+          (click)="openModal(dataModal, null, 'addPreview2')">
           <span
             class="hidden md:block"
             [translate]="'name'"
@@ -28,7 +28,7 @@
           ></span>
           <i class="fa-solid fa-user-plus"></i>
         </button>
-        <button style="color: red;"
+        <button style="color: red;" *ngIf="allPreviewCount!=0"
         class="flex gap-1 btn btn-primary"
         (click)="open(addPreviewMessage, null, 'addPreviewMessage')">
         <span
@@ -78,50 +78,50 @@
         </ng-container>
 
         <!-- nationalId Column -->
+        <ng-container matColumnDef="orderBarcode">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span>{{'باركود الطلب '}}</span>
+
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.orderBarcode }}
+          </td>
+        </ng-container>
+
         <ng-container matColumnDef="previewCode">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
-            <span>{{'كود المعاينة '}}</span>
+            <span>{{'كود المعاينة'}}</span>
 
           </th>
           <td mat-cell *matCellDef="let element">
             {{ element.previewCode }}
           </td>
         </ng-container>
-
-        <ng-container matColumnDef="nameAr">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>
-            <span>{{'اسم المعاينة'}}</span>
-
-          </th>
-          <td mat-cell *matCellDef="let element">
-            {{ element.nameAr }}
-          </td>
-        </ng-container>
         
 
         <!-- phone Column -->
-        <ng-container matColumnDef="mainPhoneNo">
+        <ng-container matColumnDef="customerName">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
-            <span>{{'تليفون المعاينة  الرئيسي'}}</span>
+            <span>{{'اسم العميل'}}</span>
           </th>
           <td mat-cell *matCellDef="let element">
-            {{ element.mainPhoneNo }}
+            {{ element.customerName }}
           </td>
         </ng-container>
-        <ng-container matColumnDef="nationalId">
+        <ng-container matColumnDef="chairpersonName">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
-            <span>{{'رقم البطاقة'}}</span>
+            <span>{{'القائم بالمعاينة'}}</span>
           </th>
           <td mat-cell *matCellDef="let element">
-            {{ element.nationalId }}
+            {{ element.chairpersonName }}
           </td>
         </ng-container>
-        <ng-container matColumnDef="statusName">
+        <ng-container matColumnDef="previewStatustxt">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
-            <span>{{'الوظيفة'}}</span>
+            <span>{{'حالة المعاينة'}}</span>
           </th>
           <td mat-cell *matCellDef="let element" >
-            {{ element.jobName }}
+            {{ element.previewStatustxt }}
 
           </td>
         </ng-container>
@@ -275,16 +275,16 @@
               <label class="col-form-label">{{ "كود العميل" | translate }}</label>
               <ng-select
                 style="min-width: max-content"
-                id="customerid"
-                #customerid="ngModel"
+                id="customerId"
+                #customerId="ngModel"
                 required
                 class="w-full p-0 {{
-                  customerid.invalid && branchId.touched ? 'errorInput' : ''
+                  customerId.invalid && branchId.touched ? 'errorInput' : ''
                 }}"
                 [clearable]="true"
-                name="customerid"
+                name="customerId"
                 placeholder=" {{ 'كود العميل' | translate }}"
-                [(ngModel)]="modalDetails.customerid"
+                [(ngModel)]="modalDetails.customerId"
                 [ngModelOptions]="{ standalone: true }"
               >
                 <ng-option
@@ -299,13 +299,13 @@
               <label class="col-form-label">{{ "اسم العميل" | translate }}</label>
               <ng-select
                 style="min-width: max-content"
-                id="customerid"
-                #customerid="ngModel"
+                id="customerId"
+                #customerId="ngModel"
                 class="w-full p-0"
                 [clearable]="true"
-                name="customerid"
+                name="customerId"
                 placeholder=" {{ 'اسم العميل' | translate }}"
-                [(ngModel)]="modalDetails.customerid"
+                [(ngModel)]="modalDetails.customerId"
                 [ngModelOptions]="{ standalone: true }"
               >
                 <ng-option
@@ -320,13 +320,13 @@
               <label class="col-form-label">{{ "رقم التليفون" | translate }}</label>
               <ng-select
                 style="min-width: max-content"
-                id="customerid"
-                #customerid="ngModel"
+                id="customerId"
+                #customerId="ngModel"
                 class="w-full p-0"
                 [clearable]="true"
-                name="customerid"
+                name="customerId"
                 placeholder=" {{ 'رقم التليفون' | translate }}"
-                [(ngModel)]="modalDetails.customerid"
+                [(ngModel)]="modalDetails.customerId"
                 [ngModelOptions]="{ standalone: true }"
               >
                 <ng-option
@@ -341,13 +341,13 @@
               <label class="col-form-label">{{ "رقم التليفون 2" | translate }}</label>
               <ng-select
                 style="min-width: max-content"
-                id="customerid"
-                #customerid="ngModel"
+                id="customerId"
+                #customerId="ngModel"
                 class="w-full p-0"
                 [clearable]="true"
-                name="customerid"
+                name="customerId"
                 placeholder=" {{ 'رقم التليفون 2' | translate }}"
-                [(ngModel)]="modalDetails.customerid"
+                [(ngModel)]="modalDetails.customerId"
                 [ngModelOptions]="{ standalone: true }"
               >
                 <ng-option
@@ -362,14 +362,14 @@
               <label class="col-form-label">{{ "منطقة العميل" | translate }}</label>
               <ng-select
                 style="min-width: max-content"
-                id="customerid"
-                #customerid="ngModel"
+                id="customerId"
+                #customerId="ngModel"
                 class="w-full p-0"
                 [clearable]="true"
                 disabled
-                name="customerid"
+                name="customerId"
                 placeholder=" {{ 'منطقة العميل' | translate }}"
-                [(ngModel)]="modalDetails.customerid"
+                [(ngModel)]="modalDetails.customerId"
                 [ngModelOptions]="{ standalone: true }"
               >
                 <ng-option
@@ -384,14 +384,14 @@
               <label class="col-form-label">{{ "العنوان" | translate }}</label>
               <ng-select
                 style="min-width: max-content"
-                id="customerid"
-                #customerid="ngModel"
+                id="customerId"
+                #customerId="ngModel"
                 class="w-full p-0"
                 [clearable]="true"
                 disabled
-                name="customerid"
+                name="customerId"
                 placeholder=" {{ 'العنوان' | translate }}"
-                [(ngModel)]="modalDetails.customerid"
+                [(ngModel)]="modalDetails.customerId"
                 [ngModelOptions]="{ standalone: true }"
               >
                 <ng-option
@@ -406,14 +406,14 @@
               <label class="col-form-label">{{ "عرفتنا عن طريق" | translate }}</label>
               <ng-select
                 style="min-width: max-content"
-                id="customerid"
-                #customerid="ngModel"
+                id="customerId"
+                #customerId="ngModel"
                 class="w-full p-0"
                 [clearable]="true"
-                name="customerid"
+                name="customerId"
                 disabled
                 placeholder=" {{ 'عرفتنا عن طريق' | translate }}"
-                [(ngModel)]="modalDetails.customerid"
+                [(ngModel)]="modalDetails.customerId"
                 [ngModelOptions]="{ standalone: true }"
               >
                 <ng-option
@@ -441,19 +441,19 @@
             </div>
 
             <div class="form-group">
-              <label for="appointmentDate" class="text-right col-form-label block">
+              <label for="date" class="text-right col-form-label block">
                 {{ "تاريخ المعاينة" | translate }}
               </label>
               <input
                 placeholder="{{ 'Chose' | translate }}"
-                name="appointmentDate"
+                name="date"
                 type="text"
                 class="form-control"
                 bsDatepicker
                 #dpr="bsDatepicker"
                 autocomplete="off"
                 [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
-                [(ngModel)]="modalDetails.appointmentDate"
+                [(ngModel)]="modalDetails.date"
                 [ngModelOptions]="{ standalone: true }"
               />
             </div>
@@ -464,7 +464,7 @@
               <ng-select
                 style="min-width: max-content"
                 id="previewTypeId"
-                #customerid="ngModel"
+                #customerId="ngModel"
                 class="w-full p-0"
                 [clearable]="true"
                 name="previewTypeId"
@@ -485,7 +485,7 @@
               <ng-select
                 style="min-width: max-content"
                 id="previewStatus"
-                #customerid="ngModel"
+                #customerId="ngModel"
                 class="w-full p-0"
                 [clearable]="true"
                 name="previewStatus"
@@ -493,11 +493,8 @@
                 [(ngModel)]="modalDetails.previewStatus"
                 [ngModelOptions]="{ standalone: true }"
               >
-                <ng-option
-                  *ngFor="let cus of PreviewStatusList"
-                  [value]="cus.previewStatus"
-                  >{{ cus.nameAr }}</ng-option
-                >
+              <ng-option *ngFor="let type of PreviewStatusList" [value]="type.id" [translate]="'name'"
+                [translateParams]="{ar: type.name?.ar,en: type.name?.en}"></ng-option>
               </ng-select>
             </div>
 
@@ -605,13 +602,13 @@
           type="button"
           mat-raised-button
           color="warn"
-          (click)="confirmAddPreviewMessage();modal.dismiss();openModal(dataModal, null, 'addPreview')"
+          (click)="confirmAddPreviewMessage();modal.dismiss();openModal(dataModal, null, 'addPreview1')"
         >
           {{ "Yes" | translate }}
         </button>
         <button
           type="button"
-          (click)="declineAddPreviewMessage();modal.dismiss();openModal(dataModal, null, 'addPreview')"
+          (click)="declineAddPreviewMessage();modal.dismiss();openModal(dataModal, null, 'addPreview1')"
           mat-raised-button
           color="basic"
         >

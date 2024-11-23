@@ -32,6 +32,12 @@ export class OrganizationService {
     return this.http.get<any>(this.apiEndPoint + 'Branches/GetAllBranches');
   }
 
+
+  EncryptPassword(value:any) {
+    var url=`${environment.apiEndPoint}Login/EncryptPassword?value=${value}`;
+    return this.http.get<any>(url);
+  }
+
   GetAllNews() {
     return this.http.get<any>(this.apiEndPoint + 'ContactUs/GetAllNews');
   }
