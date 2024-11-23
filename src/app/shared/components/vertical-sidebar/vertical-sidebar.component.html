@@ -41,6 +41,7 @@
                 [routerLinkActive]="'activeLink'"
                 [routerLink]="item.link"
                 (click)="activeIndex = i"
+                [title]="item.title"
               >
               <mat-icon mat-list-icon>
                 <img src="{{ item.icon }}" alt="icon" class="icon" />
@@ -56,7 +57,7 @@
             </ng-container>
 
             <ng-container *ngIf="item.type == 'multiple' && item.show">
-              <a class="aClass"
+              <a class="aClass" [title]="item.title"
                 (click)="showSubmenu = !showSubmenu; activeIndex = i"
                 class="parent {{ linkName == item.link ? 'activeLink' : '' }}"
               >
@@ -93,6 +94,7 @@
                       [routerLink]="child.link"
                       [routerLinkActive]="'activeLink'"
                       (click)="activeIndex = i"
+                      [title]="child.title"
                     >
                     <mat-icon mat-list-icon>
                       <img src="{{ child.icon }}" alt="icon" class="icon" />
@@ -112,7 +114,7 @@
                   </ng-container>
 
                   <ng-container *ngIf="child.type == 'multiple'&& child.show">
-                    <a class="aClass"
+                    <a class="aClass" [title]="child.title"
                       (click)="
                         showSubSubMenu = !showSubSubMenu;
                         activeChildIndex = childIndex
@@ -163,6 +165,7 @@
                             [routerLink]="xchild.link"
                             [routerLinkActive]="'activeLink'"
                             (click)="activeChildIndex = childIndex"
+                            [title]="xchild.title"
                           >
                           <mat-icon mat-list-icon>
                             <img

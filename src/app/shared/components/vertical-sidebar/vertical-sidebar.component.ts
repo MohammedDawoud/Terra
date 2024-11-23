@@ -165,6 +165,7 @@ export class VerticalSidebarComponent implements OnInit {
         // link: '/dash/home',
         type: 'single',
         icon: '/assets/sidebar-icons/noun_Home_-1.png',
+        title:"",
         show: true,
       },
 
@@ -173,17 +174,18 @@ export class VerticalSidebarComponent implements OnInit {
         link: null,
         type: 'multiple',
         icon: '/assets/sidebar-icons/user-multiple-1.png',
-        show: true,
-        // show: this.userG?.userPrivileges.includes(12),
-
+        title:"134851",
+        //show: true,
+        show: this.userG?.pagesList.includes(134851),
         children: [
           {
             name: { ar: 'الإضافة والبحث', en: 'Search and inquire' },
             link: '/customers/search',
             type: 'single',
             icon: '/assets/sidebar-icons/Search Icon-1.png',
-            show: true,
-            // show: this.userG?.userPrivileges.includes(1210),
+            title:"1368619",
+            //show: true,
+            show: this.userG?.pagesList.includes(1368619),
           },
         ],
       },
@@ -193,15 +195,16 @@ export class VerticalSidebarComponent implements OnInit {
         link: null,
         type: 'multiple',
         icon: '/assets/sidebar-icons/users-line.png',
-        show: true,
-        // show: this.userG?.userPrivileges.includes(12),
+        title:"231921",
+        show: this.userG?.pagesList.includes(231921),
         children: [
           {
             name: { ar: 'الإضافة والبحث', en: 'Search and inquire' },
             link: '/employees/search',
             type: 'single',
             icon: '/assets/sidebar-icons/Search Icon-1.png',
-            show: true,
+            title:"2111613",
+            show: this.userG?.pagesList.includes(2111613),
             // show: this.userG?.userPrivileges.includes(1210),
           },
         ],
@@ -212,7 +215,8 @@ export class VerticalSidebarComponent implements OnInit {
         link: null,
         type: 'multiple',
         icon: '/assets/sidebar-icons/settings-services.png',
-        show: true,
+        title:"331823",
+        show: this.userG?.pagesList.includes(331823),
         // show: this.userG?.userPrivileges.includes(12),
         children: [
           {
@@ -220,7 +224,8 @@ export class VerticalSidebarComponent implements OnInit {
             link: '/projects/preview',
             type: 'single',
             icon: '/assets/sidebar-icons/movement.png',
-            show: true,
+            title:"3122911",
+            show: this.userG?.pagesList.includes(3122911),
             // show: this.userG?.userPrivileges.includes(1210),
           },
         ],
@@ -230,6 +235,7 @@ export class VerticalSidebarComponent implements OnInit {
         link: null,
         type: 'multiple',
         icon: '/assets/sidebar-icons/bxs-dashboard.png',
+        title:"",
         show: true,
         // show: this.userG?.userPrivileges.includes(17),
         children: [
@@ -238,6 +244,7 @@ export class VerticalSidebarComponent implements OnInit {
             link: null,
             type: 'multiple',
             icon: '/assets/sidebar-icons/settings-solid.png',
+            title:"",
             show: true,
             // show: this.userG?.userPrivileges.includes(1701),
 
@@ -250,8 +257,9 @@ export class VerticalSidebarComponent implements OnInit {
                   this.lang == 'ar'
                     ? '/assets/sidebar-icons/Group 40278.png'
                     : '/assets/sidebar-icons/Group 40280.png',
+                    title:"",
                     show: true,
-                // show: this.userG?.userPrivileges.includes(170101),
+                    // show: this.userG?.userPrivileges.includes(170101),
               },  
               {
                 name: { ar: 'دليل الحسابات', en: 'Accounts guide' },
@@ -261,7 +269,8 @@ export class VerticalSidebarComponent implements OnInit {
                   this.lang == 'ar'
                     ? '/assets/sidebar-icons/Group 40278.png'
                     : '/assets/sidebar-icons/Group 40280.png',
-                    show: true,
+                    title:"4132216",
+                    show: this.userG?.pagesList.includes(4132216),
                 // show: this.userG?.userPrivileges.includes(170101),
               },       
         ],

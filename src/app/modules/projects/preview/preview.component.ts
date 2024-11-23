@@ -217,6 +217,7 @@ export class PreviewComponent implements OnInit {
     this.PreviewStatusList = [
       { id: 1, name: { ar: 'قيد الإنتظار', en: 'pending' } },
       { id: 2, name: { ar: 'قيد التشغيل', en: 'in progress' } },
+      { id: 3, name: { ar: 'منتهية', en: 'finished' } },
     ];
     this.getAllPreviews();
     this.FillCustomerSelect();
@@ -325,6 +326,7 @@ export class PreviewComponent implements OnInit {
     if (modalType == 'addPreview2') {    
       this.GeneratePreviewNumber();
       this.GenerateOrderBarcodeNumber();
+      this.TransbarcodeActive=false;
     }
     console.log('this.modalDetails');
     console.log(this.modalDetails);
@@ -332,7 +334,7 @@ export class PreviewComponent implements OnInit {
     if (data) {
       this.modalDetails = data;
       if (modalType == 'editPreview') {
-        this.modalDetails.appointmentDate = this._sharedService.String_TO_date(this.modalDetails.appointmentDate);
+        this.modalDetails.date = this._sharedService.String_TO_date(this.modalDetails.date);
         debugger;
         if (data.agentAttachmentUrl != null) {
           this.modalDetails.attachmentUrl =
@@ -452,13 +454,18 @@ export class PreviewComponent implements OnInit {
     prevObj.orderBarcode = this.modalDetails.orderBarcode;
     prevObj.previewCode = this.modalDetails.previewCode;
     prevObj.customerId = this.modalDetails.customerId;
-    prevObj.directManagerId = this.modalDetails.directManagerId;
+    prevObj.previewChairperson = this.modalDetails.previewChairperson;
     prevObj.previewTypeId = this.modalDetails.previewTypeId;
     prevObj.previewStatus = this.modalDetails.previewStatus;
     prevObj.notes = this.modalDetails.notes;
     if (this.modalDetails.date != null) {
       prevObj.date = this._sharedService.date_TO_String(this.modalDetails.date);
     }
+
+    prevObj.notes = this.modalDetails.notes;
+
+    prevObj.orderBarcodeAuto=!this.TransbarcodeActive;
+
     console.log('prevObj');
     console.log(prevObj);
 
@@ -510,7 +517,7 @@ export class PreviewComponent implements OnInit {
       this.ValidateObjMsg = { status: false, msg: 'اختر عميل' };
       return this.ValidateObjMsg;
     }
-    else if ((this.modalDetails.directManagerId == null ||this.modalDetails.directManagerId == '')
+    else if ((this.modalDetails.previewChairperson == null ||this.modalDetails.previewChairperson == '')
     ) {
       this.ValidateObjMsg = { status: false, msg: 'اختر القائم بالمعاينة' };
       return this.ValidateObjMsg;
@@ -545,6 +552,7 @@ export class PreviewComponent implements OnInit {
 
   getAllPreviews() {
     this.service.GetAllPreviews_Branch().subscribe((data: any) => {
+      console.log(data);
       this.dataSource = new MatTableDataSource(data);
       this.dataSourceTemp = data;
       this.dataSource.paginator = this.paginator;

@@ -153,7 +153,7 @@
         ></tr>
         <!-- Row shown when there is no matching data. -->
         <tr class="mat-row" *matNoDataRow>
-          <td class="mat-cell" colspan="4">
+          <td class="mat-cell" colspan="7">
             {{ "No result found for " }} "{{ input.value }}"
           </td>
         </tr>
@@ -515,26 +515,24 @@
         <div
           class="flex flex-wrap items-end border-t justify-between pt-2 border-neutral-300"
         >
-          <div
-            *ngIf="modalDetails.addUser != null && modalDetails.addUser != ''"
-            class="flex gap-2 items-center"
-          >
-            <img
-              class="w-20 aspect-square rounded-full object-cover"
-              *ngIf="modalDetails?.addedemployeeImg"
-              [src]="ShowImg(modalDetails?.addedemployeeImg)"
-              alt=""
-            />
-            <div class="flex flex-col gap-2">
-              <span>{{ "Data Entry" | translate }}</span>
-              <div class="flex flex-col">
-                <span>{{ modalDetails?.addUser }}</span>
-                <span>{{
-                  modalDetails?.addDate | date : " hh:mm yyyy-MM-dd"
-                }}</span>
-              </div>
+        <div *ngIf="modalDetails.addDate != null && modalDetails.addDate != ''" class="flex gap-2 items-center">
+          <div class="flex flex-col gap-2">
+            <span>{{ "تاريخ إنشاء المستند" | translate }}</span>
+            <div class="flex flex-col">
+              <span>{{
+                modalDetails?.addDate | date : " hh:mm yyyy-MM-dd"}}</span>
             </div>
           </div>
+        </div>
+        <div *ngIf="modalDetails.updateDate != null && modalDetails.updateDate != ''" class="flex gap-2 items-center">
+          <div class="flex flex-col gap-2">
+            <span>{{ "تاريخ تعديل المستند" | translate }}</span>
+            <div class="flex flex-col">
+              <span>{{
+                modalDetails?.addDate | date : " hh:mm yyyy-MM-dd"}}</span>
+            </div>
+          </div>
+        </div>
           <div class="flex gap-2">
             <button
               class="btn bg-base text-white"
