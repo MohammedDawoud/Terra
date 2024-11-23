@@ -15,10 +15,20 @@ export class AuthGuard implements CanActivate {
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
       const userG = this.authenticationService.userGlobalObj;
+      debugger
       if (userG) {
         if (!(userG?.token)) {
           this.router.navigate(['auth']);
           return false;
+        }
+        else
+        {
+          if(state.url=="/customers/search" && userG?.pagesList.includes(1368619))return true;       
+          else if(state.url=="/employees/search" && userG?.pagesList.includes(2111613))return true;        
+          else if(state.url=="/projects/preview" && userG?.pagesList.includes(3122911))return true;         
+          else if(state.url=="/accounts/Accounts_guide" && userG?.pagesList.includes(4132216))return true;
+          else if(state.url=="/controlpanel/organization")return true;     
+          else return false;        
         }
         // authorised so return true
         return true;
