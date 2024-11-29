@@ -1,4 +1,4 @@
-<div class="preview pb-4">
+<div class="meeting pb-4">
   <app-navigator [title]="title"></app-navigator>
 
   <div class="tables-data mt-3 overflow-hidden">
@@ -15,28 +15,28 @@
 
       <!---------------------------------------------------------------------------->
       <div class="flex gap-2 controler">
-        <button *ngIf="allPreviewCount==0"
+        <button *ngIf="allMeetingCount==0"
           class="flex gap-1 btn btn-primary"
-          (click)="openModal(dataModal, null, 'addPreview2')">
+          (click)="openModal(dataModal, null, 'addMeeting2')">
           <span
             class="hidden md:block"
             [translate]="'name'"
             [translateParams]="{
-              ar: 'معاينة جديدة ',
-              en: 'New Preview '
+              ar: 'إجتماع جديد ',
+              en: 'New Meeting '
             }"
           ></span>
           <i class="fa-solid fa-user-plus"></i>
         </button>
-        <button *ngIf="allPreviewCount!=0"
+        <button *ngIf="allMeetingCount!=0"
         class="flex gap-1 btn btn-primary"
-        (click)="open(addPreviewMessage, null, 'addPreviewMessage')">
+        (click)="open(addMeetingMessage, null, 'addMeetingMessage')">
         <span
           class="hidden md:block"
           [translate]="'name'"
           [translateParams]="{
-            ar: 'معاينة جديدة ',
-            en: 'New Preview '
+            ar: 'إجتماع جديد ',
+            en: 'New Meeting '
           }"
         ></span>
         <i class="fa-solid fa-user-plus"></i>
@@ -88,13 +88,13 @@
           </td>
         </ng-container>
 
-        <ng-container matColumnDef="previewCode">
+        <ng-container matColumnDef="meetingCode">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
-            <span>{{'كود المعاينة'}}</span>
+            <span>{{'كود الإجتماع'}}</span>
 
           </th>
           <td mat-cell *matCellDef="let element">
-            {{ element.previewCode }}
+            {{ element.meetingCode }}
           </td>
         </ng-container>
         
@@ -110,31 +110,31 @@
         </ng-container>
         <ng-container matColumnDef="chairpersonName">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
-            <span>{{'القائم بالمعاينة'}}</span>
+            <span>{{'القائم بالإجتماع'}}</span>
           </th>
           <td mat-cell *matCellDef="let element">
             {{ element.chairpersonName }}
           </td>
         </ng-container>
-        <ng-container matColumnDef="previewStatustxt">
+        <ng-container matColumnDef="meetingStatustxt">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
-            <span>{{'حالة المعاينة'}}</span>
+            <span>{{'حالة الإجتماع'}}</span>
           </th>
           <td mat-cell *matCellDef="let element" >
-            {{ element.previewStatustxt }}
+            {{ element.meetingStatustxt }}
 
           </td>
         </ng-container>
-        <ng-container matColumnDef="previewConverttxt">
+        <ng-container matColumnDef="meetingConverttxt">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
             <span>{{'حالة التحويل'}}</span>
           </th>
           <td mat-cell *matCellDef="let element" >
-            <span style="color: #0ea516;font-size: 14px;font-weight: bold;" *ngIf="element.previewConvert == true">
-              {{ element.previewConverttxt }}
+            <span style="color: #0ea516;font-size: 14px;font-weight: bold;" *ngIf="element.meetingConvert == true">
+              {{ element.meetingConverttxt }}
             </span>
-            <span style="color: #b20b0b;font-size: 14px;font-weight: bold;" *ngIf="element.previewConvert == false">
-              {{ element.previewConverttxt }}
+            <span style="color: #b20b0b;font-size: 14px;font-weight: bold;" *ngIf="element.meetingConvert == false">
+              {{ element.meetingConverttxt }}
             </span>
           </td>
         </ng-container>
@@ -152,19 +152,19 @@
           ></th>
           <td mat-cell *matCellDef="let element">
             <div class="flex gap-1 justify-center py-2">
-              <button *ngIf="element.previewStatus!=3"
+              <button *ngIf="element.meetingStatus!=3"
               class="min-w-max p-2 bg-orange-100 hover:bg-orange-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
-                (click)="openModal(dataModal, element, 'editPreview')"
+                (click)="openModal(dataModal, element, 'editMeeting')"
               >
                 <i class="fa-regular fa-pen-to-square"></i>
               </button>
-              <button *ngIf="element.previewStatus==3 && !element.previewConvert"
+              <!-- <button *ngIf="element.meetingStatus==3 && !element.meetingConvert"
               class="min-w-max p-2 bg-green-100 hover:bg-green-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
-              (click)="openModal(convertModal, element, 'convertPreview')"
+              (click)="openModal(convertModal, element, 'convertMeeting')"
             >
             <i class="fa-solid fa-arrow-rotate-right"></i>
-            </button>
-            <button *ngIf="!element.previewConvert"
+            </button> -->
+            <button *ngIf="!element.meetingConvert"
                 class="min-w-max p-2 bg-red-100 hover:bg-red-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
                 (click)="openModal(deleteModal, element, 'delete')"
               >
@@ -182,7 +182,7 @@
           mat-row
           *matRowDef="let row; columns: displayedColumns"
           class="duration-300 hover:bg-slate-100"
-          (dblclick)="openModal(dataModal, row, 'PreviewView')"
+          (dblclick)="openModal(dataModal, row, 'MeetingView')"
           ></tr>
         <!-- Row shown when there is no matching data. -->
         <tr class="mat-row" *matNoDataRow>
@@ -203,7 +203,7 @@
       class="modal-header text-white flex justify-between items-center"
     >
       <h4 class="m-0">
-        <span class="text-2xl">{{ 'المعاينة' | translate }}</span>
+        <span class="text-2xl">{{ 'الإجتماع' | translate }}</span>
       </h4>
       <button
         type="button"
@@ -220,7 +220,7 @@
 
             <div class="form-group">
               <label class="col-form-label">
-                {{ "فرع المعاينة" | translate }}</label
+                {{ "فرع الإجتماع" | translate }}</label
               >
 
               <ng-select
@@ -234,7 +234,7 @@
                 [disabled]="load_BranchUserId?.length == 1"
                 [clearable]="false"
                 name="branchId"
-                placeholder=" {{ 'فرع المعاينة' | translate }}"
+                placeholder=" {{ 'فرع الإجتماع' | translate }}"
                 [(ngModel)]="modalDetails.branchId"
                 [ngModelOptions]="{ standalone: true }"
               >
@@ -262,9 +262,9 @@
                 [clearable]="false"
                 name="branchId"
                 placeholder=" {{ 'باركود العمليات' | translate }}"
-                [(ngModel)]="modalDetails.previewBarcodeSelect"
+                [(ngModel)]="modalDetails.meetingBarcodeSelect"
                 [ngModelOptions]="{ standalone: true }"
-                (change)="getpreviewdata(modalDetails.previewBarcodeSelect)"
+                (change)="getmeetingdata(modalDetails.meetingBarcodeSelect)"
 
               >
                 <ng-option
@@ -299,25 +299,25 @@
             </div>
 
             <div class="form-group">
-              <label for="previewCode" class="col-form-label">
+              <label for="meetingCode" class="col-form-label">
                 <ng-container>
-                  {{ "كود المعاينة" | translate }}
+                  {{ "كود الإجتماع" | translate }}
                 </ng-container>
               </label>
               <input
                 type="text"
                 class="form-control"
-                id="previewCode"
+                id="meetingCode"
                 autocomplete="off"
-                #previewCode="ngModel"
+                #meetingCode="ngModel"
                 required
                 class="form-control"
-                name="previewCode"
+                name="meetingCode"
                 disabled
                 placeholder="{{ 'Write' | translate }} {{
-                  'كود المعاينة' | translate
+                  'كود الإجتماع' | translate
                 }} "
-                [(ngModel)]="modalDetails.previewCode"
+                [(ngModel)]="modalDetails.meetingCode"
               />
             </div>
 
@@ -332,7 +332,7 @@
                   customerId.invalid && branchId.touched ? 'errorInput' : ''
                 }}"
                 [clearable]="true"
-                [disabled]="modalDetails.type=='PreviewView' || TransbarcodeActive"
+                [disabled]="modalDetails.type=='MeetingView' || TransbarcodeActive"
                 name="customerId"
                 placeholder=" {{ 'كود العميل' | translate }}"
                 [(ngModel)]="modalDetails.customerId"
@@ -352,7 +352,7 @@
                 style="min-width: max-content"
                 id="customerId"
                 #customerId="ngModel"
-                [disabled]="modalDetails.type=='PreviewView' || TransbarcodeActive"
+                [disabled]="modalDetails.type=='MeetingView' || TransbarcodeActive"
                 class="w-full p-0"
                 [clearable]="true"
                 name="customerId"
@@ -373,7 +373,7 @@
               <ng-select
                 style="min-width: max-content"
                 id="customerId"
-                [disabled]="modalDetails.type=='PreviewView' || TransbarcodeActive"
+                [disabled]="modalDetails.type=='MeetingView' || TransbarcodeActive"
                 #customerId="ngModel"
                 class="w-full p-0"
                 [clearable]="true"
@@ -395,7 +395,7 @@
               <ng-select
                 style="min-width: max-content"
                 id="customerId"
-                [disabled]="modalDetails.type=='PreviewView' || TransbarcodeActive"
+                [disabled]="modalDetails.type=='MeetingView' || TransbarcodeActive"
                 #customerId="ngModel"
                 class="w-full p-0"
                 [clearable]="true"
@@ -480,13 +480,13 @@
 
             <div class="form-group">
               <label class="col-form-label">
-                {{ "القائم بالمعاينة" | translate }}
+                {{ "القائم بالإجتماع" | translate }}
               </label>
               <ng-select
                 class="w-full p-0"
-                [disabled]="modalDetails.type=='PreviewView'"
-                placeholder="{{ 'القائم بالمعاينة' | translate }}"
-                [(ngModel)]="modalDetails.previewChairperson"
+                [disabled]="modalDetails.type=='MeetingView'"
+                placeholder="{{ 'القائم بالإجتماع' | translate }}"
+                [(ngModel)]="modalDetails.meetingChairperson"
                 [ngModelOptions]="{ standalone: true }"
               >
                 <ng-option *ngFor="let emp of load_Employees" [value]="emp.employeeId">{{
@@ -497,14 +497,14 @@
 
             <div class="form-group">
               <label for="date" class="text-right col-form-label block">
-                {{ "تاريخ المعاينة" | translate }}
+                {{ "تاريخ الإجتماع" | translate }}
               </label>
               <input
                 placeholder="{{ 'Chose' | translate }}"
                 name="date"
                 type="text"
                 class="form-control"
-                [disabled]="modalDetails.type=='PreviewView'"
+                [disabled]="modalDetails.type=='MeetingView'"
                 bsDatepicker
                 #dpr="bsDatepicker"
                 autocomplete="off"
@@ -516,21 +516,21 @@
 
 
             <div class="form-group">
-              <label class="col-form-label">{{ "نوع المعاينة" | translate }}</label>
+              <label class="col-form-label">{{ "نوع الإجتماع" | translate }}</label>
               <ng-select
                 style="min-width: max-content"
-                id="previewTypeId"
+                id="meetingTypeId"
                 #customerId="ngModel"
-                [disabled]="modalDetails.type=='PreviewView'"
+                [disabled]="modalDetails.type=='MeetingView'"
                 class="w-full p-0"
                 [clearable]="true"
-                name="previewTypeId"
-                placeholder=" {{ 'نوع المعاينة' | translate }}"
-                [(ngModel)]="modalDetails.previewTypeId"
+                name="meetingTypeId"
+                placeholder=" {{ 'نوع الإجتماع' | translate }}"
+                [(ngModel)]="modalDetails.meetingTypeId"
                 [ngModelOptions]="{ standalone: true }"
               >
                 <ng-option
-                  *ngFor="let item of PreviewTypesList"
+                  *ngFor="let item of MeetingTypesList"
                   [value]="item.id"
                   >{{ item.name }}</ng-option
                 >
@@ -538,20 +538,20 @@
             </div>
 
             <div class="form-group">
-              <label class="col-form-label">{{ "حالة المعاينة" | translate }}</label>
+              <label class="col-form-label">{{ "حالة الإجتماع" | translate }}</label>
               <ng-select
                 style="min-width: max-content"
-                id="previewStatus"
+                id="meetingStatus"
                 #customerId="ngModel"
-                [disabled]="modalDetails.type=='PreviewView'"
+                [disabled]="modalDetails.type=='MeetingView'"
                 class="w-full p-0"
                 [clearable]="true"
-                name="previewStatus"
-                placeholder=" {{ 'حالة المعاينة' | translate }}"
-                [(ngModel)]="modalDetails.previewStatus"
+                name="meetingStatus"
+                placeholder=" {{ 'حالة الإجتماع' | translate }}"
+                [(ngModel)]="modalDetails.meetingStatus"
                 [ngModelOptions]="{ standalone: true }"
               >
-              <ng-option *ngFor="let type of PreviewStatusList" [value]="type.id" [translate]="'name'"
+              <ng-option *ngFor="let type of MeetingStatusList" [value]="type.id" [translate]="'name'"
                 [translateParams]="{ar: type.name?.ar,en: type.name?.en}"></ng-option>
               </ng-select>
             </div>
@@ -563,37 +563,37 @@
             </div>
             
             
-          <div class="form-group" *ngIf="modalDetails.type=='PreviewView' && modalDetails.previewConvert">
-            <label for="meetingCode" class="col-form-label" style="color: red;">
+          <div class="form-group" *ngIf="modalDetails.type=='MeetingView' && modalDetails.meetingConvert">
+            <label for="designCode" class="col-form-label" style="color: red;">
               <ng-container>
-                {{ "كود الإجتماع" | translate }}
+                {{ "كود التصميم" | translate }}
               </ng-container>
             </label>
             <input
               type="text"
               class="form-control"
-              id="meetingCode"
+              id="designCode"
               autocomplete="off"
-              #meetingCode="ngModel"
+              #designCode="ngModel"
               
               class="form-control"
-              name="meetingCode"
+              name="designCode"
               disabled
               placeholder="{{
-                'كود الإجتماع' | translate
+                'كود التصميم' | translate
               }} "
-              [(ngModel)]="modalDetails.meetingCode"
+              [(ngModel)]="modalDetails.designCode"
             />
           </div>
 
 
-          <div class="form-group" *ngIf="modalDetails.type=='PreviewView' && modalDetails.previewConvert">
+          <div class="form-group" *ngIf="modalDetails.type=='MeetingView' && modalDetails.meetingConvert">
             <label for="date" class="text-right col-form-label block" style="color: red;">
-              {{ "تاريخ الإجتماع" | translate }}
+              {{ "تاريخ التصميم" | translate }}
             </label>
             <input
               placeholder="{{ 'Chose' | translate }}"
-              name="meetingDate"
+              name="designDate"
               type="text"
               class="form-control"
               disabled
@@ -601,19 +601,19 @@
               #dpr="bsDatepicker"
               autocomplete="off"
               [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
-              [(ngModel)]="modalDetails.meetingDate"
+              [(ngModel)]="modalDetails.designDate"
               [ngModelOptions]="{ standalone: true }"
             />
           </div>
 
-          <div class="form-group" *ngIf="modalDetails.type=='PreviewView' && modalDetails.previewConvert">
+          <div class="form-group" *ngIf="modalDetails.type=='MeetingView' && modalDetails.meetingConvert">
             <label class="col-form-label" style="color: red;">
-              {{ "القائم بالإجتماع" | translate }}
+              {{ "القائم بالتصميم" | translate }}
             </label>
             <ng-select
               class="w-full p-0"
-              placeholder="{{ 'القائم بالإجتماع' | translate }}"
-              [(ngModel)]="modalDetails.meetingChairperson"
+              placeholder="{{ 'القائم بالتصميم' | translate }}"
+              [(ngModel)]="modalDetails.designChairperson"
               disabled
               [ngModelOptions]="{ standalone: true }"
             >
@@ -643,7 +643,7 @@
                 "
                 cols="30"
                 rows="4"
-                [disabled]="modalDetails.type=='PreviewView'"
+                [disabled]="modalDetails.type=='MeetingView'"
                 id="Notestxt3"
                 autocomplete="off"
                 name="Notestxt3"
@@ -675,10 +675,10 @@
             </div>
           </div>
           <div class="flex gap-2">
-            <button *ngIf="modalDetails.type!='PreviewView'"
+            <button *ngIf="modalDetails.type!='MeetingView'"
               class="btn bg-base text-white"
-              (click)="addPreview()"
-              [disabled]="disableButtonSave_Preview"
+              (click)="addMeeting()"
+              [disabled]="disableButtonSave_Meeting"
             >
               {{ "save" | translate }}
             </button>
@@ -727,8 +727,8 @@
       <p
         [translate]="'name'"
         [translateParams]="{
-          ar: 'هل تريد تحويل هذه المعاينة للإجتماع',
-          en: 'Are you sure to convert this preview to meeting ?'
+          ar: 'هل تريد تحويل هذه الإجتماع للإجتماع',
+          en: 'Are you sure to convert this meeting to meeting ?'
         }"
       ></p>
       <div class="flex gap-2 justify-center">
@@ -752,14 +752,14 @@
     </div>
   </ng-template>
 
-  <!-- confirm addPreviewMessage -->
-  <ng-template #addPreviewMessage let-modal>
+  <!-- confirm addMeetingMessage -->
+  <ng-template #addMeetingMessage let-modal>
     <div class="modal-body text-center">
       <p
         [translate]="'name'"
         [translateParams]="{
-          ar: 'هل تريد اضافة معاينة بباركود عمليات قديم ؟',
-          en: 'Do you want to add a preview with an old transaction barcode?'
+          ar: 'هل تريد اضافة إجتماع بباركود عمليات قديم ؟',
+          en: 'Do you want to add a meeting with an old transaction barcode?'
         }"
       ></p>
       <div class="flex gap-2 justify-center">
@@ -767,13 +767,13 @@
           type="button"
           mat-raised-button
           color="warn"
-          (click)="confirmAddPreviewMessage();modal.dismiss();openModal(dataModal, null, 'addPreview1')"
+          (click)="confirmAddMeetingMessage();modal.dismiss();openModal(dataModal, null, 'addMeeting1')"
         >
           {{ "Yes" | translate }}
         </button>
         <button
           type="button"
-          (click)="declineAddPreviewMessage();modal.dismiss();openModal(dataModal, null, 'addPreview1')"
+          (click)="declineAddMeetingMessage();modal.dismiss();openModal(dataModal, null, 'addMeeting1')"
           mat-raised-button
           color="basic"
         >

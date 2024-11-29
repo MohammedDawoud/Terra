@@ -26,7 +26,7 @@ import {
 } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
-import { PreviewService } from 'src/app/core/services/project-services/preview.service';
+import { MeetingService } from 'src/app/core/services/project-services/meeting.service';
 import { ExportationService } from 'src/app/core/services/exportation-service/exportation.service';
 import { fade } from 'src/app/shared/animations/toggleBtn.animation';
 import { RestApiService } from 'src/app/shared/services/api.service';
@@ -71,25 +71,25 @@ const toHijri = hijriSafe.toHijri;
 // }
 
 @Component({
-  selector: 'app-preview',
-  templateUrl: './preview.component.html',
-  styleUrls: ['./preview.component.scss'],
+  selector: 'app-meeting',
+  templateUrl: './meeting.component.html',
+  styleUrls: ['./meeting.component.scss'],
   animations: [fade],
 })
-export class PreviewComponent implements OnInit {
+export class MeetingComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   public uploadedFiles: Array<File> = [];
   dataSourceTemp: any = [];
   dataSource: MatTableDataSource<any> = new MatTableDataSource([{}]);
-  _PreviewSMS: any = null;
+  _MeetingSMS: any = null;
   modal?: BsModalRef;
   modalDetails: any = {};
   load_BranchAccount: any;
   load_CityAndAreas: any;
   customrRowSelected: any;
   BranchId: number;
-  allPreviewCount = 0;
+  allMeetingCount = 0;
   load_BranchUserId: any;
   nameAr: any;
   nameEn: any;
@@ -110,11 +110,11 @@ export class PreviewComponent implements OnInit {
         ar: 'إدارة المشاريع',
         en: 'Projects',
       },
-      link: '/projects/preview',
+      link: '/projects/meeting',
     },
     sub: {
-      ar: 'المعاينات',
-      en: 'Preview',
+      ar: 'الإجتماعات',
+      en: 'Meeting',
     },
   };
 
@@ -140,11 +140,11 @@ export class PreviewComponent implements OnInit {
   displayedColumns: string[] = [
     'branchName',
     'orderBarcode',
-    'previewCode',
+    'meetingCode',
     'customerName',
     'chairpersonName',
-    'previewStatustxt',
-    'previewConverttxt', 
+    'meetingStatustxt',
+    'meetingConverttxt', 
     'operations',
   ];
   displayedColumn: any = {
@@ -155,21 +155,21 @@ export class PreviewComponent implements OnInit {
     filter: {
       enable: true,
       date: null,
-      search_PreviewName: '',
-      search_previewEmail: '',
-      search_previewMobile: '',
+      search_MeetingName: '',
+      search_meetingEmail: '',
+      search_meetingMobile: '',
       isChecked: false,
     },
   };
 
   EditModel: any = {
-    PreviewId: 0,
+    MeetingId: 0,
     nameAr: null,
     nameEn: null,
   };
 
   constructor(
-    private service: PreviewService,
+    private service: MeetingService,
     private modalService: BsModalService,
     private api: RestApiService,
     private changeDetection: ChangeDetectorRef,
@@ -212,24 +212,24 @@ export class PreviewComponent implements OnInit {
   existValue: any = true;
 
   selectAllValue = false;
-  PreviewStatusList: any;
+  MeetingStatusList: any;
 
   ngOnInit(): void {
-    this.PreviewStatusList = [
+    this.MeetingStatusList = [
       { id: 1, name: { ar: 'قيد الإنتظار', en: 'pending' } },
       { id: 2, name: { ar: 'قيد التشغيل', en: 'in progress' } },
       { id: 3, name: { ar: 'منتهية', en: 'finished' } },
     ];
-    this.getAllPreviews();
+    this.getAllMeetings();
     this.FillCustomerSelect();
     this.FillEmployeeselect();
-    this.FillPreviewTypesSelect();
+    this.FillMeetingTypesSelect();
   }
 
-  PreviewTypesList: any;
-  FillPreviewTypesSelect() {
-    this.service.FillPreviewTypesSelect().subscribe((data) => {
-      this.PreviewTypesList = data;
+  MeetingTypesList: any;
+  FillMeetingTypesSelect() {
+    this.service.FillMeetingTypesSelect().subscribe((data) => {
+      this.MeetingTypesList = data;
     });
   }
 
@@ -244,8 +244,8 @@ export class PreviewComponent implements OnInit {
             d.branchName?.trim().toLowerCase().indexOf(val) !== -1) ||
           (d.nationalId &&
             d.nationalId?.trim().toLowerCase().indexOf(val) !== -1) ||
-          (d.previewCode &&
-            d.previewCode?.trim().toLowerCase().indexOf(val) !== -1) ||
+          (d.meetingCode &&
+            d.meetingCode?.trim().toLowerCase().indexOf(val) !== -1) ||
           (d.nameAr &&
             d.nameAr?.trim().toLowerCase().indexOf(val) !== -1) ||
           (d.mainPhoneNo &&
@@ -263,7 +263,7 @@ export class PreviewComponent implements OnInit {
 
   // checkValue(event: any) {
   //   if (event == 'A') {
-  //     this.getAllPreviews();
+  //     this.getAllMeetings();
   //   } else {
   //     this.RefreshData();
   //   }
@@ -271,10 +271,10 @@ export class PreviewComponent implements OnInit {
 
   resetandRefresh() {
     if (this.searchBox.open == false) {
-      this.data2.filter.search_PreviewName = null;
-      this.data2.filter.search_previewMobile = null;
+      this.data2.filter.search_MeetingName = null;
+      this.data2.filter.search_meetingMobile = null;
       this.data.type = 0;
-      this.getAllPreviews();
+      this.getAllMeetings();
     }
   }
   //------------------ Fill DATA ----------------------------------
@@ -296,8 +296,8 @@ export class PreviewComponent implements OnInit {
   }
 
   load_BarcodesCustomer: any=[];
-  GetAllPreviewsSelectBarcode() {
-    this.service.GetAllPreviewsSelectBarcode().subscribe((data) => {
+  GetAllMeetingsSelectBarcode() {
+    this.service.GetAllMeetingsSelectBarcode().subscribe((data) => {
       this.load_BarcodesCustomer = data;
       console.log(this.load_BarcodesCustomer);
     });
@@ -310,18 +310,18 @@ export class PreviewComponent implements OnInit {
     });
   }
 
-  GeneratePreviewNumber(){
+  GenerateMeetingNumber(){
     debugger
-    this.service.GeneratePreviewNumber().subscribe(data=>{
-      this.modalDetails.previewCode=data.reasonPhrase;
+    this.service.GenerateMeetingNumber().subscribe(data=>{
+      this.modalDetails.meetingCode=data.reasonPhrase;
     });
   }
-  GeneratePreviewNumberByBarcodeNum(){
+  GenerateMeetingNumberByBarcodeNum(){
     debugger
     if(!(this.modalDetails.orderBarcode==null || this.modalDetails.orderBarcode==""))
     {
-      this.service.GeneratePreviewNumberByBarcodeNum(this.modalDetails.orderBarcode).subscribe(data=>{
-        this.modalDetails.previewCode=data.reasonPhrase;
+      this.service.GenerateMeetingNumberByBarcodeNum(this.modalDetails.orderBarcode).subscribe(data=>{
+        this.modalDetails.meetingCode=data.reasonPhrase;
       });
     }  
   }
@@ -330,7 +330,7 @@ export class PreviewComponent implements OnInit {
       this.modalDetails.orderBarcode=data.reasonPhrase;
       if(!this.TransbarcodeActive)
       {
-        this.GeneratePreviewNumberByBarcodeNum();
+        this.GenerateMeetingNumberByBarcodeNum();
       }
     });
   }
@@ -342,16 +342,16 @@ export class PreviewComponent implements OnInit {
     this.fillBranchByUserId();
     if(this.TransbarcodeActive)
     {
-      this.GetAllPreviewsSelectBarcode();
+      this.GetAllMeetingsSelectBarcode();
     }
     debugger
-    if (modalType == 'addPreview1') {
+    if (modalType == 'addMeeting1') {
       if(!this.TransbarcodeActive)
       {
-        this.GeneratePreviewNumber();
+        this.GenerateMeetingNumber();
       }    
     }
-    if (modalType == 'addPreview2') {    
+    if (modalType == 'addMeeting2') {    
       this.GenerateOrderBarcodeNumber();
       this.TransbarcodeActive=false;
     }
@@ -361,7 +361,7 @@ export class PreviewComponent implements OnInit {
 
     if (data) {
       this.modalDetails = data;
-      if (modalType == 'editPreview' || modalType == 'PreviewView') {
+      if (modalType == 'editMeeting' || modalType == 'MeetingView') {
         this.TransbarcodeActive=false;
         if(this.modalDetails.date!=null)
         {
@@ -458,25 +458,25 @@ export class PreviewComponent implements OnInit {
   }
 
   TransbarcodeActive:boolean=false;
-  confirmAddPreviewMessage(){
+  confirmAddMeetingMessage(){
     this.TransbarcodeActive=true;
   }
-  declineAddPreviewMessage(){
+  declineAddMeetingMessage(){
     this.TransbarcodeActive=false;
     this.GenerateOrderBarcodeNumber();
   }
 
 
-  PreviewIdPublic: any = 0;
-  setPreviewid_P(id: any) {
-    this.PreviewIdPublic = id;
-    console.log('this.PreviewIdPublic');
-    console.log(this.PreviewIdPublic);
+  MeetingIdPublic: any = 0;
+  setMeetingid_P(id: any) {
+    this.MeetingIdPublic = id;
+    console.log('this.MeetingIdPublic');
+    console.log(this.MeetingIdPublic);
   }
 
-  disableButtonSave_Preview = false;
+  disableButtonSave_Meeting = false;
 
-  addPreview() {
+  addMeeting() {
     debugger;
     var val = this.validateForm();
     if (val.status == false) {
@@ -484,16 +484,16 @@ export class PreviewComponent implements OnInit {
       return;
     }
     var prevObj: any = {};
-    prevObj.previewId = this.modalDetails.previewId;
+    prevObj.meetingId = this.modalDetails.meetingId;
     prevObj.branchId = this.modalDetails.branchId;
 
     prevObj.orderBarcode = this.modalDetails.orderBarcode;
 
-    prevObj.previewCode = this.modalDetails.previewCode;
+    prevObj.meetingCode = this.modalDetails.meetingCode;
     prevObj.customerId = this.modalDetails.customerId;
-    prevObj.previewChairperson = this.modalDetails.previewChairperson;
-    prevObj.previewTypeId = this.modalDetails.previewTypeId;
-    prevObj.previewStatus = this.modalDetails.previewStatus;
+    prevObj.meetingChairperson = this.modalDetails.meetingChairperson;
+    prevObj.meetingTypeId = this.modalDetails.meetingTypeId;
+    prevObj.meetingStatus = this.modalDetails.meetingStatus;
     prevObj.notes = this.modalDetails.notes;
     if (this.modalDetails.date != null) {
       prevObj.date = this._sharedService.date_TO_String(this.modalDetails.date);
@@ -510,18 +510,18 @@ export class PreviewComponent implements OnInit {
     for (const key of Object.keys(prevObj)) {
       const value = prevObj[key] == null ? '' : prevObj[key];
       formData.append(key, value);
-      formData.append('PreviewId', prevObj.previewId.toString());
+      formData.append('MeetingId', prevObj.meetingId.toString());
     }
-    this.disableButtonSave_Preview = true;
+    this.disableButtonSave_Meeting = true;
     setTimeout(() => {
-      this.disableButtonSave_Preview = false;
+      this.disableButtonSave_Meeting = false;
     }, 5000);
-    this.service.SavePreview(formData).subscribe((result: any) => {
+    this.service.SaveMeeting(formData).subscribe((result: any) => {
       if (result.statusCode == 200) {
         this.toast.success(
           this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
         this.decline();
-        this.getAllPreviews();
+        this.getAllMeetings();
         this.ngbModalService.dismissAll();
       } else {
         this.toast.error(result.reasonPhrase, 'رسالة');
@@ -536,7 +536,7 @@ export class PreviewComponent implements OnInit {
       this.modalDetails.branchId == null ||
       this.modalDetails.branchId == ''
     ) {
-      this.ValidateObjMsg = { status: false, msg: 'أختر فرع المعاينة' };
+      this.ValidateObjMsg = { status: false, msg: 'أختر فرع الإجتماع' };
       return this.ValidateObjMsg;
     } else if (
       this.modalDetails.orderBarcode == null ||
@@ -544,8 +544,8 @@ export class PreviewComponent implements OnInit {
     ) {
       this.ValidateObjMsg = { status: false, msg: 'أدخل باركود العمليات' };
       return this.ValidateObjMsg;
-    } else if (this.modalDetails.previewCode == null || this.modalDetails.previewCode == '') {
-      this.ValidateObjMsg = { status: false, msg: 'اختر كود المعاينة' };
+    } else if (this.modalDetails.meetingCode == null || this.modalDetails.meetingCode == '') {
+      this.ValidateObjMsg = { status: false, msg: 'اختر كود الإجتماع' };
       return this.ValidateObjMsg;
     } else if (
       this.modalDetails.customerId == null ||
@@ -554,15 +554,15 @@ export class PreviewComponent implements OnInit {
       this.ValidateObjMsg = { status: false, msg: 'اختر عميل' };
       return this.ValidateObjMsg;
     }
-    else if ((this.modalDetails.previewChairperson == null ||this.modalDetails.previewChairperson == '')
+    else if ((this.modalDetails.meetingChairperson == null ||this.modalDetails.meetingChairperson == '')
     ) {
-      this.ValidateObjMsg = { status: false, msg: 'اختر القائم بالمعاينة' };
+      this.ValidateObjMsg = { status: false, msg: 'اختر القائم بالإجتماع' };
       return this.ValidateObjMsg;
     }
     else if ((this.modalDetails.date == null ||this.modalDetails.date == '')) {
       this.ValidateObjMsg = {
         status: false,
-        msg: 'ادخل تاريخ المعاينة',
+        msg: 'ادخل تاريخ الإجتماع',
       };
       return this.ValidateObjMsg;
     }
@@ -577,31 +577,31 @@ export class PreviewComponent implements OnInit {
       x.push({
         branchName: this.dataSourceTemp[index].branchName,
         orderBarcode: this.dataSourceTemp[index].orderBarcode,
-        previewCode: this.dataSourceTemp[index].previewCode,
+        meetingCode: this.dataSourceTemp[index].meetingCode,
         customerName: this.dataSourceTemp[index].customerName,
         chairpersonName: this.dataSourceTemp[index].chairpersonName,
-        previewStatus: this.dataSourceTemp[index].previewStatustxt,
-        previewConvert: this.dataSourceTemp[index].previewConverttxt,
+        meetingStatus: this.dataSourceTemp[index].meetingStatustxt,
+        designConvert: this.dataSourceTemp[index].designConverttxt,
       });
     }
-    this.service.customExportExcel(x, 'Previews');
+    this.service.customExportExcel(x, 'Meetings');
   }
 
-  getAllPreviews() {
-    this.service.GetAllPreviews_Branch().subscribe((data: any) => {
+  getAllMeetings() {
+    this.service.GetAllMeetings_Branch().subscribe((data: any) => {
       this.dataSource = new MatTableDataSource(data);
       this.dataSourceTemp = data;
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
-      this.allPreviewCount = data.length;
+      this.allMeetingCount = data.length;
     });
   }
 
-  getpreviewdata(customerId:any){
+  getmeetingdata(customerId:any){
     this.modalDetails.customerId=customerId;
     let data = this.load_BarcodesCustomer.filter((d: { id: any }) => d.id == customerId); 
     this.modalDetails.orderBarcode=data[0].name;
-    this.GeneratePreviewNumberByBarcodeNum();
+    this.GenerateMeetingNumberByBarcodeNum();
   }
 
   resetModal() {
@@ -614,16 +614,16 @@ export class PreviewComponent implements OnInit {
         nameAr: '',
         nameEn: '',
       },
-      type: 'addPreview',
+      type: 'addMeeting',
       nameAr: null,
       nameEn: null,
       id: null,
       name: null,
-      previewId: 0,
+      meetingId: 0,
       branchId: null,
       orderBarcode:null,
-      previewBarcodeSelect: null,
-      previewCode: null,
+      meetingBarcodeSelect: null,
+      meetingCode: null,
       nationalId: null,
       address: null,
       mainPhoneNo: null,
@@ -637,18 +637,18 @@ export class PreviewComponent implements OnInit {
       accountName: null,
       addDate: null,
       addUser: [],
-      addedpreviewImg: null,
-      meetingCode: null,
-      meetingDate: null,
-      meetingChairperson: null,
+      addedmeetingImg: null,
+      designCode: null,
+      designDate: null,
+      designChairperson: null,
     };
   }
 
   confirm(): void {
-    this.service.DeletePreview(this.modalDetails.previewId).subscribe((result) => {
+    this.service.DeleteMeeting(this.modalDetails.meetingId).subscribe((result) => {
         if (result.statusCode == 200) {
           this.toast.success(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
-          this.getAllPreviews();
+          this.getAllMeetings();
           this.modal?.hide();
         } else {
           this.toast.error(result.reasonPhrase, this.translate.instant('Message'));
@@ -657,10 +657,10 @@ export class PreviewComponent implements OnInit {
   }
 
   confirmConvert(): void {
-    this.service.ConvertPreview(this.modalDetails.previewId).subscribe((result) => {
+    this.service.ConvertMeeting(this.modalDetails.meetingId).subscribe((result) => {
         if (result.statusCode == 200) {
           this.toast.success(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
-          this.getAllPreviews();
+          this.getAllMeetings();
           this.modal?.hide();
         } else {
           this.toast.error(result.reasonPhrase, this.translate.instant('Message'));

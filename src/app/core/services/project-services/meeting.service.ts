@@ -7,7 +7,7 @@ import { ExportationService } from '../exportation-service/exportation.service';
 @Injectable({
   providedIn: 'root',
 })
-export class PreviewService {
+export class MeetingService {
 
   private apiEndPoint: string = '';
   constructor(private http:HttpClient,
@@ -15,21 +15,21 @@ export class PreviewService {
     this.apiEndPoint = environment.apiEndPoint;
   }
 
-  GetAllPreviews_Branch(){
-    return this.http.get<any>(this.apiEndPoint + 'Preview/GetAllPreviews_Branch');
+  GetAllMeetings_Branch(){
+    return this.http.get<any>(this.apiEndPoint + 'Meeting/GetAllMeetings_Branch');
   }
-  GetPreviewById(PreviewId:any) {
-    var url=`${environment.apiEndPoint}Preview/GetPreviewById?PreviewId=${PreviewId}`;
+  GetMeetingById(MeetingId:any) {
+    var url=`${environment.apiEndPoint}Meeting/GetMeetingById?MeetingId=${MeetingId}`;
     return this.http.get<any>(url);
   }
-  DeletePreview(PreviewId:any) {
-    return this.http.post<any>(this.apiEndPoint + 'Preview/DeletePreview?PreviewId='+PreviewId,{});
+  DeleteMeeting(MeetingId:any) {
+    return this.http.post<any>(this.apiEndPoint + 'Meeting/DeleteMeeting?MeetingId='+MeetingId,{});
   }
-  ConvertPreview(PreviewId:any) {
-    return this.http.post<any>(this.apiEndPoint + 'Preview/ConvertPreview?PreviewId='+PreviewId,{});
+  ConvertMeeting(MeetingId:any) {
+    return this.http.post<any>(this.apiEndPoint + 'Meeting/ConvertMeeting?MeetingId='+MeetingId,{});
   }
-  SavePreview(model: any) {
-    return this.http.post<any>(this.apiEndPoint + 'Preview/SavePreview', model);
+  SaveMeeting(model: any) {
+    return this.http.post<any>(this.apiEndPoint + 'Meeting/SaveMeeting', model);
   }
 
   GetCustMainAccByBranchId(BranchId:any) {
@@ -40,20 +40,20 @@ export class PreviewService {
     var url=`${environment.apiEndPoint}Account/GetEmpMainAccByBranchId?BranchId=${BranchId}`;
     return this.http.get<any>(url);
   }
-  GetPreviewsByPreviewId(PreviewId:any) {
-    var url=`${environment.apiEndPoint}Preview/GetPreviewsByPreviewId?PreviewId=${PreviewId}`;
+  GetMeetingsByMeetingId(MeetingId:any) {
+    var url=`${environment.apiEndPoint}Meeting/GetMeetingsByMeetingId?MeetingId=${MeetingId}`;
     return this.http.get<any>(url);
   }
-  GeneratePreviewNumber() {
-    var url=`${environment.apiEndPoint}Preview/GeneratePreviewNumber`;
+  GenerateMeetingNumber() {
+    var url=`${environment.apiEndPoint}Meeting/GenerateMeetingNumber`;
     return this.http.get<any>(url);
   }
-  GeneratePreviewNumberByBarcodeNum(OrderBarcode:any ) {
-    var url=`${environment.apiEndPoint}Preview/GeneratePreviewNumberByBarcodeNum?OrderBarcode=${OrderBarcode}`;
+  GenerateMeetingNumberByBarcodeNum(OrderBarcode:any ) {
+    var url=`${environment.apiEndPoint}Meeting/GenerateMeetingNumberByBarcodeNum?OrderBarcode=${OrderBarcode}`;
     return this.http.get<any>(url);
   }
   GenerateOrderBarcodeNumber() {
-    var url=`${environment.apiEndPoint}Preview/GenerateOrderBarcodeNumber`;
+    var url=`${environment.apiEndPoint}Meeting/GenerateOrderBarcodeNumber`;
     return this.http.get<any>(url);
   }
   FillCitySelect() {
@@ -62,11 +62,11 @@ export class PreviewService {
   FillJobSelect() {
     return this.http.get<any>(environment.apiEndPoint+'Organizations/FillJobSelect');
   }
-  FillPreviewselect() {
-    return this.http.get<any>(environment.apiEndPoint+'Preview/FillPreviewselect');
+  FillMeetingselect() {
+    return this.http.get<any>(environment.apiEndPoint+'Meeting/FillMeetingselect');
   }
-  FillPreviewselectW(PreviewId:any) {
-    var url=`${environment.apiEndPoint}Preview/FillPreviewselectW?PreviewId=${PreviewId}`;
+  FillMeetingselectW(MeetingId:any) {
+    var url=`${environment.apiEndPoint}Meeting/FillMeetingselectW?MeetingId=${MeetingId}`;
     return this.http.get<any>(url);
   }
   FillPayTypeSelect() {
@@ -75,15 +75,15 @@ export class PreviewService {
   FillSocialMediaSelect() {
     return this.http.get<any>(environment.apiEndPoint+'Organizations/FillSocialMediaSelect');
   }
-  FillPreviewTypesSelect() {
-    return this.http.get<any>(environment.apiEndPoint+'Organizations/FillPreviewTypesSelect');
+  FillMeetingTypesSelect() {
+    return this.http.get<any>(environment.apiEndPoint+'Organizations/FillMeetingTypesSelect');
   }
   FillBranchByUserIdSelect(){
     return this.http.get<any>(this.apiEndPoint + 'Branches/FillBranchByUserIdSelect');
   }
 
-  GetAllPreviewsSelectBarcode(){
-    return this.http.get<any>(this.apiEndPoint + 'Preview/GetAllPreviewsSelectBarcode');
+  GetAllMeetingsSelectBarcode(){
+    return this.http.get<any>(this.apiEndPoint + 'Meeting/GetAllMeetingsSelectBarcode');
   }
   customExportExcel(dataExport: any, nameExport: any) {
 
@@ -132,15 +132,15 @@ export class PreviewService {
   }
 
 
-  // SearchFn(_PreviewVM: PreviewVM): Observable<any> {
+  // SearchFn(_MeetingVM: MeetingVM): Observable<any> {
   //   const headers = { 'content-type': 'application/json' };
-  //   const body = JSON.stringify(_PreviewVM);
+  //   const body = JSON.stringify(_MeetingVM);
   //   return this.http.post(this.customerSearchUrl, body, { headers: headers });
   // }
 
-  // getAllPreviewsByPreviewTypeId(type: any) {
+  // getAllMeetingsByMeetingTypeId(type: any) {
   //   return this.http.get<any>(
-  //     this.getAllPreviewsByPreviewTypeIdUrl + '?PreviewTypeId=' + type
+  //     this.getAllMeetingsByMeetingTypeIdUrl + '?MeetingTypeId=' + type
   //   );
   // }
 

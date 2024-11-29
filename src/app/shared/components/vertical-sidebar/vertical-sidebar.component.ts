@@ -220,12 +220,21 @@ export class VerticalSidebarComponent implements OnInit {
         // show: this.userG?.userPrivileges.includes(12),
         children: [
           {
-            name: { ar: 'المعاينات', en: 'Preview' },
+            name: { ar: 'المعاينات', en: 'Previews' },
             link: '/projects/preview',
             type: 'single',
             icon: '/assets/sidebar-icons/movement.png',
             title:"3122911",
             show: this.userG?.pagesList.includes(3122911),
+            // show: this.userG?.userPrivileges.includes(1210),
+          },
+          {
+            name: { ar: 'الإجتماعات', en: 'Meetings' },
+            link: '/projects/meeting',
+            type: 'single',
+            icon: '/assets/sidebar-icons/Group 40644.png',
+            title:"3213321",
+            show: this.userG?.pagesList.includes(3213321),
             // show: this.userG?.userPrivileges.includes(1210),
           },
         ],
