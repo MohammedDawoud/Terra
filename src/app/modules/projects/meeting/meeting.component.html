@@ -15,9 +15,9 @@
 
       <!---------------------------------------------------------------------------->
       <div class="flex gap-2 controler">
-        <button *ngIf="allMeetingCount==0"
+        <button
           class="flex gap-1 btn btn-primary"
-          (click)="openModal(dataModal, null, 'addMeeting2')">
+          (click)="openModal(dataModal, null, 'addMeeting')">
           <span
             class="hidden md:block"
             [translate]="'name'"
@@ -27,19 +27,6 @@
             }"
           ></span>
           <i class="fa-solid fa-user-plus"></i>
-        </button>
-        <button *ngIf="allMeetingCount!=0"
-        class="flex gap-1 btn btn-primary"
-        (click)="open(addMeetingMessage, null, 'addMeetingMessage')">
-        <span
-          class="hidden md:block"
-          [translate]="'name'"
-          [translateParams]="{
-            ar: 'إجتماع جديد ',
-            en: 'New Meeting '
-          }"
-        ></span>
-        <i class="fa-solid fa-user-plus"></i>
         </button>
         <button
           class="flex gap-1 btn btn-warning"
@@ -246,56 +233,58 @@
               </ng-select>
             </div>
 
-            <div class="form-group" *ngIf="TransbarcodeActive">
+            <div class="form-group">
               <label class="col-form-label">
-                {{ "باركود العمليات" | translate }}</label
-              >
+                {{ "رقم المعاينة" | translate }}</label>
 
               <ng-select
                 style="min-width: max-content"
-                id="orderBarcode"
-                #orderBarcode="ngModel"
+                id="previewId"
+                #previewId="ngModel"
                 required
                 class="w-full p-0 {{
-                  orderBarcode.invalid && orderBarcode.touched ? 'errorInput' : ''
+                  previewId.invalid && previewId.touched ? 'errorInput' : ''
                 }}"
                 [clearable]="false"
                 name="branchId"
-                placeholder=" {{ 'باركود العمليات' | translate }}"
-                [(ngModel)]="modalDetails.meetingBarcodeSelect"
+                placeholder=" {{ 'رقم المعاينة' | translate }}"
+                [(ngModel)]="modalDetails.previewId"
                 [ngModelOptions]="{ standalone: true }"
-                (change)="getmeetingdata(modalDetails.meetingBarcodeSelect)"
+                (change)="getmeetingdata(modalDetails.previewId)"
 
               >
                 <ng-option
-                  *ngFor="let prev of load_BarcodesCustomer"
+                  *ngFor="let prev of load_BarcodesCodes"
                   [value]="prev.id"
                   >{{ prev.name }}</ng-option>
               </ng-select>
             </div>
 
 
-            <div class="form-group" *ngIf="!TransbarcodeActive">
-              <label for="orderBarcode" class="col-form-label">
-                <ng-container>
-                  {{ "باركود العمليات" | translate }}
-                </ng-container>
-              </label>
-              <input
-                type="text"
-                class="form-control"
+            <div class="form-group">
+              <label class="col-form-label">
+                {{ "باركود العمليات" | translate }}</label>
+
+              <ng-select
+                style="min-width: max-content"
                 id="orderBarcode"
-                autocomplete="off"
                 #orderBarcode="ngModel"
                 required
-                class="form-control"
-                name="orderBarcode"
-                [disabled]="!TransbarcodeActive"
-                placeholder="{{ 'Write' | translate }} {{
-                  'باركود العمليات' | translate
-                }} "
-                [(ngModel)]="modalDetails.orderBarcode"
-              />
+                disabled
+                class="w-full p-0 {{
+                  orderBarcode.invalid && orderBarcode.touched ? 'errorInput' : ''
+                }}"
+                [clearable]="false"
+                name="branchId"
+                placeholder=" {{ 'باركود العمليات' | translate }}"
+                [(ngModel)]="modalDetails.previewId"
+                [ngModelOptions]="{ standalone: true }"
+                >
+                <ng-option
+                  *ngFor="let prev of load_BarcodesCodes"
+                  [value]="prev.id"
+                  >{{ prev.orderBarcode }}</ng-option>
+              </ng-select>
             </div>
 
             <div class="form-group">
@@ -332,7 +321,7 @@
                   customerId.invalid && branchId.touched ? 'errorInput' : ''
                 }}"
                 [clearable]="true"
-                [disabled]="modalDetails.type=='MeetingView' || TransbarcodeActive"
+                disabled
                 name="customerId"
                 placeholder=" {{ 'كود العميل' | translate }}"
                 [(ngModel)]="modalDetails.customerId"
@@ -352,7 +341,7 @@
                 style="min-width: max-content"
                 id="customerId"
                 #customerId="ngModel"
-                [disabled]="modalDetails.type=='MeetingView' || TransbarcodeActive"
+                disabled
                 class="w-full p-0"
                 [clearable]="true"
                 name="customerId"
@@ -373,7 +362,7 @@
               <ng-select
                 style="min-width: max-content"
                 id="customerId"
-                [disabled]="modalDetails.type=='MeetingView' || TransbarcodeActive"
+                disabled
                 #customerId="ngModel"
                 class="w-full p-0"
                 [clearable]="true"
@@ -395,7 +384,7 @@
               <ng-select
                 style="min-width: max-content"
                 id="customerId"
-                [disabled]="modalDetails.type=='MeetingView' || TransbarcodeActive"
+                disabled
                 #customerId="ngModel"
                 class="w-full p-0"
                 [clearable]="true"
@@ -751,38 +740,6 @@
       </div>
     </div>
   </ng-template>
-
-  <!-- confirm addMeetingMessage -->
-  <ng-template #addMeetingMessage let-modal>
-    <div class="modal-body text-center">
-      <p
-        [translate]="'name'"
-        [translateParams]="{
-          ar: 'هل تريد اضافة إجتماع بباركود عمليات قديم ؟',
-          en: 'Do you want to add a meeting with an old transaction barcode?'
-        }"
-      ></p>
-      <div class="flex gap-2 justify-center">
-        <button
-          type="button"
-          mat-raised-button
-          color="warn"
-          (click)="confirmAddMeetingMessage();modal.dismiss();openModal(dataModal, null, 'addMeeting1')"
-        >
-          {{ "Yes" | translate }}
-        </button>
-        <button
-          type="button"
-          (click)="declineAddMeetingMessage();modal.dismiss();openModal(dataModal, null, 'addMeeting1')"
-          mat-raised-button
-          color="basic"
-        >
-          {{ "No" | translate }}
-        </button>
-      </div>
-    </div>
-  </ng-template>
-
 
 </div>
 

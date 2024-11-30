@@ -57,6 +57,7 @@ import {
 import { SharedService } from 'src/app/core/services/shared.service';
 import { CustomerService } from 'src/app/core/services/customer-services/customer.service';
 import { EmployeeService } from 'src/app/core/services/employee-services/employee.service';
+import { PreviewService } from 'src/app/core/services/project-services/preview.service';
 
 const hijriSafe = require('hijri-date/lib/safe');
 const HijriDate = hijriSafe.default;
@@ -170,6 +171,7 @@ export class MeetingComponent implements OnInit {
 
   constructor(
     private service: MeetingService,
+    private previewservice: PreviewService,
     private modalService: BsModalService,
     private api: RestApiService,
     private changeDetection: ChangeDetectorRef,
@@ -296,12 +298,21 @@ export class MeetingComponent implements OnInit {
   }
 
   load_BarcodesCustomer: any=[];
-  GetAllMeetingsSelectBarcode() {
-    this.service.GetAllMeetingsSelectBarcode().subscribe((data) => {
+  GetAllPreviewsSelectBarcodeFinished() {
+    this.previewservice.GetAllPreviewsSelectBarcodeFinished().subscribe((data) => {
       this.load_BarcodesCustomer = data;
       console.log(this.load_BarcodesCustomer);
     });
   }
+  load_BarcodesCodes: any=[];
+
+  GetAllPreviewsCodeFinished() {
+    this.previewservice.GetAllPreviewsCodeFinished().subscribe((data) => {
+      this.load_BarcodesCodes = data;
+      console.log(this.load_BarcodesCodes);
+    });
+  }
+
 
   load_Employees: any=[];
   FillEmployeeselect() {
@@ -325,35 +336,18 @@ export class MeetingComponent implements OnInit {
       });
     }  
   }
-  GenerateOrderBarcodeNumber(){
-    this.service.GenerateOrderBarcodeNumber().subscribe(data=>{
-      this.modalDetails.orderBarcode=data.reasonPhrase;
-      if(!this.TransbarcodeActive)
-      {
-        this.GenerateMeetingNumberByBarcodeNum();
-      }
-    });
-  }
 
   //-----------------------OPEN MODAL--------------------------------------------------
 
   openModal(template: TemplateRef<any>, data?: any, modalType?: any) {
     this.resetModal();
     this.fillBranchByUserId();
-    if(this.TransbarcodeActive)
-    {
-      this.GetAllMeetingsSelectBarcode();
-    }
+    this.GetAllPreviewsSelectBarcodeFinished();
+    this.GetAllPreviewsCodeFinished();
+
     debugger
-    if (modalType == 'addMeeting1') {
-      if(!this.TransbarcodeActive)
-      {
-        this.GenerateMeetingNumber();
-      }    
-    }
-    if (modalType == 'addMeeting2') {    
-      this.GenerateOrderBarcodeNumber();
-      this.TransbarcodeActive=false;
+    if (modalType == 'addMeeting') {
+      this.GenerateMeetingNumber(); 
     }
     console.log('this.modalDetails');
     console.log(this.modalDetails);
@@ -362,7 +356,6 @@ export class MeetingComponent implements OnInit {
     if (data) {
       this.modalDetails = data;
       if (modalType == 'editMeeting' || modalType == 'MeetingView') {
-        this.TransbarcodeActive=false;
         if(this.modalDetails.date!=null)
         {
           this.modalDetails.date = this._sharedService.String_TO_date(this.modalDetails.date);
@@ -457,15 +450,6 @@ export class MeetingComponent implements OnInit {
     }
   }
 
-  TransbarcodeActive:boolean=false;
-  confirmAddMeetingMessage(){
-    this.TransbarcodeActive=true;
-  }
-  declineAddMeetingMessage(){
-    this.TransbarcodeActive=false;
-    this.GenerateOrderBarcodeNumber();
-  }
-
 
   MeetingIdPublic: any = 0;
   setMeetingid_P(id: any) {
@@ -500,8 +484,6 @@ export class MeetingComponent implements OnInit {
     }
 
     prevObj.notes = this.modalDetails.notes;
-
-    prevObj.orderBarcodeAuto=!this.TransbarcodeActive;
 
     console.log('prevObj');
     console.log(prevObj);
@@ -597,11 +579,11 @@ export class MeetingComponent implements OnInit {
     });
   }
 
-  getmeetingdata(customerId:any){
-    this.modalDetails.customerId=customerId;
-    let data = this.load_BarcodesCustomer.filter((d: { id: any }) => d.id == customerId); 
+  getmeetingdata(previewId:any){
+    let data = this.load_BarcodesCodes.filter((d: { id: any }) => d.id == previewId); 
     this.modalDetails.orderBarcode=data[0].name;
-    this.GenerateMeetingNumberByBarcodeNum();
+    this.modalDetails.customerId=data[0].customerId;
+    // this.GenerateMeetingNumberByBarcodeNum();
   }
 
   resetModal() {
@@ -622,7 +604,7 @@ export class MeetingComponent implements OnInit {
       meetingId: 0,
       branchId: null,
       orderBarcode:null,
-      meetingBarcodeSelect: null,
+      previewId: null,
       meetingCode: null,
       nationalId: null,
       address: null,

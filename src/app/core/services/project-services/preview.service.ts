@@ -85,6 +85,13 @@ export class PreviewService {
   GetAllPreviewsSelectBarcode(){
     return this.http.get<any>(this.apiEndPoint + 'Preview/GetAllPreviewsSelectBarcode');
   }
+  GetAllPreviewsSelectBarcodeFinished(){
+    return this.http.get<any>(this.apiEndPoint + 'Preview/GetAllPreviewsSelectBarcodeFinished');
+  }
+  GetAllPreviewsCodeFinished(){
+    return this.http.get<any>(this.apiEndPoint + 'Preview/GetAllPreviewsCodeFinished');
+  }
+  
   customExportExcel(dataExport: any, nameExport: any) {
 
     let exportation = JSON.parse(JSON.stringify(dataExport));
