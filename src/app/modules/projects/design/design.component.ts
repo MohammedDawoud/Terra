@@ -26,7 +26,7 @@ import {
 } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
-import { MeetingService } from 'src/app/core/services/project-services/meeting.service';
+import { DesignService } from 'src/app/core/services/project-services/design.service';
 import { ExportationService } from 'src/app/core/services/exportation-service/exportation.service';
 import { fade } from 'src/app/shared/animations/toggleBtn.animation';
 import { RestApiService } from 'src/app/shared/services/api.service';
@@ -72,25 +72,25 @@ const toHijri = hijriSafe.toHijri;
 // }
 
 @Component({
-  selector: 'app-meeting',
-  templateUrl: './meeting.component.html',
-  styleUrls: ['./meeting.component.scss'],
+  selector: 'app-design',
+  templateUrl: './design.component.html',
+  styleUrls: ['./design.component.scss'],
   animations: [fade],
 })
-export class MeetingComponent implements OnInit {
+export class DesignComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   public uploadedFiles: Array<File> = [];
   dataSourceTemp: any = [];
   dataSource: MatTableDataSource<any> = new MatTableDataSource([{}]);
-  _MeetingSMS: any = null;
+  _DesignSMS: any = null;
   modal?: BsModalRef;
   modalDetails: any = {};
   load_BranchAccount: any;
   load_CityAndAreas: any;
   customrRowSelected: any;
   BranchId: number;
-  allMeetingCount = 0;
+  allDesignCount = 0;
   load_BranchUserId: any;
   nameAr: any;
   nameEn: any;
@@ -111,11 +111,11 @@ export class MeetingComponent implements OnInit {
         ar: 'إدارة المشاريع',
         en: 'Projects',
       },
-      link: '/projects/meeting',
+      link: '/projects/design',
     },
     sub: {
-      ar: 'الإجتماعات',
-      en: 'Meeting',
+      ar: 'التصميمات',
+      en: 'Design',
     },
   };
 
@@ -142,11 +142,11 @@ export class MeetingComponent implements OnInit {
     'branchName',
     'orderBarcode',
     'previewCode',
-    'meetingCode',
+    'designCode',
     'customerName',
     'chairpersonName',
-    'meetingStatustxt',
-    'meetingConverttxt', 
+    'designStatustxt',
+    'designConverttxt', 
     'operations',
   ];
   displayedColumn: any = {
@@ -157,21 +157,21 @@ export class MeetingComponent implements OnInit {
     filter: {
       enable: true,
       date: null,
-      search_MeetingName: '',
-      search_meetingEmail: '',
-      search_meetingMobile: '',
+      search_DesignName: '',
+      search_designEmail: '',
+      search_designMobile: '',
       isChecked: false,
     },
   };
 
   EditModel: any = {
-    MeetingId: 0,
+    DesignId: 0,
     nameAr: null,
     nameEn: null,
   };
 
   constructor(
-    private service: MeetingService,
+    private service: DesignService,
     private previewservice: PreviewService,
     private modalService: BsModalService,
     private api: RestApiService,
@@ -215,25 +215,25 @@ export class MeetingComponent implements OnInit {
   existValue: any = true;
 
   selectAllValue = false;
-  MeetingStatusList: any;
+  DesignStatusList: any;
 
   ngOnInit(): void {
-    this.MeetingStatusList = [
+    this.DesignStatusList = [
       { id: 1, name: { ar: 'قيد الإنتظار', en: 'pending' } },
       { id: 2, name: { ar: 'قيد التشغيل', en: 'in progress' } },
-      { id: 3, name: { ar: 'منتهية', en: 'finished' } },
+      // { id: 3, name: { ar: 'منتهية', en: 'finished' } },
     ];
-    this.getAllMeetings();
+    this.getAllDesigns();
     this.FillCustomerSelect();
     this.FillEmployeeselect();
     this.FilltAllPreviewTypes();
-    this.FillMeetingTypesSelect();
+    this.FillDesignTypesSelect();
   }
 
-  MeetingTypesList: any;
-  FillMeetingTypesSelect() {
-    this.service.FillMeetingTypesSelect().subscribe((data) => {
-      this.MeetingTypesList = data;
+  DesignTypesList: any;
+  FillDesignTypesSelect() {
+    this.service.FillDesignTypesSelect().subscribe((data) => {
+      this.DesignTypesList = data;
     });
   }
 
@@ -248,8 +248,8 @@ export class MeetingComponent implements OnInit {
             d.branchName?.trim().toLowerCase().indexOf(val) !== -1) ||
           (d.nationalId &&
             d.nationalId?.trim().toLowerCase().indexOf(val) !== -1) ||
-          (d.meetingCode &&
-            d.meetingCode?.trim().toLowerCase().indexOf(val) !== -1) ||
+          (d.designCode &&
+            d.designCode?.trim().toLowerCase().indexOf(val) !== -1) ||
           (d.nameAr &&
             d.nameAr?.trim().toLowerCase().indexOf(val) !== -1) ||
           (d.mainPhoneNo &&
@@ -267,7 +267,7 @@ export class MeetingComponent implements OnInit {
 
   // checkValue(event: any) {
   //   if (event == 'A') {
-  //     this.getAllMeetings();
+  //     this.getAllDesigns();
   //   } else {
   //     this.RefreshData();
   //   }
@@ -275,10 +275,10 @@ export class MeetingComponent implements OnInit {
 
   resetandRefresh() {
     if (this.searchBox.open == false) {
-      this.data2.filter.search_MeetingName = null;
-      this.data2.filter.search_meetingMobile = null;
+      this.data2.filter.search_DesignName = null;
+      this.data2.filter.search_designMobile = null;
       this.data.type = 0;
-      this.getAllMeetings();
+      this.getAllDesigns();
     }
   }
   //------------------ Fill DATA ----------------------------------
@@ -309,8 +309,8 @@ export class MeetingComponent implements OnInit {
   load_BarcodesCodes: any=[];  
   load_BarcodesCodesTemp: any=[];
 
-  GetAllPreviewsCodeFinished() {
-    this.previewservice.GetAllPreviewsCodeFinished().subscribe((data) => {
+  GetAllPreviewsCodeFinishedMeeting() {
+    this.previewservice.GetAllPreviewsCodeFinishedMeeting().subscribe((data) => {
       this.load_BarcodesCodes = data;
       this.load_BarcodesCodesTemp=data;
       console.log(this.load_BarcodesCodes);
@@ -338,18 +338,18 @@ export class MeetingComponent implements OnInit {
     });
   }
 
-  GenerateMeetingNumber(){
+  GenerateDesignNumber(){
     debugger
-    this.service.GenerateMeetingNumber().subscribe(data=>{
-      this.modalDetails.meetingCode=data.reasonPhrase;
+    this.service.GenerateDesignNumber().subscribe(data=>{
+      this.modalDetails.designCode=data.reasonPhrase;
     });
   }
-  GenerateMeetingNumberByBarcodeNum(){
+  GenerateDesignNumberByBarcodeNum(){
     debugger
     if(!(this.modalDetails.orderBarcode==null || this.modalDetails.orderBarcode==""))
     {
-      this.service.GenerateMeetingNumberByBarcodeNum(this.modalDetails.orderBarcode).subscribe(data=>{
-        this.modalDetails.meetingCode=data.reasonPhrase;
+      this.service.GenerateDesignNumberByBarcodeNum(this.modalDetails.orderBarcode).subscribe(data=>{
+        this.modalDetails.designCode=data.reasonPhrase;
       });
     }  
   }
@@ -362,9 +362,9 @@ export class MeetingComponent implements OnInit {
     //this.GetAllPreviewsSelectBarcodeFinished();
 
     debugger
-    if (modalType == 'addMeeting') {
-      this.GetAllPreviewsCodeFinished();
-      //this.GenerateMeetingNumber(); 
+    if (modalType == 'addDesign') {
+      this.GetAllPreviewsCodeFinishedMeeting();
+      //this.GenerateDesignNumber(); 
     }
     console.log('this.modalDetails');
     console.log(this.modalDetails);
@@ -372,7 +372,7 @@ export class MeetingComponent implements OnInit {
 
     if (data) {
       this.modalDetails = data;
-      if (modalType == 'editMeeting' || modalType == 'MeetingView') {
+      if (modalType == 'editDesign' || modalType == 'DesignView') {
         this.GetAllPreviewsCodeAll();
         if(this.modalDetails.date!=null)
         {
@@ -469,16 +469,16 @@ export class MeetingComponent implements OnInit {
   }
 
 
-  MeetingIdPublic: any = 0;
-  setMeetingid_P(id: any) {
-    this.MeetingIdPublic = id;
-    console.log('this.MeetingIdPublic');
-    console.log(this.MeetingIdPublic);
+  DesignIdPublic: any = 0;
+  setDesignid_P(id: any) {
+    this.DesignIdPublic = id;
+    console.log('this.DesignIdPublic');
+    console.log(this.DesignIdPublic);
   }
 
-  disableButtonSave_Meeting = false;
+  disableButtonSave_Design = false;
 
-  addMeeting() {
+  addDesign() {
     debugger;
     var val = this.validateForm();
     if (val.status == false) {
@@ -486,31 +486,31 @@ export class MeetingComponent implements OnInit {
       return;
     }
     var prevObj: any = {};
-    prevObj.meetingId = this.modalDetails.meetingId;
+    prevObj.designId = this.modalDetails.designId;
 
-    if(this.modalDetails.meetingStatus==3){
-      if(this.modalDetails.designDate==null){
-        this.toast.error(this.translate.instant("من فضلك أختر تاريخ التصميم"),this.translate.instant('Message'));
-        return;
-      }
-      if(this.modalDetails.designChairperson==null){
-        this.toast.error(this.translate.instant("من فضلك أختر القائم بالتصميم"),this.translate.instant('Message'));
-        return;
-      }
-      if (this.modalDetails.meetingDate != null) {
-        prevObj.designDate = this._sharedService.date_TO_String(this.modalDetails.designDate);
-      }
-      prevObj.designChairperson=this.modalDetails.designChairperson;
+    // if(this.modalDetails.designStatus==3){
+    //   if(this.modalDetails.designDate==null){
+    //     this.toast.error(this.translate.instant("من فضلك أختر تاريخ التصميم"),this.translate.instant('Message'));
+    //     return;
+    //   }
+    //   if(this.modalDetails.designChairperson==null){
+    //     this.toast.error(this.translate.instant("من فضلك أختر القائم بالتصميم"),this.translate.instant('Message'));
+    //     return;
+    //   }
+    //   if (this.modalDetails.designDate != null) {
+    //     prevObj.designDate = this._sharedService.date_TO_String(this.modalDetails.designDate);
+    //   }
+    //   prevObj.designChairperson=this.modalDetails.designChairperson;
 
-    }
+    // }
 
     prevObj.branchId = this.modalDetails.branchId;
     prevObj.previewId = this.modalDetails.previewId;
-    prevObj.meetingCode = this.modalDetails.meetingCode;
+    prevObj.designCode = this.modalDetails.designCode;
     prevObj.customerId = this.modalDetails.customerId;
-    prevObj.meetingChairperson = this.modalDetails.meetingChairperson;
-    prevObj.meetingTypeId = this.modalDetails.meetingTypeId;
-    prevObj.meetingStatus = this.modalDetails.meetingStatus;
+    prevObj.designChairperson = this.modalDetails.designChairperson;
+    prevObj.designTypeId = this.modalDetails.designTypeId;
+    prevObj.designStatus = this.modalDetails.designStatus;
     prevObj.notes = this.modalDetails.notes;
     if (this.modalDetails.date != null) {
       prevObj.date = this._sharedService.date_TO_String(this.modalDetails.date);
@@ -525,18 +525,18 @@ export class MeetingComponent implements OnInit {
     for (const key of Object.keys(prevObj)) {
       const value = prevObj[key] == null ? '' : prevObj[key];
       formData.append(key, value);
-      formData.append('MeetingId', prevObj.meetingId.toString());
+      formData.append('DesignId', prevObj.designId.toString());
     }
-    this.disableButtonSave_Meeting = true;
+    this.disableButtonSave_Design = true;
     setTimeout(() => {
-      this.disableButtonSave_Meeting = false;
+      this.disableButtonSave_Design = false;
     }, 5000);
-    this.service.SaveMeeting(formData).subscribe((result: any) => {
+    this.service.SaveDesign(formData).subscribe((result: any) => {
       if (result.statusCode == 200) {
         this.toast.success(
           this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
         this.decline();
-        this.getAllMeetings();
+        this.getAllDesigns();
         this.ngbModalService.dismissAll();
       } else {
         this.toast.error(result.reasonPhrase, 'رسالة');
@@ -551,7 +551,7 @@ export class MeetingComponent implements OnInit {
       this.modalDetails.branchId == null ||
       this.modalDetails.branchId == ''
     ) {
-      this.ValidateObjMsg = { status: false, msg: 'أختر فرع الإجتماع' };
+      this.ValidateObjMsg = { status: false, msg: 'أختر فرع التصميم' };
       return this.ValidateObjMsg;
     } else if (
       this.modalDetails.previewId == null ||
@@ -559,8 +559,8 @@ export class MeetingComponent implements OnInit {
     ) {
       this.ValidateObjMsg = { status: false, msg: 'أدخل كود المعاينة' };
       return this.ValidateObjMsg;
-    } else if (this.modalDetails.meetingCode == null || this.modalDetails.meetingCode == '') {
-      this.ValidateObjMsg = { status: false, msg: 'اختر كود الإجتماع' };
+    } else if (this.modalDetails.designCode == null || this.modalDetails.designCode == '') {
+      this.ValidateObjMsg = { status: false, msg: 'اختر كود التصميم' };
       return this.ValidateObjMsg;
     } else if (
       this.modalDetails.customerId == null ||
@@ -569,15 +569,15 @@ export class MeetingComponent implements OnInit {
       this.ValidateObjMsg = { status: false, msg: 'اختر عميل' };
       return this.ValidateObjMsg;
     }
-    else if ((this.modalDetails.meetingChairperson == null ||this.modalDetails.meetingChairperson == '')
+    else if ((this.modalDetails.designChairperson == null ||this.modalDetails.designChairperson == '')
     ) {
-      this.ValidateObjMsg = { status: false, msg: 'اختر القائم بالإجتماع' };
+      this.ValidateObjMsg = { status: false, msg: 'اختر القائم بالتصميم' };
       return this.ValidateObjMsg;
     }
     else if ((this.modalDetails.date == null ||this.modalDetails.date == '')) {
       this.ValidateObjMsg = {
         status: false,
-        msg: 'ادخل تاريخ الإجتماع',
+        msg: 'ادخل تاريخ التصميم',
       };
       return this.ValidateObjMsg;
     }
@@ -593,32 +593,32 @@ export class MeetingComponent implements OnInit {
         branchName: this.dataSourceTemp[index].branchName,
         orderBarcode: this.dataSourceTemp[index].orderBarcode,
         previewCode: this.dataSourceTemp[index].previewCode,      
-        meetingCode: this.dataSourceTemp[index].meetingCode,
+        designCode: this.dataSourceTemp[index].designCode,
         customerName: this.dataSourceTemp[index].customerName,
         chairpersonName: this.dataSourceTemp[index].chairpersonName,
-        meetingStatus: this.dataSourceTemp[index].meetingStatustxt,
+        designStatus: this.dataSourceTemp[index].designStatustxt,
         designConvert: this.dataSourceTemp[index].designConverttxt,
       });
     }
-    this.service.customExportExcel(x, 'Meetings');
+    this.service.customExportExcel(x, 'Designs');
   }
 
-  getAllMeetings() {
-    this.service.GetAllMeetings_Branch().subscribe((data: any) => {
+  getAllDesigns() {
+    this.service.GetAllDesigns_Branch().subscribe((data: any) => {
       this.dataSource = new MatTableDataSource(data);
       this.dataSourceTemp = data;
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
-      this.allMeetingCount = data.length;
+      this.allDesignCount = data.length;
     });
   }
 
-  getmeetingdata(previewId:any){
+  getdesigndata(previewId:any){
     let data = this.load_BarcodesCodes.filter((d: { id: any }) => d.id == previewId); 
     this.modalDetails.orderBarcode=data[0].name;
     this.modalDetails.customerId=data[0].customerId;
     this.modalDetails.previewTypeId=data[0].previewTypeId;
-    this.GenerateMeetingNumberByBarcodeNum();
+    this.GenerateDesignNumberByBarcodeNum();
   }
 
   CustomerChange(customerId:any){
@@ -637,7 +637,7 @@ export class MeetingComponent implements OnInit {
     {
       this.modalDetails.previewId=data[0].id;
       this.modalDetails.previewTypeId=data[0].previewTypeId;
-      this.getmeetingdata(data[0].id);  
+      this.getdesigndata(data[0].id);  
     }
   }
   previewTypeChange(previewTypeId:any){
@@ -656,7 +656,7 @@ export class MeetingComponent implements OnInit {
     {
       this.modalDetails.previewId=data[0].id;
       this.modalDetails.customerId=data[0].customerId;
-      this.getmeetingdata(data[0].id);  
+      this.getdesigndata(data[0].id);  
     }
   }
 
@@ -670,17 +670,17 @@ export class MeetingComponent implements OnInit {
         nameAr: '',
         nameEn: '',
       },
-      type: 'addMeeting',
+      type: 'addDesign',
       nameAr: null,
       nameEn: null,
       id: null,
       name: null,
-      meetingId: 0,
+      designId: 0,
       branchId: null,
       orderBarcode:null,
       previewId: null,
       previewTypeId:null,
-      meetingCode: null,
+      designCode: null,
       nationalId: null,
       address: null,
       mainPhoneNo: null,
@@ -694,18 +694,18 @@ export class MeetingComponent implements OnInit {
       accountName: null,
       addDate: null,
       addUser: [],
-      addedmeetingImg: null,
-      designCode: null,
-      designDate: null,
-      designChairperson: null,
+      addeddesignImg: null,
+      contractCode: null,
+      contractDate: null,
+      contractChairperson: null,
     };
   }
 
   confirm(): void {
-    this.service.DeleteMeeting(this.modalDetails.meetingId).subscribe((result) => {
+    this.service.DeleteDesign(this.modalDetails.designId).subscribe((result) => {
         if (result.statusCode == 200) {
           this.toast.success(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
-          this.getAllMeetings();
+          this.getAllDesigns();
           this.modal?.hide();
         } else {
           this.toast.error(result.reasonPhrase, this.translate.instant('Message'));
@@ -714,10 +714,10 @@ export class MeetingComponent implements OnInit {
   }
 
   confirmConvert(): void {
-    this.service.ConvertMeeting(this.modalDetails.meetingId).subscribe((result) => {
+    this.service.ConvertDesign(this.modalDetails.designId).subscribe((result) => {
         if (result.statusCode == 200) {
           this.toast.success(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
-          this.getAllMeetings();
+          this.getAllDesigns();
           this.modal?.hide();
         } else {
           this.toast.error(result.reasonPhrase, this.translate.instant('Message'));

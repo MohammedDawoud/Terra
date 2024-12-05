@@ -223,12 +223,12 @@ export class PreviewComponent implements OnInit {
     this.getAllPreviews();
     this.FillCustomerSelect();
     this.FillEmployeeselect();
-    this.FillPreviewTypesSelect();
+    this.FilltAllPreviewTypes();
   }
 
-  PreviewTypesList: any;
-  FillPreviewTypesSelect() {
-    this.service.FillPreviewTypesSelect().subscribe((data) => {
+  PreviewTypesList: any=[];
+  FilltAllPreviewTypes() {
+    this.service.FilltAllPreviewTypes().subscribe((data) => {
       this.PreviewTypesList = data;
     });
   }
@@ -246,6 +246,10 @@ export class PreviewComponent implements OnInit {
             d.nationalId?.trim().toLowerCase().indexOf(val) !== -1) ||
           (d.previewCode &&
             d.previewCode?.trim().toLowerCase().indexOf(val) !== -1) ||
+            (d.customerName &&
+              d.customerName?.trim().toLowerCase().indexOf(val) !== -1) ||
+              (d.chairpersonName &&
+                d.chairpersonName?.trim().toLowerCase().indexOf(val) !== -1) ||
           (d.nameAr &&
             d.nameAr?.trim().toLowerCase().indexOf(val) !== -1) ||
           (d.mainPhoneNo &&
@@ -296,9 +300,13 @@ export class PreviewComponent implements OnInit {
   }
 
   load_BarcodesCustomer: any=[];
+  load_BarcodesCustomerTemp: any=[];
+
   GetAllPreviewsSelectBarcode() {
     this.service.GetAllPreviewsSelectBarcode().subscribe((data) => {
       this.load_BarcodesCustomer = data;
+      this.load_BarcodesCustomerTemp = data;
+
       console.log(this.load_BarcodesCustomer);
     });
   }
@@ -483,9 +491,29 @@ export class PreviewComponent implements OnInit {
       this.toast.error(val.msg, 'رسالة');
       return;
     }
+
+   
+
     var prevObj: any = {};
     prevObj.previewId = this.modalDetails.previewId;
     prevObj.branchId = this.modalDetails.branchId;
+
+    if(this.modalDetails.previewStatus==3){
+      if(this.modalDetails.meetingDate==null){
+        this.toast.error(this.translate.instant("من فضلك أختر تاريخ الإجتماع"),this.translate.instant('Message'));
+        return;
+      }
+      if(this.modalDetails.meetingChairperson==null){
+        this.toast.error(this.translate.instant("من فضلك أختر القائم بالإجتماع"),this.translate.instant('Message'));
+        return;
+      }
+      if (this.modalDetails.meetingDate != null) {
+        prevObj.meetingDate = this._sharedService.date_TO_String(this.modalDetails.meetingDate);
+      }
+      prevObj.meetingChairperson=this.modalDetails.meetingChairperson;
+
+    }
+
 
     prevObj.orderBarcode = this.modalDetails.orderBarcode;
 
@@ -559,6 +587,16 @@ export class PreviewComponent implements OnInit {
       this.ValidateObjMsg = { status: false, msg: 'اختر القائم بالمعاينة' };
       return this.ValidateObjMsg;
     }
+    else if ((this.modalDetails.previewTypeId == null ||this.modalDetails.previewTypeId == '')
+    ) {
+      this.ValidateObjMsg = { status: false, msg: 'اختر نوع المعاينة' };
+      return this.ValidateObjMsg;
+    }
+    else if ((this.modalDetails.previewStatus == null ||this.modalDetails.previewStatus == '')
+    ) {
+      this.ValidateObjMsg = { status: false, msg: 'اختر حالة المعاينة' };
+      return this.ValidateObjMsg;
+    }
     else if ((this.modalDetails.date == null ||this.modalDetails.date == '')) {
       this.ValidateObjMsg = {
         status: false,
@@ -604,6 +642,26 @@ export class PreviewComponent implements OnInit {
     this.GeneratePreviewNumberByBarcodeNum();
   }
 
+  CustomerChange(customerId:any){
+    debugger
+    if(this.TransbarcodeActive)
+    {
+      this.modalDetails.previewBarcodeSelect=null;
+      if(customerId==null)
+      {
+        this.load_BarcodesCustomer=this.load_BarcodesCustomerTemp;
+        return;
+      }
+      let data = this.load_BarcodesCustomerTemp.filter((d: { id: any }) => d.id == customerId); 
+      this.load_BarcodesCustomer = data;
+      if(data.length==1)
+      {
+        this.modalDetails.previewBarcodeSelect=data[0].id;
+        this.getpreviewdata(data[0].id);  
+      }
+    }
+  }
+
   resetModal() {
     this.isSubmit = false;
     this.control.clear();
@@ -640,6 +698,7 @@ export class PreviewComponent implements OnInit {
       addedpreviewImg: null,
       meetingCode: null,
       meetingDate: null,
+      meetingId: null,
       meetingChairperson: null,
     };
   }
@@ -668,8 +727,102 @@ export class PreviewComponent implements OnInit {
       });
   }
 
+  //-----------------------------------SavePreviewType-------------------------------
+
+  selectedPreviewType: any;
+  // PreviewType: any;
+
+  AddDataType: any = {
+    // PreviewType: null,
+    // previewTypenamear: null,
+    // previewTypenameen: null,
+    PreviewTypedata: {
+      id: 0,
+      namear: null,
+      nameen: null,
+    },
+  };
+  PreviewTypeRowSelected: any;
+  getPreviewTypeRow(row: any) {
+    this.PreviewTypeRowSelected = row;
+  }
+  setPreviewTypeInSelect(data: any, modal: any) {
+
+    this.modalDetails.previewTypeId=data.id;
+
+    // this.AddDataType.PreviewType = data.id;
+    // this.AddDataType.previewTypenamear = data.name;
+    // this.AddDataType.previewTypenameen = data.nameE ?? data.name;
+    //modal?.dismiss();
+  }
+  confirmPreviewTypeDelete() {
+    this.service.DeletePreviewType(this.PreviewTypeRowSelected.id).subscribe((result: any) => {
+        if (result.statusCode == 200) {
+          this.toast.success(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
+          this.FilltAllPreviewTypes();
+        } else {
+          this.toast.error(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
+        }
+      });
+  }
+
+  savePreviewType() {
+    if (
+      this.AddDataType.PreviewTypedata.namear == null ||
+      this.AddDataType.PreviewTypedata.nameen == null
+    ) {
+      this.toast.error('من فضلك أكمل البيانات', 'رسالة');
+      return;
+    }
+    var PreviewTypeObj: any = {};
+    PreviewTypeObj.PreviewTypeId = this.AddDataType.PreviewTypedata.id;
+    PreviewTypeObj.NameAr = this.AddDataType.PreviewTypedata.namear;
+    PreviewTypeObj.NameEn = this.AddDataType.PreviewTypedata.nameen;
+
+    var obj = PreviewTypeObj;
+    this.service.SavePreviewType(obj).subscribe((result: any) => {
+      if (result.statusCode == 200) {
+        this.toast.success(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
+        this.resetPreviewType();
+        this.FilltAllPreviewTypes();
+      } else {
+        this.toast.error(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
+      }
+    });
+  }
+  resetPreviewType() {
+    this.AddDataType.PreviewTypedata.id = 0;
+    this.AddDataType.PreviewTypedata.namear = null;
+    this.AddDataType.PreviewTypedata.nameen = null;
+  }
+
+  //----------------------------------EndSavePreviewtype-----------------------------
+
+  
+
   decline(): void {
     this.modal?.hide();
+  }
+
+
+  UpdateMeeting() {   
+    debugger;
+    var MeetingObj: any = {};
+    MeetingObj.MeetingId = this.modalDetails.meetingId;
+    if(this.modalDetails.meetingDate!=null)
+    {
+      MeetingObj.Date = this._sharedService.date_TO_String(this.modalDetails.meetingDate);
+    } 
+    MeetingObj.MeetingChairperson = this.modalDetails.meetingChairperson;
+
+    this.service.UpdateMeeting(MeetingObj).subscribe((result: any) => {
+        if (result.statusCode == 200) {
+          this.toast.success(this.translate.instant(result.reasonPhrase), this.translate.instant('Message'));
+          this.getAllPreviews();
+        } else {
+          this.toast.error(this.translate.instant(result.reasonPhrase), this.translate.instant('Message') );
+        }
+      });
   }
 
 

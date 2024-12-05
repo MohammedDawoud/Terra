@@ -1,7 +1,7 @@
 git add .
-git commit -m "Khalaf"
+git commit -m "Dawoud"
 git pull
-ng build --configuration production --base-href /eTameer/
+ng build --configuration production --base-href /eTerra/
 
 
 

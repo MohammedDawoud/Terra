@@ -7,7 +7,7 @@ import { ExportationService } from '../exportation-service/exportation.service';
 @Injectable({
   providedIn: 'root',
 })
-export class PreviewService {
+export class DesignService {
 
   private apiEndPoint: string = '';
   constructor(private http:HttpClient,
@@ -15,21 +15,21 @@ export class PreviewService {
     this.apiEndPoint = environment.apiEndPoint;
   }
 
-  GetAllPreviews_Branch(){
-    return this.http.get<any>(this.apiEndPoint + 'Preview/GetAllPreviews_Branch');
+  GetAllDesigns_Branch(){
+    return this.http.get<any>(this.apiEndPoint + 'Design/GetAllDesigns_Branch');
   }
-  GetPreviewById(PreviewId:any) {
-    var url=`${environment.apiEndPoint}Preview/GetPreviewById?PreviewId=${PreviewId}`;
+  GetDesignById(DesignId:any) {
+    var url=`${environment.apiEndPoint}Design/GetDesignById?DesignId=${DesignId}`;
     return this.http.get<any>(url);
   }
-  DeletePreview(PreviewId:any) {
-    return this.http.post<any>(this.apiEndPoint + 'Preview/DeletePreview?PreviewId='+PreviewId,{});
+  DeleteDesign(DesignId:any) {
+    return this.http.post<any>(this.apiEndPoint + 'Design/DeleteDesign?DesignId='+DesignId,{});
   }
-  ConvertPreview(PreviewId:any) {
-    return this.http.post<any>(this.apiEndPoint + 'Preview/ConvertPreview?PreviewId='+PreviewId,{});
+  ConvertDesign(DesignId:any) {
+    return this.http.post<any>(this.apiEndPoint + 'Design/ConvertDesign?DesignId='+DesignId,{});
   }
-  SavePreview(model: any) {
-    return this.http.post<any>(this.apiEndPoint + 'Preview/SavePreview', model);
+  SaveDesign(model: any) {
+    return this.http.post<any>(this.apiEndPoint + 'Design/SaveDesign', model);
   }
 
   GetCustMainAccByBranchId(BranchId:any) {
@@ -40,20 +40,20 @@ export class PreviewService {
     var url=`${environment.apiEndPoint}Account/GetEmpMainAccByBranchId?BranchId=${BranchId}`;
     return this.http.get<any>(url);
   }
-  GetPreviewsByPreviewId(PreviewId:any) {
-    var url=`${environment.apiEndPoint}Preview/GetPreviewsByPreviewId?PreviewId=${PreviewId}`;
+  GetDesignsByDesignId(DesignId:any) {
+    var url=`${environment.apiEndPoint}Design/GetDesignsByDesignId?DesignId=${DesignId}`;
     return this.http.get<any>(url);
   }
-  GeneratePreviewNumber() {
-    var url=`${environment.apiEndPoint}Preview/GeneratePreviewNumber`;
+  GenerateDesignNumber() {
+    var url=`${environment.apiEndPoint}Design/GenerateDesignNumber`;
     return this.http.get<any>(url);
   }
-  GeneratePreviewNumberByBarcodeNum(OrderBarcode:any ) {
-    var url=`${environment.apiEndPoint}Preview/GeneratePreviewNumberByBarcodeNum?OrderBarcode=${OrderBarcode}`;
+  GenerateDesignNumberByBarcodeNum(OrderBarcode:any ) {
+    var url=`${environment.apiEndPoint}Design/GenerateDesignNumberByBarcodeNum?OrderBarcode=${OrderBarcode}`;
     return this.http.get<any>(url);
   }
   GenerateOrderBarcodeNumber() {
-    var url=`${environment.apiEndPoint}Preview/GenerateOrderBarcodeNumber`;
+    var url=`${environment.apiEndPoint}Design/GenerateOrderBarcodeNumber`;
     return this.http.get<any>(url);
   }
   FillCitySelect() {
@@ -62,11 +62,11 @@ export class PreviewService {
   FillJobSelect() {
     return this.http.get<any>(environment.apiEndPoint+'Organizations/FillJobSelect');
   }
-  FillPreviewselect() {
-    return this.http.get<any>(environment.apiEndPoint+'Preview/FillPreviewselect');
+  FillDesignselect() {
+    return this.http.get<any>(environment.apiEndPoint+'Design/FillDesignselect');
   }
-  FillPreviewselectW(PreviewId:any) {
-    var url=`${environment.apiEndPoint}Preview/FillPreviewselectW?PreviewId=${PreviewId}`;
+  FillDesignselectW(DesignId:any) {
+    var url=`${environment.apiEndPoint}Design/FillDesignselectW?DesignId=${DesignId}`;
     return this.http.get<any>(url);
   }
   FillPayTypeSelect() {
@@ -75,50 +75,16 @@ export class PreviewService {
   FillSocialMediaSelect() {
     return this.http.get<any>(environment.apiEndPoint+'Organizations/FillSocialMediaSelect');
   }
+  FillDesignTypesSelect() {
+    return this.http.get<any>(environment.apiEndPoint+'Organizations/FillDesignTypesSelect');
+  }
   FillBranchByUserIdSelect(){
     return this.http.get<any>(this.apiEndPoint + 'Branches/FillBranchByUserIdSelect');
   }
 
-  GetAllPreviewsSelectBarcode(){
-    return this.http.get<any>(this.apiEndPoint + 'Preview/GetAllPreviewsSelectBarcode');
+  GetAllDesignsSelectBarcode(){
+    return this.http.get<any>(this.apiEndPoint + 'Design/GetAllDesignsSelectBarcode');
   }
-  GetAllPreviewsSelectBarcodeFinished(){
-    return this.http.get<any>(this.apiEndPoint + 'Preview/GetAllPreviewsSelectBarcodeFinished');
-  }
-  GetAllPreviewsCodeFinished(){
-    return this.http.get<any>(this.apiEndPoint + 'Preview/GetAllPreviewsCodeFinished');
-  }
-  GetAllPreviewsCodeFinishedMeeting(){
-    return this.http.get<any>(this.apiEndPoint + 'Preview/GetAllPreviewsCodeFinishedMeeting');
-  }
-  GetAllPreviewsCodeAll(){
-    return this.http.get<any>(this.apiEndPoint + 'Preview/GetAllPreviewsCodeAll');
-  }
-
-
-  UpdateMeeting(obj: any): Observable<any> {
-    const headers = { 'content-type': 'application/json' };
-    const body = JSON.stringify(obj);
-    return this.http.post(this.apiEndPoint + 'Meeting/UpdateMeeting', body, {
-      headers: headers,
-    });
-  }
-
-
-  FilltAllPreviewTypes() {
-    return this.http.get<any>(this.apiEndPoint+'Preview/FilltAllPreviewTypes');
-  }
-  SavePreviewType(modal: any): Observable<any> {
-    const headers = { 'content-type': 'application/json' }
-    const body = JSON.stringify(modal);
-    return this.http.post(this.apiEndPoint + 'Preview/SavePreviewType', body, { 'headers': headers });
-  }
-  DeletePreviewType(PreviewTypeid: number): Observable<any> {
-    return this.http.post(`${this.apiEndPoint}Preview/DeletePreviewType?PreviewTypeid=` + PreviewTypeid, {});
-  }
-
-
-
   customExportExcel(dataExport: any, nameExport: any) {
 
     let exportation = JSON.parse(JSON.stringify(dataExport));
@@ -166,15 +132,15 @@ export class PreviewService {
   }
 
 
-  // SearchFn(_PreviewVM: PreviewVM): Observable<any> {
+  // SearchFn(_DesignVM: DesignVM): Observable<any> {
   //   const headers = { 'content-type': 'application/json' };
-  //   const body = JSON.stringify(_PreviewVM);
+  //   const body = JSON.stringify(_DesignVM);
   //   return this.http.post(this.customerSearchUrl, body, { headers: headers });
   // }
 
-  // getAllPreviewsByPreviewTypeId(type: any) {
+  // getAllDesignsByDesignTypeId(type: any) {
   //   return this.http.get<any>(
-  //     this.getAllPreviewsByPreviewTypeIdUrl + '?PreviewTypeId=' + type
+  //     this.getAllDesignsByDesignTypeIdUrl + '?DesignTypeId=' + type
   //   );
   // }
 

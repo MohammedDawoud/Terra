@@ -64,7 +64,6 @@
           </td>
         </ng-container>
 
-        <!-- nationalId Column -->
         <ng-container matColumnDef="orderBarcode">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
             <span>{{'باركود الطلب '}}</span>
@@ -72,6 +71,16 @@
           </th>
           <td mat-cell *matCellDef="let element">
             {{ element.orderBarcode }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="previewCode">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span>{{'رقم المعاينة '}}</span>
+
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.previewCode }}
           </td>
         </ng-container>
 
@@ -242,6 +251,7 @@
                 id="previewId"
                 #previewId="ngModel"
                 required
+                [disabled]="modalDetails.type!='addMeeting'"
                 class="w-full p-0 {{
                   previewId.invalid && previewId.touched ? 'errorInput' : ''
                 }}"
@@ -260,6 +270,30 @@
               </ng-select>
             </div>
 
+            <div class="form-group">
+              <label class="col-form-label">{{ "نوع المعاينة" | translate }}</label>
+              <ng-select
+                style="min-width: max-content"
+                id="previewTypeId"
+                #customerId="ngModel"
+                [disabled]="modalDetails.type!='addMeeting'"
+                class="w-full p-0"
+                [clearable]="true"
+                name="previewTypeId"
+                (change)="previewTypeChange(modalDetails.previewTypeId)"
+
+                placeholder=" {{ 'نوع المعاينة' | translate }}"
+                [(ngModel)]="modalDetails.previewTypeId"
+                [ngModelOptions]="{ standalone: true }"
+              >
+                <ng-option
+                  *ngFor="let item of PreviewTypesList"
+                  [value]="item.id"
+                  >{{ item.name }}</ng-option
+                >
+              </ng-select>
+            </div>
+
 
             <div class="form-group">
               <label class="col-form-label">
@@ -270,7 +304,7 @@
                 id="orderBarcode"
                 #orderBarcode="ngModel"
                 required
-                disabled
+                [disabled]="modalDetails.type!='addMeeting'"
                 class="w-full p-0 {{
                   orderBarcode.invalid && orderBarcode.touched ? 'errorInput' : ''
                 }}"
@@ -279,6 +313,7 @@
                 placeholder=" {{ 'باركود العمليات' | translate }}"
                 [(ngModel)]="modalDetails.previewId"
                 [ngModelOptions]="{ standalone: true }"
+                (change)="getmeetingdata(modalDetails.previewId)"
                 >
                 <ng-option
                   *ngFor="let prev of load_BarcodesCodes"
@@ -321,7 +356,9 @@
                   customerId.invalid && branchId.touched ? 'errorInput' : ''
                 }}"
                 [clearable]="true"
-                disabled
+                [disabled]="modalDetails.type!='addMeeting'"
+                (change)="CustomerChange(modalDetails.customerId)"
+
                 name="customerId"
                 placeholder=" {{ 'كود العميل' | translate }}"
                 [(ngModel)]="modalDetails.customerId"
@@ -341,7 +378,8 @@
                 style="min-width: max-content"
                 id="customerId"
                 #customerId="ngModel"
-                disabled
+                [disabled]="modalDetails.type!='addMeeting'"
+                (change)="CustomerChange(modalDetails.customerId)"
                 class="w-full p-0"
                 [clearable]="true"
                 name="customerId"
@@ -544,15 +582,9 @@
                 [translateParams]="{ar: type.name?.ar,en: type.name?.en}"></ng-option>
               </ng-select>
             </div>
-            <div class="form-group">
 
-            </div>
-            <div class="form-group">
-
-            </div>
-            
-            
-          <div class="form-group" *ngIf="modalDetails.type=='MeetingView' && modalDetails.meetingConvert">
+               
+          <div class="form-group" *ngIf="modalDetails.meetingStatus==3">
             <label for="designCode" class="col-form-label" style="color: red;">
               <ng-container>
                 {{ "كود التصميم" | translate }}
@@ -564,10 +596,9 @@
               id="designCode"
               autocomplete="off"
               #designCode="ngModel"
-              
+              disabled
               class="form-control"
               name="designCode"
-              disabled
               placeholder="{{
                 'كود التصميم' | translate
               }} "
@@ -576,7 +607,7 @@
           </div>
 
 
-          <div class="form-group" *ngIf="modalDetails.type=='MeetingView' && modalDetails.meetingConvert">
+          <div class="form-group" *ngIf="modalDetails.meetingStatus==3">
             <label for="date" class="text-right col-form-label block" style="color: red;">
               {{ "تاريخ التصميم" | translate }}
             </label>
@@ -585,7 +616,7 @@
               name="designDate"
               type="text"
               class="form-control"
-              disabled
+              [disabled]="modalDetails.type=='MeetingView'"
               bsDatepicker
               #dpr="bsDatepicker"
               autocomplete="off"
@@ -595,7 +626,7 @@
             />
           </div>
 
-          <div class="form-group" *ngIf="modalDetails.type=='MeetingView' && modalDetails.meetingConvert">
+          <div class="form-group" *ngIf="modalDetails.meetingStatus==3">
             <label class="col-form-label" style="color: red;">
               {{ "القائم بالتصميم" | translate }}
             </label>
@@ -603,7 +634,7 @@
               class="w-full p-0"
               placeholder="{{ 'القائم بالتصميم' | translate }}"
               [(ngModel)]="modalDetails.designChairperson"
-              disabled
+              [disabled]="modalDetails.type=='MeetingView'"
               [ngModelOptions]="{ standalone: true }"
             >
               <ng-option *ngFor="let emp of load_Employees" [value]="emp.employeeId">{{

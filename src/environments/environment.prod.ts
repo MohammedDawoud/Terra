@@ -1,7 +1,11 @@
 export const environment = {
   production: true,
-  apiEndPoint: 'https://api.terracloud.com/api/',
-  PhotoURL: 'https://api.terracloud.com',
+  // apiEndPoint: 'https://api.terracloud.com/api/',
+  // PhotoURL: 'https://api.terracloud.com',
+  apiEndPoint:window.location.hostname==="192.168.101.11"?"http://192.168.101.11:8084/api/":"http://hej08pxktvw.sn.mynetname.net:8084/api/",
+  PhotoURL:window.location.hostname==="192.168.101.11"?"http://192.168.101.11:8084":"http://hej08pxktvw.sn.mynetname.net:8084",
+
+
   printConfig: {
     printMode: 'template', // template
     popupProperties:

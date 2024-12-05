@@ -237,6 +237,15 @@ export class VerticalSidebarComponent implements OnInit {
             show: this.userG?.pagesList.includes(3213321),
             // show: this.userG?.userPrivileges.includes(1210),
           },
+          {
+            name: { ar: 'التصميمات', en: 'Designs' },
+            link: '/projects/design',
+            type: 'single',
+            icon: '/assets/sidebar-icons/Group 40644.png',
+            title:"3222111",
+            show: this.userG?.pagesList.includes(3222111),
+            // show: this.userG?.userPrivileges.includes(1210),
+          },
         ],
       },
       {

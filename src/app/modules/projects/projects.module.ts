@@ -12,12 +12,13 @@ import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { FileUploadModule } from '@iplab/ngx-file-upload';
 import {DragDropModule} from '@angular/cdk/drag-drop';
 import { MeetingComponent } from './meeting/meeting.component';
+import { DesignComponent } from './design/design.component';
 
 @NgModule({
   declarations: [
     PreviewComponent,
     MeetingComponent,
-
+    DesignComponent,
   ],
   imports: [
     CommonModule,
