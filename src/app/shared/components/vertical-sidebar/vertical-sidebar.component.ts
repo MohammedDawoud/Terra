@@ -162,7 +162,7 @@ export class VerticalSidebarComponent implements OnInit {
     this.menu = [
       {
         name: { ar: 'الصفحة الرئيسية', en: 'Dashboard' },
-        // link: '/dash/home',
+        link: '/dash/home',
         type: 'single',
         icon: '/assets/sidebar-icons/noun_Home_-1.png',
         title:"",

@@ -15,6 +15,14 @@ const routes: Routes = [
       ),
   },
   {
+    path: 'dash',
+    component: VerticalLayoutComponent,
+    loadChildren: () =>
+      import('src/app/modules/dashboard/dashboard.module').then(
+        (m) => m.DashboardModule
+      ),canActivate:[AuthGuard],
+  },
+  {
     path: 'customers',
     component: VerticalLayoutComponent,
     loadChildren: () =>

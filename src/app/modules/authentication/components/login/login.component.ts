@@ -106,7 +106,9 @@ export class LoginComponent implements OnInit {
       .subscribe({
         next: () => {
           this.sharedservice.setAction('clickButton2');
-          this.router.navigateByUrl('controlpanel/organization');
+          //this.router.navigateByUrl('controlpanel/organization');
+          this.router.navigateByUrl('dash/home');
+
         },
         error: (error) => {},
       });
