@@ -227,15 +227,15 @@ export class DesignComponent implements OnInit {
     this.FillCustomerSelect();
     this.FillEmployeeselect();
     this.FilltAllPreviewTypes();
-    this.FillDesignTypesSelect();
+    // this.FillDesignTypesSelect();
   }
 
-  DesignTypesList: any;
-  FillDesignTypesSelect() {
-    this.service.FillDesignTypesSelect().subscribe((data) => {
-      this.DesignTypesList = data;
-    });
-  }
+  // DesignTypesList: any;
+  // FillDesignTypesSelect() {
+  //   this.service.FillDesignTypesSelect().subscribe((data) => {
+  //     this.DesignTypesList = data;
+  //   });
+  // }
 
 
   applyFilter(event: any) {
@@ -503,13 +503,14 @@ export class DesignComponent implements OnInit {
     //   prevObj.designChairperson=this.modalDetails.designChairperson;
 
     // }
-
+    
     prevObj.branchId = this.modalDetails.branchId;
     prevObj.previewId = this.modalDetails.previewId;
+    prevObj.meetingId = this.modalDetails.meetingId;
     prevObj.designCode = this.modalDetails.designCode;
     prevObj.customerId = this.modalDetails.customerId;
     prevObj.designChairperson = this.modalDetails.designChairperson;
-    prevObj.designTypeId = this.modalDetails.designTypeId;
+    // prevObj.designTypeId = this.modalDetails.designTypeId;
     prevObj.designStatus = this.modalDetails.designStatus;
     prevObj.notes = this.modalDetails.notes;
     if (this.modalDetails.date != null) {
@@ -520,7 +521,6 @@ export class DesignComponent implements OnInit {
 
     console.log('prevObj');
     console.log(prevObj);
-
     const formData = new FormData();
     for (const key of Object.keys(prevObj)) {
       const value = prevObj[key] == null ? '' : prevObj[key];
@@ -618,6 +618,8 @@ export class DesignComponent implements OnInit {
     this.modalDetails.orderBarcode=data[0].name;
     this.modalDetails.customerId=data[0].customerId;
     this.modalDetails.previewTypeId=data[0].previewTypeId;
+    this.modalDetails.meetingId=data[0].meetingId;
+
     this.GenerateDesignNumberByBarcodeNum();
   }
 
@@ -625,6 +627,7 @@ export class DesignComponent implements OnInit {
     debugger
     this.modalDetails.previewId=null;
     this.modalDetails.previewTypeId=null;
+    this.modalDetails.meetingId=null;
 
     if(customerId==null)
     {
@@ -637,6 +640,7 @@ export class DesignComponent implements OnInit {
     {
       this.modalDetails.previewId=data[0].id;
       this.modalDetails.previewTypeId=data[0].previewTypeId;
+      this.modalDetails.meetingId=data[0].meetingId;
       this.getdesigndata(data[0].id);  
     }
   }
@@ -656,6 +660,7 @@ export class DesignComponent implements OnInit {
     {
       this.modalDetails.previewId=data[0].id;
       this.modalDetails.customerId=data[0].customerId;
+      this.modalDetails.meetingId=data[0].meetingId;
       this.getdesigndata(data[0].id);  
     }
   }
@@ -680,6 +685,7 @@ export class DesignComponent implements OnInit {
       orderBarcode:null,
       previewId: null,
       previewTypeId:null,
+      meetingId:null,
       designCode: null,
       nationalId: null,
       address: null,
