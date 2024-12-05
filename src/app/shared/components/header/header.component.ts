@@ -299,7 +299,7 @@ export class HeaderComponent implements OnInit {
   }
 
   public flags = [
-    { name: 'العربية', image: 'assets/images/flags/sa.svg', lang: 'ar' },
+    { name: 'العربية', image: 'assets/images/flags/eg.svg', lang: 'ar' },
     { name: 'English', image: 'assets/images/flags/gb.svg', lang: 'en' },
   ];
 
