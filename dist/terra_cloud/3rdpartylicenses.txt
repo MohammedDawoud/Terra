@@ -873,6 +873,9 @@ MIT
 ng-otp-input
 MIT
 
+ngx-bootstrap/accordion
+MIT
+
 ngx-bootstrap/buttons
 MIT
 
@@ -906,6 +909,9 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
+
+ngx-bootstrap/collapse
+MIT
 
 ngx-bootstrap/component-loader
 MIT
