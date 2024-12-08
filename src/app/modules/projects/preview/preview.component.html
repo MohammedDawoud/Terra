@@ -360,6 +360,7 @@
                 placeholder=" {{ 'اسم العميل' | translate }}"
                 [(ngModel)]="modalDetails.customerId"
                 [ngModelOptions]="{ standalone: true }"
+                (change)="CustomerChange(modalDetails.customerId)"
               >
                 <ng-option
                   *ngFor="let cus of load_Customers"
@@ -382,6 +383,7 @@
                 placeholder=" {{ 'رقم التليفون' | translate }}"
                 [(ngModel)]="modalDetails.customerId"
                 [ngModelOptions]="{ standalone: true }"
+                (change)="CustomerChange(modalDetails.customerId)"
               >
                 <ng-option
                   *ngFor="let cus of load_Customers"
@@ -404,6 +406,7 @@
                 placeholder=" {{ 'رقم التليفون 2' | translate }}"
                 [(ngModel)]="modalDetails.customerId"
                 [ngModelOptions]="{ standalone: true }"
+                (change)="CustomerChange(modalDetails.customerId)"
               >
                 <ng-option
                   *ngFor="let cus of load_Customers"
