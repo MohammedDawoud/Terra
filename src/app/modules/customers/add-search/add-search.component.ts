@@ -55,6 +55,7 @@ import {
   moveItemInArray,
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
+import { SharedService } from 'src/app/core/services/shared.service';
 
 const hijriSafe = require('hijri-date/lib/safe');
 const HijriDate = hijriSafe.default;
@@ -171,6 +172,7 @@ export class AddSearchComponent implements OnInit {
     private ngbModalService: NgbModal,
     private authenticationService: AuthenticationService,
     private translate: TranslateService,
+    private sharedService: SharedService,
     private domSanitizer: DomSanitizer
   ) {
     this.userG = this.authenticationService.userGlobalObj;
@@ -254,12 +256,22 @@ export class AddSearchComponent implements OnInit {
   }
   //------------------ Fill DATA ----------------------------------
 
-  fillBranchByUserId() {
+  fillBranchByUserId(modalType:any) {
     this.service.FillBranchByUserIdSelect().subscribe((data) => {
       this.load_BranchUserId = data;
       if (this.load_BranchUserId.length == 1) {
         this.modalDetails.branchId = this.load_BranchUserId[0].id;
-        this.getBranchAccount(this.modalDetails.branchId);
+        if (modalType == 'addClient'){
+          this.getBranchAccount(this.modalDetails.branchId);
+        }
+      }
+      else
+      {
+        if (modalType == 'addClient'){
+          debugger
+          this.modalDetails.branchId = parseInt(this.sharedService.getStoBranch());
+          this.getBranchAccount(this.modalDetails.branchId);
+        }     
       }
     });
   }
@@ -289,21 +301,34 @@ export class AddSearchComponent implements OnInit {
     });
   }
 
-  GenerateCustomerNumber(){
-    this.service.GenerateCustomerNumber().subscribe(data=>{
+  // GenerateCustomerNumber(){
+  //   this.service.GenerateCustomerNumber().subscribe(data=>{
+  //     this.modalDetails.customerCode=data.reasonPhrase;
+  //   });
+  // }
+  CustomerNumber_Reservation(BranchId:any){
+    this.service.CustomerNumber_Reservation(BranchId).subscribe(data=>{
       this.modalDetails.customerCode=data.reasonPhrase;
     });
   }
+  
+
   objBranchAccount: any = null;
   getBranchAccount(BranchId: any) {
     debugger
     this.objBranchAccount = null;
     this.modalDetails.accountName = null;
     this.service.GetCustMainAccByBranchId(BranchId).subscribe({next: (data: any) => {
+      debugger
       if(data.result.accountId!=0)
       {
         this.modalDetails.accountName =data.result.nameAr + ' - ' + data.result.accountCode;
         this.objBranchAccount = data.result;
+        this.CustomerNumber_Reservation(BranchId);
+      }
+      else
+      {
+        this.modalDetails.customerCode=null;
       }    
       },
       error: (error) => {},
@@ -314,7 +339,7 @@ export class AddSearchComponent implements OnInit {
   //-----------------------OPEN MODAL--------------------------------------------------
 
   openModal(template: TemplateRef<any>, data?: any, modalType?: any) {
-    this.fillBranchByUserId();
+    this.fillBranchByUserId(modalType);
     this.FillCitySelect_Cus();
     this.FillPaytypeSelect_Cus();
     this.FillSocialMediaSelect_Cus();
@@ -324,7 +349,8 @@ export class AddSearchComponent implements OnInit {
     //this.getEmailOrganization();
     debugger
     if (modalType == 'addClient') {
-      this.GenerateCustomerNumber();
+      // this.GenerateCustomerNumber();
+      //this.CustomerNumber_Reservation();
     }
     console.log('this.modalDetails');
     console.log(this.modalDetails);

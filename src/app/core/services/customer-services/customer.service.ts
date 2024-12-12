@@ -40,6 +40,10 @@ export class CustomerService {
     var url=`${environment.apiEndPoint}Customer/GenerateCustomerNumber`;
     return this.http.get<any>(url);
   }
+  CustomerNumber_Reservation(BranchId:any) {
+    var url=`${environment.apiEndPoint}Customer/CustomerNumber_Reservation?BranchId=${BranchId}`;
+    return this.http.get<any>(url);
+  }
   FillCitySelect() {
     return this.http.get<any>(environment.apiEndPoint+'Organizations/FillCitySelect');
   }
