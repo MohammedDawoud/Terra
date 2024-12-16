@@ -159,24 +159,46 @@ export class AccountsGuideComponent implements OnInit {
   LevelNode: any = 1;
 
   newAccount() {
-    this.disabledcreate = false
-    this.selectItemOftree = false
-    this.accId = 0
-    this.acountCode = null
-    this.accountNameAR = null
-    this.accountNameEn = null
-    this.MainAccountCode = null
-    this.MainAccountName = null
-    this.accountLevel = null
-    this.Nature = null
-    this.accounStatus = false
-    this.Type = null
-    this.classification = null
-    this.ParentId = null
-    this.LevelNode = 1
-    this.selectItemOftree = false
-    this.disabledcreate = false
-
+    
+    if(this.accId>0)
+    {
+      this.disabledcreate = false;
+      this.selectItemOftree = false;
+      this.Type = this.Type;
+      this.classification = this.classification;
+      this.ParentId = this.accId;
+      this.MainAccountCode = this.acountCode;
+      this.MainAccountName = this.accountNameAR;
+      this.accountLevel = this.accountLevel+1;
+      this.Nature = this.Nature;
+      this.accounStatus = this.accounStatus;
+      this.accId = 0;
+      this.acountCode = null;
+      this.accountNameAR = null;
+      this.accountNameEn = null;
+      this.LevelNode = this.accountLevel+1;
+      this.GetNewCodeByParentId(this.ParentId);
+    }
+    else
+    {
+      this.disabledcreate = false
+      this.selectItemOftree = false
+      this.accId = 0
+      this.acountCode = null
+      this.accountNameAR = null
+      this.accountNameEn = null
+      this.MainAccountCode = null
+      this.MainAccountName = null
+      this.accountLevel = null
+      this.Nature = null
+      this.accounStatus = false
+      this.Type = null
+      this.classification = null
+      this.ParentId = null
+      this.LevelNode = 1
+      this.selectItemOftree = false
+      this.disabledcreate = false
+    }
   }
   TypeList = [
     { id: 1, name: "بدون" },

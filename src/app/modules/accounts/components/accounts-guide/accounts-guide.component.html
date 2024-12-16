@@ -56,7 +56,7 @@
                 placeholder="{{ 'MainAccountCode' | translate }}"
                 [(ngModel)]="MainAccountCode"
                 (keyup)="GetAccountByCode()"
-                [disabled]="selectItemOftree==true"
+                disabled
               />
             </div>
           </div>
@@ -73,7 +73,7 @@
                 name="MainAccountName"autocomplete="off"
                 placeholder="{{ 'MainAccountName' | translate }}"
                 [(ngModel)]="MainAccountName"
-                [disabled]="selectItemOftree==true"
+                disabled
               />
             </div>
           </div>
