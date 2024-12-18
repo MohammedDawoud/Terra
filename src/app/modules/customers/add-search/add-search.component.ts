@@ -138,8 +138,12 @@ export class AddSearchComponent implements OnInit {
     'customerCode',
     'nameAr',
     'mainPhoneNo',
-    'nationalId',
+    'cityName',
+    'address',
+    'paytypeName',
+    'socialMediaName',
     'statusName',
+    'addDate',
     'operations',
   ];
   displayedColumn: any = {
@@ -217,18 +221,20 @@ export class AddSearchComponent implements OnInit {
         return (
           (d.branchName &&
             d.branchName?.trim().toLowerCase().indexOf(val) !== -1) ||
-          (d.nationalId &&
-            d.nationalId?.trim().toLowerCase().indexOf(val) !== -1) ||
+          (d.cityName &&
+            d.cityName?.trim().toLowerCase().indexOf(val) !== -1) ||
           (d.customerCode &&
             d.customerCode?.trim().toLowerCase().indexOf(val) !== -1) ||
             (d.nameAr &&
               d.nameAr?.trim().toLowerCase().indexOf(val) !== -1) ||
-          (d.email &&
-            d.email?.trim().toLowerCase().indexOf(val) !== -1) ||
+          (d.address &&
+            d.address?.trim().toLowerCase().indexOf(val) !== -1) ||
           (d.mainPhoneNo &&
             d.mainPhoneNo?.trim().toLowerCase().indexOf(val) !== -1) ||
-          (d.subMainPhoneNo &&
-            d.subMainPhoneNo?.trim().toLowerCase().indexOf(val) !== -1)
+            (d.socialMediaName &&
+              d.socialMediaName?.trim().toLowerCase().indexOf(val) !== -1) ||
+          (d.paytypeName &&
+            d.paytypeName?.trim().toLowerCase().indexOf(val) !== -1)
         );
       });
     }
@@ -471,6 +477,7 @@ export class AddSearchComponent implements OnInit {
     custObj.cityId = this.modalDetails.cityId;
     custObj.customerCode = this.modalDetails.customerCode;
     custObj.socialMediaId = this.modalDetails.socialMediaId;
+    custObj.payTypeId = this.modalDetails.payTypeId;
     custObj.branchId = this.modalDetails.branchId;
     custObj.accountId = this.modalDetails.accountId;
     custObj.subMainPhoneNo = this.modalDetails.subMainPhoneNo;
@@ -516,12 +523,6 @@ export class AddSearchComponent implements OnInit {
     ) {
       this.ValidateObjMsg = { status: false, msg: ' أدخل أسم العميل عربي' };
       return this.ValidateObjMsg;
-    } else if (
-      this.modalDetails.nameEn == null ||
-      this.modalDetails.nameEn == ''
-    ) {
-      this.ValidateObjMsg = { status: false, msg: 'أدخل أسم العميل انجليزي' };
-      return this.ValidateObjMsg;
     } else if (this.modalDetails.branchId == null) {
       this.ValidateObjMsg = { status: false, msg: 'اختر فرع العميل' };
       return this.ValidateObjMsg;
@@ -534,12 +535,27 @@ export class AddSearchComponent implements OnInit {
     }
     else if ((this.modalDetails.mainPhoneNo == null ||this.modalDetails.mainPhoneNo == '')
     ) {
-      this.ValidateObjMsg = { status: false, msg: 'ادخل جوال العميل' };
+      this.ValidateObjMsg = { status: false, msg: 'ادخل تليفون العميل  الرئيسي' };
       return this.ValidateObjMsg;
     }
-    else if ((this.modalDetails.nationalId == null ||this.modalDetails.nationalId == '')
+    else if ((this.modalDetails.address == null ||this.modalDetails.address == '')
     ) {
-      this.ValidateObjMsg = { status: false, msg: 'ادخل رقم هوية العميل' };
+      this.ValidateObjMsg = { status: false, msg: 'ادخل العنوان' };
+      return this.ValidateObjMsg;
+    }
+    else if ((this.modalDetails.address == null ||this.modalDetails.address == '')
+    ) {
+      this.ValidateObjMsg = { status: false, msg: 'ادخل المنطقة' };
+      return this.ValidateObjMsg;
+    }
+    else if ((this.modalDetails.payTypeId == null ||this.modalDetails.payTypeId == '')
+    ) {
+      this.ValidateObjMsg = { status: false, msg: 'ادخل طريقة الدفع' };
+      return this.ValidateObjMsg;
+    }
+    else if ((this.modalDetails.socialMediaId == null ||this.modalDetails.socialMediaId == '')
+    ) {
+      this.ValidateObjMsg = { status: false, msg: 'ادخل عرفتنا عن طريق' };
       return this.ValidateObjMsg;
     }
     // else if ((this.modalDetails.email == null ||
@@ -560,17 +576,43 @@ export class AddSearchComponent implements OnInit {
     return this.ValidateObjMsg;
   }
 
+  keyPress(event: any) {
+    var ew = event.which;
+    if (ew > 31 && (ew < 48 || ew > 57)) {
+      return false;
+    }
+    return true;
+  }
+
+  locale = 'en-US';
+  options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+    formatMatcher:"basic"
+  };
+
   exportData() {
     let x = [];
 
     for (let index = 0; index < this.dataSourceTemp.length; index++) {
+      let date = new Date(this.dataSourceTemp[index].addDate);
+      const formatter = new Intl.DateTimeFormat(this.locale, this.options);
+      const formattedDate = formatter.format(date);
       x.push({
         branchName: this.dataSourceTemp[index].branchName,
         customerCode: this.dataSourceTemp[index].customerCode,
         customerName: this.dataSourceTemp[index].nameAr,
         mainPhoneNo: this.dataSourceTemp[index].mainPhoneNo,
-        nationalId: this.dataSourceTemp[index].nationalId,
+        cityName: this.dataSourceTemp[index].cityName,
+        address: this.dataSourceTemp[index].address,
+        paytypeName: this.dataSourceTemp[index].paytypeName,
+        socialMediaName: this.dataSourceTemp[index].socialMediaName,
         statusName: this.dataSourceTemp[index].statusName,
+        addDate:formattedDate,
       });
     }
     debugger;
@@ -579,7 +621,7 @@ export class AddSearchComponent implements OnInit {
 
   getAllCustomers() {
     this.service.GetAllCustomers_Branch().subscribe((data: any) => {
-      // console.log(data);
+      console.log(data);
 
       this.dataSource = new MatTableDataSource(data);
       this.dataSourceTemp = data;
@@ -608,6 +650,7 @@ export class AddSearchComponent implements OnInit {
       branchId: null,
       customerCode: null,
       socialMediaId:null,
+      payTypeId:null,
       nationalId: null,
       address: null,
       email: null,
@@ -622,6 +665,7 @@ export class AddSearchComponent implements OnInit {
       cityName: null,
       addedcustomerImg: null,
       accountCodee: null,
+      status:true,
     };
   }
 

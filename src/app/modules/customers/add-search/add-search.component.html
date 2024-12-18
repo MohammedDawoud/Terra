@@ -57,15 +57,13 @@
         <!-- name Column -->
         <ng-container matColumnDef="branchName">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
-            <span>{{'اسم الفرع'}}</span>
+            <span>{{'الفرع'}}</span>
 
           </th>
           <td mat-cell *matCellDef="let element">
             {{ element.branchName }}
           </td>
         </ng-container>
-
-        <!-- nationalId Column -->
         <ng-container matColumnDef="customerCode">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
             <span>{{'كود العميل '}}</span>
@@ -75,7 +73,6 @@
             {{ element.customerCode }}
           </td>
         </ng-container>
-
         <ng-container matColumnDef="nameAr">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
             <span>{{'اسم العميل'}}</span>
@@ -85,23 +82,44 @@
             {{ element.nameAr }}
           </td>
         </ng-container>
-        
-
-        <!-- phone Column -->
         <ng-container matColumnDef="mainPhoneNo">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
-            <span>{{'تليفون العميل  الرئيسي'}}</span>
+            <span>{{'تليفون العميل'}}</span>
           </th>
           <td mat-cell *matCellDef="let element">
             {{ element.mainPhoneNo }}
           </td>
         </ng-container>
-        <ng-container matColumnDef="nationalId">
+        <ng-container matColumnDef="cityName">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
-            <span>{{'رقم البطاقة'}}</span>
+            <span>{{'المنطقة'}}</span>
           </th>
           <td mat-cell *matCellDef="let element">
-            {{ element.nationalId }}
+            {{ element.cityName }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="address">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span>{{'العنوان'}}</span>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.address }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="paytypeName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span>{{'طريقة الدفع'}}</span>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.paytypeName }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="socialMediaName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span>{{'عرفتني عن طريق'}}</span>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.socialMediaName }}
           </td>
         </ng-container>
         <ng-container matColumnDef="statusName">
@@ -115,6 +133,14 @@
             <span style="color: #b20b0b;font-size: 17px;font-weight: bold;" *ngIf="element.status == false">
               {{ element.statusName }}
             </span>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="addDate">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span>{{'تاريخ الإنشاء'}}</span>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.addDate | date : " hh:mm yyyy-MM-dd" }}
           </td>
         </ng-container>
         <!-- operations Column -->
@@ -258,11 +284,7 @@
                   #nameEn="ngModel"
                   #nameEnValue
                   required
-                  class="form-control {{
-                    nameEn.invalid && !nameEn.touched
-                      ? 'errorInput'
-                      : ''
-                  }}"
+                  class="form-control"
                   name="nameEn"
                   [placeholder]="
                     ('Write' | translate) +
@@ -292,13 +314,10 @@
                   class="form-control"
                   id="nationalId"
                   autocomplete="off"
+                  (keypress)="keyPress($event)"
                   #nationalId="ngModel"
                   required
-                  class="form-control {{
-                    modalDetails.nationalId == null
-                      ? 'errorInput'
-                      : ''
-                  }}"
+                  class="form-control"
                   name="nationalId"
                   placeholder="{{ 'Write' | translate }} {{
                     'NationalId' | translate
@@ -368,13 +387,14 @@
               <input
                 type="text"
                 autocomplete="off"
-
+                minlength="10"
+                maxlength="10"
+                (keypress)="keyPress($event)"
                 class="form-control {{
                   modalDetails.mainPhoneNo == null
                     ? 'errorInput'
                     : ''
                 }}"
-                maxlength="11"
                 id="mainPhoneNo"
                 name="mainPhoneNo"
                 placeholder="{{ 'تليفون العميل  الرئيسي	' | translate }} "
@@ -389,9 +409,11 @@
                 type="text"
                 class="form-control"
                 id="subMainPhoneNo"
+                minlength="10"
+                maxlength="10"
+                (keypress)="keyPress($event)"
                 autocomplete="off"
                 #subMainPhoneNo="ngModel"
-                maxlength="11"
                 required
                 class="form-control"
                 name="subMainPhoneNo"
@@ -422,7 +444,11 @@
                 {{ "العنوان" | translate }}
               </label>
               <input
-                class="form-control"
+                class="form-control {{
+                  modalDetails.address == null
+                    ? 'errorInput'
+                    : ''
+                }}"
                 type="text"
                 id="address"
                 name="address"
@@ -438,7 +464,11 @@
                 {{ "Area" | translate }}
               </label>
               <ng-select
-                class="w-full p-0"
+                class="w-full p-0 form-control {{
+                  modalDetails.cityId == null
+                    ? 'errorInput'
+                    : ''
+                }}"
                 placeholder="{{ 'Area' | translate }}"
                 [(ngModel)]="modalDetails.cityId"
                 [ngModelOptions]="{ standalone: true }"
@@ -454,7 +484,11 @@
                 {{ "طريقة الدفع" | translate }}
               </label>
               <ng-select
-                class="w-full p-0"
+                class=" w-full p-0 form-control {{
+                  modalDetails.payTypeId == null
+                    ? 'errorInput'
+                    : ''
+                }}"
                 placeholder="{{ 'طريقة الدفع' | translate }}"
                 [(ngModel)]="modalDetails.payTypeId"
                 [ngModelOptions]="{ standalone: true }"
@@ -470,7 +504,11 @@
                 {{ "عرفتنا عن طريق" | translate }}
               </label>
               <ng-select
-                class="w-full p-0"
+                class=" w-full p-0 form-control {{
+                  modalDetails.socialMediaId == null
+                    ? 'errorInput'
+                    : ''
+                }}"
                 placeholder="{{ 'عرفتنا عن طريق' | translate }}"
                 [(ngModel)]="modalDetails.socialMediaId"
                 [ngModelOptions]="{ standalone: true }"
