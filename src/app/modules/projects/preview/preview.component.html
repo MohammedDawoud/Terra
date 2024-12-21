@@ -524,7 +524,7 @@
               <div class="flex">
 
                 <ng-select
-                style="min-width: max-content"
+                style="min-width: max-content" 
                 id="previewTypeId"
                 #customerId="ngModel"
                 [disabled]="modalDetails.type=='PreviewView'"
@@ -546,7 +546,7 @@
               type="button"
               class="btn bg-base text-white"
               style="padding: 5px 10px"
-              (click)="open(AddOption, null, 'addtasktype')"
+              (click)="open(AddOption, null, 'addpreviewtype')"
             >
               <i class="fa fa-plus"></i>
             </button>
@@ -696,7 +696,7 @@
               <span>{{ "تاريخ تعديل المستند" | translate }}</span>
               <div class="flex flex-col">
                 <span>{{
-                  modalDetails?.addDate | date : " hh:mm yyyy-MM-dd"}}</span>
+                  modalDetails?.updateDate | date : " hh:mm yyyy-MM-dd"}}</span>
               </div>
             </div>
           </div>
@@ -819,7 +819,7 @@
     class="modal-header text-white flex justify-between items-center"
   >
     <h4 class="m-0">
-      <span class="text-2xl"> نوع مهمة جديدة </span>
+      <span class="text-2xl"> نوع معاينة جديدة </span>
     </h4>
     <button
       type="button"

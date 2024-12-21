@@ -4,14 +4,6 @@
   <div class="tables-data mt-3 overflow-hidden">
     <!-- buttons -->
     <div class="flex justify-between gap-2 items-center my-3 flex-wrap">
-      <div class="w-fit">
-        <input
-          class="form-control"
-          (keyup)="applyFilter($event)"
-          placeholder="{{ 'search' | translate }}"
-          #input
-        />
-      </div>
 
       <!---------------------------------------------------------------------------->
       <div class="flex gap-2 controler">
@@ -29,6 +21,14 @@
           ></span>
           <i class="fa-solid fa-user-plus"></i>
         </button>
+
+        <button class="flex gap-1 btn btn-danger" (click)="dataSearch.filter.showFilters = !dataSearch.filter.showFilters;">
+        <span
+          class="hidden md:block"
+          [translate]="'name'" [translateParams]="{ar: 'بحث ',en: 'Search '}"></span>
+        <i class="fa-solid fa-search"></i>
+        </button>
+
         <button
           class="flex gap-1 btn btn-warning"
           (click)="exportData()"
@@ -45,6 +45,105 @@
         </button>
       </div>
     </div>
+
+    <div *ngIf="dataSearch.filter.showFilters" class="flex gap-6 flex-wrap items-end mb-4">
+
+      <div class="max-w-xs">
+        <label class="col-form-label"> {{ "أسم العميل" | translate }}</label>
+  
+        <ng-select
+          #CustomerName
+          [items]="dataSearch.filter.ListName"
+          bindLabel="name"
+          bindValue="id"
+          [clearable]="true"
+          class="w-full p-0"
+          [(ngModel)]="dataSearch.filter.customerId"
+          placeholder="{{ 'Chose' | translate }}"
+          (change)="RefreshData()"
+        >
+        </ng-select>
+      </div>
+      <div class="max-w-xs">
+        <label class="col-form-label"> {{ "كود العميل" | translate }}</label>
+  
+        <ng-select
+          #CustomerName
+          [items]="dataSearch.filter.ListCode"
+          bindLabel="name"
+          bindValue="id"
+          [clearable]="true"
+          class="w-full p-0"
+          [(ngModel)]="dataSearch.filter.customerId"
+          placeholder="{{ 'Chose' | translate }}"
+          (change)="RefreshData()"
+        >
+        </ng-select>
+      </div>
+      <div class="max-w-xs">
+        <label class="col-form-label"> {{ "رقم تليفون العميل" | translate }}</label>
+  
+        <ng-select
+          #CustomerName
+          [items]="dataSearch.filter.ListPhone"
+          bindLabel="name"
+          bindValue="id"
+          [clearable]="true"
+          class="w-full p-0"
+          [(ngModel)]="dataSearch.filter.customerId"
+          placeholder="{{ 'Chose' | translate }}"
+          (change)="RefreshData()"
+        >
+        </ng-select>
+      </div>
+      <div class="max-w-xs">
+        <label class="col-form-label"> {{ "المنطقة" | translate }}</label>
+  
+        <ng-select
+          #CustomerName
+          [items]="dataSearch.filter.ListCity"
+          bindLabel="name"
+          bindValue="id"
+          [clearable]="true"
+          class="w-full p-0"
+          [(ngModel)]="dataSearch.filter.cityId"
+          placeholder="{{ 'Chose' | translate }}"
+          (change)="RefreshData()"
+        >
+        </ng-select>
+      </div>
+      <button
+        class="btn btn-primary"
+        (click)="dataSearch.filter.enable = !dataSearch.filter.enable;ClearDate();"
+        [translate]="'name'"
+        [translateParams]="{
+          ar: 'فلترة بالوقت',
+          en: 'Time Filter'
+        }"
+      ></button>
+      <div class="form-group col-md-2 timeInput" *ngIf="dataSearch.filter.enable">
+        <input
+          placeholder="{{ 'Chose Date' | translate }}"
+          [(ngModel)]="dataSearch.filter.date"
+          type="text"
+          (ngModelChange)="CheckDate($event)"
+          class="form-control"
+          [bsConfig]="{ rangeInputFormat: 'DD/MM/YYYY' }"
+          bsDaterangepicker
+          #dpr="bsDaterangepicker"
+        />
+      </div>
+  
+      <div class="w-fit">
+        <input
+          class="form-control"
+          (keyup)="applyFilter($event)"
+          placeholder="{{ 'search' | translate }}"
+          #input
+        />
+      </div>
+    </div>
+
 
     <!-- table -->
     <div class="overflow-auto">
@@ -184,7 +283,7 @@
         <!-- Row shown when there is no matching data. -->
         <tr class="mat-row" *matNoDataRow>
           <td class="mat-cell" colspan="7">
-            {{ "No result found for " }} "{{ input.value }}"
+            {{ "لا يوجد نتائج" }} 
           </td>
         </tr>
       </table>
@@ -289,7 +388,7 @@
                   [placeholder]="
                     ('Write' | translate) +
                     ' ' +
-                    (('Client Name (Arabic)') | translate)"
+                    (('Client Name (English)') | translate)"
                   [(ngModel)]="modalDetails.nameEn"
                 />
 
@@ -341,7 +440,7 @@
                   branchId.invalid && branchId.touched ? 'errorInput' : ''
                 }}"
                 [disabled]="load_BranchUserId?.length == 1"
-                (change)="getBranchAccount(modalDetails.branchId)"
+                (change)="getBranchAccount(modalDetails.branchId,'addClient')"
                 [clearable]="false"
                 name="branchId"
                 placeholder=" {{ 'Customer Branch' | translate }}"
@@ -463,13 +562,14 @@
               <label class="col-form-label">
                 {{ "Area" | translate }}
               </label>
+              <div class="flex">
               <ng-select
                 class="w-full p-0 form-control {{
                   modalDetails.cityId == null
                     ? 'errorInput'
                     : ''
                 }}"
-                placeholder="{{ 'Area' | translate }}"
+                placeholder="{{ 'Area' | translate }}" 
                 [(ngModel)]="modalDetails.cityId"
                 [ngModelOptions]="{ standalone: true }"
               >
@@ -477,6 +577,15 @@
                   city.name
                 }}</ng-option>
               </ng-select>
+              <button
+              type="button"
+              class="btn bg-base text-white"
+              style="padding: 5px 10px"
+              (click)="open(AddCityPopup, null, 'addcity')"
+            >
+              <i class="fa fa-plus"></i>
+            </button>
+              </div>
             </div>
 
             <div class="form-group">
@@ -571,7 +680,7 @@
             <span>{{ "تاريخ تعديل المستند" | translate }}</span>
             <div class="flex flex-col">
               <span>{{
-                modalDetails?.addDate | date : " hh:mm yyyy-MM-dd"}}</span>
+                modalDetails?.updateDate | date : " hh:mm yyyy-MM-dd"}}</span>
             </div>
           </div>
         </div>
@@ -622,6 +731,174 @@
       </div>
     </div>
   </ng-template>
+
+
+<!-- Add option -->
+<ng-template #AddCityPopup let-modal>
+  <div
+    style="background-color: var(--base-color)"
+    class="modal-header text-white flex justify-between items-center"
+  >
+    <h4 class="m-0">
+      <span class="text-2xl"> منطقة جديدة </span>
+    </h4>
+    <button
+      type="button"
+      class="text-2xl text-white m-0"
+      (click)="modal?.dismiss()"
+    >
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+  <div class="modal-body text-center">
+    <form #addCity="ngForm" class="grid grid-cols-1 md:grid-cols-2 gap-2">
+      <div class="form-group">
+        <label for="CityNameArtxt3" class="text-right col-form-label block">
+          {{ "nameAr" | translate }}
+          <span class="text-danger">*</span></label
+        >
+        <input
+          required
+          #CityNameAr="ngModel"
+          [(ngModel)]="AddDataType.Citydata.namear"
+          class="form-control"
+          type="text"
+          id="CityNameArtxt3"
+          name="CityNameArtxt3"
+          autocomplete="off"
+          [placeholder]="('Write' | translate) + ' ' + ('nameAr' | translate)"
+        />
+      </div>
+      <div class="form-group">
+        <label for="CityNameEntxt3" class="text-right col-form-label block">
+          {{ "nameEn" | translate }}
+          <span class="text-danger">*</span></label
+        >
+        <div style="display: inline-flex; width: 100%">
+          <input
+            required
+            #CityNameEnValue
+            #CityNameEn="ngModel"
+            [(ngModel)]="AddDataType.Citydata.nameen"
+            class="form-control"
+            type="text"
+            id="CityNameEntxt3"
+            name="CityNameEntxt3"
+            autocomplete="off"
+            [placeholder]="('Write' | translate) + ' ' + ('nameEn' | translate)"
+          />
+          <a
+            class="btn"
+            id="CopyCityName2"
+            (click)="
+              AddDataType.Citydata.nameen = AddDataType.Citydata.namear
+            "
+            ><i class="fa fa-copy"></i
+          ></a>
+        </div>
+      </div>
+    </form>
+    <div class="max-h-80 overflow-auto px-2">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>{{ "nameAr" | translate }}</th>
+            <th>{{ "nameEn" | translate }}</th>
+            <th
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'خيارات',
+                en: 'Operations'
+              }"
+            ></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let type of CityTypesPopup_Cus"
+            (dblclick)="
+              setCityInSelect(type, modal); modal.dismiss('Cross click')
+            "
+          >
+            <td>{{ type.name }}</td>
+            <td>{{ type.nameEn }}</td>
+            <td class="flex gap-2 justify-center">
+              <button
+                class="p-2 bg-orange-100 hover:bg-orange-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+                (click)="
+                  AddDataType.Citydata.id = type.id;
+                  AddDataType.Citydata.namear = type.name;
+                  AddDataType.Citydata.nameen = type.nameEn
+                "
+              >
+                <i class="fa-regular fa-pen-to-square"></i>
+              </button>
+              <button
+                (click)="getCityRow(type);
+                  open(
+                    deleteCity,
+                    AddDataType.Citydata,
+                    'deleteCity'              
+                  )
+                "
+                class="p-2 bg-red-100 hover:bg-red-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+              >
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="flex gap-2 mt-3 pt-3 border-t border-neutral-300">
+      <button
+        class="btn bg-base text-white"
+        type="submit"
+        [disabled]="!AddDataType.Citydata.namear"
+        (click)="saveCity()"
+      >
+        {{ "Save" | translate }}
+      </button>
+      <button (click)="modal.dismiss()" class="btn btn-secondary">
+        {{ "Back" | translate }}
+      </button>
+      <button (click)="resetCity()" class="btn bg-base text-white">
+        {{ "جديد" | translate }}
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<!-- deleteCityModal -->
+<ng-template #deleteCity let-modal>
+  <div class="modal-body text-center">
+    <p
+      [translate]="'name'"
+      [translateParams]="{
+        ar: 'هل تريد بالتأكيد حذف هذا الصف',
+        en: 'Are you sure to delete this row ?'
+      }"
+    ></p>
+    <div class="flex gap-2 justify-center mt-3">
+      <button
+        type="button"
+        mat-raised-button
+        color="warn"
+        (click)="confirmCityDelete(); modal.dismiss()"
+      >
+        {{ "Yes" | translate }}
+      </button>
+      <button
+        type="button"
+        (click)="modal.dismiss()"
+        mat-raised-button
+        color="basic"
+      >
+        {{ "No" | translate }}
+      </button>
+    </div>
+  </div>
+</ng-template>
 
 
 </div>

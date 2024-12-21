@@ -24,9 +24,6 @@ export class OrganizationService {
       modal
     );
   }
-  FillCitySelect() {
-    return this.http.get<any>(environment.apiEndPoint+'Organizations/FillCitySelect');
-  }
 
   GetAllBranches() {
     return this.http.get<any>(this.apiEndPoint + 'Branches/GetAllBranches');
@@ -58,4 +55,18 @@ export class OrganizationService {
       null
     );
   }
+
+  FillCitySelect() {
+    return this.http.get<any>(this.apiEndPoint+'Organizations/FillCitySelect');
+  }
+  SaveCity(modal: any): Observable<any> {
+    const headers = { 'content-type': 'application/json' }
+    const body = JSON.stringify(modal);
+    return this.http.post(this.apiEndPoint + 'Organizations/SaveCity', body, { 'headers': headers });
+  }
+  DeletePreviewType(CityId: number): Observable<any> {
+    return this.http.post(`${this.apiEndPoint}Organizations/DeleteCity?CityId=` + CityId, {});
+  }
+
+
 }

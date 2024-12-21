@@ -728,14 +728,10 @@ export class PreviewComponent implements OnInit {
   }
 
   //-----------------------------------SavePreviewType-------------------------------
-
+  //#region 
   selectedPreviewType: any;
-  // PreviewType: any;
 
   AddDataType: any = {
-    // PreviewType: null,
-    // previewTypenamear: null,
-    // previewTypenameen: null,
     PreviewTypedata: {
       id: 0,
       namear: null,
@@ -747,13 +743,7 @@ export class PreviewComponent implements OnInit {
     this.PreviewTypeRowSelected = row;
   }
   setPreviewTypeInSelect(data: any, modal: any) {
-
     this.modalDetails.previewTypeId=data.id;
-
-    // this.AddDataType.PreviewType = data.id;
-    // this.AddDataType.previewTypenamear = data.name;
-    // this.AddDataType.previewTypenameen = data.nameE ?? data.name;
-    //modal?.dismiss();
   }
   confirmPreviewTypeDelete() {
     this.service.DeletePreviewType(this.PreviewTypeRowSelected.id).subscribe((result: any) => {
@@ -795,7 +785,7 @@ export class PreviewComponent implements OnInit {
     this.AddDataType.PreviewTypedata.namear = null;
     this.AddDataType.PreviewTypedata.nameen = null;
   }
-
+  //#endregion
   //----------------------------------EndSavePreviewtype-----------------------------
 
   

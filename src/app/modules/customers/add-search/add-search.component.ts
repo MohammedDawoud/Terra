@@ -56,6 +56,7 @@ import {
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
 import { SharedService } from 'src/app/core/services/shared.service';
+import { OrganizationService } from 'src/app/core/services/sys_Services/organization.service';
 
 const hijriSafe = require('hijri-date/lib/safe');
 const HijriDate = hijriSafe.default;
@@ -114,18 +115,11 @@ export class AddSearchComponent implements OnInit {
     },
   };
 
-  data: any = {
-    type: '0',
-    files: [],
-    clients: [],
-    branches: [],
-    cities: [],
-    filesTypes: [],
-  };
 
   searchBox: any = {
     open: false,
     searchType: null,
+
   };
   @ViewChild(DatatableComponent) table: DatatableComponent | any;
 
@@ -150,16 +144,21 @@ export class AddSearchComponent implements OnInit {
     usersMail: ['select', 'name', 'email'],
     usersMobile: ['select', 'name', 'mobile'],
   };
-  data2: any = {
+  dataSearch: any = {
     filter: {
-      enable: true,
+      enable: false,
       date: null,
-      search_CustomerName: '',
-      search_customerEmail: '',
-      search_customerMobile: '',
       isChecked: false,
+      ListName:[],
+      ListCode:[],
+      ListPhone:[],
+      ListCity:[],
+      customerId:null,
+      cityId:null,
+      showFilters:false
     },
   };
+
 
   EditModel: any = {
     CustomerId: 0,
@@ -169,7 +168,9 @@ export class AddSearchComponent implements OnInit {
 
   constructor(
     private service: CustomerService,
-    private modalService: BsModalService,
+    private _organization: OrganizationService,
+    private _sharedService: SharedService,
+    private modalService: BsModalService, 
     private api: RestApiService,
     private changeDetection: ChangeDetectorRef,
     private toast: ToastrService,
@@ -244,6 +245,9 @@ export class AddSearchComponent implements OnInit {
     this.dataSource.sort = this.sort;
   }
 
+  //--------------------------------------------Search-------------------------------------------
+  //#region 
+
   // checkValue(event: any) {
   //   if (event == 'A') {
   //     this.getAllCustomers();
@@ -252,14 +256,69 @@ export class AddSearchComponent implements OnInit {
   //   }
   // }
 
-  resetandRefresh() {
-    if (this.searchBox.open == false) {
-      this.data2.filter.search_CustomerName = null;
-      this.data2.filter.search_customerMobile = null;
-      this.data.type = 0;
-      this.getAllCustomers();
+
+  RefreshDataCheck(from: any, to: any){
+
+    this.dataSource.data=this.dataSourceTemp;
+
+    // if((from==null || from=="")&&(to==null || to=="")&&(this.dataSearch.customerId==null || this.dataSearch.customerId=="")
+    //   &&(this.dataSearch.customerCode==null || this.dataSearch.customerCode=="")
+    //   &&(this.dataSearch.mainPhoneNo==null || this.dataSearch.mainPhoneNo=="")
+    //   &&(this.dataSearch.cityId==null || this.dataSearch.cityId==""))
+    //   {
+    //     this.dataSource.data=this.dataSourceTemp;
+    //   }
+    if(!(from==null || from=="" || to==null || to==""))
+    {
+      debugger
+      this.dataSource.data = this.dataSource.data.filter((item: any) => {
+        var AccDate=new Date(item.addDate);
+        var AccFrom=new Date(from);
+        var AccTo=new Date(to);
+        return AccDate.getTime() >= AccFrom.getTime() &&
+        AccDate.getTime() <= AccTo.getTime();
+    });
+    }
+    if(this.dataSearch.filter.customerId!=null && this.dataSearch.filter.customerId!="")
+    {
+      this.dataSource.data = this.dataSource.data.filter((d: { customerId: any }) => d.customerId == this.dataSearch.filter.customerId);
+    }
+    if(this.dataSearch.filter.cityId!=null && this.dataSearch.filter.cityId!="")
+    {
+      this.dataSource.data = this.dataSource.data.filter((d: { cityId: any }) => d.cityId == this.dataSearch.filter.cityId);
+    } 
+   
+  }
+
+  ClearDate(){
+    if(this.dataSearch.filter.enable==false){ 
+      this.dataSearch.filter.date=null;   
+      this.RefreshDataCheck(null,null);
     }
   }
+  CheckDate(event: any) {
+    debugger
+    if (event != null) {
+      var from = this._sharedService.date_TO_String(event[0]);
+      var to = this._sharedService.date_TO_String(event[1]);
+      this.RefreshDataCheck(from, to);
+    } else {    
+      this.RefreshDataCheck(null,null);
+    }
+  }
+  RefreshData(){
+    debugger
+    if( this.dataSearch.filter.date==null)
+    {
+    this.RefreshDataCheck(null,null);
+    }
+    else
+    {
+    this.RefreshDataCheck(this.dataSearch.filter.date[0],this.dataSearch.filter.date[1]);
+    }
+  }
+  //#endregion
+  //----------------------------------EndSearch---------------------------------------------------
   //------------------ Fill DATA ----------------------------------
 
   fillBranchByUserId(modalType:any) {
@@ -268,7 +327,7 @@ export class AddSearchComponent implements OnInit {
       if (this.load_BranchUserId.length == 1) {
         this.modalDetails.branchId = this.load_BranchUserId[0].id;
         if (modalType == 'addClient'){
-          this.getBranchAccount(this.modalDetails.branchId);
+          this.getBranchAccount(this.modalDetails.branchId,modalType);
         }
       }
       else
@@ -276,7 +335,7 @@ export class AddSearchComponent implements OnInit {
         if (modalType == 'addClient'){
           debugger
           this.modalDetails.branchId = parseInt(this.sharedService.getStoBranch());
-          this.getBranchAccount(this.modalDetails.branchId);
+          this.getBranchAccount(this.modalDetails.branchId,modalType);
         }     
       }
     });
@@ -320,7 +379,7 @@ export class AddSearchComponent implements OnInit {
   
 
   objBranchAccount: any = null;
-  getBranchAccount(BranchId: any) {
+  getBranchAccount(BranchId: any,modalType:any) {
     debugger
     this.objBranchAccount = null;
     this.modalDetails.accountName = null;
@@ -330,7 +389,10 @@ export class AddSearchComponent implements OnInit {
       {
         this.modalDetails.accountName =data.result.nameAr + ' - ' + data.result.accountCode;
         this.objBranchAccount = data.result;
-        this.CustomerNumber_Reservation(BranchId);
+        if(modalType == 'addClient')
+        {
+          this.CustomerNumber_Reservation(BranchId);
+        }
       }
       else
       {
@@ -365,7 +427,7 @@ export class AddSearchComponent implements OnInit {
       this.modalDetails = data;
 
       if (modalType == 'editClient') {
-        this.getBranchAccount(this.modalDetails.branchId);
+        this.getBranchAccount(this.modalDetails.branchId,modalType);
         debugger;
         if (data.agentAttachmentUrl != null) {
           this.modalDetails.attachmentUrl =
@@ -558,15 +620,6 @@ export class AddSearchComponent implements OnInit {
       this.ValidateObjMsg = { status: false, msg: 'ادخل عرفتنا عن طريق' };
       return this.ValidateObjMsg;
     }
-    // else if ((this.modalDetails.email == null ||
-    //     this.modalDetails.email == '')
-    // ) {
-    //   this.ValidateObjMsg = {
-    //     status: false,
-    //     msg: 'ادخل البريد الالكتروني للعميل',
-    //   };
-    //   return this.ValidateObjMsg;
-    // }
     if ((this.modalDetails.nationalId == null ||
       this.modalDetails.nationalId == '')) {
     this.ValidateObjMsg = { status: false, msg: 'ادخل رقم هوية العميل' };
@@ -628,7 +681,50 @@ export class AddSearchComponent implements OnInit {
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
       this.allCount = data.length;
+      this.FillSerachLists(data);    
     });
+  }
+
+
+  FillSerachLists(dataT:any){
+    this.FillCustomerListName(dataT);
+    this.FillCustomerListCode(dataT);
+    this.FillCustomerListPhone(dataT);
+    this.FillCustomerListCity(dataT);
+  }
+
+  FillCustomerListName(dataT:any){
+    const ListLoad = dataT.map((item: { customerId: any; nameAr: any; }) => {
+      const container:any = {}; container.id = item.customerId; container.name = item.nameAr; return container;
+    })
+    const key = 'id';
+    const arrayUniqueByKey = [...new Map(ListLoad.map((item: { [x: string]: any; }) => [item[key], item])).values()];
+    this.dataSearch.filter.ListName=arrayUniqueByKey;
+  }
+  FillCustomerListCode(dataT:any){
+    const ListLoad = dataT.map((item: { customerId: any; customerCode: any; }) => {
+      const container:any = {}; container.id = item.customerId; container.name = item.customerCode; return container;
+    })
+    const key = 'id';
+    const arrayUniqueByKey = [...new Map(ListLoad.map((item: { [x: string]: any; }) => [item[key], item])).values()];
+    this.dataSearch.filter.ListCode=arrayUniqueByKey;
+  }
+  FillCustomerListPhone(dataT:any){
+    const ListLoad = dataT.map((item: { customerId: any; mainPhoneNo: any; }) => {
+      const container:any = {}; container.id = item.customerId; container.name = item.mainPhoneNo; return container;
+    })
+    const key = 'id';
+    const arrayUniqueByKey = [...new Map(ListLoad.map((item: { [x: string]: any; }) => [item[key], item])).values()];
+    this.dataSearch.filter.ListPhone=arrayUniqueByKey;
+  }
+  FillCustomerListCity(dataT:any){
+    const ListLoad = dataT.map((item: { cityId: any; cityName: any; }) => {
+      const container:any = {}; container.id = item.cityId; container.name = item.cityName; console.log("container",container); return container;   
+    })
+    const key = 'id';
+    const arrayUniqueByKey = [...new Map(ListLoad.map((item: { [x: string]: any; }) => [item[key], item])).values()];
+    this.dataSearch.filter.ListCity=arrayUniqueByKey;
+    this.dataSearch.filter.ListCity = this.dataSearch.filter.ListCity.filter((d: { id: any }) => (d.id !=null && d.id!=0));
   }
 
   resetModal() {
@@ -718,5 +814,68 @@ export class AddSearchComponent implements OnInit {
   public ngOnDestroy(): void {
     this.subscription?.unsubscribe();
   }
+
+
+  //-----------------------------------SaveCity-------------------------------
+  //#region 
+  selectedCity: any;
+
+  AddDataType: any = {
+    Citydata: {
+      id: 0,
+      namear: null,
+      nameen: null,
+    },
+  };
+  CityRowSelected: any;
+  getCityRow(row: any) {
+    this.CityRowSelected = row;
+  }
+  setCityInSelect(data: any, modal: any) {
+    this.modalDetails.cityId=data.id;
+  }
+  confirmCityDelete() {
+    this._organization.DeletePreviewType(this.CityRowSelected.id).subscribe((result: any) => {
+        if (result.statusCode == 200) {
+          this.toast.success(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
+          this.FillCitySelect_Cus();
+        } else {
+          this.toast.error(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
+        }
+      });
+  }
+
+  saveCity() {
+    if (
+      this.AddDataType.Citydata.namear == null ||
+      this.AddDataType.Citydata.nameen == null
+    ) {
+      this.toast.error('من فضلك أكمل البيانات', 'رسالة');
+      return;
+    }
+    var CityObj: any = {};
+    CityObj.CityId = this.AddDataType.Citydata.id;
+    CityObj.NameAr = this.AddDataType.Citydata.namear;
+    CityObj.NameEn = this.AddDataType.Citydata.nameen;
+
+    var obj = CityObj;
+    this._organization.SaveCity(obj).subscribe((result: any) => {
+      if (result.statusCode == 200) {
+        this.toast.success(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
+        this.resetCity();
+        this.FillCitySelect_Cus();
+      } else {
+        this.toast.error(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
+      }
+    });
+  }
+  resetCity() {
+    this.AddDataType.Citydata.id = 0;
+    this.AddDataType.Citydata.namear = null;
+    this.AddDataType.Citydata.nameen = null;
+  }
+  //#endregion
+  //----------------------------------EndSavePreviewtype-----------------------------
+
 
 }
