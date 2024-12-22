@@ -596,8 +596,13 @@ export class AddSearchComponent implements OnInit {
       return this.ValidateObjMsg;
     }
     else if ((this.modalDetails.mainPhoneNo == null ||this.modalDetails.mainPhoneNo == '')
-    ) {
+    ) {       
       this.ValidateObjMsg = { status: false, msg: 'ادخل تليفون العميل  الرئيسي' };
+      return this.ValidateObjMsg;
+    }
+    else if(this.modalDetails.mainPhoneNo.length<11)
+    {
+      this.ValidateObjMsg = { status: false, msg: 'لا يمكنك الحفظ أقل من 11 رقم' };
       return this.ValidateObjMsg;
     }
     else if ((this.modalDetails.address == null ||this.modalDetails.address == '')
@@ -620,11 +625,6 @@ export class AddSearchComponent implements OnInit {
       this.ValidateObjMsg = { status: false, msg: 'ادخل عرفتنا عن طريق' };
       return this.ValidateObjMsg;
     }
-    if ((this.modalDetails.nationalId == null ||
-      this.modalDetails.nationalId == '')) {
-    this.ValidateObjMsg = { status: false, msg: 'ادخل رقم هوية العميل' };
-    return this.ValidateObjMsg;
-  }
     this.ValidateObjMsg = { status: true, msg: null };
     return this.ValidateObjMsg;
   }

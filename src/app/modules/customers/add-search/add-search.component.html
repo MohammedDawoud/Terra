@@ -486,8 +486,8 @@
               <input
                 type="text"
                 autocomplete="off"
-                minlength="10"
-                maxlength="10"
+                minlength="11"
+                maxlength="11"
                 (keypress)="keyPress($event)"
                 class="form-control {{
                   modalDetails.mainPhoneNo == null
@@ -508,8 +508,6 @@
                 type="text"
                 class="form-control"
                 id="subMainPhoneNo"
-                minlength="10"
-                maxlength="10"
                 (keypress)="keyPress($event)"
                 autocomplete="off"
                 #subMainPhoneNo="ngModel"
