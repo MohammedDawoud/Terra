@@ -489,11 +489,7 @@
                 minlength="11"
                 maxlength="11"
                 (keypress)="keyPress($event)"
-                class="form-control {{
-                  modalDetails.mainPhoneNo == null
-                    ? 'errorInput'
-                    : ''
-                }}"
+                class="form-control {{ modalDetails.mainPhoneNo == null? 'errorInput': ''}}"
                 id="mainPhoneNo"
                 name="mainPhoneNo"
                 placeholder="{{ 'تليفون العميل  الرئيسي	' | translate }} "
@@ -562,11 +558,7 @@
               </label>
               <div class="flex">
               <ng-select
-                class="w-full p-0 form-control {{
-                  modalDetails.cityId == null
-                    ? 'errorInput'
-                    : ''
-                }}"
+                class="w-full p-0 form-control {{modalDetails.cityId == null ? 'errorInput': ''}}"
                 placeholder="{{ 'Area' | translate }}" 
                 [(ngModel)]="modalDetails.cityId"
                 [ngModelOptions]="{ standalone: true }"

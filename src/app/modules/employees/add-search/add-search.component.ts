@@ -136,8 +136,12 @@ export class AddSearchComponent implements OnInit {
     'employeeCode',
     'nameAr',
     'mainPhoneNo',
-    'nationalId',
+    'salary',
+    'address',
+    'jobName',
+    'managerName',
     'statusName',
+    'addDate',
     'operations',
   ];
   displayedColumn: any = {
@@ -440,8 +444,7 @@ export class AddSearchComponent implements OnInit {
     custObj.accountId = this.modalDetails.accountId;
     custObj.subMainPhoneNo = this.modalDetails.subMainPhoneNo;
     custObj.mainPhoneNo = this.modalDetails.mainPhoneNo;
-    //custObj.status = this.modalDetails.status;
-    custObj.status = true;
+    custObj.status = this.modalDetails.status;
 
     custObj.directManagerId = this.modalDetails.directManagerId;
     custObj.jobId = this.modalDetails.jobId;
@@ -490,13 +493,17 @@ export class AddSearchComponent implements OnInit {
     ) {
       this.ValidateObjMsg = { status: false, msg: ' أدخل أسم الموظف عربي' };
       return this.ValidateObjMsg;
-    } else if (
-      this.modalDetails.nameEn == null ||
-      this.modalDetails.nameEn == ''
-    ) {
-      this.ValidateObjMsg = { status: false, msg: 'أدخل أسم الموظف انجليزي' };
-      return this.ValidateObjMsg;
-    } else if (this.modalDetails.branchId == null) {
+    }
+    else if ((this.modalDetails.nationalId == null ||
+      this.modalDetails.nationalId == '')
+  ) {
+    this.ValidateObjMsg = {
+      status: false,
+      msg: 'ادخل رقم الهوية للموظف',
+    };
+    return this.ValidateObjMsg;
+  } 
+  else if (this.modalDetails.branchId == null) {
       this.ValidateObjMsg = { status: false, msg: 'اختر فرع الموظف' };
       return this.ValidateObjMsg;
     } else if (
@@ -508,38 +515,77 @@ export class AddSearchComponent implements OnInit {
     }
     else if ((this.modalDetails.mainPhoneNo == null ||this.modalDetails.mainPhoneNo == '')
     ) {
-      this.ValidateObjMsg = { status: false, msg: 'ادخل جوال الموظف' };
+      this.ValidateObjMsg = { status: false, msg: 'ادخل تليفون الموظف' };
       return this.ValidateObjMsg;
     }
-    else if ((this.modalDetails.nationalId == null ||
-        this.modalDetails.nationalId == '')
+    else if(this.modalDetails.mainPhoneNo.length<11)
+    {
+      this.ValidateObjMsg = { status: false, msg: 'لا يمكنك الحفظ أقل من 11 رقم' };
+      return this.ValidateObjMsg;
+    }
+    else if ((this.modalDetails.salary == null ||this.modalDetails.salary == '')
     ) {
-      this.ValidateObjMsg = {
-        status: false,
-        msg: 'ادخل رقم الهوية للموظف',
-      };
+      this.ValidateObjMsg = { status: false, msg: 'ادخل مرتب الموظف' };
       return this.ValidateObjMsg;
     }
-    if ((this.modalDetails.nationalId == null ||
-      this.modalDetails.nationalId == '')) {
-    this.ValidateObjMsg = { status: false, msg: 'ادخل رقم هوية الموظف' };
-    return this.ValidateObjMsg;
-  }
+    else if ((this.modalDetails.address == null ||this.modalDetails.address == '')
+    ) {
+      this.ValidateObjMsg = { status: false, msg: 'ادخل العنوان' };
+      return this.ValidateObjMsg;
+    }
+    else if ((this.modalDetails.jobId == null ||this.modalDetails.jobId == '')
+    ) {
+      this.ValidateObjMsg = { status: false, msg: 'ادخل الوظيفة' };
+      return this.ValidateObjMsg;
+    }
+    else if ((this.modalDetails.appointmentDate == null ||this.modalDetails.appointmentDate == '')
+    ) {
+      this.ValidateObjMsg = { status: false, msg: 'ادخل تاريخ التعيين' };
+      return this.ValidateObjMsg;
+    }
+
     this.ValidateObjMsg = { status: true, msg: null };
     return this.ValidateObjMsg;
   }
+
+  keyPress(event: any) {
+    var ew = event.which;
+    if (ew > 31 && (ew < 48 || ew > 57)) {
+      return false;
+    }
+    return true;
+  }
+
+  locale = 'en-US';
+  options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+    formatMatcher:"basic"
+  };
 
   exportData() {
     let x = [];
 
     for (let index = 0; index < this.dataSourceTemp.length; index++) {
+      let date = new Date(this.dataSourceTemp[index].addDate);
+      const formatter = new Intl.DateTimeFormat(this.locale, this.options);
+      const formattedDate = formatter.format(date);
       x.push({
         branchName: this.dataSourceTemp[index].branchName,
         employeeCode: this.dataSourceTemp[index].employeeCode,
         employeeName: this.dataSourceTemp[index].nameAr,
         mainPhoneNo: this.dataSourceTemp[index].mainPhoneNo,
-        nationalId: this.dataSourceTemp[index].nationalId,
+        salary: this.dataSourceTemp[index].salary,
+        address: this.dataSourceTemp[index].address,
         jobName: this.dataSourceTemp[index].jobName,
+        managerName: this.dataSourceTemp[index].managerName,
+        statusName: this.dataSourceTemp[index].statusName,
+        addDate: formattedDate,
+
       });
     }
     debugger;
@@ -584,6 +630,7 @@ export class AddSearchComponent implements OnInit {
       jobId: null,
       salary: null,
       appointmentDate: null,
+      status:true,
       notes: null,
       accountId: null,
       accountName: null,
@@ -643,5 +690,118 @@ export class AddSearchComponent implements OnInit {
   public ngOnDestroy(): void {
     this.subscription?.unsubscribe();
   }
+
+  //------------------------------Search--------------------------------------------------------
+//#region 
+
+  dataSearch: any = {
+    filter: {
+      enable: false,
+      date: null,
+      isChecked: false,
+      ListName:[],
+      ListCode:[],
+      ListPhone:[],
+      ListJob:[],
+      employeeId:null,
+      jobId:null,
+      showFilters:false
+    },
+  };
+
+FillSerachLists(dataT:any){
+  this.FillEmployeeListName(dataT);
+  this.FillEmployeeListCode(dataT);
+  this.FillEmployeeListPhone(dataT);
+  this.FillEmployeeListJob(dataT);
+}
+
+FillEmployeeListName(dataT:any){
+  const ListLoad = dataT.map((item: { employeeId: any; nameAr: any; }) => {
+    const container:any = {}; container.id = item.employeeId; container.name = item.nameAr; return container;
+  })
+  const key = 'id';
+  const arrayUniqueByKey = [...new Map(ListLoad.map((item: { [x: string]: any; }) => [item[key], item])).values()];
+  this.dataSearch.filter.ListName=arrayUniqueByKey;
+}
+FillEmployeeListCode(dataT:any){
+  const ListLoad = dataT.map((item: { employeeId: any; employeeCode: any; }) => {
+    const container:any = {}; container.id = item.employeeId; container.name = item.employeeCode; return container;
+  })
+  const key = 'id';
+  const arrayUniqueByKey = [...new Map(ListLoad.map((item: { [x: string]: any; }) => [item[key], item])).values()];
+  this.dataSearch.filter.ListCode=arrayUniqueByKey;
+}
+FillEmployeeListPhone(dataT:any){
+  const ListLoad = dataT.map((item: { employeeId: any; mainPhoneNo: any; }) => {
+    const container:any = {}; container.id = item.employeeId; container.name = item.mainPhoneNo; return container;
+  })
+  const key = 'id';
+  const arrayUniqueByKey = [...new Map(ListLoad.map((item: { [x: string]: any; }) => [item[key], item])).values()];
+  this.dataSearch.filter.ListPhone=arrayUniqueByKey;
+}
+FillEmployeeListJob(dataT:any){
+  const ListLoad = dataT.map((item: { jobId: any; jobName: any; }) => {
+    const container:any = {}; container.id = item.jobId; container.name = item.jobName; console.log("container",container); return container;   
+  })
+  const key = 'id';
+  const arrayUniqueByKey = [...new Map(ListLoad.map((item: { [x: string]: any; }) => [item[key], item])).values()];
+  this.dataSearch.filter.ListJob=arrayUniqueByKey;
+  this.dataSearch.filter.ListJob = this.dataSearch.filter.ListJob.filter((d: { id: any }) => (d.id !=null && d.id!=0));
+}
+
+RefreshDataCheck(from: any, to: any){
+  this.dataSource.data=this.dataSourceTemp;
+  if(!(from==null || from=="" || to==null || to==""))
+  {
+    debugger
+    this.dataSource.data = this.dataSource.data.filter((item: any) => {
+      var AccDate=new Date(item.addDate);
+      var AccFrom=new Date(from);
+      var AccTo=new Date(to);
+      return AccDate.getTime() >= AccFrom.getTime() &&
+      AccDate.getTime() <= AccTo.getTime();
+  });
+  }
+  if(this.dataSearch.filter.employeeId!=null && this.dataSearch.filter.employeeId!="")
+  {
+    this.dataSource.data = this.dataSource.data.filter((d: { employeeId: any }) => d.employeeId == this.dataSearch.filter.employeeId);
+  }
+  if(this.dataSearch.filter.jobId!=null && this.dataSearch.filter.jobId!="")
+  {
+    this.dataSource.data = this.dataSource.data.filter((d: { jobId: any }) => d.jobId == this.dataSearch.filter.jobId);
+  } 
+ 
+}
+
+ClearDate(){
+  if(this.dataSearch.filter.enable==false){ 
+    this.dataSearch.filter.date=null;   
+    this.RefreshDataCheck(null,null);
+  }
+}
+CheckDate(event: any) {
+  debugger
+  if (event != null) {
+    var from = this._sharedService.date_TO_String(event[0]);
+    var to = this._sharedService.date_TO_String(event[1]);
+    this.RefreshDataCheck(from, to);
+  } else {    
+    this.RefreshDataCheck(null,null);
+  }
+}
+RefreshData(){
+  debugger
+  if( this.dataSearch.filter.date==null)
+  {
+  this.RefreshDataCheck(null,null);
+  }
+  else
+  {
+  this.RefreshDataCheck(this.dataSearch.filter.date[0],this.dataSearch.filter.date[1]);
+  }
+}
+//#endregion 
+//------------------------------Search--------------------------------------------------------
 
 }

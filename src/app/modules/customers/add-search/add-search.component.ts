@@ -144,20 +144,7 @@ export class AddSearchComponent implements OnInit {
     usersMail: ['select', 'name', 'email'],
     usersMobile: ['select', 'name', 'mobile'],
   };
-  dataSearch: any = {
-    filter: {
-      enable: false,
-      date: null,
-      isChecked: false,
-      ListName:[],
-      ListCode:[],
-      ListPhone:[],
-      ListCity:[],
-      customerId:null,
-      cityId:null,
-      showFilters:false
-    },
-  };
+
 
 
   EditModel: any = {
@@ -245,80 +232,6 @@ export class AddSearchComponent implements OnInit {
     this.dataSource.sort = this.sort;
   }
 
-  //--------------------------------------------Search-------------------------------------------
-  //#region 
-
-  // checkValue(event: any) {
-  //   if (event == 'A') {
-  //     this.getAllCustomers();
-  //   } else {
-  //     this.RefreshData();
-  //   }
-  // }
-
-
-  RefreshDataCheck(from: any, to: any){
-
-    this.dataSource.data=this.dataSourceTemp;
-
-    // if((from==null || from=="")&&(to==null || to=="")&&(this.dataSearch.customerId==null || this.dataSearch.customerId=="")
-    //   &&(this.dataSearch.customerCode==null || this.dataSearch.customerCode=="")
-    //   &&(this.dataSearch.mainPhoneNo==null || this.dataSearch.mainPhoneNo=="")
-    //   &&(this.dataSearch.cityId==null || this.dataSearch.cityId==""))
-    //   {
-    //     this.dataSource.data=this.dataSourceTemp;
-    //   }
-    if(!(from==null || from=="" || to==null || to==""))
-    {
-      debugger
-      this.dataSource.data = this.dataSource.data.filter((item: any) => {
-        var AccDate=new Date(item.addDate);
-        var AccFrom=new Date(from);
-        var AccTo=new Date(to);
-        return AccDate.getTime() >= AccFrom.getTime() &&
-        AccDate.getTime() <= AccTo.getTime();
-    });
-    }
-    if(this.dataSearch.filter.customerId!=null && this.dataSearch.filter.customerId!="")
-    {
-      this.dataSource.data = this.dataSource.data.filter((d: { customerId: any }) => d.customerId == this.dataSearch.filter.customerId);
-    }
-    if(this.dataSearch.filter.cityId!=null && this.dataSearch.filter.cityId!="")
-    {
-      this.dataSource.data = this.dataSource.data.filter((d: { cityId: any }) => d.cityId == this.dataSearch.filter.cityId);
-    } 
-   
-  }
-
-  ClearDate(){
-    if(this.dataSearch.filter.enable==false){ 
-      this.dataSearch.filter.date=null;   
-      this.RefreshDataCheck(null,null);
-    }
-  }
-  CheckDate(event: any) {
-    debugger
-    if (event != null) {
-      var from = this._sharedService.date_TO_String(event[0]);
-      var to = this._sharedService.date_TO_String(event[1]);
-      this.RefreshDataCheck(from, to);
-    } else {    
-      this.RefreshDataCheck(null,null);
-    }
-  }
-  RefreshData(){
-    debugger
-    if( this.dataSearch.filter.date==null)
-    {
-    this.RefreshDataCheck(null,null);
-    }
-    else
-    {
-    this.RefreshDataCheck(this.dataSearch.filter.date[0],this.dataSearch.filter.date[1]);
-    }
-  }
-  //#endregion
-  //----------------------------------EndSearch---------------------------------------------------
   //------------------ Fill DATA ----------------------------------
 
   fillBranchByUserId(modalType:any) {
@@ -684,7 +597,23 @@ export class AddSearchComponent implements OnInit {
       this.FillSerachLists(data);    
     });
   }
+//------------------------------Search--------------------------------------------------------
+//#region 
 
+dataSearch: any = {
+  filter: {
+    enable: false,
+    date: null,
+    isChecked: false,
+    ListName:[],
+    ListCode:[],
+    ListPhone:[],
+    ListCity:[],
+    customerId:null,
+    cityId:null,
+    showFilters:false
+  },
+};
 
   FillSerachLists(dataT:any){
     this.FillCustomerListName(dataT);
@@ -726,6 +655,60 @@ export class AddSearchComponent implements OnInit {
     this.dataSearch.filter.ListCity=arrayUniqueByKey;
     this.dataSearch.filter.ListCity = this.dataSearch.filter.ListCity.filter((d: { id: any }) => (d.id !=null && d.id!=0));
   }
+
+  RefreshDataCheck(from: any, to: any){
+    this.dataSource.data=this.dataSourceTemp;
+    if(!(from==null || from=="" || to==null || to==""))
+    {
+      debugger
+      this.dataSource.data = this.dataSource.data.filter((item: any) => {
+        var AccDate=new Date(item.addDate);
+        var AccFrom=new Date(from);
+        var AccTo=new Date(to);
+        return AccDate.getTime() >= AccFrom.getTime() &&
+        AccDate.getTime() <= AccTo.getTime();
+    });
+    }
+    if(this.dataSearch.filter.customerId!=null && this.dataSearch.filter.customerId!="")
+    {
+      this.dataSource.data = this.dataSource.data.filter((d: { customerId: any }) => d.customerId == this.dataSearch.filter.customerId);
+    }
+    if(this.dataSearch.filter.cityId!=null && this.dataSearch.filter.cityId!="")
+    {
+      this.dataSource.data = this.dataSource.data.filter((d: { cityId: any }) => d.cityId == this.dataSearch.filter.cityId);
+    } 
+   
+  }
+
+  ClearDate(){
+    if(this.dataSearch.filter.enable==false){ 
+      this.dataSearch.filter.date=null;   
+      this.RefreshDataCheck(null,null);
+    }
+  }
+  CheckDate(event: any) {
+    debugger
+    if (event != null) {
+      var from = this._sharedService.date_TO_String(event[0]);
+      var to = this._sharedService.date_TO_String(event[1]);
+      this.RefreshDataCheck(from, to);
+    } else {    
+      this.RefreshDataCheck(null,null);
+    }
+  }
+  RefreshData(){
+    debugger
+    if( this.dataSearch.filter.date==null)
+    {
+    this.RefreshDataCheck(null,null);
+    }
+    else
+    {
+    this.RefreshDataCheck(this.dataSearch.filter.date[0],this.dataSearch.filter.date[1]);
+    }
+  }
+  //#endregion 
+//------------------------------Search--------------------------------------------------------
 
   resetModal() {
     this.isSubmit = false;
