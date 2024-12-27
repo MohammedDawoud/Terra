@@ -164,7 +164,6 @@ export class AddSearchComponent implements OnInit {
     private ngbModalService: NgbModal,
     private authenticationService: AuthenticationService,
     private translate: TranslateService,
-    private sharedService: SharedService,
     private domSanitizer: DomSanitizer
   ) {
     this.userG = this.authenticationService.userGlobalObj;
@@ -247,7 +246,7 @@ export class AddSearchComponent implements OnInit {
       {
         if (modalType == 'addClient'){
           debugger
-          this.modalDetails.branchId = parseInt(this.sharedService.getStoBranch());
+          this.modalDetails.branchId = parseInt(this._sharedService.getStoBranch());
           this.getBranchAccount(this.modalDetails.branchId,modalType);
         }     
       }
@@ -573,6 +572,8 @@ export class AddSearchComponent implements OnInit {
         customerCode: this.dataSourceTemp[index].customerCode,
         customerName: this.dataSourceTemp[index].nameAr,
         mainPhoneNo: this.dataSourceTemp[index].mainPhoneNo,
+        subMainPhoneNo: this.dataSourceTemp[index].subMainPhoneNo,
+        email: this.dataSourceTemp[index].email,
         cityName: this.dataSourceTemp[index].cityName,
         address: this.dataSourceTemp[index].address,
         paytypeName: this.dataSourceTemp[index].paytypeName,

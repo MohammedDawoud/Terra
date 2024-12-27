@@ -253,7 +253,7 @@ export class VerticalSidebarComponent implements OnInit {
         link: null,
         type: 'multiple',
         icon: '/assets/sidebar-icons/bxs-dashboard.png',
-        title:"",
+        title:"411133",
         show: this.userG?.pagesList.includes(411133),
 
         // show: this.userG?.userPrivileges.includes(17),
@@ -263,7 +263,7 @@ export class VerticalSidebarComponent implements OnInit {
             link: null,
             type: 'multiple',
             icon: '/assets/sidebar-icons/settings-solid.png',
-            title:"",
+            title:"4112737",
             show: this.userG?.pagesList.includes(4112737),
             // show: this.userG?.userPrivileges.includes(1701),
 
@@ -276,7 +276,7 @@ export class VerticalSidebarComponent implements OnInit {
                   this.lang == 'ar'
                     ? '/assets/sidebar-icons/Group 40278.png'
                     : '/assets/sidebar-icons/Group 40280.png',
-                    title:"",
+                    title:"4117341",
                     show: this.userG?.pagesList.includes(4117341),
                     // show: this.userG?.userPrivileges.includes(170101),
               },  

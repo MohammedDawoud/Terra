@@ -42,6 +42,10 @@ export class EmployeeService {
     var url=`${environment.apiEndPoint}Employee/GenerateEmployeeNumber`;
     return this.http.get<any>(url);
   }
+  EmployeeNumber_Reservation(BranchId:any) {
+    var url=`${environment.apiEndPoint}Employee/EmployeeNumber_Reservation?BranchId=${BranchId}`;
+    return this.http.get<any>(url);
+  }
   FillCitySelect() {
     return this.http.get<any>(environment.apiEndPoint+'Organizations/FillCitySelect');
   }

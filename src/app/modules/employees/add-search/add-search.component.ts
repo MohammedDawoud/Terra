@@ -257,12 +257,23 @@ export class AddSearchComponent implements OnInit {
   }
   //------------------ Fill DATA ----------------------------------
 
-  fillBranchByUserId() {
+  fillBranchByUserId(modalType:any) {
     this.service.FillBranchByUserIdSelect().subscribe((data) => {
       this.load_BranchUserId = data;
+
       if (this.load_BranchUserId.length == 1) {
         this.modalDetails.branchId = this.load_BranchUserId[0].id;
-        this.getBranchAccountE(this.modalDetails.branchId);
+        if (modalType == 'addEmployee'){
+          this.getBranchAccountE(this.modalDetails.branchId,modalType);
+        }
+      }
+      else
+      {
+        if (modalType == 'addEmployee'){
+          debugger
+          this.modalDetails.branchId = parseInt(this._sharedService.getStoBranch());
+          this.getBranchAccountE(this.modalDetails.branchId,modalType);
+        }     
       }
     });
   }
@@ -287,13 +298,20 @@ export class AddSearchComponent implements OnInit {
   }
 
 
-  GenerateEmployeeNumber(){
-    this.service.GenerateEmployeeNumber().subscribe(data=>{
+  // GenerateEmployeeNumber(){
+  //   this.service.GenerateEmployeeNumber().subscribe(data=>{
+  //     this.modalDetails.employeeCode=data.reasonPhrase;
+  //   });
+  // }
+
+  EmployeeNumber_Reservation(BranchId:any){
+    this.service.EmployeeNumber_Reservation(BranchId).subscribe(data=>{
       this.modalDetails.employeeCode=data.reasonPhrase;
     });
   }
+
   objBranchAccount: any = null;
-  getBranchAccountE(BranchId: any) {
+  getBranchAccountE(BranchId: any,modalType:any) {
     debugger
     this.objBranchAccount = null;
     this.modalDetails.accountName = null;
@@ -302,6 +320,14 @@ export class AddSearchComponent implements OnInit {
       {
         this.modalDetails.accountName =data.result.nameAr + ' - ' + data.result.accountCode;
         this.objBranchAccount = data.result;
+        if(modalType == 'addEmployee')
+        {
+          this.EmployeeNumber_Reservation(BranchId);
+        }
+      } 
+      else
+      {
+        this.modalDetails.employeeCode=null;
       }    
       },
       error: (error) => {},
@@ -312,14 +338,14 @@ export class AddSearchComponent implements OnInit {
   //-----------------------OPEN MODAL--------------------------------------------------
 
   openModal(template: TemplateRef<any>, data?: any, modalType?: any) {
-    this.fillBranchByUserId();
+    this.fillBranchByUserId(modalType);
     this.FillJobSelect_Emp();
 
     this.resetModal();
     //this.getEmailOrganization();
     debugger
     if (modalType == 'addEmployee') {
-      this.GenerateEmployeeNumber();
+      // this.GenerateEmployeeNumber();
       this.FillEmployeeselectW(0);
     }
     console.log('this.modalDetails');
@@ -330,7 +356,7 @@ export class AddSearchComponent implements OnInit {
       this.FillEmployeeselectW( this.modalDetails.employeeId);
       if (modalType == 'editEmployee') {
         this.modalDetails.appointmentDate = this._sharedService.String_TO_date(this.modalDetails.appointmentDate);
-        this.getBranchAccountE(this.modalDetails.branchId);
+        this.getBranchAccountE(this.modalDetails.branchId,modalType);
         debugger;
         if (data.agentAttachmentUrl != null) {
           this.modalDetails.attachmentUrl =

@@ -283,7 +283,7 @@
         <!-- Row shown when there is no matching data. -->
         <tr class="mat-row" *matNoDataRow>
           <td class="mat-cell" colspan="7">
-            {{ "No result found for " }} "{{ input.value }}"
+            {{ "لا يوجد نتائج" }}
           </td>
         </tr>
       </table>
@@ -433,7 +433,7 @@
                 required
                 class="w-full p-0 form-control {{modalDetails.branchId == null ? 'errorInput': ''}}"
                 [disabled]="load_BranchUserId?.length == 1"
-                (change)="getBranchAccountE(modalDetails.branchId)"
+                (change)="getBranchAccountE(modalDetails.branchId,'addEmployee')"
                 [clearable]="false"
                 name="branchId"
                 placeholder=" {{ 'فرع الموظف' | translate }}"
