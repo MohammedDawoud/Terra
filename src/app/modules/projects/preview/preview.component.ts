@@ -57,6 +57,8 @@ import {
 import { SharedService } from 'src/app/core/services/shared.service';
 import { CustomerService } from 'src/app/core/services/customer-services/customer.service';
 import { EmployeeService } from 'src/app/core/services/employee-services/employee.service';
+import { filesservice } from 'src/app/core/services/sys_Services/files.service';
+import { HttpEventType } from '@angular/common/http';
 
 const hijriSafe = require('hijri-date/lib/safe');
 const HijriDate = hijriSafe.default;
@@ -79,7 +81,6 @@ const toHijri = hijriSafe.toHijri;
 export class PreviewComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-  public uploadedFiles: Array<File> = [];
   dataSourceTemp: any = [];
   dataSource: MatTableDataSource<any> = new MatTableDataSource([{}]);
   _PreviewSMS: any = null;
@@ -179,6 +180,7 @@ export class PreviewComponent implements OnInit {
     private authenticationService: AuthenticationService,
     private customerService: CustomerService,
     private employeeService: EmployeeService,
+    private filesservice: filesservice,
     private translate: TranslateService,
     private domSanitizer: DomSanitizer
   ) {
@@ -283,14 +285,43 @@ export class PreviewComponent implements OnInit {
   }
   //------------------ Fill DATA ----------------------------------
 
-  fillBranchByUserId() {
+  fillBranchByUserId(modalType:any) {
     this.service.FillBranchByUserIdSelect().subscribe((data) => {
       this.load_BranchUserId = data;
+      debugger
+      if(modalType == 'addPreview2')
+      {
+        this.modalDetails.orderBarcode=1;
+      }
       if (this.load_BranchUserId.length == 1) {
         this.modalDetails.branchId = this.load_BranchUserId[0].id;
       }
+      if (this.load_BranchUserId.length == 1) {
+        this.modalDetails.branchId = this.load_BranchUserId[0].id;
+        if (modalType == 'addPreview1' || modalType == 'addPreview2'){
+          this.BranchChange(this.modalDetails.branchId,modalType);
+        }
+      }
+      else
+      {
+        this.modalDetails.branchId = parseInt(this._sharedService.getStoBranch());
+        if (modalType == 'addPreview1' || modalType == 'addPreview2'){
+          debugger
+          
+          this.BranchChange(this.modalDetails.branchId,modalType);
+        }     
+      }
+
     });
   }
+
+  BranchChange(BranchId: any,modalType:any) {
+    if(modalType == 'addPreview1'  || modalType == 'addPreview2')
+    {
+      this.PreviewNumber_Reservation(BranchId,this.modalDetails.orderBarcode,modalType);
+    }
+  }
+
   load_Customers: any=[];
   FillCustomerSelect() {
     this.customerService.FillCustomerSelect().subscribe((data) => {
@@ -333,21 +364,41 @@ export class PreviewComponent implements OnInit {
       });
     }  
   }
+  // GenerateOrderBarcodeNumber(){
+  //   this.service.GenerateOrderBarcodeNumber().subscribe(data=>{
+  //     this.modalDetails.orderBarcode=data.reasonPhrase;
+  //     if(!this.TransbarcodeActive)
+  //     {
+  //       this.GeneratePreviewNumberByBarcodeNum();
+  //     }
+  //   });
+  // }
   GenerateOrderBarcodeNumber(){
     this.service.GenerateOrderBarcodeNumber().subscribe(data=>{
       this.modalDetails.orderBarcode=data.reasonPhrase;
       if(!this.TransbarcodeActive)
       {
-        this.GeneratePreviewNumberByBarcodeNum();
+        //this.GeneratePreviewNumberByBarcodeNum();
+        this.PreviewNumber_Reservation(this.modalDetails.branchId,this.modalDetails.orderBarcode,this.modalDetails.type);
       }
     });
   }
+
+  PreviewNumber_Reservation(BranchId:any,orderBarcode:any,modalType:any){
+    if(!(BranchId==null || orderBarcode==null))
+    {
+      this.service.PreviewNumber_Reservation(BranchId,orderBarcode).subscribe(data=>{
+        this.modalDetails.previewCode=data.reasonPhrase;
+      });
+    }
+  }
+
 
   //-----------------------OPEN MODAL--------------------------------------------------
 
   openModal(template: TemplateRef<any>, data?: any, modalType?: any) {
     this.resetModal();
-    this.fillBranchByUserId();
+    this.fillBranchByUserId(modalType);
     if(this.TransbarcodeActive)
     {
       this.GetAllPreviewsSelectBarcode();
@@ -356,11 +407,17 @@ export class PreviewComponent implements OnInit {
     if (modalType == 'addPreview1') {
       if(!this.TransbarcodeActive)
       {
-        this.GeneratePreviewNumber();
-      }    
+        //this.GeneratePreviewNumber();
+        //this.PreviewNumber_Reservation(this.modalDetails.branchId);
+      }   
     }
-    if (modalType == 'addPreview2') {    
-      this.GenerateOrderBarcodeNumber();
+    if (modalType == 'addPreview2') {
+      this.modalDetails.orderBarcode=1;
+      // this.modalDetails.previewCode=1;
+      //this.PreviewNumber_Reservation(this.modalDetails.branchId,this.modalDetails.orderBarcode,'addPreview2');
+      //this.GenerateOrderBarcodeNumber();
+      //this.PreviewNumber_Reservation(this.modalDetails.branchId);
+      //this.PreviewNumber_Reservation(this.modalDetails.branchId,"First");
       this.TransbarcodeActive=false;
     }
     console.log('this.modalDetails');
@@ -420,6 +477,10 @@ export class PreviewComponent implements OnInit {
     if (type === 'deleteModalPerm') {
       this.publicidRow = data.idRow;
     }
+    if(type === 'ShowPreviewFiles')
+    {
+      this.GetAllPreviewFiles(this.modalDetails.previewId);
+    }
     this.ngbModalService
       .open(content, {
         ariaLabelledBy: 'modal-basic-title',
@@ -455,15 +516,61 @@ export class PreviewComponent implements OnInit {
     this.modalDetails.nameEn = null;
     this.isSubmit = false;
   }
-  ShowImg(pho: any) {
-    var img = environment.PhotoURL + pho;
-    return img;
+
+  downloadFile(data: any) {
+    debugger
+    var link="file:///D:/Terra/testtgrebe/64background.png";
+    console.log(link);
+    window.open(link, '_blank');
   }
-  ShowAgentFile(file: any) {
-    if (file != null) {
-      window.open(file, '_blank');
+
+  downloadFile3(data: any) {
+    try
+    {
+      debugger
+      //var link=environment.PhotoURL+"/Uploads/Users/img1.jpg";
+      var link=environment.PhotoURL+data.fileUrl;
+      console.log(link);
+      window.open(link, '_blank');
+    }
+    catch (error)
+    {
+      this.toast.error("تأكد من الملف",this.translate.instant("Message"));
     }
   }
+
+  downloadFile2(data: any) {
+    try
+    {
+      debugger
+      //var link=environment.PhotoURL+data.fileUrl;
+      var link="http://"+data.fileUrl;
+      console.log(link);
+      window.open(link, '_blank');
+    }
+    catch (error)
+    {
+      this.toast.error("تأكد من الملف",this.translate.instant("Message"));
+    }
+  }
+  PreviewFileRowSelected: any;
+
+  getPreviewFileRow(row: any) {
+    debugger
+    this.PreviewFileRowSelected = row;
+  }
+  confirmDeleteFile(): void {
+    this.service.DeleteFiles(this.PreviewFileRowSelected.fileId).subscribe((result) => {
+        if (result.statusCode == 200) {
+          this.toast.success(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
+          this.GetAllPreviewFiles(this.PreviewFileRowSelected.previewId);
+          this.modal?.hide();
+        } else {
+          this.toast.error(result.reasonPhrase, this.translate.instant('Message'));
+        }
+      });
+  }
+
 
   TransbarcodeActive:boolean=false;
   confirmAddPreviewMessage(){
@@ -472,6 +579,7 @@ export class PreviewComponent implements OnInit {
   declineAddPreviewMessage(){
     this.TransbarcodeActive=false;
     this.GenerateOrderBarcodeNumber();
+    //this.PreviewNumber_Reservation(this.modalDetails.branchId,this.modalDetails.orderBarcode,"addPreview1");
   }
 
 
@@ -634,12 +742,23 @@ export class PreviewComponent implements OnInit {
       this.allPreviewCount = data.length;
     });
   }
+  PreviewFilesList: any=[];
+
+  GetAllPreviewFiles(PreviewId:any) {
+    this.PreviewFilesList=[];
+    this.service.GetAllPreviewFiles(PreviewId).subscribe((data: any) => {
+      this.PreviewFilesList = data;
+    });
+  }
+  
+
 
   getpreviewdata(customerId:any){
     this.modalDetails.customerId=customerId;
     let data = this.load_BarcodesCustomer.filter((d: { id: any }) => d.id == customerId); 
     this.modalDetails.orderBarcode=data[0].name;
-    this.GeneratePreviewNumberByBarcodeNum();
+    //this.GeneratePreviewNumberByBarcodeNum();
+    this.PreviewNumber_Reservation(this.modalDetails.branchId,this.modalDetails.orderBarcode,this.modalDetails.type)
   }
 
   CustomerChange(customerId:any){
@@ -647,6 +766,7 @@ export class PreviewComponent implements OnInit {
     if(this.TransbarcodeActive)
     {
       this.modalDetails.previewBarcodeSelect=null;
+      this.modalDetails.previewCode=null;
       if(customerId==null)
       {
         this.load_BarcodesCustomer=this.load_BarcodesCustomerTemp;
@@ -849,4 +969,97 @@ export class PreviewComponent implements OnInit {
     this.subscription?.unsubscribe();
   }
 
+  //--------------------------------UploadFiles---------------------------------------
+  //#region 
+public uploadedFiles: Array<File> = [];
+selectedFiles?: FileList;
+currentFile?: File;
+
+progress = 0;
+uploading=false;
+disableButtonSave_File = false;
+dataFile:any={
+  FileId:0,
+  FileName:null,
+}
+resetprog(){
+  this.disableButtonSave_File = false;
+  this.progress = 0;
+  this.uploading=false;
+}
+
+  selectFile(event: any): void {
+    this.selectedFiles = event.target.files;
+  }
+  SaveprojectFiles(type:any,dataFile:any,uploadtype:any) {
+  if(this.dataFile.FileName==null)
+  {
+    this.toast.error("من فضلك أكمل البيانات ", 'رسالة');
+    return;
+  }
+  if(this.control?.value.length>0){
+  }
+    var _Files: any = {};
+    _Files.fileId=0;
+    _Files.previewId=this.modalDetails.previewId;
+    _Files.fileName=this.dataFile.FileName;
+    _Files.typePageId=1;
+    _Files.notes=null;
+    this.progress = 0;
+    this.disableButtonSave_File = true;
+    this.uploading=true;
+    setTimeout(() => {
+      this.resetprog();
+    }, 60000);
+
+    if (this.control?.value.length>0) {
+      var obj=_Files;
+      this.filesservice.UploadFiles(this.control?.value[0],obj).subscribe((result: any)=>{
+        if (result.type === HttpEventType.UploadProgress) {
+          this.progress = Math.round(100 * result.loaded / result.total);
+        }
+        debugger
+        if(result?.body?.statusCode==200){
+          this.control.removeFile(this.control?.value[0]);
+          this.toast.success(this.translate.instant(result?.body?.reasonPhrase),'رسالة');
+          this.getAllPreviews();
+          this.ClearField();
+          this.resetprog();
+        }
+        else if(result?.body?.statusCode>200){
+          this.toast.error(this.translate.instant(result?.body?.reasonPhrase), 'رسالة');
+          this.resetprog();
+        }
+        else if(result?.type>=0)
+        {}
+        else{this.toast.error(this.translate.instant(result?.body?.reasonPhrase), 'رسالة');this.resetprog();}
+
+      });
+    }
+    else{this.toast.error("من فضلك أختر ملف", 'رسالة');}
+
+
+  }
+ClearField(){
+  this.dataFile.FileId=0;
+  this.dataFile.FileName=null;
+  this.selectedFiles = undefined;
+  this.uploadedFiles=[];
+}
+
+clickfile(evenet:any)
+{
+  console.log(evenet);
+}
+focusfile(evenet:any)
+{
+  console.log(evenet);
+}
+blurfile(evenet:any)
+{
+  console.log(evenet);
+}
+
+  //-------------------------------EndUploadFiles-------------------------------------
+//#endregion
 }

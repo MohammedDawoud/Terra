@@ -271,10 +271,12 @@ export class AddSearchComponent implements OnInit {
     });
   }
   SocialMedia_Cus: any;
+  SocialMediaPopup_Cus: any;
 
   FillSocialMediaSelect_Cus() {
     this.service.FillSocialMediaSelect().subscribe((data) => {
       this.SocialMedia_Cus = data;
+      this.SocialMediaPopup_Cus=data;
     });
   }
 
@@ -588,8 +590,6 @@ export class AddSearchComponent implements OnInit {
 
   getAllCustomers() {
     this.service.GetAllCustomers_Branch().subscribe((data: any) => {
-      console.log(data);
-
       this.dataSource = new MatTableDataSource(data);
       this.dataSourceTemp = data;
       this.dataSource.paginator = this.paginator;
@@ -799,18 +799,23 @@ dataSearch: any = {
     this.subscription?.unsubscribe();
   }
 
-
-  //-----------------------------------SaveCity-------------------------------
-  //#region 
-  selectedCity: any;
-
   AddDataType: any = {
     Citydata: {
       id: 0,
       namear: null,
       nameen: null,
     },
+    socialMediadata: {
+      id: 0,
+      namear: null,
+      nameen: null,
+    },
   };
+  //-----------------------------------SaveCity-------------------------------
+  //#region 
+  selectedCity: any;
+
+
   CityRowSelected: any;
   getCityRow(row: any) {
     this.CityRowSelected = row;
@@ -819,7 +824,7 @@ dataSearch: any = {
     this.modalDetails.cityId=data.id;
   }
   confirmCityDelete() {
-    this._organization.DeletePreviewType(this.CityRowSelected.id).subscribe((result: any) => {
+    this._organization.DeleteCity(this.CityRowSelected.id).subscribe((result: any) => {
         if (result.statusCode == 200) {
           this.toast.success(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
           this.FillCitySelect_Cus();
@@ -857,6 +862,59 @@ dataSearch: any = {
     this.AddDataType.Citydata.id = 0;
     this.AddDataType.Citydata.namear = null;
     this.AddDataType.Citydata.nameen = null;
+  }
+  //#endregion
+  //----------------------------------EndSavePreviewtype-----------------------------
+
+    //-----------------------------------SaveCity-------------------------------
+  //#region 
+  selectedsocialMedia: any;
+  socialMediaRowSelected: any;
+  getsocialMediaRow(row: any) {
+    this.socialMediaRowSelected = row;
+  }
+  setsocialMediaInSelect(data: any, modal: any) {
+    this.modalDetails.socialMediaId=data.id;
+  }
+  confirmsocialMediaDelete() {
+    this._organization.DeleteSocialMedia(this.socialMediaRowSelected.id).subscribe((result: any) => {
+        if (result.statusCode == 200) {
+          this.toast.success(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
+          this.FillSocialMediaSelect_Cus();
+        } else {
+          this.toast.error(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
+        }
+      });
+  }
+
+  SaveSocialMedia() {
+    if (
+      this.AddDataType.socialMediadata.namear == null ||
+      this.AddDataType.socialMediadata.nameen == null
+    ) {
+      this.toast.error('من فضلك أكمل البيانات', 'رسالة');
+      return;
+    }
+    var socialMediaObj: any = {};
+    socialMediaObj.socialMediaId = this.AddDataType.socialMediadata.id;
+    socialMediaObj.NameAr = this.AddDataType.socialMediadata.namear;
+    socialMediaObj.NameEn = this.AddDataType.socialMediadata.nameen;
+
+    var obj = socialMediaObj;
+    this._organization.SaveSocialMedia(obj).subscribe((result: any) => {
+      if (result.statusCode == 200) {
+        this.toast.success(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
+        this.resetsocialMedia();
+        this.FillSocialMediaSelect_Cus();
+      } else {
+        this.toast.error(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
+      }
+    });
+  }
+  resetsocialMedia() {
+    this.AddDataType.socialMediadata.id = 0;
+    this.AddDataType.socialMediadata.namear = null;
+    this.AddDataType.socialMediadata.nameen = null;
   }
   //#endregion
   //----------------------------------EndSavePreviewtype-----------------------------

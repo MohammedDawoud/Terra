@@ -602,22 +602,27 @@
               <label class="col-form-label">
                 {{ "عرفتنا عن طريق" | translate }}
               </label>
+              <div class="flex">
               <ng-select
-                class=" w-full p-0 form-control {{
-                  modalDetails.socialMediaId == null
-                    ? 'errorInput'
-                    : ''
-                }}"
-                placeholder="{{ 'عرفتنا عن طريق' | translate }}"
+                class="w-full p-0 form-control {{modalDetails.socialMediaId == null ? 'errorInput': ''}}"
+                placeholder="{{ 'عرفتنا عن طريق' | translate }}" 
                 [(ngModel)]="modalDetails.socialMediaId"
                 [ngModelOptions]="{ standalone: true }"
               >
-                <ng-option *ngFor="let item of SocialMedia_Cus" [value]="item.id">{{
-                  item.name
+                <ng-option *ngFor="let socialMedia of SocialMedia_Cus" [value]="socialMedia.id">{{
+                  socialMedia.name
                 }}</ng-option>
               </ng-select>
+              <button
+              type="button"
+              class="btn bg-base text-white"
+              style="padding: 5px 10px"
+              (click)="open(AddsocialMediaPopup, null, 'addsocialMedia')"
+            >
+              <i class="fa fa-plus"></i>
+            </button>
+              </div>
             </div>
-
 
             <div class="flex gap-2 items-end mt-3">
               <mat-slide-toggle
@@ -723,7 +728,7 @@
   </ng-template>
 
 
-<!-- Add option -->
+<!-- Add AddCityPopup -->
 <ng-template #AddCityPopup let-modal>
   <div
     style="background-color: var(--base-color)"
@@ -875,6 +880,174 @@
         mat-raised-button
         color="warn"
         (click)="confirmCityDelete(); modal.dismiss()"
+      >
+        {{ "Yes" | translate }}
+      </button>
+      <button
+        type="button"
+        (click)="modal.dismiss()"
+        mat-raised-button
+        color="basic"
+      >
+        {{ "No" | translate }}
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+
+<!-- Add AddsocialMediaPopup -->
+<ng-template #AddsocialMediaPopup let-modal>
+  <div
+    style="background-color: var(--base-color)"
+    class="modal-header text-white flex justify-between items-center"
+  >
+    <h4 class="m-0">
+      <span class="text-2xl"> نوع جديد </span>
+    </h4>
+    <button
+      type="button"
+      class="text-2xl text-white m-0"
+      (click)="modal?.dismiss()"
+    >
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+  <div class="modal-body text-center">
+    <form #addsocialMedia="ngForm" class="grid grid-cols-1 md:grid-cols-2 gap-2">
+      <div class="form-group">
+        <label for="socialMediaNameArtxt3" class="text-right col-form-label block">
+          {{ "nameAr" | translate }}
+          <span class="text-danger">*</span></label
+        >
+        <input
+          required
+          #socialMediaNameAr="ngModel"
+          [(ngModel)]="AddDataType.socialMediadata.namear"
+          class="form-control"
+          type="text"
+          id="socialMediaNameArtxt3"
+          name="socialMediaNameArtxt3"
+          autocomplete="off"
+          [placeholder]="('Write' | translate) + ' ' + ('nameAr' | translate)"
+        />
+      </div>
+      <div class="form-group">
+        <label for="socialMediaNameEntxt3" class="text-right col-form-label block">
+          {{ "nameEn" | translate }}
+          <span class="text-danger">*</span></label
+        >
+        <div style="display: inline-flex; width: 100%">
+          <input
+            required
+            #socialMediaNameEnValue
+            #socialMediaNameEn="ngModel"
+            [(ngModel)]="AddDataType.socialMediadata.nameen"
+            class="form-control"
+            type="text"
+            id="socialMediaNameEntxt3"
+            name="socialMediaNameEntxt3"
+            autocomplete="off"
+            [placeholder]="('Write' | translate) + ' ' + ('nameEn' | translate)"
+          />
+          <a
+            class="btn"
+            id="CopysocialMediaName2"
+            (click)="
+              AddDataType.socialMediadata.nameen = AddDataType.socialMediadata.namear
+            "
+            ><i class="fa fa-copy"></i
+          ></a>
+        </div>
+      </div>
+    </form>
+    <div class="max-h-80 overflow-auto px-2">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>{{ "nameAr" | translate }}</th>
+            <th>{{ "nameEn" | translate }}</th>
+            <th
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'خيارات',
+                en: 'Operations'
+              }"
+            ></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let type of SocialMediaPopup_Cus"
+            (dblclick)="
+              setsocialMediaInSelect(type, modal); modal.dismiss('Cross click')
+            "
+          >
+            <td>{{ type.name }}</td>
+            <td>{{ type.nameEn }}</td>
+            <td class="flex gap-2 justify-center">
+              <button
+                class="p-2 bg-orange-100 hover:bg-orange-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+                (click)="
+                  AddDataType.socialMediadata.id = type.id;
+                  AddDataType.socialMediadata.namear = type.name;
+                  AddDataType.socialMediadata.nameen = type.nameEn
+                "
+              >
+                <i class="fa-regular fa-pen-to-square"></i>
+              </button>
+              <button
+                (click)="getsocialMediaRow(type);
+                  open(
+                    deletesocialMedia,
+                    AddDataType.socialMediadata,
+                    'deletesocialMedia'              
+                  )
+                "
+                class="p-2 bg-red-100 hover:bg-red-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+              >
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="flex gap-2 mt-3 pt-3 border-t border-neutral-300">
+      <button
+        class="btn bg-base text-white"
+        type="submit"
+        [disabled]="!AddDataType.socialMediadata.namear"
+        (click)="SaveSocialMedia()"
+      >
+        {{ "Save" | translate }}
+      </button>
+      <button (click)="modal.dismiss()" class="btn btn-secondary">
+        {{ "Back" | translate }}
+      </button>
+      <button (click)="resetsocialMedia()" class="btn bg-base text-white">
+        {{ "جديد" | translate }}
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<!-- deletesocialMediaModal -->
+<ng-template #deletesocialMedia let-modal>
+  <div class="modal-body text-center">
+    <p
+      [translate]="'name'"
+      [translateParams]="{
+        ar: 'هل تريد بالتأكيد حذف هذا الصف',
+        en: 'Are you sure to delete this row ?'
+      }"
+    ></p>
+    <div class="flex gap-2 justify-center mt-3">
+      <button
+        type="button"
+        mat-raised-button
+        color="warn"
+        (click)="confirmsocialMediaDelete(); modal.dismiss()"
       >
         {{ "Yes" | translate }}
       </button>

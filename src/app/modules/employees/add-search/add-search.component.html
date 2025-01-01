@@ -20,6 +20,12 @@
           ></span>
           <i class="fa-solid fa-user-plus"></i>
         </button>
+        <button class="flex gap-1 btn btn-danger" (click)="dataSearch.filter.showFilters = !dataSearch.filter.showFilters;">
+          <span
+            class="hidden md:block"
+            [translate]="'name'" [translateParams]="{ar: 'بحث ',en: 'Search '}"></span>
+          <i class="fa-solid fa-search"></i>
+          </button>
         <button
           class="flex gap-1 btn btn-warning"
           (click)="exportData()"
@@ -92,7 +98,7 @@
   
         <ng-select
           #CustomerName
-          [items]="dataSearch.filter.LsitJob"
+          [items]="dataSearch.filter.ListJob"
           bindLabel="name"
           bindValue="id"
           [clearable]="true"

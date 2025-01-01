@@ -64,8 +64,20 @@ export class OrganizationService {
     const body = JSON.stringify(modal);
     return this.http.post(this.apiEndPoint + 'Organizations/SaveCity', body, { 'headers': headers });
   }
-  DeletePreviewType(CityId: number): Observable<any> {
+  DeleteCity(CityId: number): Observable<any> {
     return this.http.post(`${this.apiEndPoint}Organizations/DeleteCity?CityId=` + CityId, {});
+  }
+
+  FillSocialMediaSelect() {
+    return this.http.get<any>(this.apiEndPoint+'Organizations/FillSocialMediaSelect');
+  }
+  SaveSocialMedia(modal: any): Observable<any> {
+    const headers = { 'content-type': 'application/json' }
+    const body = JSON.stringify(modal);
+    return this.http.post(this.apiEndPoint + 'Organizations/SaveSocialMedia', body, { 'headers': headers });
+  }
+  DeleteSocialMedia(SocialMediaId: number): Observable<any> {
+    return this.http.post(`${this.apiEndPoint}Organizations/DeleteSocialMedia?SocialMediaId=` + SocialMediaId, {});
   }
 
 

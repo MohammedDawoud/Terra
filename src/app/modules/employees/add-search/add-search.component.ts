@@ -620,13 +620,13 @@ export class AddSearchComponent implements OnInit {
 
   getAllEmployees() {
     this.service.GetAllEmployees_Branch().subscribe((data: any) => {
-      // console.log(data);
-
       this.dataSource = new MatTableDataSource(data);
       this.dataSourceTemp = data;
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
       this.allCount = data.length;
+      this.FillSerachLists(data);
+
     });
   }
 
