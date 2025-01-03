@@ -517,14 +517,14 @@ export class PreviewComponent implements OnInit {
     this.isSubmit = false;
   }
 
-  downloadFile(data: any) {
+  downloadFile3(data: any) {
     debugger
     var link="file:///D:/Terra/testtgrebe/64background.png";
     console.log(link);
     window.open(link, '_blank');
   }
 
-  downloadFile3(data: any) {
+  downloadFile(data: any) {
     try
     {
       debugger
