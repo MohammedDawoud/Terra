@@ -119,6 +119,11 @@ export class AuthenticationService {
     var url = `${environment.apiEndPoint}Login/Login?username=${Username}&password=${Password}&activationCode=${ActivationCode}&remember=${Remember}&branch=${Branch}&returnUrl=${ReturnUrl}`;
     return this.http.get<any>(url).pipe(
       map((user) => {
+        debugger
+        if(user.statusCode==406)
+        {
+          return user;
+        }
         this.sharedService.setStoBranch(user.branchId);
         this.sharedService.setStoYear(user.yearId_G);
         this.sharedService.setStofiscalId(user.fiscalId_G);

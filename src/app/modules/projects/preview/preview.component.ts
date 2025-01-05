@@ -143,9 +143,12 @@ export class PreviewComponent implements OnInit {
     'orderBarcode',
     'previewCode',
     'customerName',
+    'mainPhoneNo',
+    'address',
     'chairpersonName',
+    'date',
     'previewStatustxt',
-    'previewConverttxt', 
+    'addDate', 
     'operations',
   ];
   displayedColumn: any = {
@@ -171,6 +174,7 @@ export class PreviewComponent implements OnInit {
 
   constructor(
     private service: PreviewService,
+    private files: filesservice,
     private modalService: BsModalService,
     private api: RestApiService,
     private changeDetection: ChangeDetectorRef,
@@ -180,7 +184,6 @@ export class PreviewComponent implements OnInit {
     private authenticationService: AuthenticationService,
     private customerService: CustomerService,
     private employeeService: EmployeeService,
-    private filesservice: filesservice,
     private translate: TranslateService,
     private domSanitizer: DomSanitizer
   ) {
@@ -316,6 +319,7 @@ export class PreviewComponent implements OnInit {
   }
 
   BranchChange(BranchId: any,modalType:any) {
+    debugger
     if(modalType == 'addPreview1'  || modalType == 'addPreview2')
     {
       this.PreviewNumber_Reservation(BranchId,this.modalDetails.orderBarcode,modalType);
@@ -385,14 +389,13 @@ export class PreviewComponent implements OnInit {
   }
 
   PreviewNumber_Reservation(BranchId:any,orderBarcode:any,modalType:any){
-    if(!(BranchId==null || orderBarcode==null))
+    if(!(BranchId==null))
     {
       this.service.PreviewNumber_Reservation(BranchId,orderBarcode).subscribe(data=>{
         this.modalDetails.previewCode=data.reasonPhrase;
       });
     }
   }
-
 
   //-----------------------OPEN MODAL--------------------------------------------------
 
@@ -431,7 +434,11 @@ export class PreviewComponent implements OnInit {
         if(this.modalDetails.date!=null)
         {
           this.modalDetails.date = this._sharedService.String_TO_date(this.modalDetails.date);
+          this.modalDetails.prevDateTime = this.modalDetails.date;
         }
+
+
+
         if(this.modalDetails.meetingDate!=null)
         {
           this.modalDetails.meetingDate = this._sharedService.String_TO_date(this.modalDetails.meetingDate);
@@ -517,60 +524,6 @@ export class PreviewComponent implements OnInit {
     this.isSubmit = false;
   }
 
-  downloadFile3(data: any) {
-    debugger
-    var link="file:///D:/Terra/testtgrebe/64background.png";
-    console.log(link);
-    window.open(link, '_blank');
-  }
-
-  downloadFile(data: any) {
-    try
-    {
-      debugger
-      //var link=environment.PhotoURL+"/Uploads/Users/img1.jpg";
-      var link=environment.PhotoURL+data.fileUrl;
-      console.log(link);
-      window.open(link, '_blank');
-    }
-    catch (error)
-    {
-      this.toast.error("تأكد من الملف",this.translate.instant("Message"));
-    }
-  }
-
-  downloadFile2(data: any) {
-    try
-    {
-      debugger
-      //var link=environment.PhotoURL+data.fileUrl;
-      var link="http://"+data.fileUrl;
-      console.log(link);
-      window.open(link, '_blank');
-    }
-    catch (error)
-    {
-      this.toast.error("تأكد من الملف",this.translate.instant("Message"));
-    }
-  }
-  PreviewFileRowSelected: any;
-
-  getPreviewFileRow(row: any) {
-    debugger
-    this.PreviewFileRowSelected = row;
-  }
-  confirmDeleteFile(): void {
-    this.service.DeleteFiles(this.PreviewFileRowSelected.fileId).subscribe((result) => {
-        if (result.statusCode == 200) {
-          this.toast.success(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
-          this.GetAllPreviewFiles(this.PreviewFileRowSelected.previewId);
-          this.modal?.hide();
-        } else {
-          this.toast.error(result.reasonPhrase, this.translate.instant('Message'));
-        }
-      });
-  }
-
 
   TransbarcodeActive:boolean=false;
   confirmAddPreviewMessage(){
@@ -634,6 +587,10 @@ export class PreviewComponent implements OnInit {
     if (this.modalDetails.date != null) {
       prevObj.date = this._sharedService.date_TO_String(this.modalDetails.date);
     }
+    if (this.modalDetails.prevDateTime != null) {
+      prevObj.prevDateTime = this._sharedService.formatAMPM(this.modalDetails.prevDateTime);
+    }
+
 
     prevObj.notes = this.modalDetails.notes;
 
@@ -668,50 +625,48 @@ export class PreviewComponent implements OnInit {
   validateForm() {
     this.ValidateObjMsg = { status: true, msg: null };
 
-    if (
-      this.modalDetails.branchId == null ||
-      this.modalDetails.branchId == ''
-    ) {
+    if (this.modalDetails.branchId == null ||this.modalDetails.branchId == '') {
       this.ValidateObjMsg = { status: false, msg: 'أختر فرع المعاينة' };
       return this.ValidateObjMsg;
-    } else if (
-      this.modalDetails.orderBarcode == null ||
-      this.modalDetails.orderBarcode == ''
-    ) {
+    }
+    // else if (this.modalDetails.branchId == 1 ||this.modalDetails.branchId == '1') {
+    //   this.ValidateObjMsg = { status: false, msg: 'لا يمكنك الحفظ في الإدارة المركزية' };
+    //   return this.ValidateObjMsg;
+    // } 
+     else if (this.modalDetails.orderBarcode == null ||this.modalDetails.orderBarcode == '') {
       this.ValidateObjMsg = { status: false, msg: 'أدخل باركود العمليات' };
       return this.ValidateObjMsg;
     } else if (this.modalDetails.previewCode == null || this.modalDetails.previewCode == '') {
       this.ValidateObjMsg = { status: false, msg: 'اختر كود المعاينة' };
       return this.ValidateObjMsg;
-    } else if (
-      this.modalDetails.customerId == null ||
-      this.modalDetails.customerId == ''
-    ) {
+    } else if (this.modalDetails.customerId == null ||this.modalDetails.customerId == '') {
       this.ValidateObjMsg = { status: false, msg: 'اختر عميل' };
       return this.ValidateObjMsg;
     }
-    else if ((this.modalDetails.previewChairperson == null ||this.modalDetails.previewChairperson == '')
-    ) {
+    else if ((this.modalDetails.previewChairperson == null ||this.modalDetails.previewChairperson == '')) {
       this.ValidateObjMsg = { status: false, msg: 'اختر القائم بالمعاينة' };
       return this.ValidateObjMsg;
     }
-    else if ((this.modalDetails.previewTypeId == null ||this.modalDetails.previewTypeId == '')
-    ) {
+    else if ((this.modalDetails.previewTypeId == null ||this.modalDetails.previewTypeId == '')) {
       this.ValidateObjMsg = { status: false, msg: 'اختر نوع المعاينة' };
       return this.ValidateObjMsg;
     }
-    else if ((this.modalDetails.previewStatus == null ||this.modalDetails.previewStatus == '')
-    ) {
+    else if ((this.modalDetails.previewStatus == null ||this.modalDetails.previewStatus == '')) {
       this.ValidateObjMsg = { status: false, msg: 'اختر حالة المعاينة' };
       return this.ValidateObjMsg;
     }
     else if ((this.modalDetails.date == null ||this.modalDetails.date == '')) {
+      this.ValidateObjMsg = {status: false,msg: 'ادخل تاريخ المعاينة',};
+      return this.ValidateObjMsg;
+    }
+    else if ((this.modalDetails.prevDateTime == null ||this.modalDetails.prevDateTime == '')) {
       this.ValidateObjMsg = {
         status: false,
-        msg: 'ادخل تاريخ المعاينة',
+        msg: 'ادخل وقت المعاينة',
       };
       return this.ValidateObjMsg;
     }
+    
     this.ValidateObjMsg = { status: true, msg: null };
     return this.ValidateObjMsg;
   }
@@ -725,9 +680,13 @@ export class PreviewComponent implements OnInit {
         orderBarcode: this.dataSourceTemp[index].orderBarcode,
         previewCode: this.dataSourceTemp[index].previewCode,
         customerName: this.dataSourceTemp[index].customerName,
+        mainPhoneNo: this.dataSourceTemp[index].mainPhoneNo,
+        address: this.dataSourceTemp[index].address,
         chairpersonName: this.dataSourceTemp[index].chairpersonName,
+        date: this.dataSourceTemp[index].date,
         previewStatus: this.dataSourceTemp[index].previewStatustxt,
         previewConvert: this.dataSourceTemp[index].previewConverttxt,
+        addDate: this.dataSourceTemp[index].addDate,
       });
     }
     this.service.customExportExcel(x, 'Previews');
@@ -742,14 +701,7 @@ export class PreviewComponent implements OnInit {
       this.allPreviewCount = data.length;
     });
   }
-  PreviewFilesList: any=[];
 
-  GetAllPreviewFiles(PreviewId:any) {
-    this.PreviewFilesList=[];
-    this.service.GetAllPreviewFiles(PreviewId).subscribe((data: any) => {
-      this.PreviewFilesList = data;
-    });
-  }
   
 
 
@@ -758,7 +710,7 @@ export class PreviewComponent implements OnInit {
     let data = this.load_BarcodesCustomer.filter((d: { id: any }) => d.id == customerId); 
     this.modalDetails.orderBarcode=data[0].name;
     //this.GeneratePreviewNumberByBarcodeNum();
-    this.PreviewNumber_Reservation(this.modalDetails.branchId,this.modalDetails.orderBarcode,this.modalDetails.type)
+    //this.PreviewNumber_Reservation(this.modalDetails.branchId,this.modalDetails.orderBarcode,this.modalDetails.type)
   }
 
   CustomerChange(customerId:any){
@@ -820,6 +772,7 @@ export class PreviewComponent implements OnInit {
       meetingDate: null,
       meetingId: null,
       meetingChairperson: null,
+      prevDateTime:null,
     };
   }
 
@@ -1014,7 +967,7 @@ resetprog(){
 
     if (this.control?.value.length>0) {
       var obj=_Files;
-      this.filesservice.UploadFiles(this.control?.value[0],obj).subscribe((result: any)=>{
+      this.files.UploadFiles(this.control?.value[0],obj).subscribe((result: any)=>{
         if (result.type === HttpEventType.UploadProgress) {
           this.progress = Math.round(100 * result.loaded / result.total);
         }
@@ -1060,6 +1013,186 @@ blurfile(evenet:any)
   console.log(evenet);
 }
 
+
+downloadFile3(data: any) {
+  debugger
+  var link="file:///D:/Terra/testtgrebe/64background.png";
+  console.log(link);
+  window.open(link, '_blank');
+}
+
+downloadFile(data: any) {
+  try
+  {
+    debugger
+    //var link=environment.PhotoURL+"/Uploads/Users/img1.jpg";
+    var link=environment.PhotoURL+data.fileUrl;
+    console.log(link);
+    window.open(link, '_blank');
+  }
+  catch (error)
+  {
+    this.toast.error("تأكد من الملف",this.translate.instant("Message"));
+  }
+}
+
+downloadFile2(data: any) {
+  try
+  {
+    debugger
+    //var link=environment.PhotoURL+data.fileUrl;
+    var link="http://"+data.fileUrl;
+    console.log(link);
+    window.open(link, '_blank');
+  }
+  catch (error)
+  {
+    this.toast.error("تأكد من الملف",this.translate.instant("Message"));
+  }
+}
+PreviewFileRowSelected: any;
+
+getPreviewFileRow(row: any) {
+  debugger
+  this.PreviewFileRowSelected = row;
+}
+confirmDeletePreviewFile(): void {
+  this.files.DeleteFiles(this.PreviewFileRowSelected.fileId).subscribe((result) => {
+      if (result.statusCode == 200) {
+        this.toast.success(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
+        this.GetAllPreviewFiles(this.PreviewFileRowSelected.previewId);
+        this.modal?.hide();
+      } else {
+        this.toast.error(result.reasonPhrase, this.translate.instant('Message'));
+      }
+    });
+}
+
+PreviewFilesList: any=[];
+
+GetAllPreviewFiles(PreviewId:any) {
+  this.PreviewFilesList=[];
+  this.files.GetAllPreviewFiles(PreviewId).subscribe((data: any) => {
+    this.PreviewFilesList = data;
+  });
+}
+
+
   //-------------------------------EndUploadFiles-------------------------------------
 //#endregion
+
+
+//------------------------------Search--------------------------------------------------------
+//#region 
+
+dataSearch: any = {
+  filter: {
+    enable: false,
+    date: null,
+    isChecked: false,
+    ListName:[],
+    ListCode:[],
+    ListPhone:[],
+    ListCity:[],
+    customerId:null,
+    cityId:null,
+    showFilters:false
+  },
+};
+
+  FillSerachLists(dataT:any){
+    this.FillCustomerListName(dataT);
+    this.FillCustomerListCode(dataT);
+    this.FillCustomerListPhone(dataT);
+    this.FillCustomerListCity(dataT);
+  }
+
+  FillCustomerListName(dataT:any){
+    const ListLoad = dataT.map((item: { customerId: any; nameAr: any; }) => {
+      const container:any = {}; container.id = item.customerId; container.name = item.nameAr; return container;
+    })
+    const key = 'id';
+    const arrayUniqueByKey = [...new Map(ListLoad.map((item: { [x: string]: any; }) => [item[key], item])).values()];
+    this.dataSearch.filter.ListName=arrayUniqueByKey;
+  }
+  FillCustomerListCode(dataT:any){
+    const ListLoad = dataT.map((item: { customerId: any; customerCode: any; }) => {
+      const container:any = {}; container.id = item.customerId; container.name = item.customerCode; return container;
+    })
+    const key = 'id';
+    const arrayUniqueByKey = [...new Map(ListLoad.map((item: { [x: string]: any; }) => [item[key], item])).values()];
+    this.dataSearch.filter.ListCode=arrayUniqueByKey;
+  }
+  FillCustomerListPhone(dataT:any){
+    const ListLoad = dataT.map((item: { customerId: any; mainPhoneNo: any; }) => {
+      const container:any = {}; container.id = item.customerId; container.name = item.mainPhoneNo; return container;
+    })
+    const key = 'id';
+    const arrayUniqueByKey = [...new Map(ListLoad.map((item: { [x: string]: any; }) => [item[key], item])).values()];
+    this.dataSearch.filter.ListPhone=arrayUniqueByKey;
+  }
+  FillCustomerListCity(dataT:any){
+    const ListLoad = dataT.map((item: { cityId: any; cityName: any; }) => {
+      const container:any = {}; container.id = item.cityId; container.name = item.cityName; console.log("container",container); return container;   
+    })
+    const key = 'id';
+    const arrayUniqueByKey = [...new Map(ListLoad.map((item: { [x: string]: any; }) => [item[key], item])).values()];
+    this.dataSearch.filter.ListCity=arrayUniqueByKey;
+    this.dataSearch.filter.ListCity = this.dataSearch.filter.ListCity.filter((d: { id: any }) => (d.id !=null && d.id!=0));
+  }
+
+  RefreshDataCheck(from: any, to: any){
+    this.dataSource.data=this.dataSourceTemp;
+    if(!(from==null || from=="" || to==null || to==""))
+    {
+      debugger
+      this.dataSource.data = this.dataSource.data.filter((item: any) => {
+        var AccDate=new Date(item.addDate);
+        var AccFrom=new Date(from);
+        var AccTo=new Date(to);
+        return AccDate.getTime() >= AccFrom.getTime() &&
+        AccDate.getTime() <= AccTo.getTime();
+    });
+    }
+    if(this.dataSearch.filter.customerId!=null && this.dataSearch.filter.customerId!="")
+    {
+      this.dataSource.data = this.dataSource.data.filter((d: { customerId: any }) => d.customerId == this.dataSearch.filter.customerId);
+    }
+    if(this.dataSearch.filter.cityId!=null && this.dataSearch.filter.cityId!="")
+    {
+      this.dataSource.data = this.dataSource.data.filter((d: { cityId: any }) => d.cityId == this.dataSearch.filter.cityId);
+    } 
+   
+  }
+
+  ClearDate(){
+    if(this.dataSearch.filter.enable==false){ 
+      this.dataSearch.filter.date=null;   
+      this.RefreshDataCheck(null,null);
+    }
+  }
+  CheckDate(event: any) {
+    debugger
+    if (event != null) {
+      var from = this._sharedService.date_TO_String(event[0]);
+      var to = this._sharedService.date_TO_String(event[1]);
+      this.RefreshDataCheck(from, to);
+    } else {    
+      this.RefreshDataCheck(null,null);
+    }
+  }
+  RefreshData(){
+    debugger
+    if( this.dataSearch.filter.date==null)
+    {
+    this.RefreshDataCheck(null,null);
+    }
+    else
+    {
+    this.RefreshDataCheck(this.dataSearch.filter.date[0],this.dataSearch.filter.date[1]);
+    }
+  }
+  //#endregion 
+//------------------------------Search--------------------------------------------------------
+
 }

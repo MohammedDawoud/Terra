@@ -55,6 +55,7 @@ import { Imageipe } from './pipes/img.pipe';
 import { MatStepperModule } from '@angular/material/stepper';
 import { NgxEditorModule } from 'ngx-editor';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { NotValidComponent } from './components/not-valid/not-valid.component';
 
 @NgModule({
   declarations: [
@@ -69,6 +70,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
     PagesHeaderComponent,
     SafePipe,
     Imageipe,
+    NotValidComponent,
   ],
   imports: [
     CommonModule,

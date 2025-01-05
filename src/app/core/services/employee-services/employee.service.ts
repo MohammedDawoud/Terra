@@ -59,6 +59,10 @@ export class EmployeeService {
     var url=`${environment.apiEndPoint}Employee/FillEmployeeselectW?EmployeeId=${EmployeeId}`;
     return this.http.get<any>(url);
   }
+  FillEmployeeselectManagerW(EmployeeId:any) {
+    var url=`${environment.apiEndPoint}Employee/FillEmployeeselectManagerW?EmployeeId=${EmployeeId}`;
+    return this.http.get<any>(url);
+  }
   FillPayTypeSelect() {
     return this.http.get<any>(environment.apiEndPoint+'Organizations/FillPayTypeSelect');
   }

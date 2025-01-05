@@ -103,6 +103,7 @@ export class AppComponent implements OnInit, AfterContentChecked {
           ev.url.includes('employees') ||
           ev.url.includes('controlpanel') ||
           ev.url.includes('reports') ||
+          ev.url.includes('notValid') ||
           ev.url.includes('communications')
         ) {
           this.isDash = true;
@@ -119,6 +120,7 @@ export class AppComponent implements OnInit, AfterContentChecked {
           ev.url.includes('employees') ||
           ev.url.includes('controlpanel') ||
           ev.url.includes('reports') ||
+          ev.url.includes('notValid') ||
           ev.url.includes('communications')
         ) {
           //this.ChangeOnlineStatus(true);

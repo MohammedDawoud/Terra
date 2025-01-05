@@ -104,10 +104,18 @@ export class LoginComponent implements OnInit {
       )
       .pipe(first())
       .subscribe({
-        next: () => {
-          this.sharedservice.setAction('clickButton2');
+        next: (data) => {
+          debugger
+          if(data!.statusCode==406)
+          {
+            this.router.navigateByUrl('notValid');
+          }
+          else
+          {
+            this.router.navigateByUrl('dash/home');
+          }
+          // this.sharedservice.setAction('clickButton2');
           //this.router.navigateByUrl('controlpanel/organization');
-          this.router.navigateByUrl('dash/home');
 
         },
         error: (error) => {},

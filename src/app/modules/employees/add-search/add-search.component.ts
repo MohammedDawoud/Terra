@@ -55,6 +55,8 @@ import {
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
 import { SharedService } from 'src/app/core/services/shared.service';
+import { filesservice } from 'src/app/core/services/sys_Services/files.service';
+import { HttpEventType } from '@angular/common/http';
 
 const hijriSafe = require('hijri-date/lib/safe');
 const HijriDate = hijriSafe.default;
@@ -77,7 +79,6 @@ const toHijri = hijriSafe.toHijri;
 export class AddSearchComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-  public uploadedFiles: Array<File> = [];
   dataSourceTemp: any = [];
   dataSource: MatTableDataSource<any> = new MatTableDataSource([{}]);
   _EmployeeSMS: any = null;
@@ -167,6 +168,7 @@ export class AddSearchComponent implements OnInit {
 
   constructor(
     private service: EmployeeService,
+    private files: filesservice,
     private modalService: BsModalService,
     private api: RestApiService,
     private changeDetection: ChangeDetectorRef,
@@ -291,8 +293,8 @@ export class AddSearchComponent implements OnInit {
 
   Managers_Emp: any;
 
-  FillEmployeeselectW(EmpId:any) {
-    this.service.FillEmployeeselectW(EmpId).subscribe((data) => {
+  FillEmployeeselectManagerW(EmpId:any) {
+    this.service.FillEmployeeselectManagerW(EmpId).subscribe((data) => {
       this.Managers_Emp = data;
     });
   }
@@ -346,14 +348,14 @@ export class AddSearchComponent implements OnInit {
     debugger
     if (modalType == 'addEmployee') {
       // this.GenerateEmployeeNumber();
-      this.FillEmployeeselectW(0);
+      this.FillEmployeeselectManagerW(0);
     }
     console.log('this.modalDetails');
     console.log(this.modalDetails);
 
     if (data) {
       this.modalDetails = data;
-      this.FillEmployeeselectW( this.modalDetails.employeeId);
+      this.FillEmployeeselectManagerW( this.modalDetails.employeeId);
       if (modalType == 'editEmployee') {
         this.modalDetails.appointmentDate = this._sharedService.String_TO_date(this.modalDetails.appointmentDate);
         this.getBranchAccountE(this.modalDetails.branchId,modalType);
@@ -399,6 +401,10 @@ export class AddSearchComponent implements OnInit {
     if (type === 'deleteModalPerm') {
       this.publicidRow = data.idRow;
     }
+    if(type === 'ShowEmployeeFiles')
+      {
+        this.GetAllEmployeeFiles(this.modalDetails.employeeId);
+      }
     this.ngbModalService
       .open(content, {
         ariaLabelledBy: 'modal-basic-title',
@@ -471,7 +477,7 @@ export class AddSearchComponent implements OnInit {
     custObj.subMainPhoneNo = this.modalDetails.subMainPhoneNo;
     custObj.mainPhoneNo = this.modalDetails.mainPhoneNo;
     custObj.status = this.modalDetails.status;
-
+    custObj.isManager = this.modalDetails.isManager;
     custObj.directManagerId = this.modalDetails.directManagerId;
     custObj.jobId = this.modalDetails.jobId;
     custObj.salary = this.modalDetails.salary;
@@ -657,6 +663,7 @@ export class AddSearchComponent implements OnInit {
       salary: null,
       appointmentDate: null,
       status:true,
+      isManager:false,
       notes: null,
       accountId: null,
       accountName: null,
@@ -829,5 +836,143 @@ RefreshData(){
 }
 //#endregion 
 //------------------------------Search--------------------------------------------------------
+
+//-------------------------------------File-------------------------------------------
+//#region 
+
+public uploadedFiles: Array<File> = [];
+selectedFiles?: FileList;
+currentFile?: File;
+
+progress = 0;
+uploading=false;
+disableButtonSave_File = false;
+dataFile:any={
+  FileId:0,
+  FileName:null,
+}
+resetprog(){
+  this.disableButtonSave_File = false;
+  this.progress = 0;
+  this.uploading=false;
+}
+
+  selectFile(event: any): void {
+    this.selectedFiles = event.target.files;
+  }
+  SaveprojectFiles(type:any,dataFile:any,uploadtype:any) {
+  if(this.dataFile.FileName==null)
+  {
+    this.toast.error("من فضلك أكمل البيانات ", 'رسالة');
+    return;
+  }
+  if(this.control?.value.length>0){
+  }
+  debugger
+    var _Files: any = {};
+    _Files.fileId=0;
+    _Files.employeeId=this.modalDetails.employeeId;
+    _Files.fileName=this.dataFile.FileName;
+    _Files.typePageId=2;
+    _Files.notes=null;
+    this.progress = 0;
+    this.disableButtonSave_File = true;
+    this.uploading=true;
+    setTimeout(() => {
+      this.resetprog();
+    }, 60000);
+
+    if (this.control?.value.length>0) {
+      var obj=_Files;
+      this.files.UploadFiles(this.control?.value[0],obj).subscribe((result: any)=>{
+        if (result.type === HttpEventType.UploadProgress) {
+          this.progress = Math.round(100 * result.loaded / result.total);
+        }
+        debugger
+        if(result?.body?.statusCode==200){
+          this.control.removeFile(this.control?.value[0]);
+          this.toast.success(this.translate.instant(result?.body?.reasonPhrase),'رسالة');
+          this.getAllEmployees();
+          this.ClearField();
+          this.resetprog();
+        }
+        else if(result?.body?.statusCode>200){
+          this.toast.error(this.translate.instant(result?.body?.reasonPhrase), 'رسالة');
+          this.resetprog();
+        }
+        else if(result?.type>=0)
+        {}
+        else{this.toast.error(this.translate.instant(result?.body?.reasonPhrase), 'رسالة');this.resetprog();}
+
+      });
+    }
+    else{this.toast.error("من فضلك أختر ملف", 'رسالة');}
+
+
+  }
+ClearField(){
+  this.dataFile.FileId=0;
+  this.dataFile.FileName=null;
+  this.selectedFiles = undefined;
+  this.uploadedFiles=[];
+}
+
+clickfile(evenet:any)
+{
+  console.log(evenet);
+}
+focusfile(evenet:any)
+{
+  console.log(evenet);
+}
+blurfile(evenet:any)
+{
+  console.log(evenet);
+}
+
+
+downloadFile(data: any) {
+  try
+  {
+    debugger
+    //var link=environment.PhotoURL+"/Uploads/Users/img1.jpg";
+    var link=environment.PhotoURL+data.fileUrl;
+    console.log(link);
+    window.open(link, '_blank');
+  }
+  catch (error)
+  {
+    this.toast.error("تأكد من الملف",this.translate.instant("Message"));
+  }
+}
+
+EmployeeFileRowSelected: any;
+
+getEmployeeFileRow(row: any) {
+  debugger
+  this.EmployeeFileRowSelected = row;
+}
+confirmDeleteEmployeeFile(): void {
+  this.files.DeleteFiles(this.EmployeeFileRowSelected.fileId).subscribe((result) => {
+      if (result.statusCode == 200) {
+        this.toast.success(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
+        this.GetAllEmployeeFiles(this.EmployeeFileRowSelected.employeeId);
+        this.modal?.hide();
+      } else {
+        this.toast.error(result.reasonPhrase, this.translate.instant('Message'));
+      }
+    });
+}
+
+EmployeeFilesList: any=[];
+
+GetAllEmployeeFiles(EmployeeId:any) {
+  this.EmployeeFilesList=[];
+  this.files.GetAllEmployeeFiles(EmployeeId).subscribe((data: any) => {
+    this.EmployeeFilesList = data;
+  });
+}
+//#endregion
+//----------------------------------------End File---------------------------------------
 
 }

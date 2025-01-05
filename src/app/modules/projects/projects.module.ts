@@ -13,6 +13,7 @@ import { FileUploadModule } from '@iplab/ngx-file-upload';
 import {DragDropModule} from '@angular/cdk/drag-drop';
 import { MeetingComponent } from './meeting/meeting.component';
 import { DesignComponent } from './design/design.component';
+import { TimepickerModule } from 'ngx-bootstrap/timepicker';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { DesignComponent } from './design/design.component';
     PaginationModule,
     MatPaginatorModule,
     FileUploadModule,
+    TimepickerModule,
     DragDropModule
   ],
   providers: [BsModalService],

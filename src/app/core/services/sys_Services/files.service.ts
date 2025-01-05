@@ -20,7 +20,15 @@ export class filesservice {
     formData.append('FileId', String(_file.fileId));
     formData.append('FileName', String(_file.fileName));
     formData.append('TypePageId', String(_file.typePageId));
-    formData.append('PreviewId',String(_file.previewId));
+    debugger
+    if(!(_file.employeeId==undefined || _file.employeeId==null))
+    {
+      formData.append('EmployeeId',String(_file.employeeId));
+    }
+    if(!(_file.previewId==undefined || _file.previewId==null))
+    {
+      formData.append('PreviewId',String(_file.previewId));
+    }
     formData.append('Notes',String(_file.notes));
 
     const req = new HttpRequest('POST', `${this.apiEndPoint}Files/UploadFiles`, formData, {
@@ -28,6 +36,17 @@ export class filesservice {
       responseType: 'json'
     });
     return this.http.request(req);
+  }
+  GetAllPreviewFiles(PreviewId:any) {
+    var url=`${environment.apiEndPoint}Files/GetAllPreviewFiles?PreviewId=${PreviewId}`;
+    return this.http.get<any>(url);
+  }
+  GetAllEmployeeFiles(EmployeeId:any) {
+    var url=`${environment.apiEndPoint}Files/GetAllEmployeeFiles?EmployeeId=${EmployeeId}`;
+    return this.http.get<any>(url);
+  }
+  DeleteFiles(FileId:any) {
+    return this.http.post<any>(this.apiEndPoint + 'Files/DeleteFiles?FileId='+FileId,{});
   }
 
 

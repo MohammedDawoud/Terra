@@ -4,6 +4,7 @@ import { NotFoundComponent } from './shared/components/not-found/not-found.compo
 import { VerticalLayoutComponent } from './shared/layouts/vertical-layout/vertical-layout.component';
 import { NewsComponent } from './modules/core/components/news/news.component';
 import { AuthGuard } from './core/helper/auth.guard';
+import { NotValidComponent } from './shared/components/not-valid/not-valid.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'auth', pathMatch: 'full' },
@@ -64,6 +65,7 @@ const routes: Routes = [
   },
 
   { path: 'news', component: NewsComponent },
+  { path: 'notValid', component: NotValidComponent },
   { path: '**', component: NotFoundComponent },
 ];
 

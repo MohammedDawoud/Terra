@@ -169,14 +169,7 @@ export class PreviewService {
     this.exportationService.exportExcel(excelData, nameExport + new Date().getTime(), headers);
   }
 
-  GetAllPreviewFiles(PreviewId:any) {
-    var url=`${environment.apiEndPoint}Files/GetAllPreviewFiles?PreviewId=${PreviewId}`;
-    return this.http.get<any>(url);
-  }
 
-  DeleteFiles(FileId:any) {
-    return this.http.post<any>(this.apiEndPoint + 'Files/DeleteFiles?FileId='+FileId,{});
-  }
 
   // SearchFn(_PreviewVM: PreviewVM): Observable<any> {
   //   const headers = { 'content-type': 'application/json' };
