@@ -52,8 +52,9 @@ export class EmployeeService {
   FillJobSelect() {
     return this.http.get<any>(environment.apiEndPoint+'Organizations/FillJobSelect');
   }
-  FillEmployeeselect() {
-    return this.http.get<any>(environment.apiEndPoint+'Employee/FillEmployeeselect');
+  FillEmployeeselect(Type:any) {
+    var url=`${environment.apiEndPoint}Employee/FillEmployeeselect?Type=${Type}`;
+    return this.http.get<any>(url);
   }
   FillEmployeeselectW(EmployeeId:any) {
     var url=`${environment.apiEndPoint}Employee/FillEmployeeselectW?EmployeeId=${EmployeeId}`;

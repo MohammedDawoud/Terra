@@ -864,9 +864,9 @@ dataSearch: any = {
     this.AddDataType.Citydata.nameen = null;
   }
   //#endregion
-  //----------------------------------EndSavePreviewtype-----------------------------
+  //----------------------------------EndSaveCity-----------------------------
 
-    //-----------------------------------SaveCity-------------------------------
+    //-----------------------------------SavesocialMedia-------------------------------
   //#region 
   selectedsocialMedia: any;
   socialMediaRowSelected: any;
@@ -917,7 +917,7 @@ dataSearch: any = {
     this.AddDataType.socialMediadata.nameen = null;
   }
   //#endregion
-  //----------------------------------EndSavePreviewtype-----------------------------
+  //----------------------------------EndSavesocialMedia-----------------------------
 
 
 }

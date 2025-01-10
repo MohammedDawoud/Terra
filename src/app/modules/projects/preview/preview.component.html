@@ -34,12 +34,12 @@
         <i class="fa-solid fa-user-plus"></i>
         </button>
 
-        <!-- <button class="flex gap-1 btn btn-danger" (click)="dataSearch.filter.showFilters = !dataSearch.filter.showFilters;">
+        <button class="flex gap-1 btn btn-danger" (click)="dataSearch.filter.showFilters = !dataSearch.filter.showFilters;">
           <span
             class="hidden md:block"
             [translate]="'name'" [translateParams]="{ar: 'بحث ',en: 'Search '}"></span>
           <i class="fa-solid fa-search"></i>
-          </button> -->
+          </button>
 
         <button
           class="flex gap-1 btn btn-warning"
@@ -109,16 +109,48 @@
         </ng-select>
       </div>
       <div class="max-w-xs">
-        <label class="col-form-label"> {{ "المنطقة" | translate }}</label>
+        <label class="col-form-label"> {{ "القائم بالمعاينة" | translate }}</label>
   
         <ng-select
           #CustomerName
-          [items]="dataSearch.filter.ListCity"
+          [items]="dataSearch.filter.ListEmployee"
           bindLabel="name"
           bindValue="id"
           [clearable]="true"
           class="w-full p-0"
-          [(ngModel)]="dataSearch.filter.cityId"
+          [(ngModel)]="dataSearch.filter.previewChairperson"
+          placeholder="{{ 'Chose' | translate }}"
+          (change)="RefreshData()"
+        >
+        </ng-select>
+      </div>
+      <div class="max-w-xs">
+        <label class="col-form-label"> {{ "حالة المعاينة" | translate }}</label>
+  
+        <ng-select
+          #CustomerName
+          [items]="dataSearch.filter.ListPreviewStatus"
+          bindLabel="name"
+          bindValue="id"
+          [clearable]="true"
+          class="w-full p-0"
+          [(ngModel)]="dataSearch.filter.previewStatusId"
+          placeholder="{{ 'Chose' | translate }}"
+          (change)="RefreshData()"
+        >
+        </ng-select>
+      </div>
+      <div class="max-w-xs">
+        <label class="col-form-label"> {{ "حالة رسوم المعاينة" | translate }}</label>
+  
+        <ng-select
+          #CustomerName
+          [items]="dataSearch.filter.ListPreviewValue"
+          bindLabel="name"
+          bindValue="id"
+          [clearable]="true"
+          class="w-full p-0"
+          [(ngModel)]="dataSearch.filter.PreviewValueId"
           placeholder="{{ 'Chose' | translate }}"
           (change)="RefreshData()"
         >
@@ -543,7 +575,7 @@
               <ng-select
                 style="min-width: max-content"
                 id="customerId"
-                [disabled]="modalDetails.type=='PreviewView' || TransbarcodeActive"
+                disabled
                 #customerId="ngModel"
                 class="w-full p-0 form-control {{modalDetails.customerId == null ? 'errorInput': ''}}"
                 [clearable]="true"
@@ -724,6 +756,9 @@
 
             </div>
 
+
+
+
             <div class="form-group">
               <label class="col-form-label">{{ "حالة المعاينة" | translate }}</label>
               <ng-select
@@ -742,12 +777,48 @@
                 [translateParams]="{ar: type.name?.ar,en: type.name?.en}"></ng-option>
               </ng-select>
             </div>
-            <div class="form-group">
 
-            </div>
-            <div class="form-group">
 
+            <div class="flex gap-2 items-end mt-3">
+              <mat-slide-toggle style="height: 41px !important;"
+                color="primary"
+                [(ngModel)]="modalDetails.totalValueStatus"
+                [ngModelOptions]="{ standalone: true }"
+              >
+                <span>{{'رسوم المعاينة نشط'}}</span>
+              </mat-slide-toggle>
             </div>
+
+            <div class="form-group" *ngIf="modalDetails.totalValueStatus">
+              <label for="totalValue" class="col-form-label">
+                <ng-container>
+                  {{ "مبلغ الرسوم" | translate }}
+                </ng-container>
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                id="totalValue"
+                autocomplete="off"
+                #orderBarcode="ngModel"
+                required
+                class="form-control {{ modalDetails.totalValue == null? 'errorInput': ''}}"
+                name="totalValue"
+                placeholder="{{ 'Write' | translate }} {{
+                  'مبلغ الرسوم' | translate
+                }} "
+                [(ngModel)]="modalDetails.totalValue"
+              />
+            </div>
+
+
+
+            <!-- <div class="form-group">
+
+            </div> -->
+            <!-- <div class="form-group">
+
+            </div> -->
             
             
           <div class="form-group" *ngIf="modalDetails.previewStatus==3">

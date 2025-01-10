@@ -19,7 +19,7 @@ export class filesservice {
     formData.append('uploadesgiles', file);
     formData.append('FileId', String(_file.fileId));
     formData.append('FileName', String(_file.fileName));
-    formData.append('TypePageId', String(_file.typePageId));
+    formData.append('TransactionTypeId', String(_file.transactionTypeId));
     debugger
     if(!(_file.employeeId==undefined || _file.employeeId==null))
     {

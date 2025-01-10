@@ -578,7 +578,8 @@
               <label class="col-form-label">
                 {{ "الوظيفة" | translate }}
               </label>
-              <ng-select
+              <div class="flex">
+                <ng-select
                 class="w-full p-0 form-control {{modalDetails.jobId == null ? 'errorInput': ''}}"
                 placeholder="{{ 'الوظيفة' | translate }}"
                 [(ngModel)]="modalDetails.jobId"
@@ -588,6 +589,15 @@
                   job.name
                 }}</ng-option>
               </ng-select>
+              <button
+              type="button"
+              class="btn bg-base text-white"
+              style="padding: 5px 10px"
+              (click)="open(AddJobPopup, null, 'addJob')"
+            >
+              <i class="fa fa-plus"></i>
+            </button>
+              </div>
             </div>
 
             <div class="form-group">
@@ -912,6 +922,173 @@
         mat-raised-button
         color="warn"
         (click)="confirmDeleteEmployeeFile(); modal.dismiss()"
+      >
+        {{ "Yes" | translate }}
+      </button>
+      <button
+        type="button"
+        (click)="modal.dismiss()"
+        mat-raised-button
+        color="basic"
+      >
+        {{ "No" | translate }}
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Add AddJobPopup -->
+<ng-template #AddJobPopup let-modal>
+  <div
+    style="background-color: var(--base-color)"
+    class="modal-header text-white flex justify-between items-center"
+  >
+    <h4 class="m-0">
+      <span class="text-2xl"> وظيفة جديدة </span>
+    </h4>
+    <button
+      type="button"
+      class="text-2xl text-white m-0"
+      (click)="modal?.dismiss()"
+    >
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+  <div class="modal-body text-center">
+    <form #addJob="ngForm" class="grid grid-cols-1 md:grid-cols-2 gap-2">
+      <div class="form-group">
+        <label for="JobNameArtxt3" class="text-right col-form-label block">
+          {{ "nameAr" | translate }}
+          <span class="text-danger">*</span></label
+        >
+        <input
+          required
+          #JobNameAr="ngModel"
+          [(ngModel)]="AddDataType.Jobdata.namear"
+          class="form-control"
+          type="text"
+          id="JobNameArtxt3"
+          name="JobNameArtxt3"
+          autocomplete="off"
+          [placeholder]="('Write' | translate) + ' ' + ('nameAr' | translate)"
+        />
+      </div>
+      <div class="form-group">
+        <label for="JobNameEntxt3" class="text-right col-form-label block">
+          {{ "nameEn" | translate }}
+          <span class="text-danger">*</span></label
+        >
+        <div style="display: inline-flex; width: 100%">
+          <input
+            required
+            #JobNameEnValue
+            #JobNameEn="ngModel"
+            [(ngModel)]="AddDataType.Jobdata.nameen"
+            class="form-control"
+            type="text"
+            id="JobNameEntxt3"
+            name="JobNameEntxt3"
+            autocomplete="off"
+            [placeholder]="('Write' | translate) + ' ' + ('nameEn' | translate)"
+          />
+          <a
+            class="btn"
+            id="CopyJobName2"
+            (click)="
+              AddDataType.Jobdata.nameen = AddDataType.Jobdata.namear
+            "
+            ><i class="fa fa-copy"></i
+          ></a>
+        </div>
+      </div>
+    </form>
+    <div class="max-h-80 overflow-auto px-2">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>{{ "nameAr" | translate }}</th>
+            <th>{{ "nameEn" | translate }}</th>
+            <th
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'خيارات',
+                en: 'Operations'
+              }"
+            ></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let type of JobTypesPopup_Emp"
+            (dblclick)="
+              setJobInSelect(type, modal); modal.dismiss('Cross click')
+            "
+          >
+            <td>{{ type.name }}</td>
+            <td>{{ type.nameEn }}</td>
+            <td class="flex gap-2 justify-center">
+              <button
+                class="p-2 bg-orange-100 hover:bg-orange-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+                (click)="
+                  AddDataType.Jobdata.id = type.id;
+                  AddDataType.Jobdata.namear = type.name;
+                  AddDataType.Jobdata.nameen = type.nameEn
+                "
+              >
+                <i class="fa-regular fa-pen-to-square"></i>
+              </button>
+              <button
+                (click)="getJobRow(type);
+                  open(
+                    deleteJob,
+                    AddDataType.Jobdata,
+                    'deleteJob'              
+                  )
+                "
+                class="p-2 bg-red-100 hover:bg-red-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+              >
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="flex gap-2 mt-3 pt-3 border-t border-neutral-300">
+      <button
+        class="btn bg-base text-white"
+        type="submit"
+        [disabled]="!AddDataType.Jobdata.namear"
+        (click)="saveJob()"
+      >
+        {{ "Save" | translate }}
+      </button>
+      <button (click)="modal.dismiss()" class="btn btn-secondary">
+        {{ "Back" | translate }}
+      </button>
+      <button (click)="resetJob()" class="btn bg-base text-white">
+        {{ "جديد" | translate }}
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<!-- deleteJobModal -->
+<ng-template #deleteJob let-modal>
+  <div class="modal-body text-center">
+    <p
+      [translate]="'name'"
+      [translateParams]="{
+        ar: 'هل تريد بالتأكيد حذف هذا الصف',
+        en: 'Are you sure to delete this row ?'
+      }"
+    ></p>
+    <div class="flex gap-2 justify-center mt-3">
+      <button
+        type="button"
+        mat-raised-button
+        color="warn"
+        (click)="confirmJobDelete(); modal.dismiss()"
       >
         {{ "Yes" | translate }}
       </button>

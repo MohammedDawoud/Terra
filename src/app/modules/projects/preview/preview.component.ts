@@ -348,7 +348,7 @@ export class PreviewComponent implements OnInit {
 
   load_Employees: any=[];
   FillEmployeeselect() {
-    this.employeeService.FillEmployeeselect().subscribe((data) => {
+    this.employeeService.FillEmployeeselect(2).subscribe((data) => {
       this.load_Employees = data;
     });
   }
@@ -436,8 +436,15 @@ export class PreviewComponent implements OnInit {
           this.modalDetails.date = this._sharedService.String_TO_date(this.modalDetails.date);
           this.modalDetails.prevDateTime = this.modalDetails.date;
         }
-
-
+        debugger
+        if(!(this.modalDetails.totalValue==null || this.modalDetails.totalValue==""))
+        {
+          this.modalDetails.totalValueStatus=true;
+        }
+        else
+        {
+          this.modalDetails.totalValueStatus=false;
+        }
 
         if(this.modalDetails.meetingDate!=null)
         {
@@ -583,13 +590,14 @@ export class PreviewComponent implements OnInit {
     prevObj.previewChairperson = this.modalDetails.previewChairperson;
     prevObj.previewTypeId = this.modalDetails.previewTypeId;
     prevObj.previewStatus = this.modalDetails.previewStatus;
-    prevObj.notes = this.modalDetails.notes;
     if (this.modalDetails.date != null) {
       prevObj.date = this._sharedService.date_TO_String(this.modalDetails.date);
     }
     if (this.modalDetails.prevDateTime != null) {
       prevObj.prevDateTime = this._sharedService.formatAMPM(this.modalDetails.prevDateTime);
     }
+
+    prevObj.totalValue = this.modalDetails.totalValue;
 
 
     prevObj.notes = this.modalDetails.notes;
@@ -659,6 +667,10 @@ export class PreviewComponent implements OnInit {
       this.ValidateObjMsg = {status: false,msg: 'ادخل تاريخ المعاينة',};
       return this.ValidateObjMsg;
     }
+    else if (this.modalDetails.totalValueStatus && ((this.modalDetails.totalValue == null ||this.modalDetails.totalValue == ''))) {
+      this.ValidateObjMsg = {status: false,msg: 'ادخل مبلغ الرسوم',};
+      return this.ValidateObjMsg;
+    }
     else if ((this.modalDetails.prevDateTime == null ||this.modalDetails.prevDateTime == '')) {
       this.ValidateObjMsg = {
         status: false,
@@ -699,6 +711,7 @@ export class PreviewComponent implements OnInit {
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
       this.allPreviewCount = data.length;
+      this.FillSerachLists(data);
     });
   }
 
@@ -956,7 +969,7 @@ resetprog(){
     _Files.fileId=0;
     _Files.previewId=this.modalDetails.previewId;
     _Files.fileName=this.dataFile.FileName;
-    _Files.typePageId=1;
+    _Files.transactionTypeId=37;
     _Files.notes=null;
     this.progress = 0;
     this.disableButtonSave_File = true;
@@ -1093,9 +1106,13 @@ dataSearch: any = {
     ListName:[],
     ListCode:[],
     ListPhone:[],
-    ListCity:[],
+    ListEmployee:[],
+    ListPreviewStatus:[],
+    ListPreviewValue:[],
     customerId:null,
-    cityId:null,
+    previewChairperson:null,
+    previewStatusId:null,
+    PreviewValueId:null,
     showFilters:false
   },
 };
@@ -1104,12 +1121,14 @@ dataSearch: any = {
     this.FillCustomerListName(dataT);
     this.FillCustomerListCode(dataT);
     this.FillCustomerListPhone(dataT);
-    this.FillCustomerListCity(dataT);
+    this.FillCustomerListEmployee(dataT);
+    this.FillListPreviewStatus();
+    this.FillListPreviewValue();
   }
 
   FillCustomerListName(dataT:any){
-    const ListLoad = dataT.map((item: { customerId: any; nameAr: any; }) => {
-      const container:any = {}; container.id = item.customerId; container.name = item.nameAr; return container;
+    const ListLoad = dataT.map((item: { customerId: any; customerName: any; }) => {
+      const container:any = {}; container.id = item.customerId; container.name = item.customerName; return container;
     })
     const key = 'id';
     const arrayUniqueByKey = [...new Map(ListLoad.map((item: { [x: string]: any; }) => [item[key], item])).values()];
@@ -1131,14 +1150,28 @@ dataSearch: any = {
     const arrayUniqueByKey = [...new Map(ListLoad.map((item: { [x: string]: any; }) => [item[key], item])).values()];
     this.dataSearch.filter.ListPhone=arrayUniqueByKey;
   }
-  FillCustomerListCity(dataT:any){
-    const ListLoad = dataT.map((item: { cityId: any; cityName: any; }) => {
-      const container:any = {}; container.id = item.cityId; container.name = item.cityName; console.log("container",container); return container;   
+  FillCustomerListEmployee(dataT:any){
+    const ListLoad = dataT.map((item: { previewChairperson: any; chairpersonName: any; }) => {
+      const container:any = {}; container.id = item.previewChairperson; container.name = item.chairpersonName; console.log("container",container); return container;   
     })
     const key = 'id';
     const arrayUniqueByKey = [...new Map(ListLoad.map((item: { [x: string]: any; }) => [item[key], item])).values()];
-    this.dataSearch.filter.ListCity=arrayUniqueByKey;
-    this.dataSearch.filter.ListCity = this.dataSearch.filter.ListCity.filter((d: { id: any }) => (d.id !=null && d.id!=0));
+    this.dataSearch.filter.ListEmployee=arrayUniqueByKey;
+    this.dataSearch.filter.ListEmployee = this.dataSearch.filter.ListEmployee.filter((d: { id: any }) => (d.id !=null && d.id!=0));
+  }
+
+  FillListPreviewStatus(){
+    this.dataSearch.filter.ListPreviewStatus= [
+      { id: 1, name: 'قيد الإنتظار' },
+      { id: 2, name: 'قيد التشغيل' },
+      { id: 3, name: 'منتهية' },
+    ];
+  }
+  FillListPreviewValue(){
+    this.dataSearch.filter.ListPreviewValue= [
+      { id: 1, name: 'نشط' },
+      { id: 2, name: 'غير نشط' },
+    ];
   }
 
   RefreshDataCheck(from: any, to: any){
@@ -1147,7 +1180,7 @@ dataSearch: any = {
     {
       debugger
       this.dataSource.data = this.dataSource.data.filter((item: any) => {
-        var AccDate=new Date(item.addDate);
+        var AccDate=new Date(item.date);
         var AccFrom=new Date(from);
         var AccTo=new Date(to);
         return AccDate.getTime() >= AccFrom.getTime() &&
@@ -1158,9 +1191,23 @@ dataSearch: any = {
     {
       this.dataSource.data = this.dataSource.data.filter((d: { customerId: any }) => d.customerId == this.dataSearch.filter.customerId);
     }
-    if(this.dataSearch.filter.cityId!=null && this.dataSearch.filter.cityId!="")
+    if(this.dataSearch.filter.previewChairperson!=null && this.dataSearch.filter.previewChairperson!="")
     {
-      this.dataSource.data = this.dataSource.data.filter((d: { cityId: any }) => d.cityId == this.dataSearch.filter.cityId);
+      this.dataSource.data = this.dataSource.data.filter((d: { previewChairperson: any }) => d.previewChairperson == this.dataSearch.filter.previewChairperson);
+    } 
+    if(this.dataSearch.filter.previewStatusId!=null && this.dataSearch.filter.previewStatusId!="")
+    {
+      this.dataSource.data = this.dataSource.data.filter((d: { previewStatus: any }) => d.previewStatus == this.dataSearch.filter.previewStatusId);
+    } 
+    if(this.dataSearch.filter.PreviewValueId!=null && this.dataSearch.filter.PreviewValueId!="")
+    {
+      if(this.dataSearch.filter.PreviewValueId==1)
+      {
+        this.dataSource.data = this.dataSource.data.filter((d: { totalValue: any }) => !(d.totalValue ==null || d.totalValue ==""));
+      }
+      else{
+        this.dataSource.data = this.dataSource.data.filter((d: { totalValue: any }) => (d.totalValue ==null || d.totalValue ==""));
+      }
     } 
    
   }

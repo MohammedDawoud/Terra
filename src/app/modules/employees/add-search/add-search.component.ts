@@ -57,6 +57,7 @@ import {
 import { SharedService } from 'src/app/core/services/shared.service';
 import { filesservice } from 'src/app/core/services/sys_Services/files.service';
 import { HttpEventType } from '@angular/common/http';
+import { OrganizationService } from 'src/app/core/services/sys_Services/organization.service';
 
 const hijriSafe = require('hijri-date/lib/safe');
 const HijriDate = hijriSafe.default;
@@ -169,6 +170,7 @@ export class AddSearchComponent implements OnInit {
   constructor(
     private service: EmployeeService,
     private files: filesservice,
+    private _organization: OrganizationService,
     private modalService: BsModalService,
     private api: RestApiService,
     private changeDetection: ChangeDetectorRef,
@@ -873,7 +875,7 @@ resetprog(){
     _Files.fileId=0;
     _Files.employeeId=this.modalDetails.employeeId;
     _Files.fileName=this.dataFile.FileName;
-    _Files.typePageId=2;
+    _Files.transactionTypeId=36;
     _Files.notes=null;
     this.progress = 0;
     this.disableButtonSave_File = true;
@@ -974,5 +976,69 @@ GetAllEmployeeFiles(EmployeeId:any) {
 }
 //#endregion
 //----------------------------------------End File---------------------------------------
+
+AddDataType: any = {
+  Jobdata: {
+    id: 0,
+    namear: null,
+    nameen: null,
+  },
+};
+
+  //-----------------------------------SaveCity-------------------------------
+  //#region 
+  selectedJob: any;
+
+
+  JobRowSelected: any;
+  getJobRow(row: any) {
+    this.JobRowSelected = row;
+  }
+  setJobInSelect(data: any, modal: any) {
+    this.modalDetails.jobId=data.id;
+  }
+  confirmJobDelete() {
+    this._organization.DeleteJob(this.JobRowSelected.id).subscribe((result: any) => {
+        if (result.statusCode == 200) {
+          this.toast.success(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
+          this.FillJobSelect_Emp();
+        } else {
+          this.toast.error(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
+        }
+      });
+  }
+
+  saveJob() {
+    if (
+      this.AddDataType.Jobdata.namear == null ||
+      this.AddDataType.Jobdata.nameen == null
+    ) {
+      this.toast.error('من فضلك أكمل البيانات', 'رسالة');
+      return;
+    }
+    var JobObj: any = {};
+    JobObj.JobId = this.AddDataType.Jobdata.id;
+    JobObj.NameAr = this.AddDataType.Jobdata.namear;
+    JobObj.NameEn = this.AddDataType.Jobdata.nameen;
+
+    var obj = JobObj;
+    this._organization.SaveJob(obj).subscribe((result: any) => {
+      if (result.statusCode == 200) {
+        this.toast.success(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
+        this.resetJob();
+        this.FillJobSelect_Emp();
+      } else {
+        this.toast.error(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
+      }
+    });
+  }
+  resetJob() {
+    this.AddDataType.Jobdata.id = 0;
+    this.AddDataType.Jobdata.namear = null;
+    this.AddDataType.Jobdata.nameen = null;
+  }
+  //#endregion
+  //----------------------------------EndSaveCity-----------------------------
+
 
 }
