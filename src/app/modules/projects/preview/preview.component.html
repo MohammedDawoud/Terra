@@ -328,17 +328,16 @@
             >
             <i class="fa-solid fa-arrow-rotate-right"></i>
             </button> -->
-            <button *ngIf="!element.previewConvert"
+            <button
             class="min-w-max p-2 bg-green-100 hover:bg-green-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
             (click)="open(uploadFileModal, element, 'uploadFile')" >
             <i class="fa fa-upload"></i>
             </button>
-            <button *ngIf="!element.previewConvert"
-              class="min-w-max p-2 bg-blue-100 hover:bg-blue-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
-              (click)="open(ShowPreviewFilesModal, element, 'ShowPreviewFiles')" >
-              <!-- <i class="fa fa-eye"></i> -->
-              <i class="fa-solid fa-download"></i>
-
+            <button 
+            class="min-w-max p-2 bg-blue-100 hover:bg-blue-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+            (click)="open(ShowPreviewFilesModal, element, 'ShowPreviewFiles')" >
+            <!-- <i class="fa fa-eye"></i> -->
+            <i class="fa-solid fa-download"></i>
             </button>
 
           
@@ -772,6 +771,7 @@
                 placeholder=" {{ 'حالة المعاينة' | translate }}"
                 [(ngModel)]="modalDetails.previewStatus"
                 [ngModelOptions]="{ standalone: true }"
+                (change)="previewStatusChange()"
               >
               <ng-option *ngFor="let type of PreviewStatusList" [value]="type.id" [translate]="'name'"
                 [translateParams]="{ar: type.name?.ar,en: type.name?.en}"></ng-option>
@@ -861,6 +861,30 @@
               [(ngModel)]="modalDetails.meetingDate"
               [ngModelOptions]="{ standalone: true }"
             />
+          </div>
+
+          <div class="col-md-3"  *ngIf="modalDetails.previewStatus==3">
+            <div class="form-group">
+              <!-- <label class="text-right col-form-label block">
+                {{ "from the hour" | translate }}
+              </label> -->
+              <span style="padding-right: 110%; color: #cd2a2a">{{
+                "minute" | translate
+              }}</span>
+              <span style="padding-right: 52%; color: #cd2a2a">{{
+                "hour" | translate
+              }}</span>
+              <div class="form-group timeInput">
+                <timepicker
+                  [(ngModel)]="modalDetails.meetDateTime"
+                  style="direction: ltr"
+                  [ngModelOptions]="{ standalone: true }"
+                  name="meetDateTime"
+                  autocomplete="off"
+
+                ></timepicker>
+              </div>
+            </div>
           </div>
 
           <div class="form-group" *ngIf="modalDetails.previewStatus==3">
@@ -1352,6 +1376,7 @@
         <thead>
           <tr>
             <th>{{ "أسم الملف" | translate }}</th>
+            <th>{{ "تاريخ رفع الملف" | translate }}</th>
             <th
               [translate]="'name'"
               [translateParams]="{
@@ -1365,6 +1390,7 @@
           <tr
             *ngFor="let type of PreviewFilesList">
             <td>{{ type.fileName }}</td>
+            <td>{{type.addDate | date : " hh:mm yyyy-MM-dd"}}</td>
             <td class="flex gap-2 justify-center">
               <button
                 class="p-2 bg-orange-100 hover:bg-orange-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
@@ -1372,7 +1398,7 @@
                 <!-- <i class="fa fa-eye"></i> -->
                 <i class="fa-solid fa-download"></i>
               </button>
-              <button
+              <button *ngIf="!modalDetails.previewConvert"
               (click)="getPreviewFileRow(type);open(deletePreviewFile,type,'deletePreviewFile')"
               class="p-2 bg-red-100 hover:bg-red-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
             >

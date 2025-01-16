@@ -4,14 +4,6 @@
   <div class="tables-data mt-3 overflow-hidden">
     <!-- buttons -->
     <div class="flex justify-between gap-2 items-center my-3 flex-wrap">
-      <div class="w-fit">
-        <input
-          class="form-control"
-          (keyup)="applyFilter($event)"
-          placeholder="{{ 'search' | translate }}"
-          #input
-        />
-      </div>
 
       <!---------------------------------------------------------------------------->
       <div class="flex gap-2 controler">
@@ -28,6 +20,12 @@
           ></span>
           <i class="fa-solid fa-user-plus"></i>
         </button>
+        <button class="flex gap-1 btn btn-danger" (click)="dataSearch.filter.showFilters = !dataSearch.filter.showFilters;">
+          <span
+            class="hidden md:block"
+            [translate]="'name'" [translateParams]="{ar: 'بحث ',en: 'Search '}"></span>
+          <i class="fa-solid fa-search"></i>
+          </button>
         <button
           class="flex gap-1 btn btn-warning"
           (click)="exportData()"
@@ -45,6 +43,119 @@
       </div>
     </div>
 
+    <div *ngIf="dataSearch.filter.showFilters" class="flex gap-6 flex-wrap items-end mb-4">
+
+      <div class="max-w-xs">
+        <label class="col-form-label"> {{ "أسم العميل" | translate }}</label>
+  
+        <ng-select
+          #CustomerName
+          [items]="dataSearch.filter.ListName"
+          bindLabel="name"
+          bindValue="id"
+          [clearable]="true"
+          class="w-full p-0"
+          [(ngModel)]="dataSearch.filter.customerId"
+          placeholder="{{ 'Chose' | translate }}"
+          (change)="RefreshData()"
+        >
+        </ng-select>
+      </div>
+      <div class="max-w-xs">
+        <label class="col-form-label"> {{ "كود العميل" | translate }}</label>
+  
+        <ng-select
+          #CustomerName
+          [items]="dataSearch.filter.ListCode"
+          bindLabel="name"
+          bindValue="id"
+          [clearable]="true"
+          class="w-full p-0"
+          [(ngModel)]="dataSearch.filter.customerId"
+          placeholder="{{ 'Chose' | translate }}"
+          (change)="RefreshData()"
+        >
+        </ng-select>
+      </div>
+      <div class="max-w-xs">
+        <label class="col-form-label"> {{ "رقم تليفون العميل" | translate }}</label>
+  
+        <ng-select
+          #CustomerName
+          [items]="dataSearch.filter.ListPhone"
+          bindLabel="name"
+          bindValue="id"
+          [clearable]="true"
+          class="w-full p-0"
+          [(ngModel)]="dataSearch.filter.customerId"
+          placeholder="{{ 'Chose' | translate }}"
+          (change)="RefreshData()"
+        >
+        </ng-select>
+      </div>
+      <div class="max-w-xs">
+        <label class="col-form-label"> {{ "القائم بالإجتماع" | translate }}</label>
+  
+        <ng-select
+          #CustomerName
+          [items]="dataSearch.filter.ListEmployee"
+          bindLabel="name"
+          bindValue="id"
+          [clearable]="true"
+          class="w-full p-0"
+          [(ngModel)]="dataSearch.filter.meetingChairperson"
+          placeholder="{{ 'Chose' | translate }}"
+          (change)="RefreshData()"
+        >
+        </ng-select>
+      </div>
+      <div class="max-w-xs">
+        <label class="col-form-label"> {{ "حالة الإجتماع" | translate }}</label>
+  
+        <ng-select
+          #CustomerName
+          [items]="dataSearch.filter.ListMeetingStatus"
+          bindLabel="name"
+          bindValue="id"
+          [clearable]="true"
+          class="w-full p-0"
+          [(ngModel)]="dataSearch.filter.meetingStatusId"
+          placeholder="{{ 'Chose' | translate }}"
+          (change)="RefreshData()"
+        >
+        </ng-select>
+      </div>
+      <button
+        class="btn btn-primary"
+        (click)="dataSearch.filter.enable = !dataSearch.filter.enable;ClearDate();"
+        [translate]="'name'"
+        [translateParams]="{
+          ar: 'فلترة بالوقت',
+          en: 'Time Filter'
+        }"
+      ></button>
+      <div class="form-group col-md-2 timeInput" *ngIf="dataSearch.filter.enable">
+        <input
+          placeholder="{{ 'Chose Date' | translate }}"
+          [(ngModel)]="dataSearch.filter.date"
+          type="text"
+          (ngModelChange)="CheckDate($event)"
+          class="form-control"
+          [bsConfig]="{ rangeInputFormat: 'DD/MM/YYYY' }"
+          bsDaterangepicker
+          #dpr="bsDaterangepicker"
+        />
+      </div>
+  
+      <div class="w-fit">
+        <input
+          class="form-control"
+          (keyup)="applyFilter($event)"
+          placeholder="{{ 'search' | translate }}"
+          #input
+        />
+      </div>
+    </div>
     <!-- table -->
     <div class="overflow-auto">
       <table
@@ -154,6 +265,19 @@
               >
                 <i class="fa-regular fa-pen-to-square"></i>
               </button>
+
+              <button
+              class="min-w-max p-2 bg-green-100 hover:bg-green-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+              (click)="open(uploadFileModal, element, 'uploadFile')" >
+              <i class="fa fa-upload"></i>
+              </button>
+              <button 
+              class="min-w-max p-2 bg-blue-100 hover:bg-blue-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+              (click)="open(ShowDesignFilesModal, element, 'ShowDesignFiles')" >
+              <!-- <i class="fa fa-eye"></i> -->
+              <i class="fa-solid fa-download"></i>
+              </button>
+
               <!-- <button *ngIf="element.designStatus==3 && !element.designConvert"
               class="min-w-max p-2 bg-green-100 hover:bg-green-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
               (click)="openModal(convertModal, element, 'convertDesign')"
@@ -183,7 +307,7 @@
         <!-- Row shown when there is no matching data. -->
         <tr class="mat-row" *matNoDataRow>
           <td class="mat-cell" colspan="7">
-            {{ "No result found for " }} "{{ input.value }}"
+            {{ "لا يوجد نتائج" }} 
           </td>
         </tr>
       </table>
@@ -539,7 +663,7 @@
               </label>
               <ng-select
                 class="w-full p-0"
-                [disabled]="modalDetails.type=='DesignView'"
+                disabled
                 placeholder="{{ 'القائم بالتصميم' | translate }}"
                 [(ngModel)]="modalDetails.designChairperson"
                 [ngModelOptions]="{ standalone: true }"
@@ -559,7 +683,7 @@
                 name="date"
                 type="text"
                 class="form-control"
-                [disabled]="modalDetails.type=='DesignView'"
+                disabled
                 bsDatepicker
                 #dpr="bsDatepicker"
                 autocomplete="off"
@@ -569,6 +693,30 @@
               />
             </div>
 
+            <div class="col-md-3">
+              <div class="form-group">
+                <!-- <label class="text-right col-form-label block">
+                  {{ "from the hour" | translate }}
+                </label> -->
+                <span style="padding-right: 110%; color: #cd2a2a">{{
+                  "minute" | translate
+                }}</span>
+                <span style="padding-right: 52%; color: #cd2a2a">{{
+                  "hour" | translate
+                }}</span>
+                <div class="form-group timeInput">
+                  <timepicker
+                    [disabled]="true"
+                    [(ngModel)]="modalDetails.desDateTime"
+                    style="direction: ltr"
+                    [ngModelOptions]="{ standalone: true }"
+                    name="prevDateTime"
+                    autocomplete="off"
+
+                  ></timepicker>
+                </div>
+              </div>
+            </div>
 
             <!-- <div class="form-group">
               <label class="col-form-label">{{ "نوع التصميم" | translate }}</label>
@@ -708,8 +856,7 @@
             <div  *ngIf="modalDetails.addDate != null && modalDetails.addDate != ''" class="flex flex-col gap-2">
               <span>{{ "تاريخ إنشاء المستند" | translate }}</span>
               <div class="flex flex-col">
-                <span>{{
-                  modalDetails?.addDate | date : " hh:mm yyyy-MM-dd"}}</span>
+                <span>{{modalDetails?.addDate | date : " hh:mm yyyy-MM-dd"}}</span>
               </div>
             </div>
           </div>
@@ -717,8 +864,7 @@
             <div *ngIf="modalDetails.updateDate != null && modalDetails.updateDate != ''" class="flex flex-col gap-2">
               <span>{{ "تاريخ تعديل المستند" | translate }}</span>
               <div class="flex flex-col">
-                <span>{{
-                  modalDetails?.updateDate | date : " hh:mm yyyy-MM-dd"}}</span>
+                <span>{{modalDetails?.updateDate | date : " hh:mm yyyy-MM-dd"}}</span>
               </div>
             </div>
           </div>
@@ -800,5 +946,387 @@
     </div>
   </ng-template>
 
+
+<!-- uploadFileModal -->
+<ng-template #uploadFileModal let-modal>
+  <div class="modal-header bg-base text-white">
+    <h4
+      class="modal-title mb-0"
+      id="modal-basic-title">{{"رفع ملف علي تصميم"}}</h4>
+    <button type="button" class="m-0" (click)="modal.dismiss('Cross click')">
+      <i class="fa fa-close"></i>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form #uploadForm="ngForm">
+      <div class="row items-end uploadDiv">
+        <div class="col-md-4 mb-3">
+          <div class="form-input-group">
+            <label
+              for=""
+              class="block"
+              [translate]="'name'"
+              [translateParams]="{ ar: 'اسم الملف', en: 'File name' }"
+            ></label>
+            <input type="text" class="form-control" [ngModelOptions]="{standalone: true}"
+             [(ngModel)]="dataFile.FileName" name="file_name" autocomplete="off"/>
+          </div>
+        </div>
+
+        <div class="upload row-span-2">
+          <file-upload class="h-full" [control]="control" (click)="clickfile($event)" (focus)="focusfile($event)" (blur)="blurfile($event)">
+            <ng-template
+              let-isFileDragDropAvailable="isFileDragDropAvailable"
+              #placeholder
+            >
+              <div class="px-5 flex flex-column justify-center items-center gap-2"*ngIf="control.size === 0">
+                <div class="icon">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="1em"
+                    viewBox="0 0 640 512"
+                  >
+                    <path
+                      d="M144 480C64.5 480 0 415.5 0 336c0-62.8 40.2-116.2 96.2-135.9c-.1-2.7-.2-5.4-.2-8.1c0-88.4 71.6-160 160-160c59.3 0 111 32.2 138.7 80.2C409.9 102 428.3 96 448 96c53 0 96 43 96 96c0 12.2-2.3 23.8-6.4 34.6C596 238.4 640 290.1 640 352c0 70.7-57.3 128-128 128H144zm79-217c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l39-39V392c0 13.3 10.7 24 24 24s24-10.7 24-24V257.9l39 39c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-80-80c-9.4-9.4-24.6-9.4-33.9 0l-80 80z"
+                    />
+                  </svg>
+                </div>
+
+                <div class="upload-text">
+                  {{ "Upload File" | translate }} 😶
+                </div>
+              </div>
+            </ng-template>
+
+            <ng-template
+              let-i="index"
+              let-file="file"
+              let-control="control"
+              #item
+            >
+            <div *ngIf="file">
+              <span class="delete-button" style="display: flex;" (click)="control.removeFile(file)"> <span> حذف ❌ </span>
+                <svg viewBox="0 0 448 512">
+                  <path
+                    d="M32 464a48 48 0 0 0 48 48h288a48 48 0 0 0 48-48V128H32zm272-256a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zM432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16z"
+                  ></path>
+                </svg>
+              </span>
+              <img class="max-h-44" *ngIf="control.valid" [src]="uploadedFile | async"/>
+
+              <section class="file-info">
+                <span style="font-size: 16px;font-weight: 700;">تفاصيل الملف</span>
+                <hr/>
+                <ul>
+                  <li><span style="color:red;">Name: </span>{{file.name}}</li>
+                  <li><span style="color:red;">Type: </span>{{file.type}}</li>
+                  <li><span style="color:red;">Size: </span>{{file.size}} bytes</li>
+                </ul>
+              </section>
+              <section *ngIf="!(control.size === 0)">
+                <p>تم تحديد الملف بنجاح، ولرفع الملف علي المعاينة اضغط زر رفع الملف ✅ </p>
+              </section>
+            </div>
+            </ng-template>
+          </file-upload>
+        </div>
+        <mat-progress-bar style="height: 12px;" mode="determinate" value="{{progress}}"></mat-progress-bar>
+        <p style="text-align: center;color: #950101;" *ngIf="uploading"> جاري التحميل ... ⏳ </p>
+        <p style="font-weight: 700;">يرجي الانتباه للاتي عند رفع ملف : </p>
+        <p><span style="color:red">أولا</span> : تأكد من فحص الملف بواسطة مكافح الفيروسات والتأكد منه قبل رفعه علي النظام</p>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer justify-content-end" style="border-top: none">
+    <button
+      type="button"
+      class="btn btn-light py-2 px-3 mt-0"
+      (click)="modal.dismiss('Cross click')"
+    >
+      {{ "close" | translate }}
+    </button>
+    <button
+      [disabled]="control.size === 0 || disableButtonSave_File"
+      type="button"
+      class="btn submit-btn bg-base text-white py-2 px-3 mt-0"
+      (click)="SaveprojectFiles('add',uploadForm.value,1)"
+    >
+      {{ "رفع الملف" | translate }}
+      <i class="fa fa-upload"></i>
+    </button>
+  </div>
+</ng-template>
+
+<!-- ShowDesignFilesModal -->
+<ng-template #ShowDesignFilesModal let-modal>
+  <div
+    style="background-color: var(--base-color)"
+    class="modal-header text-white flex justify-between items-center"
+  >
+    <h4 class="m-0">
+      <span class="text-2xl"> عرض الملفات </span>
+    </h4>
+    <button
+      type="button"
+      class="text-2xl text-white m-0"
+      (click)="modal?.dismiss()"
+    >
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+  <div class="modal-body text-center">
+    <h3 style="text-align: right;color: red;font-weight: bold;">ملفات التصميم</h3>
+
+    <div class="max-h-80 overflow-auto px-2">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>{{ "أسم الملف" | translate }}</th>
+            <th>{{ "تاريخ رفع الملف" | translate }}</th>
+            <th
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'خيارات',
+                en: 'Operations'
+              }"
+            ></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let type of DesignFilesList">
+            <td>{{ type.fileName }}</td>
+            <td>{{type.addDate | date : " hh:mm yyyy-MM-dd"}}</td>
+            <td class="flex gap-2 justify-center">
+              <button
+                class="p-2 bg-orange-100 hover:bg-orange-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+                (click)="downloadFile(type)">
+                <!-- <i class="fa fa-eye"></i> -->
+                <i class="fa-solid fa-download"></i>
+              </button>
+              <button *ngIf="!modalDetails.designConvert"
+              (click)="getDesignFileRow(type);open(deleteDesignFile,type,'deleteDesignFile')"
+              class="p-2 bg-red-100 hover:bg-red-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+            >
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <h3 style="text-align: right;color: red;font-weight: bold;">ملفات الإجتماع</h3>
+
+    <div class="max-h-80 overflow-auto px-2">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>{{ "أسم الملف" | translate }}</th>
+            <th>{{ "تاريخ رفع الملف" | translate }}</th>
+            <th
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'خيارات',
+                en: 'Operations'
+              }"
+            ></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let type of MeetingFilesList">
+            <td>{{ type.fileName }}</td>
+            <td>{{type.addDate | date : " hh:mm yyyy-MM-dd"}}</td>
+            <td class="flex gap-2 justify-center">
+              <button
+                class="p-2 bg-orange-100 hover:bg-orange-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+                (click)="downloadFile(type)">
+                <!-- <i class="fa fa-eye"></i> -->
+                <i class="fa-solid fa-download"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <h3 style="text-align: right;color: red;font-weight: bold;">ملفات المعاينة</h3>
+
+    <div class="max-h-80 overflow-auto px-2">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>{{ "أسم الملف" | translate }}</th>
+            <th>{{ "تاريخ رفع الملف" | translate }}</th>
+            <th
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'خيارات',
+                en: 'Operations'
+              }"
+            ></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let type of PreviewFilesList">
+            <td>{{ type.fileName }}</td>
+            <td>{{type.addDate | date : " hh:mm yyyy-MM-dd"}}</td>
+            <td class="flex gap-2 justify-center">
+              <button
+                class="p-2 bg-orange-100 hover:bg-orange-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+                (click)="downloadFile(type)">
+                <!-- <i class="fa fa-eye"></i> -->
+                <i class="fa-solid fa-download"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="flex gap-2 mt-3 pt-3 border-t border-neutral-300">
+      <button (click)="modal.dismiss()" class="btn btn-secondary">
+        {{ "Back" | translate }}
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<!-- deleteDesignFile -->
+<ng-template #deleteDesignFile let-modal>
+  <div class="modal-body text-center">
+    <p
+      [translate]="'name'"
+      [translateParams]="{
+        ar: 'هل تريد بالتأكيد حذف هذا الصف',
+        en: 'Are you sure to delete this row ?'
+      }"
+    ></p>
+    <div class="flex gap-2 justify-center mt-3">
+      <button
+        type="button"
+        mat-raised-button
+        color="warn"
+        (click)="confirmDeleteDesignFile(); modal.dismiss()"
+      >
+        {{ "Yes" | translate }}
+      </button>
+      <button
+        type="button"
+        (click)="modal.dismiss()"
+        mat-raised-button
+        color="basic"
+      >
+        {{ "No" | translate }}
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+
+<!-- PreviewNotesModal -->
+<ng-template #PreviewNotesModal let-modal>
+  <div class="modal-header bg-base text-white">
+    <h4
+      class="modal-title mb-0"
+      id="modal-basic-title">{{"ملاحظات المعاينة"}}</h4>
+    <button type="button" class="m-0" (click)="modal.dismiss('Cross click')">
+      <i class="fa fa-close"></i>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div>
+      <div class="form-group col-span-4">
+        <label for="example-text-input" class="col-form-label">{{
+          "Notes" | translate
+        }}</label>
+        <button *ngIf="modalDetails.previewNotes"
+        class="min-w-max p-2 bg-red-100 hover:bg-red-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+        (click)="open(PreviewNotesModal, null, 'PreviewNotes')"
+          >
+          <i class="fa-solid fa-comment-dots"></i>
+        </button>
+        <button *ngIf="modalDetails.meetingNotes"
+        class="min-w-max p-2 bg-green-100 hover:bg-green-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+        (click)="open(MeetingNotesModal, null, 'MeetingNotes')"
+          >
+          <i class="fa-solid fa-comment-dots"></i>
+        </button>
+        <textarea
+          class="form-control autosizeme"
+          style="
+            border: 1px solid #b0b1b2;
+            border-radius: 6px !important;
+            padding: 5px 6px;
+          "
+          cols="30"
+          rows="4"
+          disabled
+          id="Notesptxt"
+          autocomplete="off"
+          name="Notesptxt"
+          placeholder="Notes"
+          [(ngModel)]="modalDetails.previewNotes"
+        ></textarea>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer justify-content-end" style="border-top: none">
+    <button
+      type="button"
+      class="btn btn-light py-2 px-3 mt-0"
+      (click)="modal.dismiss('Cross click')"
+    >
+      {{ "close" | translate }}
+    </button>
+  </div>
+</ng-template>
+<!-- MeetingNotesModal -->
+<ng-template #MeetingNotesModal let-modal>
+  <div class="modal-header bg-base text-white">
+    <h4
+      class="modal-title mb-0"
+      id="modal-basic-title">{{"ملاحظات الإجتماع"}}</h4>
+    <button type="button" class="m-0" (click)="modal.dismiss('Cross click')">
+      <i class="fa fa-close"></i>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div>
+      <div class="form-group col-span-4">
+        <label for="example-text-input" class="col-form-label">{{
+          "Notes" | translate
+        }}</label>
+        <textarea
+          class="form-control autosizeme"
+          style="
+            border: 1px solid #b0b1b2;
+            border-radius: 6px !important;
+            padding: 5px 6px;
+          "
+          cols="30"
+          rows="4"
+          disabled
+          id="Notesmtxt"
+          autocomplete="off"
+          name="Notesmtxt"
+          placeholder="Notes"
+          [(ngModel)]="modalDetails.meetingNotes"
+        ></textarea>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer justify-content-end" style="border-top: none">
+    <button
+      type="button"
+      class="btn btn-light py-2 px-3 mt-0"
+      (click)="modal.dismiss('Cross click')"
+    >
+      {{ "close" | translate }}
+    </button>
+  </div>
+</ng-template>
+
 </div>
+
+
 

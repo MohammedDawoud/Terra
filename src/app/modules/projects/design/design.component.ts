@@ -58,6 +58,8 @@ import { SharedService } from 'src/app/core/services/shared.service';
 import { CustomerService } from 'src/app/core/services/customer-services/customer.service';
 import { EmployeeService } from 'src/app/core/services/employee-services/employee.service';
 import { PreviewService } from 'src/app/core/services/project-services/preview.service';
+import { HttpEventType } from '@angular/common/http';
+import { filesservice } from 'src/app/core/services/sys_Services/files.service';
 
 const hijriSafe = require('hijri-date/lib/safe');
 const HijriDate = hijriSafe.default;
@@ -80,7 +82,6 @@ const toHijri = hijriSafe.toHijri;
 export class DesignComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-  public uploadedFiles: Array<File> = [];
   dataSourceTemp: any = [];
   dataSource: MatTableDataSource<any> = new MatTableDataSource([{}]);
   _DesignSMS: any = null;
@@ -177,6 +178,7 @@ export class DesignComponent implements OnInit {
     private api: RestApiService,
     private changeDetection: ChangeDetectorRef,
     private toast: ToastrService,
+    private files: filesservice,
     private ngbModalService: NgbModal,
     private _sharedService: SharedService,
     private authenticationService: AuthenticationService,
@@ -358,7 +360,6 @@ export class DesignComponent implements OnInit {
 
   openModal(template: TemplateRef<any>, data?: any, modalType?: any) {
     this.resetModal();
-    this.fillBranchByUserId();
     //this.GetAllPreviewsSelectBarcodeFinished();
 
     debugger
@@ -372,16 +373,18 @@ export class DesignComponent implements OnInit {
 
     if (data) {
       this.modalDetails = data;
+      this.fillBranchByUserId();
       if (modalType == 'editDesign' || modalType == 'DesignView') {
         this.GetAllPreviewsCodeAll();
         if(this.modalDetails.date!=null)
         {
           this.modalDetails.date = this._sharedService.String_TO_date(this.modalDetails.date);
+          this.modalDetails.desDateTime = this.modalDetails.date;
         }
-        if(this.modalDetails.designDate!=null)
-        {
-          this.modalDetails.designDate = this._sharedService.String_TO_date(this.modalDetails.designDate);
-        }    
+        // if(this.modalDetails.designDate!=null)
+        // {
+        //   this.modalDetails.designDate = this._sharedService.String_TO_date(this.modalDetails.designDate);
+        // }    
         if (data.agentAttachmentUrl != null) {
           this.modalDetails.attachmentUrl =
             environment.PhotoURL + data.agentAttachmentUrl;
@@ -389,6 +392,10 @@ export class DesignComponent implements OnInit {
         }
       }
       console.log(this.modalDetails);
+    }
+    else
+    {
+      this.fillBranchByUserId();
     }
     if (modalType) {
       //console.log(modalType);
@@ -422,6 +429,10 @@ export class DesignComponent implements OnInit {
     }
     if (type === 'deleteModalPerm') {
       this.publicidRow = data.idRow;
+    }
+    if(type === 'ShowDesignFiles')
+    {
+      this.GetAllDesignFiles(this.modalDetails.designId,this.modalDetails.meetingId,this.modalDetails.previewId);
     }
     this.ngbModalService
       .open(content, {
@@ -512,9 +523,11 @@ export class DesignComponent implements OnInit {
     prevObj.designChairperson = this.modalDetails.designChairperson;
     // prevObj.designTypeId = this.modalDetails.designTypeId;
     prevObj.designStatus = this.modalDetails.designStatus;
-    prevObj.notes = this.modalDetails.notes;
     if (this.modalDetails.date != null) {
       prevObj.date = this._sharedService.date_TO_String(this.modalDetails.date);
+    }
+    if (this.modalDetails.desDateTime != null) {
+      prevObj.desDateTime = this._sharedService.formatAMPM(this.modalDetails.desDateTime);
     }
 
     prevObj.notes = this.modalDetails.notes;
@@ -574,10 +587,22 @@ export class DesignComponent implements OnInit {
       this.ValidateObjMsg = { status: false, msg: 'اختر القائم بالتصميم' };
       return this.ValidateObjMsg;
     }
+    else if ((this.modalDetails.designStatus == null ||this.modalDetails.designStatus == '')
+    ) {
+      this.ValidateObjMsg = { status: false, msg: 'اختر حالة التصميم' };
+      return this.ValidateObjMsg;
+    }
     else if ((this.modalDetails.date == null ||this.modalDetails.date == '')) {
       this.ValidateObjMsg = {
         status: false,
         msg: 'ادخل تاريخ التصميم',
+      };
+      return this.ValidateObjMsg;
+    }
+    else if ((this.modalDetails.desDateTime == null ||this.modalDetails.desDateTime == '')) {
+      this.ValidateObjMsg = {
+        status: false,
+        msg: 'ادخل وقت التصميم',
       };
       return this.ValidateObjMsg;
     }
@@ -610,6 +635,7 @@ export class DesignComponent implements OnInit {
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
       this.allDesignCount = data.length;
+      this.FillSerachLists(data);
     });
   }
 
@@ -704,6 +730,7 @@ export class DesignComponent implements OnInit {
       contractCode: null,
       contractDate: null,
       contractChairperson: null,
+      desDateTime:null,
     };
   }
 
@@ -768,5 +795,292 @@ export class DesignComponent implements OnInit {
   public ngOnDestroy(): void {
     this.subscription?.unsubscribe();
   }
+
+      //--------------------------------UploadFiles---------------------------------------
+      //#region 
+    public uploadedFiles: Array<File> = [];
+    selectedFiles?: FileList;
+    currentFile?: File;
+    
+    progress = 0;
+    uploading=false;
+    disableButtonSave_File = false;
+    dataFile:any={
+      FileId:0,
+      FileName:null,
+    }
+    resetprog(){
+      this.disableButtonSave_File = false;
+      this.progress = 0;
+      this.uploading=false;
+    }
+    
+      selectFile(event: any): void {
+        this.selectedFiles = event.target.files;
+      }
+      SaveprojectFiles(type:any,dataFile:any,uploadtype:any) {
+      if(this.dataFile.FileName==null)
+      {
+        this.toast.error("من فضلك أكمل البيانات ", 'رسالة');
+        return;
+      }
+      if(this.control?.value.length>0){
+      }
+        var _Files: any = {};
+        _Files.fileId=0;
+        _Files.designId=this.modalDetails.designId;
+        _Files.fileName=this.dataFile.FileName;
+        _Files.transactionTypeId=39;
+        _Files.notes=null;
+        this.progress = 0;
+        this.disableButtonSave_File = true;
+        this.uploading=true;
+        setTimeout(() => {
+          this.resetprog();
+        }, 60000);
+    
+        if (this.control?.value.length>0) {
+          var obj=_Files;
+          this.files.UploadFiles(this.control?.value[0],obj).subscribe((result: any)=>{
+            if (result.type === HttpEventType.UploadProgress) {
+              this.progress = Math.round(100 * result.loaded / result.total);
+            }
+            debugger
+            if(result?.body?.statusCode==200){
+              this.control.removeFile(this.control?.value[0]);
+              this.toast.success(this.translate.instant(result?.body?.reasonPhrase),'رسالة');
+              this.getAllDesigns();
+              this.ClearField();
+              this.resetprog();
+            }
+            else if(result?.body?.statusCode>200){
+              this.toast.error(this.translate.instant(result?.body?.reasonPhrase), 'رسالة');
+              this.resetprog();
+            }
+            else if(result?.type>=0)
+            {}
+            else{this.toast.error(this.translate.instant(result?.body?.reasonPhrase), 'رسالة');this.resetprog();}
+    
+          });
+        }
+        else{this.toast.error("من فضلك أختر ملف", 'رسالة');}
+    
+    
+      }
+    ClearField(){
+      this.dataFile.FileId=0;
+      this.dataFile.FileName=null;
+      this.selectedFiles = undefined;
+      this.uploadedFiles=[];
+    }
+    
+    clickfile(evenet:any)
+    {
+      console.log(evenet);
+    }
+    focusfile(evenet:any)
+    {
+      console.log(evenet);
+    }
+    blurfile(evenet:any)
+    {
+      console.log(evenet);
+    }
+    
+    downloadFile(data: any) {
+      try
+      {
+        debugger
+        //var link=environment.PhotoURL+"/Uploads/Users/img1.jpg";
+        var link=environment.PhotoURL+data.fileUrl;
+        console.log(link);
+        window.open(link, '_blank');
+      }
+      catch (error)
+      {
+        this.toast.error("تأكد من الملف",this.translate.instant("Message"));
+      }
+    }
+  
+    DesignFileRowSelected: any;
+    
+    getDesignFileRow(row: any) {
+      debugger
+      this. DesignFileRowSelected = row;
+    }
+    confirmDeleteDesignFile(): void {
+      this.files.DeleteFiles(this. DesignFileRowSelected.fileId).subscribe((result) => {
+          if (result.statusCode == 200) {
+            this.toast.success(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
+            this.GetAllDesignFiles(this.DesignFileRowSelected.designId,this.DesignFileRowSelected.meetingId,this.DesignFileRowSelected.previewId);
+            this.modal?.hide();
+          } else {
+            this.toast.error(result.reasonPhrase, this.translate.instant('Message'));
+          }
+        });
+    }
+    
+    DesignFilesList: any=[];
+    
+    GetAllDesignFiles(DesignId:any,MeetingId:any,PreviewId:any) {
+      this.DesignFilesList=[];
+      this.files.GetAllDesignFiles(DesignId).subscribe((data: any) => {
+        this.DesignFilesList = data;
+        console.log(data);
+      });
+      this.GetAllMeetingFiles(MeetingId);
+      this.GetAllPreviewFiles(PreviewId);
+    }
+    MeetingFilesList: any=[];
+  
+    GetAllMeetingFiles(MeetingId:any) {
+      this.MeetingFilesList=[];
+      this.files.GetAllMeetingFiles(MeetingId).subscribe((data: any) => {
+        this.MeetingFilesList = data;
+        console.log(data);
+      });
+    }
+    PreviewFilesList: any=[];
+
+    GetAllPreviewFiles(PreviewId:any) {
+      this.PreviewFilesList=[];
+      this.files.GetAllPreviewFiles(PreviewId).subscribe((data: any) => {
+        this.PreviewFilesList = data;
+        console.log(data);
+      });
+    }
+    
+    
+    //#endregion
+      //-------------------------------EndUploadFiles-------------------------------------
+
+      //------------------------------Search--------------------------------------------------------
+//#region 
+
+dataSearch: any = {
+  filter: {
+    enable: false,
+    date: null,
+    isChecked: false,
+    ListName:[],
+    ListCode:[],
+    ListPhone:[],
+    ListEmployee:[],
+    ListDesignStatus:[],
+    ListDesignValue:[],
+    customerId:null,
+    designChairperson:null,
+    designStatusId:null,
+    showFilters:false
+  },
+};
+
+  FillSerachLists(dataT:any){
+    this.FillCustomerListName(dataT);
+    this.FillCustomerListCode(dataT);
+    this.FillCustomerListPhone(dataT);
+    this.FillCustomerListEmployee(dataT);
+    this.FillListDesignStatus();
+  }
+
+  FillCustomerListName(dataT:any){
+    const ListLoad = dataT.map((item: { customerId: any; customerName: any; }) => {
+      const container:any = {}; container.id = item.customerId; container.name = item.customerName; return container;
+    })
+    const key = 'id';
+    const arrayUniqueByKey = [...new Map(ListLoad.map((item: { [x: string]: any; }) => [item[key], item])).values()];
+    this.dataSearch.filter.ListName=arrayUniqueByKey;
+  }
+  FillCustomerListCode(dataT:any){
+    const ListLoad = dataT.map((item: { customerId: any; customerCode: any; }) => {
+      const container:any = {}; container.id = item.customerId; container.name = item.customerCode; return container;
+    })
+    const key = 'id';
+    const arrayUniqueByKey = [...new Map(ListLoad.map((item: { [x: string]: any; }) => [item[key], item])).values()];
+    this.dataSearch.filter.ListCode=arrayUniqueByKey;
+  }
+  FillCustomerListPhone(dataT:any){
+    const ListLoad = dataT.map((item: { customerId: any; mainPhoneNo: any; }) => {
+      const container:any = {}; container.id = item.customerId; container.name = item.mainPhoneNo; return container;
+    })
+    const key = 'id';
+    const arrayUniqueByKey = [...new Map(ListLoad.map((item: { [x: string]: any; }) => [item[key], item])).values()];
+    this.dataSearch.filter.ListPhone=arrayUniqueByKey;
+  }
+  FillCustomerListEmployee(dataT:any){
+    const ListLoad = dataT.map((item: { designChairperson: any; chairpersonName: any; }) => {
+      const container:any = {}; container.id = item.designChairperson; container.name = item.chairpersonName; console.log("container",container); return container;   
+    })
+    const key = 'id';
+    const arrayUniqueByKey = [...new Map(ListLoad.map((item: { [x: string]: any; }) => [item[key], item])).values()];
+    this.dataSearch.filter.ListEmployee=arrayUniqueByKey;
+    this.dataSearch.filter.ListEmployee = this.dataSearch.filter.ListEmployee.filter((d: { id: any }) => (d.id !=null && d.id!=0));
+  }
+
+  FillListDesignStatus(){
+    this.dataSearch.filter.ListDesignStatus= [
+      { id: 1, name: 'قيد الإنتظار' },
+      { id: 2, name: 'قيد التشغيل' },
+      { id: 3, name: 'منتهية' },
+    ];
+  }
+
+  RefreshDataCheck(from: any, to: any){
+    this.dataSource.data=this.dataSourceTemp;
+    if(!(from==null || from=="" || to==null || to==""))
+    {
+      debugger
+      this.dataSource.data = this.dataSource.data.filter((item: any) => {
+        var AccDate=new Date(item.date);
+        var AccFrom=new Date(from);
+        var AccTo=new Date(to);
+        return AccDate.getTime() >= AccFrom.getTime() &&
+        AccDate.getTime() <= AccTo.getTime();
+    });
+    }
+    if(this.dataSearch.filter.customerId!=null && this.dataSearch.filter.customerId!="")
+    {
+      this.dataSource.data = this.dataSource.data.filter((d: { customerId: any }) => d.customerId == this.dataSearch.filter.customerId);
+    }
+    if(this.dataSearch.filter.designChairperson!=null && this.dataSearch.filter.designChairperson!="")
+    {
+      this.dataSource.data = this.dataSource.data.filter((d: { designChairperson: any }) => d.designChairperson == this.dataSearch.filter.designChairperson);
+    } 
+    if(this.dataSearch.filter.designStatusId!=null && this.dataSearch.filter.designStatusId!="")
+    {
+      this.dataSource.data = this.dataSource.data.filter((d: { designStatus: any }) => d.designStatus == this.dataSearch.filter.designStatusId);
+    } 
+   
+  }
+
+  ClearDate(){
+    if(this.dataSearch.filter.enable==false){ 
+      this.dataSearch.filter.date=null;   
+      this.RefreshDataCheck(null,null);
+    }
+  }
+  CheckDate(event: any) {
+    debugger
+    if (event != null) {
+      var from = this._sharedService.date_TO_String(event[0]);
+      var to = this._sharedService.date_TO_String(event[1]);
+      this.RefreshDataCheck(from, to);
+    } else {    
+      this.RefreshDataCheck(null,null);
+    }
+  }
+  RefreshData(){
+    debugger
+    if( this.dataSearch.filter.date==null)
+    {
+    this.RefreshDataCheck(null,null);
+    }
+    else
+    {
+    this.RefreshDataCheck(this.dataSearch.filter.date[0],this.dataSearch.filter.date[1]);
+    }
+  }
+  //#endregion 
+//------------------------------Search--------------------------------------------------------
 
 }

@@ -307,14 +307,19 @@ export class PreviewComponent implements OnInit {
       }
       else
       {
-        this.modalDetails.branchId = parseInt(this._sharedService.getStoBranch());
-        if (modalType == 'addPreview1' || modalType == 'addPreview2'){
-          debugger
-          
-          this.BranchChange(this.modalDetails.branchId,modalType);
-        }     
-      }
+        if (modalType == 'editPreview' || modalType == 'PreviewView'){
 
+        }
+        else
+        {
+          this.modalDetails.branchId = parseInt(this._sharedService.getStoBranch());
+          if (modalType == 'addPreview1' || modalType == 'addPreview2'){
+            debugger
+            
+            this.BranchChange(this.modalDetails.branchId,modalType);
+          }   
+        }
+      }
     });
   }
 
@@ -401,7 +406,6 @@ export class PreviewComponent implements OnInit {
 
   openModal(template: TemplateRef<any>, data?: any, modalType?: any) {
     this.resetModal();
-    this.fillBranchByUserId(modalType);
     if(this.TransbarcodeActive)
     {
       this.GetAllPreviewsSelectBarcode();
@@ -423,12 +427,12 @@ export class PreviewComponent implements OnInit {
       //this.PreviewNumber_Reservation(this.modalDetails.branchId,"First");
       this.TransbarcodeActive=false;
     }
-    console.log('this.modalDetails');
-    console.log(this.modalDetails);
+
 
 
     if (data) {
       this.modalDetails = data;
+      this.fillBranchByUserId(modalType);
       if (modalType == 'editPreview' || modalType == 'PreviewView') {
         this.TransbarcodeActive=false;
         if(this.modalDetails.date!=null)
@@ -449,6 +453,7 @@ export class PreviewComponent implements OnInit {
         if(this.modalDetails.meetingDate!=null)
         {
           this.modalDetails.meetingDate = this._sharedService.String_TO_date(this.modalDetails.meetingDate);
+          this.modalDetails.meetDateTime = this.modalDetails.meetingDate;
         }    
         if (data.agentAttachmentUrl != null) {
           this.modalDetails.attachmentUrl =
@@ -456,7 +461,11 @@ export class PreviewComponent implements OnInit {
           //this.modalDetails.attachmentUrl = this.domSanitizer.bypassSecurityTrustUrl(environment.PhotoURL+data.agentAttachmentUrl)
         }
       }
-      console.log(this.modalDetails);
+      console.log("modalDetails",this.modalDetails);
+    }
+    else
+    {
+      this.fillBranchByUserId(modalType);
     }
     if (modalType) {
       //console.log(modalType);
@@ -571,6 +580,10 @@ export class PreviewComponent implements OnInit {
         this.toast.error(this.translate.instant("من فضلك أختر تاريخ الإجتماع"),this.translate.instant('Message'));
         return;
       }
+      if((this.modalDetails.meetDateTime == null ||this.modalDetails.meetDateTime == '')){
+        this.toast.error(this.translate.instant("من فضلك أختر وقت الإجتماع"),this.translate.instant('Message'));
+        return;
+      }
       if(this.modalDetails.meetingChairperson==null){
         this.toast.error(this.translate.instant("من فضلك أختر القائم بالإجتماع"),this.translate.instant('Message'));
         return;
@@ -578,7 +591,11 @@ export class PreviewComponent implements OnInit {
       if (this.modalDetails.meetingDate != null) {
         prevObj.meetingDate = this._sharedService.date_TO_String(this.modalDetails.meetingDate);
       }
+      if (this.modalDetails.meetDateTime != null) {
+        prevObj.meetDateTime = this._sharedService.formatAMPM(this.modalDetails.meetDateTime);
+      }
       prevObj.meetingChairperson=this.modalDetails.meetingChairperson;
+      prevObj.meetingCode=this.modalDetails.meetingCode;
 
     }
 
@@ -637,10 +654,10 @@ export class PreviewComponent implements OnInit {
       this.ValidateObjMsg = { status: false, msg: 'أختر فرع المعاينة' };
       return this.ValidateObjMsg;
     }
-    // else if (this.modalDetails.branchId == 1 ||this.modalDetails.branchId == '1') {
-    //   this.ValidateObjMsg = { status: false, msg: 'لا يمكنك الحفظ في الإدارة المركزية' };
-    //   return this.ValidateObjMsg;
-    // } 
+    else if (this.modalDetails.branchId == 1 ||this.modalDetails.branchId == '1') {
+      this.ValidateObjMsg = { status: false, msg: 'لا يمكنك الحفظ في الإدارة المركزية' };
+      return this.ValidateObjMsg;
+    } 
      else if (this.modalDetails.orderBarcode == null ||this.modalDetails.orderBarcode == '') {
       this.ValidateObjMsg = { status: false, msg: 'أدخل باركود العمليات' };
       return this.ValidateObjMsg;
@@ -703,6 +720,23 @@ export class PreviewComponent implements OnInit {
     }
     this.service.customExportExcel(x, 'Previews');
   }
+
+  MeetingNumber_Reservation(BranchId:any,orderBarcode:any,modalType:any){
+    if(!(BranchId==null))
+    {
+      this.service.MettingNumber_Reservation(BranchId,orderBarcode).subscribe(data=>{
+        this.modalDetails.meetingCode=data.reasonPhrase;
+      });
+    }
+  }
+
+  previewStatusChange(){
+    if(this.modalDetails.previewStatus==3)
+    {
+      this.MeetingNumber_Reservation(this.modalDetails.branchId,this.modalDetails.orderBarcode,this.modalDetails.type);
+    }
+  }
+
 
   getAllPreviews() {
     this.service.GetAllPreviews_Branch().subscribe((data: any) => {
@@ -902,8 +936,6 @@ export class PreviewComponent implements OnInit {
   }
 
 
-
-  // upload img ]
   public readonly uploadedFile: BehaviorSubject<string> = new BehaviorSubject(
     ''
   );
@@ -1027,13 +1059,6 @@ blurfile(evenet:any)
 }
 
 
-downloadFile3(data: any) {
-  debugger
-  var link="file:///D:/Terra/testtgrebe/64background.png";
-  console.log(link);
-  window.open(link, '_blank');
-}
-
 downloadFile(data: any) {
   try
   {
@@ -1049,20 +1074,6 @@ downloadFile(data: any) {
   }
 }
 
-downloadFile2(data: any) {
-  try
-  {
-    debugger
-    //var link=environment.PhotoURL+data.fileUrl;
-    var link="http://"+data.fileUrl;
-    console.log(link);
-    window.open(link, '_blank');
-  }
-  catch (error)
-  {
-    this.toast.error("تأكد من الملف",this.translate.instant("Message"));
-  }
-}
 PreviewFileRowSelected: any;
 
 getPreviewFileRow(row: any) {
@@ -1087,12 +1098,13 @@ GetAllPreviewFiles(PreviewId:any) {
   this.PreviewFilesList=[];
   this.files.GetAllPreviewFiles(PreviewId).subscribe((data: any) => {
     this.PreviewFilesList = data;
+    console.log(data);
   });
 }
 
 
-  //-------------------------------EndUploadFiles-------------------------------------
 //#endregion
+  //-------------------------------EndUploadFiles-------------------------------------
 
 
 //------------------------------Search--------------------------------------------------------

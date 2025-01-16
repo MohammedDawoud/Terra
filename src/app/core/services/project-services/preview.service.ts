@@ -60,6 +60,10 @@ export class PreviewService {
     var url=`${environment.apiEndPoint}Preview/PreviewNumber_Reservation?BranchId=${BranchId}&&OrderBarcode=${OrderBarcode}`;
     return this.http.get<any>(url);
   }
+  MettingNumber_Reservation(BranchId:any,OrderBarcode:any) {
+    var url=`${environment.apiEndPoint}Meeting/MeetingNumber_Reservation?BranchId=${BranchId}&&OrderBarcode=${OrderBarcode}`;
+    return this.http.get<any>(url);
+  }
   FillCitySelect() {
     return this.http.get<any>(environment.apiEndPoint+'Organizations/FillCitySelect');
   }

@@ -29,6 +29,14 @@ export class filesservice {
     {
       formData.append('PreviewId',String(_file.previewId));
     }
+    if(!(_file.meetingId==undefined || _file.meetingId==null))
+    {
+      formData.append('MeetingId',String(_file.meetingId));
+    }
+    if(!(_file.designId==undefined || _file.designId==null))
+    {
+      formData.append('DesignId',String(_file.designId));
+    }
     formData.append('Notes',String(_file.notes));
 
     const req = new HttpRequest('POST', `${this.apiEndPoint}Files/UploadFiles`, formData, {
@@ -39,6 +47,14 @@ export class filesservice {
   }
   GetAllPreviewFiles(PreviewId:any) {
     var url=`${environment.apiEndPoint}Files/GetAllPreviewFiles?PreviewId=${PreviewId}`;
+    return this.http.get<any>(url);
+  }
+  GetAllMeetingFiles(MeetingId:any) {
+    var url=`${environment.apiEndPoint}Files/GetAllMeetingFiles?MeetingId=${MeetingId}`;
+    return this.http.get<any>(url);
+  }
+  GetAllDesignFiles(DesignId:any) {
+    var url=`${environment.apiEndPoint}Files/GetAllDesignFiles?DesignId=${DesignId}`;
     return this.http.get<any>(url);
   }
   GetAllEmployeeFiles(EmployeeId:any) {
