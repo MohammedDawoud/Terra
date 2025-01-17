@@ -103,23 +103,23 @@
           bindValue="id"
           [clearable]="true"
           class="w-full p-0"
-          [(ngModel)]="dataSearch.filter.meetingChairperson"
+          [(ngModel)]="dataSearch.filter.designChairperson"
           placeholder="{{ 'Chose' | translate }}"
           (change)="RefreshData()"
         >
         </ng-select>
       </div>
       <div class="max-w-xs">
-        <label class="col-form-label"> {{ "حالة الإجتماع" | translate }}</label>
+        <label class="col-form-label"> {{ "حالة التصميم" | translate }}</label>
   
         <ng-select
           #CustomerName
-          [items]="dataSearch.filter.ListMeetingStatus"
+          [items]="dataSearch.filter.ListDesignStatus"
           bindLabel="name"
           bindValue="id"
           [clearable]="true"
           class="w-full p-0"
-          [(ngModel)]="dataSearch.filter.meetingStatusId"
+          [(ngModel)]="dataSearch.filter.designStatusId"
           placeholder="{{ 'Chose' | translate }}"
           (change)="RefreshData()"
         >

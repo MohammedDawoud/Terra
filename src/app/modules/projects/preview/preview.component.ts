@@ -328,7 +328,8 @@ export class PreviewComponent implements OnInit {
     debugger
     if(modalType == 'addPreview1'  || modalType == 'addPreview2')
     {
-      this.PreviewNumber_Reservation(BranchId,this.modalDetails.orderBarcode,modalType);
+      //this.PreviewNumber_Reservation(BranchId,this.modalDetails.orderBarcode,modalType);
+      this.OrderBarcodeNumber_Reservation(BranchId);
     }
   }
 
@@ -389,22 +390,39 @@ export class PreviewComponent implements OnInit {
   //     }
   //   });
   // }
-  GenerateOrderBarcodeNumber(){
-    this.service.GenerateOrderBarcodeNumber().subscribe(data=>{
-      this.modalDetails.orderBarcode=data.reasonPhrase;
-      if(!this.TransbarcodeActive)
-      {
-        //this.GeneratePreviewNumberByBarcodeNum();
-        this.PreviewNumber_Reservation(this.modalDetails.branchId,this.modalDetails.orderBarcode,this.modalDetails.type);
-      }
-    });
-  }
+  // GenerateOrderBarcodeNumber(){
+  //   this.service.GenerateOrderBarcodeNumber().subscribe(data=>{
+  //     this.modalDetails.orderBarcode=data.reasonPhrase;
+  //     if(!this.TransbarcodeActive)
+  //     {
+  //       //this.GeneratePreviewNumberByBarcodeNum();
+  //       this.PreviewNumber_Reservation(this.modalDetails.branchId,this.modalDetails.orderBarcode,this.modalDetails.type);
+  //     }
+  //   });
+  // }
 
   PreviewNumber_Reservation(BranchId:any,orderBarcode:any,modalType:any){
     if(!(BranchId==null))
     {
       this.service.PreviewNumber_Reservation(BranchId,orderBarcode).subscribe(data=>{
         this.modalDetails.previewCode=data.reasonPhrase;
+      });
+    }
+  }
+  OrderBarcodeNumber_Reservation(BranchId:any){
+    debugger
+    if(!(BranchId==null))
+    {
+      this.service.OrderBarcodeNumber_Reservation(BranchId).subscribe(data=>{
+        if(!this.TransbarcodeActive){
+          this.modalDetails.orderBarcode=data.reasonPhrase;
+        }
+        // if(!this.TransbarcodeActive)
+        // {
+        //   this.PreviewNumber_Reservation(this.modalDetails.branchId,this.modalDetails.orderBarcode,this.modalDetails.type);
+        // }
+        this.PreviewNumber_Reservation(this.modalDetails.branchId,this.modalDetails.orderBarcode,this.modalDetails.type);
+
       });
     }
   }
@@ -421,17 +439,11 @@ export class PreviewComponent implements OnInit {
     if (modalType == 'addPreview1') {
       if(!this.TransbarcodeActive)
       {
-        //this.GeneratePreviewNumber();
-        //this.PreviewNumber_Reservation(this.modalDetails.branchId);
+
       }   
     }
     if (modalType == 'addPreview2') {
       this.modalDetails.orderBarcode=1;
-      // this.modalDetails.previewCode=1;
-      //this.PreviewNumber_Reservation(this.modalDetails.branchId,this.modalDetails.orderBarcode,'addPreview2');
-      //this.GenerateOrderBarcodeNumber();
-      //this.PreviewNumber_Reservation(this.modalDetails.branchId);
-      //this.PreviewNumber_Reservation(this.modalDetails.branchId,"First");
       this.TransbarcodeActive=false;
     }
 
@@ -551,10 +563,14 @@ export class PreviewComponent implements OnInit {
   TransbarcodeActive:boolean=false;
   confirmAddPreviewMessage(){
     this.TransbarcodeActive=true;
+    this.PreviewNumber_Reservation(this.modalDetails.branchId,this.modalDetails.orderBarcode,"addPreview1");
   }
   declineAddPreviewMessage(){
+    debugger
     this.TransbarcodeActive=false;
-    this.GenerateOrderBarcodeNumber();
+    this.modalDetails.branchId = parseInt(this._sharedService.getStoBranch());
+    //this.OrderBarcodeNumber_Reservation(this.modalDetails.branchId);
+    //this.GenerateOrderBarcodeNumber();
     //this.PreviewNumber_Reservation(this.modalDetails.branchId,this.modalDetails.orderBarcode,"addPreview1");
   }
 
