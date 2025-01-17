@@ -142,12 +142,17 @@ export class DesignComponent implements OnInit {
   displayedColumns: string[] = [
     'branchName',
     'orderBarcode',
-    'previewCode',
+    'previewTypeName',
     'designCode',
+    'customerCode',
     'customerName',
+    'mainPhoneNo',
+    'address',
     'chairpersonName',
+    'date',
     'designStatustxt',
-    'designConverttxt', 
+    'contractCode', 
+    'addDate', 
     'operations',
   ];
   displayedColumn: any = {
@@ -438,8 +443,7 @@ export class DesignComponent implements OnInit {
       .open(content, {
         ariaLabelledBy: 'modal-basic-title',
         size: type ? 'xl' : 'lg',
-        centered:
-          type == 'SaveInvoiceConfirmModal' ? true : !type ? true : false,
+        centered:type == 'PreviewNotes' ? true : type == 'MeetingNotes' ? true :  !type ? true : false,
         backdrop: 'static',
         keyboard: false,
       })
@@ -511,8 +515,11 @@ export class DesignComponent implements OnInit {
     //   if (this.modalDetails.designDate != null) {
     //     prevObj.designDate = this._sharedService.date_TO_String(this.modalDetails.designDate);
     //   }
+    //   if (this.modalDetails.desDateTime != null) {
+    //     prevObj.desDateTime = this._sharedService.formatAMPM(this.modalDetails.desDateTime);
+    //   }
     //   prevObj.designChairperson=this.modalDetails.designChairperson;
-
+    //   prevObj.designCode=this.modalDetails.designCode;
     // }
     
     prevObj.branchId = this.modalDetails.branchId;

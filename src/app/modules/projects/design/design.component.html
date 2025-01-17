@@ -177,7 +177,7 @@
 
         <ng-container matColumnDef="orderBarcode">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
-            <span>{{'باركود الطلب '}}</span>
+            <span>{{'باركود العمليات '}}</span>
 
           </th>
           <td mat-cell *matCellDef="let element">
@@ -185,13 +185,13 @@
           </td>
         </ng-container>
 
-        <ng-container matColumnDef="previewCode">
+        <ng-container matColumnDef="previewTypeName">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
-            <span>{{'رقم المعاينة '}}</span>
+            <span>{{'نوع المعاينة '}}</span>
 
           </th>
           <td mat-cell *matCellDef="let element">
-            {{ element.previewCode }}
+            {{ element.previewTypeName }}
           </td>
         </ng-container>
 
@@ -205,8 +205,14 @@
           </td>
         </ng-container>
         
-
-        <!-- phone Column -->
+        <ng-container matColumnDef="customerCode">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span>{{'كود العميل'}}</span>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.customerCode }}
+          </td>
+        </ng-container>
         <ng-container matColumnDef="customerName">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
             <span>{{'اسم العميل'}}</span>
@@ -215,12 +221,37 @@
             {{ element.customerName }}
           </td>
         </ng-container>
+        <ng-container matColumnDef="mainPhoneNo">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span>{{'تليفون العميل'}}</span>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.mainPhoneNo }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="address">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span>{{'عنوان العميل'}}</span>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.address }}
+          </td>
+        </ng-container>
         <ng-container matColumnDef="chairpersonName">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
             <span>{{'القائم بالتصميم'}}</span>
           </th>
           <td mat-cell *matCellDef="let element">
             {{ element.chairpersonName }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span>{{'تاريخ التصميم'}}</span>
+          </th>
+          <td mat-cell *matCellDef="let element" >
+            {{ element.date | date : " hh:mm yyyy-MM-dd" }}
+
           </td>
         </ng-container>
         <ng-container matColumnDef="designStatustxt">
@@ -232,7 +263,25 @@
 
           </td>
         </ng-container>
-        <ng-container matColumnDef="designConverttxt">
+        <ng-container matColumnDef="contractCode">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span>{{'رقم العقد'}}</span>
+          </th>
+          <td mat-cell *matCellDef="let element" >
+          
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="addDate">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span>{{'تاريخ الإنشاء'}}</span>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.addDate | date : " hh:mm yyyy-MM-dd" }}
+          </td>
+        </ng-container>
+
+        <!-- <ng-container matColumnDef="designConverttxt">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
             <span>{{'حالة التحويل'}}</span>
           </th>
@@ -244,7 +293,7 @@
               {{ element.designConverttxt }}
             </span>
           </td>
-        </ng-container>
+        </ng-container> -->
 
         <!-- operations Column -->
         <ng-container matColumnDef="operations">
@@ -306,7 +355,7 @@
           ></tr>
         <!-- Row shown when there is no matching data. -->
         <tr class="mat-row" *matNoDataRow>
-          <td class="mat-cell" colspan="7">
+          <td class="mat-cell" colspan="14">
             {{ "لا يوجد نتائج" }} 
           </td>
         </tr>
@@ -830,6 +879,20 @@
               <label for="example-text-input" class="col-form-label">{{
                 "Notes" | translate
               }}</label>
+
+              <button *ngIf="modalDetails.previewNotes"
+              class="min-w-max p-2 bg-red-100 hover:bg-red-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+              (click)="open(PreviewNotesModal, null, 'PreviewNotes')"
+                >
+                <i class="fa-solid fa-comment-dots"></i>
+              </button>
+              <button *ngIf="modalDetails.meetingNotes"
+              class="min-w-max p-2 bg-green-100 hover:bg-green-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+              (click)="open(MeetingNotesModal, null, 'MeetingNotes')"
+                >
+                <i class="fa-solid fa-comment-dots"></i>
+              </button>
+
               <textarea
                 class="form-control autosizeme"
                 style="
@@ -1075,7 +1138,7 @@
     </button>
   </div>
   <div class="modal-body text-center">
-    <h3 style="text-align: right;color: red;font-weight: bold;">ملفات التصميم</h3>
+    <h3 style="text-align: right;color: red;font-weight: bold;text-decoration-line: underline;">ملفات التصميم</h3>
 
     <div class="max-h-80 overflow-auto px-2">
       <table class="table table-hover">
@@ -1115,7 +1178,7 @@
         </tbody>
       </table>
     </div>
-    <h3 style="text-align: right;color: red;font-weight: bold;">ملفات الإجتماع</h3>
+    <h3 style="text-align: right;color: red;font-weight: bold;text-decoration-line: underline;">ملفات الإجتماع</h3>
 
     <div class="max-h-80 overflow-auto px-2">
       <table class="table table-hover">
@@ -1149,7 +1212,7 @@
         </tbody>
       </table>
     </div>
-    <h3 style="text-align: right;color: red;font-weight: bold;">ملفات المعاينة</h3>
+    <h3 style="text-align: right;color: red;font-weight: bold;text-decoration-line: underline;">ملفات المعاينة</h3>
 
     <div class="max-h-80 overflow-auto px-2">
       <table class="table table-hover">
@@ -1239,18 +1302,6 @@
         <label for="example-text-input" class="col-form-label">{{
           "Notes" | translate
         }}</label>
-        <button *ngIf="modalDetails.previewNotes"
-        class="min-w-max p-2 bg-red-100 hover:bg-red-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
-        (click)="open(PreviewNotesModal, null, 'PreviewNotes')"
-          >
-          <i class="fa-solid fa-comment-dots"></i>
-        </button>
-        <button *ngIf="modalDetails.meetingNotes"
-        class="min-w-max p-2 bg-green-100 hover:bg-green-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
-        (click)="open(MeetingNotesModal, null, 'MeetingNotes')"
-          >
-          <i class="fa-solid fa-comment-dots"></i>
-        </button>
         <textarea
           class="form-control autosizeme"
           style="

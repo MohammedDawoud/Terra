@@ -178,7 +178,7 @@
 
         <ng-container matColumnDef="orderBarcode">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
-            <span>{{'باركود الطلب '}}</span>
+            <span>{{'باركود العمليات '}}</span>
 
           </th>
           <td mat-cell *matCellDef="let element">
@@ -186,13 +186,13 @@
           </td>
         </ng-container>
 
-        <ng-container matColumnDef="previewCode">
+        <ng-container matColumnDef="previewTypeName">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
-            <span>{{'رقم المعاينة '}}</span>
+            <span>{{'نوع المعاينة '}}</span>
 
           </th>
           <td mat-cell *matCellDef="let element">
-            {{ element.previewCode }}
+            {{ element.previewTypeName }}
           </td>
         </ng-container>
 
@@ -205,9 +205,14 @@
             {{ element.meetingCode }}
           </td>
         </ng-container>
-        
-
-        <!-- phone Column -->
+        <ng-container matColumnDef="customerCode">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span>{{'كود العميل'}}</span>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.customerCode }}
+          </td>
+        </ng-container>
         <ng-container matColumnDef="customerName">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
             <span>{{'اسم العميل'}}</span>
@@ -216,12 +221,37 @@
             {{ element.customerName }}
           </td>
         </ng-container>
+        <ng-container matColumnDef="mainPhoneNo">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span>{{'تليفون العميل'}}</span>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.mainPhoneNo }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="address">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span>{{'عنوان العميل'}}</span>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.address }}
+          </td>
+        </ng-container>
         <ng-container matColumnDef="chairpersonName">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
             <span>{{'القائم بالإجتماع'}}</span>
           </th>
           <td mat-cell *matCellDef="let element">
             {{ element.chairpersonName }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span>{{'تاريخ الإجتماع'}}</span>
+          </th>
+          <td mat-cell *matCellDef="let element" >
+            {{ element.date | date : " hh:mm yyyy-MM-dd" }}
+
           </td>
         </ng-container>
         <ng-container matColumnDef="meetingStatustxt">
@@ -233,7 +263,17 @@
 
           </td>
         </ng-container>
-        <ng-container matColumnDef="meetingConverttxt">
+
+        <ng-container matColumnDef="addDate">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span>{{'تاريخ الإنشاء'}}</span>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.addDate | date : " hh:mm yyyy-MM-dd" }}
+          </td>
+        </ng-container>
+
+        <!-- <ng-container matColumnDef="meetingConverttxt">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
             <span>{{'حالة التحويل'}}</span>
           </th>
@@ -245,7 +285,7 @@
               {{ element.meetingConverttxt }}
             </span>
           </td>
-        </ng-container>
+        </ng-container> -->
 
         <!-- operations Column -->
         <ng-container matColumnDef="operations">
@@ -307,7 +347,7 @@
           ></tr>
         <!-- Row shown when there is no matching data. -->
         <tr class="mat-row" *matNoDataRow>
-          <td class="mat-cell" colspan="7">
+          <td class="mat-cell" colspan="13">
             {{ "لا يوجد نتائج" }} 
           </td>
         </tr>
@@ -726,6 +766,7 @@
                 placeholder=" {{ 'حالة الإجتماع' | translate }}"
                 [(ngModel)]="modalDetails.meetingStatus"
                 [ngModelOptions]="{ standalone: true }"
+                (change)="meetingStatusChange()"
               >
               <ng-option *ngFor="let type of MeetingStatusList" [value]="type.id" [translate]="'name'"
                 [translateParams]="{ar: type.name?.ar,en: type.name?.en}"></ng-option>
@@ -775,6 +816,30 @@
             />
           </div>
 
+          <div class="col-md-3"  *ngIf="modalDetails.meetingStatus==3">
+            <div class="form-group">
+              <!-- <label class="text-right col-form-label block">
+                {{ "from the hour" | translate }}
+              </label> -->
+              <span style="padding-right: 110%; color: #cd2a2a">{{
+                "minute" | translate
+              }}</span>
+              <span style="padding-right: 52%; color: #cd2a2a">{{
+                "hour" | translate
+              }}</span>
+              <div class="form-group timeInput">
+                <timepicker
+                  [(ngModel)]="modalDetails.desDateTime"
+                  style="direction: ltr"
+                  [ngModelOptions]="{ standalone: true }"
+                  name="desDateTime"
+                  autocomplete="off"
+
+                ></timepicker>
+              </div>
+            </div>
+          </div>
+
           <div class="form-group" *ngIf="modalDetails.meetingStatus==3">
             <label class="col-form-label" style="color: red;">
               {{ "القائم بالتصميم" | translate }}
@@ -786,7 +851,7 @@
               [disabled]="modalDetails.type=='MeetingView'"
               [ngModelOptions]="{ standalone: true }"
             >
-              <ng-option *ngFor="let emp of load_Employees" [value]="emp.employeeId">{{
+              <ng-option *ngFor="let emp of load_Employees_Des" [value]="emp.employeeId">{{
                 emp.nameAr
               }}</ng-option>
             </ng-select>
@@ -1102,7 +1167,7 @@
     </button>
   </div>
   <div class="modal-body text-center">
-    <h3 style="text-align: right;color: red;font-weight: bold;">ملفات الإجتماع</h3>
+    <h3 style="text-align: right;color: red;font-weight: bold;text-decoration-line: underline;">ملفات الإجتماع</h3>
     <div class="max-h-80 overflow-auto px-2">
       <table class="table table-hover">
         <thead>
@@ -1141,7 +1206,7 @@
         </tbody>
       </table>
     </div>
-    <h3 style="text-align: right;color: red;font-weight: bold;">ملفات المعاينة</h3>
+    <h3 style="text-align: right;color: red;font-weight: bold;text-decoration-line: underline;">ملفات المعاينة</h3>
 
     <div class="max-h-80 overflow-auto px-2">
       <table class="table table-hover">

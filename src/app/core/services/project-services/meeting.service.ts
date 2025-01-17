@@ -56,6 +56,10 @@ export class MeetingService {
     var url=`${environment.apiEndPoint}Meeting/GenerateOrderBarcodeNumber`;
     return this.http.get<any>(url);
   }
+  DesignNumber_Reservation(BranchId:any,OrderBarcode:any) {
+    var url=`${environment.apiEndPoint}Design/DesignNumber_Reservation?BranchId=${BranchId}&&OrderBarcode=${OrderBarcode}`;
+    return this.http.get<any>(url);
+  }
   FillCitySelect() {
     return this.http.get<any>(environment.apiEndPoint+'Organizations/FillCitySelect');
   }

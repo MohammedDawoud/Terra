@@ -142,12 +142,16 @@ export class MeetingComponent implements OnInit {
   displayedColumns: string[] = [
     'branchName',
     'orderBarcode',
-    'previewCode',
+    'previewTypeName',
     'meetingCode',
+    'customerCode',
     'customerName',
-    'chairpersonName',
-    'meetingStatustxt',
-    'meetingConverttxt', 
+    'mainPhoneNo',
+    'address', 
+    'chairpersonName', 
+    'date', 
+    'meetingStatustxt', 
+    'addDate', 
     'operations',
   ];
   displayedColumn: any = {
@@ -228,6 +232,7 @@ export class MeetingComponent implements OnInit {
     this.getAllMeetings();
     this.FillCustomerSelect();
     this.FillEmployeeselect();
+    this.FillEmployeeselect_Des();
     this.FilltAllPreviewTypes();
     this.FillMeetingTypesSelect();
   }
@@ -339,6 +344,12 @@ export class MeetingComponent implements OnInit {
       this.load_Employees = data;
     });
   }
+  load_Employees_Des: any=[];
+  FillEmployeeselect_Des() {
+    this.employeeService.FillEmployeeselect(4).subscribe((data) => {
+      this.load_Employees_Des = data;
+    });
+  }
 
   GenerateMeetingNumber(){
     debugger
@@ -384,6 +395,7 @@ export class MeetingComponent implements OnInit {
         if(this.modalDetails.designDate!=null)
         {
           this.modalDetails.designDate = this._sharedService.String_TO_date(this.modalDetails.designDate);
+          this.modalDetails.desDateTime = this.modalDetails.desingDate;
         }    
         if (data.agentAttachmentUrl != null) {
           this.modalDetails.attachmentUrl =
@@ -503,6 +515,10 @@ export class MeetingComponent implements OnInit {
         this.toast.error(this.translate.instant("من فضلك أختر تاريخ التصميم"),this.translate.instant('Message'));
         return;
       }
+      if((this.modalDetails.desDateTime == null ||this.modalDetails.desDateTime == '')){
+        this.toast.error(this.translate.instant("من فضلك أختر وقت التصميم"),this.translate.instant('Message'));
+        return;
+      }
       if(this.modalDetails.designChairperson==null){
         this.toast.error(this.translate.instant("من فضلك أختر القائم بالتصميم"),this.translate.instant('Message'));
         return;
@@ -510,7 +526,11 @@ export class MeetingComponent implements OnInit {
       if (this.modalDetails.designDate != null) {
         prevObj.designDate = this._sharedService.date_TO_String(this.modalDetails.designDate);
       }
+      if (this.modalDetails.desDateTime != null) {
+        prevObj.desDateTime = this._sharedService.formatAMPM(this.modalDetails.desDateTime);
+      }
       prevObj.designChairperson=this.modalDetails.designChairperson;
+      prevObj.designCode=this.modalDetails.designCode;
 
     }
 
@@ -628,6 +648,23 @@ export class MeetingComponent implements OnInit {
       });
     }
     this.service.customExportExcel(x, 'Meetings');
+  }
+
+  DesignNumber_Reservation(BranchId:any,orderBarcode:any,modalType:any){
+    debugger
+    if(!(BranchId==null))
+    {
+      this.service.DesignNumber_Reservation(BranchId,orderBarcode).subscribe(data=>{
+        this.modalDetails.designCode=data.reasonPhrase;
+      });
+    }
+  }
+
+  meetingStatusChange(){
+    if(this.modalDetails.meetingStatus==3)
+    {
+      this.DesignNumber_Reservation(this.modalDetails.branchId,this.modalDetails.orderBarcode,this.modalDetails.type);
+    }
   }
 
   getAllMeetings() {

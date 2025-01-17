@@ -228,6 +228,7 @@ export class PreviewComponent implements OnInit {
     this.getAllPreviews();
     this.FillCustomerSelect();
     this.FillEmployeeselect();
+    this.FillEmployeeselect_Meet();
     this.FilltAllPreviewTypes();
   }
 
@@ -355,6 +356,12 @@ export class PreviewComponent implements OnInit {
   FillEmployeeselect() {
     this.employeeService.FillEmployeeselect(2).subscribe((data) => {
       this.load_Employees = data;
+    });
+  }
+  load_Employees_Meet: any=[];
+  FillEmployeeselect_Meet() {
+    this.employeeService.FillEmployeeselect(3).subscribe((data) => {
+      this.load_Employees_Meet = data;
     });
   }
 
