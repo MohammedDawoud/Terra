@@ -42,13 +42,13 @@ import { filesservice } from 'src/app/core/services/sys_Services/files.service';
 import { HttpEventType } from '@angular/common/http';
 import { OrganizationService } from 'src/app/core/services/sys_Services/organization.service';
 
+
 @Component({
-  selector: 'app-add-search',
-  templateUrl: './add-search.component.html',
-  styleUrls: ['./add-search.component.scss'],
-  animations: [fade],
+  selector: 'app-category',
+  templateUrl: './category.component.html',
+  styleUrls: ['./category.component.scss']
 })
-export class AddSearchComponent implements OnInit {
+export class CategoryComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   dataSourceTemp: any = [];
