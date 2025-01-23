@@ -23,12 +23,12 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatStepperModule } from '@angular/material/stepper';
 import { NgxHijriGregorianDatepickerModule } from 'ngx-hijri-gregorian-datepicker';
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import { CategoryComponent } from './components/category/category.component';
+import { CategoriesComponent } from './components/categories/categories.component';
 
 @NgModule({
   declarations: [
     AccountsGuideComponent,
-    CategoryComponent,
+    CategoriesComponent,
   ],
   imports: [
     CommonModule,

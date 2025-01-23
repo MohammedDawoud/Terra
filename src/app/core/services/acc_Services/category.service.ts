@@ -33,6 +33,10 @@ export class CategoryService {
     var url=`${environment.apiEndPoint}Category/CategoryNumber_Reservation?BranchId=${BranchId}`;
     return this.http.get<any>(url);
   }
+  FillBranchByUserIdSelect(){
+    return this.http.get<any>(this.apiEndPoint + 'Branches/FillBranchByUserIdSelect');
+  }
+
   customExportExcel(dataExport: any, nameExport: any) {
 
     let exportation = JSON.parse(JSON.stringify(dataExport));

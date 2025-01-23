@@ -17,7 +17,6 @@ import {
 } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
-import { EmployeeService } from 'src/app/core/services/employee-services/employee.service';
 import { ExportationService } from 'src/app/core/services/exportation-service/exportation.service';
 import { fade } from 'src/app/shared/animations/toggleBtn.animation';
 import { RestApiService } from 'src/app/shared/services/api.service';
@@ -41,19 +40,19 @@ import { SharedService } from 'src/app/core/services/shared.service';
 import { filesservice } from 'src/app/core/services/sys_Services/files.service';
 import { HttpEventType } from '@angular/common/http';
 import { OrganizationService } from 'src/app/core/services/sys_Services/organization.service';
-
+import { CategoryService } from 'src/app/core/services/acc_Services/category.service';
 
 @Component({
-  selector: 'app-category',
-  templateUrl: './category.component.html',
-  styleUrls: ['./category.component.scss']
+  selector: 'app-categories',
+  templateUrl: './categories.component.html',
+  styleUrls: ['./categories.component.scss'],
 })
-export class CategoryComponent implements OnInit {
+export class CategoriesComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   dataSourceTemp: any = [];
   dataSource: MatTableDataSource<any> = new MatTableDataSource([{}]);
-  _EmployeeSMS: any = null;
+  _CategorySMS: any = null;
   modal?: BsModalRef;
   modalDetails: any = {};
   load_BranchAccount: any;
@@ -74,10 +73,10 @@ export class CategoryComponent implements OnInit {
   title: any = {
     main: {
       name: {
-        ar: 'شئون الموظفين',
-        en: 'Employees',
+        ar: 'الأصناف',
+        en: 'Category',
       },
-      link: '/employees',
+      link: '/accounts',
     },
     sub: {
       ar: 'الإضافة والبحث',
@@ -106,7 +105,7 @@ export class CategoryComponent implements OnInit {
 
   displayedColumns: string[] = [
     'branchName',
-    'employeeCode',
+    'categoryCode',
     'nameAr',
     'mainPhoneNo',
     'salary',
@@ -125,21 +124,21 @@ export class CategoryComponent implements OnInit {
     filter: {
       enable: true,
       date: null,
-      search_EmployeeName: '',
-      search_employeeEmail: '',
-      search_employeeMobile: '',
+      search_CategoryName: '',
+      search_categoryEmail: '',
+      search_categoryMobile: '',
       isChecked: false,
     },
   };
 
   EditModel: any = {
-    EmployeeId: 0,
+    CategoryId: 0,
     nameAr: null,
     nameEn: null,
   };
 
   constructor(
-    private service: EmployeeService,
+    private service: CategoryService,
     private files: filesservice,
     private _organization: OrganizationService,
     private modalService: BsModalService,
@@ -184,7 +183,7 @@ export class CategoryComponent implements OnInit {
   selectAllValue = false;
 
   ngOnInit(): void {
-    this.getAllEmployees();
+    this.getAllCategorys();
   }
 
   applyFilter(event: any) {
@@ -197,8 +196,8 @@ export class CategoryComponent implements OnInit {
             d.branchName?.trim().toLowerCase().indexOf(val) !== -1) ||
           (d.nationalId &&
             d.nationalId?.trim().toLowerCase().indexOf(val) !== -1) ||
-          (d.employeeCode &&
-            d.employeeCode?.trim().toLowerCase().indexOf(val) !== -1) ||
+          (d.categoryCode &&
+            d.categoryCode?.trim().toLowerCase().indexOf(val) !== -1) ||
           (d.nameAr &&
             d.nameAr?.trim().toLowerCase().indexOf(val) !== -1) ||
           (d.mainPhoneNo &&
@@ -216,7 +215,7 @@ export class CategoryComponent implements OnInit {
 
   // checkValue(event: any) {
   //   if (event == 'A') {
-  //     this.getAllEmployees();
+  //     this.getAllCategorys();
   //   } else {
   //     this.RefreshData();
   //   }
@@ -224,10 +223,10 @@ export class CategoryComponent implements OnInit {
 
   resetandRefresh() {
     if (this.searchBox.open == false) {
-      this.data2.filter.search_EmployeeName = null;
-      this.data2.filter.search_employeeMobile = null;
+      this.data2.filter.search_CategoryName = null;
+      this.data2.filter.search_categoryMobile = null;
       this.data.type = 0;
-      this.getAllEmployees();
+      this.getAllCategorys();
     }
   }
   //------------------ Fill DATA ----------------------------------
@@ -235,103 +234,57 @@ export class CategoryComponent implements OnInit {
   fillBranchByUserId(modalType:any) {
     this.service.FillBranchByUserIdSelect().subscribe((data) => {
       this.load_BranchUserId = data;
-
       if (this.load_BranchUserId.length == 1) {
         this.modalDetails.branchId = this.load_BranchUserId[0].id;
-        if (modalType == 'addEmployee'){
-          this.getBranchAccountE(this.modalDetails.branchId,modalType);
-        }
       }
       else
       {
-        if (modalType == 'addEmployee'){
+        if (modalType == 'addCategory'){
           debugger
           this.modalDetails.branchId = parseInt(this._sharedService.getStoBranch());
-          this.getBranchAccountE(this.modalDetails.branchId,modalType);
+          this.BranchChange(this.modalDetails.branchId,modalType);
         }     
       }
     });
   }
 
-  Job_Emp: any;
-  JobTypesPopup_Emp: any;
-
-  FillJobSelect_Emp() {
-    this.service.FillJobSelect().subscribe((data) => {
-      console.log(data);
-      this.Job_Emp = data;
-      this.JobTypesPopup_Emp = data;
-    });
+  BranchChange(BranchId: any,modalType:any) {
+    debugger
+    if(modalType == 'addCategory')
+    {
+      this.CategoryNumber_Reservation(BranchId);
+    }
   }
 
-  Managers_Emp: any;
-
-  FillEmployeeselectManagerW(EmpId:any) {
-    this.service.FillEmployeeselectManagerW(EmpId).subscribe((data) => {
-      this.Managers_Emp = data;
-    });
-  }
-
-
-  // GenerateEmployeeNumber(){
-  //   this.service.GenerateEmployeeNumber().subscribe(data=>{
-  //     this.modalDetails.employeeCode=data.reasonPhrase;
+  // GenerateCategoryNumber(){
+  //   this.service.GenerateCategoryNumber().subscribe(data=>{
+  //     this.modalDetails.categoryCode=data.reasonPhrase;
   //   });
   // }
 
-  EmployeeNumber_Reservation(BranchId:any){
-    this.service.EmployeeNumber_Reservation(BranchId).subscribe(data=>{
-      this.modalDetails.employeeCode=data.reasonPhrase;
+  CategoryNumber_Reservation(BranchId:any){
+    this.service.CategoryNumber_Reservation(BranchId).subscribe(data=>{
+      this.modalDetails.categoryCode=data.reasonPhrase;
     });
   }
-
-  objBranchAccount: any = null;
-  getBranchAccountE(BranchId: any,modalType:any) {
-    debugger
-    this.objBranchAccount = null;
-    this.modalDetails.accountName = null;
-    this.service.GetEmpMainAccByBranchId(BranchId).subscribe({next: (data: any) => {
-      if(data.result.accountId!=0)
-      {
-        this.modalDetails.accountName =data.result.nameAr + ' - ' + data.result.accountCode;
-        this.objBranchAccount = data.result;
-        if(modalType == 'addEmployee')
-        {
-          this.EmployeeNumber_Reservation(BranchId);
-        }
-      } 
-      else
-      {
-        this.modalDetails.employeeCode=null;
-      }    
-      },
-      error: (error) => {},
-    });
-  }
-
 
   //-----------------------OPEN MODAL--------------------------------------------------
 
   openModal(template: TemplateRef<any>, data?: any, modalType?: any) {
     this.fillBranchByUserId(modalType);
-    this.FillJobSelect_Emp();
-
     this.resetModal();
     //this.getEmailOrganization();
     debugger
-    if (modalType == 'addEmployee') {
-      // this.GenerateEmployeeNumber();
-      this.FillEmployeeselectManagerW(0);
+    if (modalType == 'addCategory') {
+      // this.GenerateCategoryNumber();
     }
     console.log('this.modalDetails');
     console.log(this.modalDetails);
 
     if (data) {
       this.modalDetails = data;
-      this.FillEmployeeselectManagerW( this.modalDetails.employeeId);
-      if (modalType == 'editEmployee') {
+      if (modalType == 'editCategory') {
         this.modalDetails.appointmentDate = this._sharedService.String_TO_date(this.modalDetails.appointmentDate);
-        this.getBranchAccountE(this.modalDetails.branchId,modalType);
         debugger;
         if (data.agentAttachmentUrl != null) {
           this.modalDetails.attachmentUrl =
@@ -374,10 +327,6 @@ export class CategoryComponent implements OnInit {
     if (type === 'deleteModalPerm') {
       this.publicidRow = data.idRow;
     }
-    if(type === 'ShowEmployeeFiles')
-      {
-        this.GetAllEmployeeFiles(this.modalDetails.employeeId);
-      }
     this.ngbModalService
       .open(content, {
         ariaLabelledBy: 'modal-basic-title',
@@ -423,16 +372,16 @@ export class CategoryComponent implements OnInit {
     }
   }
 
-  EmployeeIdPublic: any = 0;
-  setEmployeeid_P(id: any) {
-    this.EmployeeIdPublic = id;
-    console.log('this.EmployeeIdPublic');
-    console.log(this.EmployeeIdPublic);
+  CategoryIdPublic: any = 0;
+  setCategoryid_P(id: any) {
+    this.CategoryIdPublic = id;
+    console.log('this.CategoryIdPublic');
+    console.log(this.CategoryIdPublic);
   }
 
-  disableButtonSave_Employee = false;
+  disableButtonSave_Category = false;
 
-  addEmployee() {
+  addCategory() {
     debugger;
     var val = this.validateForm();
     if (val.status == false) {
@@ -440,11 +389,11 @@ export class CategoryComponent implements OnInit {
       return;
     }
     var custObj: any = {};
-    custObj.employeeId = this.modalDetails.employeeId;
+    custObj.categoryId = this.modalDetails.categoryId;
     custObj.nameAr = this.modalDetails.nameAr;
     custObj.nameEn = this.modalDetails.nameEn;
     custObj.nationalId = this.modalDetails.nationalId;
-    custObj.employeeCode = this.modalDetails.employeeCode;
+    custObj.categoryCode = this.modalDetails.categoryCode;
     custObj.branchId = this.modalDetails.branchId;
     custObj.accountId = this.modalDetails.accountId;
     custObj.subMainPhoneNo = this.modalDetails.subMainPhoneNo;
@@ -468,20 +417,20 @@ export class CategoryComponent implements OnInit {
     for (const key of Object.keys(custObj)) {
       const value = custObj[key] == null ? '' : custObj[key];
       formData.append(key, value);
-      formData.append('EmployeeId', custObj.employeeId.toString());
+      formData.append('CategoryId', custObj.categoryId.toString());
     }
-    this.disableButtonSave_Employee = true;
+    this.disableButtonSave_Category = true;
     setTimeout(() => {
-      this.disableButtonSave_Employee = false;
+      this.disableButtonSave_Category = false;
     }, 5000);
-    this.service.SaveEmployee(formData).subscribe((result: any) => {
+    this.service.SaveCategory(formData).subscribe((result: any) => {
       if (result.statusCode == 200) {
         this.toast.success(
           this.translate.instant(result.reasonPhrase),
           this.translate.instant('Message')
         );
         this.decline();
-        this.getAllEmployees();
+        this.getAllCategorys();
         this.ngbModalService.dismissAll();
       } else {
         this.toast.error(result.reasonPhrase, 'رسالة');
@@ -496,7 +445,7 @@ export class CategoryComponent implements OnInit {
       this.modalDetails.nameAr == null ||
       this.modalDetails.nameAr == ''
     ) {
-      this.ValidateObjMsg = { status: false, msg: ' أدخل أسم الموظف عربي' };
+      this.ValidateObjMsg = { status: false, msg: ' أدخل أسم الصنف عربي' };
       return this.ValidateObjMsg;
     }
     else if ((this.modalDetails.nationalId == null ||
@@ -509,7 +458,7 @@ export class CategoryComponent implements OnInit {
     return this.ValidateObjMsg;
   } 
   else if (this.modalDetails.branchId == null) {
-      this.ValidateObjMsg = { status: false, msg: 'اختر فرع الموظف' };
+      this.ValidateObjMsg = { status: false, msg: 'اختر فرع الصنف' };
       return this.ValidateObjMsg;
     } else if (
       this.modalDetails.accountName == null ||
@@ -520,7 +469,7 @@ export class CategoryComponent implements OnInit {
     }
     else if ((this.modalDetails.mainPhoneNo == null ||this.modalDetails.mainPhoneNo == '')
     ) {
-      this.ValidateObjMsg = { status: false, msg: 'ادخل تليفون الموظف' };
+      this.ValidateObjMsg = { status: false, msg: 'ادخل تليفون الصنف' };
       return this.ValidateObjMsg;
     }
     else if(this.modalDetails.mainPhoneNo.length<11)
@@ -530,7 +479,7 @@ export class CategoryComponent implements OnInit {
     }
     else if ((this.modalDetails.salary == null ||this.modalDetails.salary == '')
     ) {
-      this.ValidateObjMsg = { status: false, msg: 'ادخل مرتب الموظف' };
+      this.ValidateObjMsg = { status: false, msg: 'ادخل مرتب الصنف' };
       return this.ValidateObjMsg;
     }
     else if ((this.modalDetails.address == null ||this.modalDetails.address == '')
@@ -581,8 +530,8 @@ export class CategoryComponent implements OnInit {
       const formattedDate = formatter.format(date);
       x.push({
         branchName: this.dataSourceTemp[index].branchName,
-        employeeCode: this.dataSourceTemp[index].employeeCode,
-        employeeName: this.dataSourceTemp[index].nameAr,
+        categoryCode: this.dataSourceTemp[index].categoryCode,
+        categoryName: this.dataSourceTemp[index].nameAr,
         mainPhoneNo: this.dataSourceTemp[index].mainPhoneNo,
         salary: this.dataSourceTemp[index].salary,
         address: this.dataSourceTemp[index].address,
@@ -594,11 +543,11 @@ export class CategoryComponent implements OnInit {
       });
     }
     debugger;
-    this.service.customExportExcel(x, 'Employees');
+    this.service.customExportExcel(x, 'Categorys');
   }
 
-  getAllEmployees() {
-    this.service.GetAllEmployees_Branch().subscribe((data: any) => {
+  getAllCategorys() {
+    this.service.GetAllCategories_Branch().subscribe((data: any) => {
       this.dataSource = new MatTableDataSource(data);
       this.dataSourceTemp = data;
       this.dataSource.paginator = this.paginator;
@@ -619,14 +568,14 @@ export class CategoryComponent implements OnInit {
         nameAr: '',
         nameEn: '',
       },
-      type: 'addEmployee',
+      type: 'addCategory',
       nameAr: null,
       nameEn: null,
       id: null,
       name: null,
-      employeeId: 0,
+      categoryId: 0,
       branchId: null,
-      employeeCode: null,
+      categoryCode: null,
       nationalId: null,
       address: null,
       mainPhoneNo: null,
@@ -642,16 +591,16 @@ export class CategoryComponent implements OnInit {
       accountName: null,
       addDate: null,
       addUser: [],
-      addedemployeeImg: null,
+      addedcategoryImg: null,
       accountCodee: null,
     };
   }
 
   confirm(): void {
-    this.service.DeleteEmployee(this.modalDetails.employeeId).subscribe((result) => {
+    this.service.DeleteCategory(this.modalDetails.categoryId).subscribe((result) => {
         if (result.statusCode == 200) {
           this.toast.success(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
-          this.getAllEmployees();
+          this.getAllCategorys();
           this.modal?.hide();
         } else {
           this.toast.error(result.reasonPhrase, 'رسالة');
@@ -709,44 +658,44 @@ export class CategoryComponent implements OnInit {
       ListCode:[],
       ListPhone:[],
       ListJob:[],
-      employeeId:null,
+      categoryId:null,
       jobId:null,
       showFilters:false
     },
   };
 
 FillSerachLists(dataT:any){
-  this.FillEmployeeListName(dataT);
-  this.FillEmployeeListCode(dataT);
-  this.FillEmployeeListPhone(dataT);
-  this.FillEmployeeListJob(dataT);
+  this.FillCategoryListName(dataT);
+  this.FillCategoryListCode(dataT);
+  this.FillCategoryListPhone(dataT);
+  this.FillCategoryListJob(dataT);
 }
 
-FillEmployeeListName(dataT:any){
-  const ListLoad = dataT.map((item: { employeeId: any; nameAr: any; }) => {
-    const container:any = {}; container.id = item.employeeId; container.name = item.nameAr; return container;
+FillCategoryListName(dataT:any){
+  const ListLoad = dataT.map((item: { categoryId: any; nameAr: any; }) => {
+    const container:any = {}; container.id = item.categoryId; container.name = item.nameAr; return container;
   })
   const key = 'id';
   const arrayUniqueByKey = [...new Map(ListLoad.map((item: { [x: string]: any; }) => [item[key], item])).values()];
   this.dataSearch.filter.ListName=arrayUniqueByKey;
 }
-FillEmployeeListCode(dataT:any){
-  const ListLoad = dataT.map((item: { employeeId: any; employeeCode: any; }) => {
-    const container:any = {}; container.id = item.employeeId; container.name = item.employeeCode; return container;
+FillCategoryListCode(dataT:any){
+  const ListLoad = dataT.map((item: { categoryId: any; categoryCode: any; }) => {
+    const container:any = {}; container.id = item.categoryId; container.name = item.categoryCode; return container;
   })
   const key = 'id';
   const arrayUniqueByKey = [...new Map(ListLoad.map((item: { [x: string]: any; }) => [item[key], item])).values()];
   this.dataSearch.filter.ListCode=arrayUniqueByKey;
 }
-FillEmployeeListPhone(dataT:any){
-  const ListLoad = dataT.map((item: { employeeId: any; mainPhoneNo: any; }) => {
-    const container:any = {}; container.id = item.employeeId; container.name = item.mainPhoneNo; return container;
+FillCategoryListPhone(dataT:any){
+  const ListLoad = dataT.map((item: { categoryId: any; mainPhoneNo: any; }) => {
+    const container:any = {}; container.id = item.categoryId; container.name = item.mainPhoneNo; return container;
   })
   const key = 'id';
   const arrayUniqueByKey = [...new Map(ListLoad.map((item: { [x: string]: any; }) => [item[key], item])).values()];
   this.dataSearch.filter.ListPhone=arrayUniqueByKey;
 }
-FillEmployeeListJob(dataT:any){
+FillCategoryListJob(dataT:any){
   const ListLoad = dataT.map((item: { jobId: any; jobName: any; }) => {
     const container:any = {}; container.id = item.jobId; container.name = item.jobName; console.log("container",container); return container;   
   })
@@ -769,9 +718,9 @@ RefreshDataCheck(from: any, to: any){
       AccDate.getTime() <= AccTo.getTime();
   });
   }
-  if(this.dataSearch.filter.employeeId!=null && this.dataSearch.filter.employeeId!="")
+  if(this.dataSearch.filter.categoryId!=null && this.dataSearch.filter.categoryId!="")
   {
-    this.dataSource.data = this.dataSource.data.filter((d: { employeeId: any }) => d.employeeId == this.dataSearch.filter.employeeId);
+    this.dataSource.data = this.dataSource.data.filter((d: { categoryId: any }) => d.categoryId == this.dataSearch.filter.categoryId);
   }
   if(this.dataSearch.filter.jobId!=null && this.dataSearch.filter.jobId!="")
   {
@@ -810,206 +759,157 @@ RefreshData(){
 //#endregion 
 //------------------------------Search--------------------------------------------------------
 
-//-------------------------------------File-------------------------------------------
-//#region 
-
-public uploadedFiles: Array<File> = [];
-selectedFiles?: FileList;
-currentFile?: File;
-
-progress = 0;
-uploading=false;
-disableButtonSave_File = false;
-dataFile:any={
-  FileId:0,
-  FileName:null,
-}
-resetprog(){
-  this.disableButtonSave_File = false;
-  this.progress = 0;
-  this.uploading=false;
-}
-
-  selectFile(event: any): void {
-    this.selectedFiles = event.target.files;
-  }
-  SaveprojectFiles(type:any,dataFile:any,uploadtype:any) {
-  if(this.dataFile.FileName==null)
-  {
-    this.toast.error("من فضلك أكمل البيانات ", 'رسالة');
-    return;
-  }
-  if(this.control?.value.length>0){
-  }
-  debugger
-    var _Files: any = {};
-    _Files.fileId=0;
-    _Files.employeeId=this.modalDetails.employeeId;
-    _Files.fileName=this.dataFile.FileName;
-    _Files.transactionTypeId=36;
-    _Files.notes=null;
-    this.progress = 0;
-    this.disableButtonSave_File = true;
-    this.uploading=true;
-    setTimeout(() => {
-      this.resetprog();
-    }, 60000);
-
-    if (this.control?.value.length>0) {
-      var obj=_Files;
-      this.files.UploadFiles(this.control?.value[0],obj).subscribe((result: any)=>{
-        if (result.type === HttpEventType.UploadProgress) {
-          this.progress = Math.round(100 * result.loaded / result.total);
-        }
-        debugger
-        if(result?.body?.statusCode==200){
-          this.control.removeFile(this.control?.value[0]);
-          this.toast.success(this.translate.instant(result?.body?.reasonPhrase),'رسالة');
-          this.getAllEmployees();
-          this.ClearField();
-          this.resetprog();
-        }
-        else if(result?.body?.statusCode>200){
-          this.toast.error(this.translate.instant(result?.body?.reasonPhrase), 'رسالة');
-          this.resetprog();
-        }
-        else if(result?.type>=0)
-        {}
-        else{this.toast.error(this.translate.instant(result?.body?.reasonPhrase), 'رسالة');this.resetprog();}
-
-      });
-    }
-    else{this.toast.error("من فضلك أختر ملف", 'رسالة');}
-
-
-  }
-ClearField(){
-  this.dataFile.FileId=0;
-  this.dataFile.FileName=null;
-  this.selectedFiles = undefined;
-  this.uploadedFiles=[];
-}
-
-clickfile(evenet:any)
-{
-  console.log(evenet);
-}
-focusfile(evenet:any)
-{
-  console.log(evenet);
-}
-blurfile(evenet:any)
-{
-  console.log(evenet);
-}
-
-
-downloadFile(data: any) {
-  try
-  {
-    debugger
-    //var link=environment.PhotoURL+"/Uploads/Users/img1.jpg";
-    var link=environment.PhotoURL+data.fileUrl;
-    console.log(link);
-    window.open(link, '_blank');
-  }
-  catch (error)
-  {
-    this.toast.error("تأكد من الملف",this.translate.instant("Message"));
-  }
-}
-
-EmployeeFileRowSelected: any;
-
-getEmployeeFileRow(row: any) {
-  debugger
-  this.EmployeeFileRowSelected = row;
-}
-confirmDeleteEmployeeFile(): void {
-  this.files.DeleteFiles(this.EmployeeFileRowSelected.fileId).subscribe((result) => {
-      if (result.statusCode == 200) {
-        this.toast.success(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
-        this.GetAllEmployeeFiles(this.EmployeeFileRowSelected.employeeId);
-        this.modal?.hide();
-      } else {
-        this.toast.error(result.reasonPhrase, this.translate.instant('Message'));
-      }
-    });
-}
-
-EmployeeFilesList: any=[];
-
-GetAllEmployeeFiles(EmployeeId:any) {
-  this.EmployeeFilesList=[];
-  this.files.GetAllEmployeeFiles(EmployeeId).subscribe((data: any) => {
-    this.EmployeeFilesList = data;
-  });
-}
-//#endregion
-//----------------------------------------End File---------------------------------------
 
 AddDataType: any = {
-  Jobdata: {
+  CategoryTypedata: {
     id: 0,
     namear: null,
     nameen: null,
+    status: true,
+  },
+  Unitdata: {
+    id: 0,
+    namear: null,
+    nameen: null,
+    status: true,
   },
 };
 
-  //-----------------------------------SaveCity-------------------------------
+  //-----------------------------------SaveCategoryType-------------------------------
   //#region 
-  selectedJob: any;
 
+  CategoryTypeList: any;
+  CategoryTypePopup: any;
 
-  JobRowSelected: any;
-  getJobRow(row: any) {
-    this.JobRowSelected = row;
+  FillCategoryTypeSelect() {
+    this.service.FillCategoryTypeSelect().subscribe((data) => {
+      console.log(data);
+      this.CategoryTypeList = data;
+      this.CategoryTypePopup = data;
+    });
   }
-  setJobInSelect(data: any, modal: any) {
+
+  selectedCategoryType: any;
+
+  CategoryTypeRowSelected: any;
+  getCategoryTypeRow(row: any) {
+    this.CategoryTypeRowSelected = row;
+  }
+  setCategoryTypeInSelect(data: any, modal: any) {
     this.modalDetails.jobId=data.id;
   }
-  confirmJobDelete() {
-    this._organization.DeleteJob(this.JobRowSelected.id).subscribe((result: any) => {
+  confirmCategoryTypeDelete() {
+    this.service.DeleteCategoryType(this.CategoryTypeRowSelected.id).subscribe((result: any) => {
         if (result.statusCode == 200) {
           this.toast.success(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
-          this.FillJobSelect_Emp();
+          this.FillCategoryTypeSelect();
         } else {
           this.toast.error(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
         }
       });
   }
 
-  saveJob() {
+  saveCategoryType() {
     if (
-      this.AddDataType.Jobdata.namear == null ||
-      this.AddDataType.Jobdata.nameen == null
+      this.AddDataType.CategoryTypedata.namear == null ||
+      this.AddDataType.CategoryTypedata.nameen == null
     ) {
       this.toast.error('من فضلك أكمل البيانات', 'رسالة');
       return;
     }
-    var JobObj: any = {};
-    JobObj.JobId = this.AddDataType.Jobdata.id;
-    JobObj.NameAr = this.AddDataType.Jobdata.namear;
-    JobObj.NameEn = this.AddDataType.Jobdata.nameen;
+    var CategoryTypeObj: any = {};
+    CategoryTypeObj.JobId = this.AddDataType.CategoryTypedata.id;
+    CategoryTypeObj.NameAr = this.AddDataType.CategoryTypedata.namear;
+    CategoryTypeObj.NameEn = this.AddDataType.CategoryTypedata.nameen;
+    CategoryTypeObj.Status = this.AddDataType.CategoryTypedata.status;
 
-    var obj = JobObj;
-    this._organization.SaveJob(obj).subscribe((result: any) => {
+    var obj = CategoryTypeObj;
+    this.service.SaveCategoryType(obj).subscribe((result: any) => {
       if (result.statusCode == 200) {
         this.toast.success(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
-        this.resetJob();
-        this.FillJobSelect_Emp();
+        this.resetCategoryType();
+        this.FillCategoryTypeSelect();
       } else {
         this.toast.error(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
       }
     });
   }
-  resetJob() {
-    this.AddDataType.Jobdata.id = 0;
-    this.AddDataType.Jobdata.namear = null;
-    this.AddDataType.Jobdata.nameen = null;
+  resetCategoryType() {
+    this.AddDataType.CategoryTypedata.id = 0;
+    this.AddDataType.CategoryTypedata.namear = null;
+    this.AddDataType.CategoryTypedata.nameen = null;
+    this.AddDataType.CategoryTypedata.status = true;
   }
   //#endregion
-  //----------------------------------EndSaveCity-----------------------------
+  //----------------------------------EndSaveCategoryType-----------------------------
 
+
+//-----------------------------------SaveUnit-------------------------------
+//#region 
+
+UnitList: any;
+UnitPopup: any;
+
+FillUnitSelect() {
+  this.service.FillUnitSelect().subscribe((data) => {
+    console.log(data);
+    this.UnitList = data;
+    this.UnitPopup = data;
+  });
+}
+
+selectedUnit: any;
+
+UnitRowSelected: any;
+getUnitRow(row: any) {
+  this.UnitRowSelected = row;
+}
+setUnitInSelect(data: any, modal: any) {
+  this.modalDetails.jobId=data.id;
+}
+confirmUnitDelete() {
+  this.service.DeleteUnit(this.UnitRowSelected.id).subscribe((result: any) => {
+      if (result.statusCode == 200) {
+        this.toast.success(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
+        this.FillUnitSelect();
+      } else {
+        this.toast.error(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
+      }
+    });
+}
+
+saveUnit() {
+  if (
+    this.AddDataType.Unitdata.namear == null ||
+    this.AddDataType.Unitdata.nameen == null
+  ) {
+    this.toast.error('من فضلك أكمل البيانات', 'رسالة');
+    return;
+  }
+  var UnitObj: any = {};
+  UnitObj.JobId = this.AddDataType.Unitdata.id;
+  UnitObj.NameAr = this.AddDataType.Unitdata.namear;
+  UnitObj.NameEn = this.AddDataType.Unitdata.nameen;
+  UnitObj.Status = this.AddDataType.Unitdata.status;
+
+  var obj = UnitObj;
+  this.service.SaveUnit(obj).subscribe((result: any) => {
+    if (result.statusCode == 200) {
+      this.toast.success(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
+      this.resetUnit();
+      this.FillUnitSelect();
+    } else {
+      this.toast.error(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
+    }
+  });
+}
+resetUnit() {
+  this.AddDataType.Unitdata.id = 0;
+  this.AddDataType.Unitdata.namear = null;
+  this.AddDataType.Unitdata.nameen = null;
+  this.AddDataType.Unitdata.status = true;
+}
+//#endregion
+//----------------------------------EndSaveUnit-----------------------------
 
 }

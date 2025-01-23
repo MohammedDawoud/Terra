@@ -1,0 +1,947 @@
+<div class="add-search pb-4">
+  <app-navigator [title]="title"></app-navigator>
+
+  <div class="tables-data mt-3 overflow-hidden">
+    <!-- buttons -->
+    <div class="flex justify-between gap-2 items-center my-3 flex-wrap">
+      <!---------------------------------------------------------------------------->
+      <div class="flex gap-2 controler">
+        <button
+          class="flex gap-1 btn btn-primary"
+          (click)="openModal(dataModal, null, 'addCategory')"
+        >
+          <span
+            class="hidden md:block"
+            [translate]="'name'"
+            [translateParams]="{
+              ar: 'صنف جديد ',
+              en: 'New Category '
+            }"
+          ></span>
+          <i class="fa-solid fa-user-plus"></i>
+        </button>
+        <button class="flex gap-1 btn btn-danger" (click)="dataSearch.filter.showFilters = !dataSearch.filter.showFilters;">
+          <span
+            class="hidden md:block"
+            [translate]="'name'" [translateParams]="{ar: 'بحث ',en: 'Search '}"></span>
+          <i class="fa-solid fa-search"></i>
+          </button>
+        <button
+          class="flex gap-1 btn btn-warning"
+          (click)="exportData()"
+        >
+          <span
+            class="hidden md:block"
+            [translate]="'name'"
+            [translateParams]="{
+              ar: 'تصدير ملف إكسل',
+              en: 'Export To Excel'
+            }"
+          ></span>
+          <i class="fa-solid fa-file-export"></i>
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="dataSearch.filter.showFilters" class="flex gap-6 flex-wrap items-end mb-4">
+
+      <div class="max-w-xs">
+        <label class="col-form-label"> {{ "أسم الصنف" | translate }}</label>
+  
+        <ng-select
+          #CustomerName
+          [items]="dataSearch.filter.ListName"
+          bindLabel="name"
+          bindValue="id"
+          [clearable]="true"
+          class="w-full p-0"
+          [(ngModel)]="dataSearch.filter.categoryId"
+          placeholder="{{ 'Chose' | translate }}"
+          (change)="RefreshData()"
+        >
+        </ng-select>
+      </div>
+      <div class="max-w-xs">
+        <label class="col-form-label"> {{ "كود الصنف" | translate }}</label>
+  
+        <ng-select
+          #CustomerName
+          [items]="dataSearch.filter.ListCode"
+          bindLabel="name"
+          bindValue="id"
+          [clearable]="true"
+          class="w-full p-0"
+          [(ngModel)]="dataSearch.filter.categoryId"
+          placeholder="{{ 'Chose' | translate }}"
+          (change)="RefreshData()"
+        >
+        </ng-select>
+      </div>
+      <div class="max-w-xs">
+        <label class="col-form-label"> {{ "رقم تليفون الصنف" | translate }}</label>
+  
+        <ng-select
+          #CustomerName
+          [items]="dataSearch.filter.ListPhone"
+          bindLabel="name"
+          bindValue="id"
+          [clearable]="true"
+          class="w-full p-0"
+          [(ngModel)]="dataSearch.filter.categoryId"
+          placeholder="{{ 'Chose' | translate }}"
+          (change)="RefreshData()"
+        >
+        </ng-select>
+      </div>
+      <div class="max-w-xs">
+        <label class="col-form-label"> {{ "الوظيفة" | translate }}</label>
+  
+        <ng-select
+          #CustomerName
+          [items]="dataSearch.filter.ListJob"
+          bindLabel="name"
+          bindValue="id"
+          [clearable]="true"
+          class="w-full p-0"
+          [(ngModel)]="dataSearch.filter.jobId"
+          placeholder="{{ 'Chose' | translate }}"
+          (change)="RefreshData()"
+        >
+        </ng-select>
+      </div>
+      <button
+        class="btn btn-primary"
+        (click)="dataSearch.filter.enable = !dataSearch.filter.enable;ClearDate();"
+        [translate]="'name'"
+        [translateParams]="{
+          ar: 'فلترة بالوقت',
+          en: 'Time Filter'
+        }"
+      ></button>
+      <div class="form-group col-md-2 timeInput" *ngIf="dataSearch.filter.enable">
+        <input
+          placeholder="{{ 'Chose Date' | translate }}"
+          [(ngModel)]="dataSearch.filter.date"
+          type="text"
+          (ngModelChange)="CheckDate($event)"
+          class="form-control"
+          [bsConfig]="{ rangeInputFormat: 'DD/MM/YYYY' }"
+          bsDaterangepicker
+          #dpr="bsDaterangepicker"
+        />
+      </div>
+  
+      <div class="w-fit">
+        <input
+          class="form-control"
+          (keyup)="applyFilter($event)"
+          placeholder="{{ 'search' | translate }}"
+          #input
+        />
+      </div>
+    </div>
+
+    <!-- table -->
+    <div class="overflow-auto">
+      <table
+        mat-table
+        [dataSource]="dataSource"
+        matSort
+        class="mat-elevation-z8 rounded-t-lg overflow-hidden w-max"
+      >
+        <!-- name Column -->
+        <ng-container matColumnDef="branchName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span>{{'الفرع'}}</span>
+
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.branchName }}
+          </td>
+        </ng-container>
+
+        <!-- nationalId Column -->
+        <ng-container matColumnDef="categoryCode">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span>{{'كود الصنف '}}</span>
+
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.categoryCode }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="nameAr">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span>{{'اسم الصنف'}}</span>
+
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.nameAr }}
+          </td>
+        </ng-container>
+        
+
+        <!-- phone Column -->
+        <ng-container matColumnDef="mainPhoneNo">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span>{{'تليفون الصنف'}}</span>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.mainPhoneNo }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="salary">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span>{{'الراتب'}}</span>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.salary }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="address">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span>{{'العنوان'}}</span>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.address }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="jobName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span>{{'الوظيفة'}}</span>
+          </th>
+          <td mat-cell *matCellDef="let element" >
+            {{ element.jobName }}
+
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="managerName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span>{{'المدير المباشر'}}</span>
+          </th>
+          <td mat-cell *matCellDef="let element" >
+            {{ element.managerName }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="statusName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span>{{'حالة الصنف'}}</span>
+          </th>
+          <td mat-cell *matCellDef="let element" >
+            <span style="color: #0ea516;font-size: 17px;font-weight: bold;" *ngIf="element.status == true">
+              {{ element.statusName }}
+            </span>
+            <span style="color: #b20b0b;font-size: 17px;font-weight: bold;" *ngIf="element.status == false">
+              {{ element.statusName }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="addDate">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span>{{'تاريخ الإنشاء'}}</span>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.addDate | date : " hh:mm yyyy-MM-dd" }}
+          </td>
+        </ng-container>
+        
+        <!-- operations Column -->
+        <ng-container matColumnDef="operations">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            [translate]="'name'"
+            [translateParams]="{
+              ar: 'خيارات',
+              en: 'Operations'
+            }"
+          ></th>
+          <td mat-cell *matCellDef="let element">
+            <div class="flex gap-1 justify-center py-2">
+              <button
+                class="min-w-max p-2 bg-orange-100 hover:bg-orange-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+                (click)="openModal(dataModal, element, 'editCategory')"
+              >
+                <i class="fa-regular fa-pen-to-square"></i>
+              </button>
+              <button
+                class="min-w-max p-2 bg-red-100 hover:bg-red-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+                (click)="openModal(deleteModal, element, 'delete')"
+              >
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Symbol Column -->
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+
+        <tr
+          mat-row
+          *matRowDef="let row; columns: displayedColumns"
+          class="duration-300 hover:bg-slate-100"
+        ></tr>
+        <!-- Row shown when there is no matching data. -->
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell" colspan="7">
+            {{ "لا يوجد نتائج" }}
+          </td>
+        </tr>
+      </table>
+    </div>
+    <mat-paginator [pageSizeOptions]="[10, 25, 100, dataSource.data.length]">
+    </mat-paginator>
+  </div>
+
+  <!-- modals  -->
+  <ng-template #dataModal>
+    <div
+      style="background-color: var(--base-color)"
+      class="modal-header text-white flex justify-between items-center"
+    >
+      <h4 class="m-0">
+        <span class="text-2xl">{{ modalDetails.type | translate }}</span>
+      </h4>
+      <button
+        type="button"
+        class="text-2xl text-white m-0"
+        (click)="modal?.hide()"
+      >
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <ng-container>
+        <form class="modal-form" addForm="ngForm">
+          <div>
+
+
+            <div class="form-group">
+              <label for="categoryCode" class="col-form-label">
+                <ng-container>
+                  {{ "كود الصنف" | translate }}
+                </ng-container>
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                id="categoryCode"
+                autocomplete="off"
+                #categoryCode="ngModel"
+                required
+                class="form-control"
+                name="categoryCode"
+                disabled
+                placeholder="{{ 'Write' | translate }} {{
+                  'كود الصنف' | translate
+                }} "
+                [(ngModel)]="modalDetails.categoryCode"
+              />
+            </div>
+
+            <!-- name -->
+            <div class="form-group">
+              <label for="nameAr" class="col-form-label">
+                <ng-container>
+                  {{ "اسم الصنف (عربي)" | translate }}
+                </ng-container>
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                id="nameAr"
+                autocomplete="off"
+                #nameAr="ngModel"
+                required
+                class="form-control {{ modalDetails.nameAr == null? 'errorInput': ''}}"
+                name="nameAr"
+                [placeholder]="
+                  ('Write' | translate) +
+                  ' ' +
+                  (('اسم الصنف (عربي)') | translate)
+                "
+                [(ngModel)]="modalDetails.nameAr"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="nameEn" class="col-form-label">
+                <ng-container>
+                  {{ "اسم الصنف (انجليزي)" | translate }}
+                </ng-container>
+               
+              </label>
+              <div style="display: inline-flex; width: 100%">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="nameEn"
+                  autocomplete="off"
+                  #nameEn="ngModel"
+                  #nameEnValue
+                  required
+                  class="form-control"
+                  name="nameEn"
+                  [placeholder]="
+                    ('Write' | translate) +
+                    ' ' +
+                    (('اسم الصنف (انجليزي)') | translate)"
+                  [(ngModel)]="modalDetails.nameEn"
+                />
+                <a
+                  class="btn"
+                  id="CopyCategoryName2"
+                  (click)="
+                    modalDetails.nameEn = modalDetails.nameAr
+                  "
+                  ><i class="fa fa-copy"></i
+                ></a>
+              </div>
+            </div>
+
+            <!-- Branch  -->
+            <div>
+              <label class="col-form-label">
+                {{ "فرع الصنف" | translate }}</label
+              >
+
+              <ng-select
+                style="min-width: max-content"
+                id="branchId"
+                #branchId="ngModel"
+                required
+                class="w-full p-0 form-control {{modalDetails.branchId == null ? 'errorInput': ''}}"
+                [disabled]="load_BranchUserId?.length == 1"
+                (change)="BranchChange(modalDetails.branchId,'addCategory')"
+                [clearable]="false"
+                name="branchId"
+                placeholder=" {{ 'فرع الصنف' | translate }}"
+                [(ngModel)]="modalDetails.branchId"
+                [ngModelOptions]="{ standalone: true }"
+              >
+                <ng-option
+                  *ngFor="let branch of load_BranchUserId"
+                  [value]="branch.id"
+                  >{{ branch.name }}</ng-option
+                >
+              </ng-select>
+            </div>
+
+            <div class="form-group">
+              <label for="amount" class="col-form-label">
+                {{ "السعر" | translate }}
+              </label>
+              <input
+                type="text"
+                class="form-control {{ modalDetails.amount == null? 'errorInput': ''}}"
+                id="amount"
+                autocomplete="off"
+                #email="ngModel"
+                required
+                name="amount"
+                placeholder=" {{ 'السعر' | translate }}"
+                [(ngModel)]="modalDetails.amount"
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="col-form-label">
+                {{ "التصنيف" | translate }}
+              </label>
+              <div class="flex">
+                <ng-select
+                class="w-full p-0 form-control {{modalDetails.categoryTypeId == null ? 'errorInput': ''}}"
+                placeholder="{{ 'التصنيف' | translate }}"
+                [(ngModel)]="modalDetails.categoryTypeId"
+                [ngModelOptions]="{ standalone: true }"
+              >
+                <ng-option *ngFor="let type of CategoryTypeList" [value]="type.id">{{
+                  type.name
+                }}</ng-option>
+              </ng-select>
+              <button
+              type="button"
+              class="btn bg-base text-white"
+              style="padding: 5px 10px"
+              (click)="open(AddCategoryTypePopup, null, 'addCategoryType')"
+            >
+              <i class="fa fa-plus"></i>
+            </button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-form-label">
+                {{ "الوحدة" | translate }}
+              </label>
+              <div class="flex">
+                <ng-select
+                class="w-full p-0 form-control {{modalDetails.unitId == null ? 'errorInput': ''}}"
+                placeholder="{{ 'التصنيف' | translate }}"
+                [(ngModel)]="modalDetails.unitId"
+                [ngModelOptions]="{ standalone: true }"
+              >
+                <ng-option *ngFor="let type of UnitList" [value]="type.id">{{
+                  type.name
+                }}</ng-option>
+              </ng-select>
+              <button
+              type="button"
+              class="btn bg-base text-white"
+              style="padding: 5px 10px"
+              (click)="open(AddUnitPopup, null, 'addUnit')"
+            >
+              <i class="fa fa-plus"></i>
+            </button>
+              </div>
+            </div>
+
+            <div class="flex gap-2 items-end mt-3">
+              <mat-slide-toggle
+                color="primary"
+                [(ngModel)]="modalDetails.status"
+                [ngModelOptions]="{ standalone: true }"
+              >
+                <span>{{'حالة الصنف'}}</span>
+              </mat-slide-toggle>
+            </div>
+
+          </div>
+          <div>
+            <div class="form-group col-span-4">
+              <label for="example-text-input" class="col-form-label">{{
+                "Notes" | translate
+              }}</label>
+              <textarea
+                class="form-control autosizeme"
+                style="
+                  border: 1px solid #b0b1b2;
+                  border-radius: 6px !important;
+                  padding: 5px 6px;
+                "
+                cols="30"
+                rows="4"
+                id="Notestxt3"
+                autocomplete="off"
+                name="Notestxt3"
+                placeholder="Notes"
+                [(ngModel)]="modalDetails.notes"
+              ></textarea>
+            </div>
+          </div>
+        </form>
+        <div
+          class="flex flex-wrap items-end border-t justify-between pt-2 border-neutral-300"
+        >
+        <div *ngIf="modalDetails.addDate != null && modalDetails.addDate != ''" class="flex gap-2 items-center">
+          <div class="flex flex-col gap-2">
+            <span>{{ "تاريخ إنشاء المستند" | translate }}</span>
+            <div class="flex flex-col">
+              <span>{{
+                modalDetails?.addDate | date : " hh:mm yyyy-MM-dd"}}</span>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="modalDetails.updateDate != null && modalDetails.updateDate != ''" class="flex gap-2 items-center">
+          <div class="flex flex-col gap-2">
+            <span>{{ "تاريخ تعديل المستند" | translate }}</span>
+            <div class="flex flex-col">
+              <span>{{
+                modalDetails?.updateDate | date : " hh:mm yyyy-MM-dd"}}</span>
+            </div>
+          </div>
+        </div>
+          <div class="flex gap-2">
+            <button
+              class="btn bg-base text-white"
+              (click)="addCategory()"
+              [disabled]="disableButtonSave_Category"
+            >
+              {{ "save" | translate }}
+            </button>
+            <button (click)="modal?.hide()" class="btn btn-secondary">
+              {{ "Back" | translate }}
+            </button>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </ng-template>
+
+  <!-- confirm delete -->
+  <ng-template #deleteModal>
+    <div class="modal-body text-center">
+      <p
+        [translate]="'name'"
+        [translateParams]="{
+          ar: 'هل تريد بالتأكيد حذف هذا الصف',
+          en: 'Are you sure to delete this row ?'
+        }"
+      ></p>
+      <div class="flex gap-2 justify-center">
+        <button
+          type="button"
+          mat-raised-button
+          color="warn"
+          (click)="confirm()"
+        >
+          {{ "Yes" | translate }}
+        </button>
+        <button
+          type="button"
+          (click)="decline()"
+          mat-raised-button
+          color="basic"
+        >
+          {{ "No" | translate }}
+        </button>
+      </div>
+    </div>
+  </ng-template>
+
+
+</div>
+
+<!-- Add AddCategoryTypePopup -->
+<ng-template #AddCategoryTypePopup let-modal>
+  <div
+    style="background-color: var(--base-color)"
+    class="modal-header text-white flex justify-between items-center"
+  >
+    <h4 class="m-0">
+      <span class="text-2xl"> تصنيف جديد </span>
+    </h4>
+    <button
+      type="button"
+      class="text-2xl text-white m-0"
+      (click)="modal?.dismiss()"
+    >
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+  <div class="modal-body text-center">
+    <form #addCategoryType="ngForm" class="grid grid-cols-1 md:grid-cols-2 gap-2">
+      <div class="form-group">
+        <label for="CategoryTypeNameArtxt3" class="text-right col-form-label block">
+          {{ "nameAr" | translate }}
+          <span class="text-danger">*</span></label
+        >
+        <input
+          required
+          #CategoryTypeNameAr="ngModel"
+          [(ngModel)]="AddDataType.CategoryTypedata.namear"
+          class="form-control"
+          type="text"
+          id="CategoryTypeNameArtxt3"
+          name="CategoryTypeNameArtxt3"
+          autocomplete="off"
+          [placeholder]="('Write' | translate) + ' ' + ('nameAr' | translate)"
+        />
+      </div>
+      <div class="form-group">
+        <label for="CategoryTypeNameEntxt3" class="text-right col-form-label block">
+          {{ "nameEn" | translate }}
+          <span class="text-danger">*</span></label
+        >
+        <div style="display: inline-flex; width: 100%">
+          <input
+            required
+            #CategoryTypeNameEnValue
+            #CategoryTypeNameEn="ngModel"
+            [(ngModel)]="AddDataType.CategoryTypedata.nameen"
+            class="form-control"
+            type="text"
+            id="CategoryTypeNameEntxt3"
+            name="CategoryTypeNameEntxt3"
+            autocomplete="off"
+            [placeholder]="('Write' | translate) + ' ' + ('nameEn' | translate)"
+          />
+          <a
+            class="btn"
+            id="CopyCategoryTypeName2"
+            (click)="
+              AddDataType.CategoryTypedata.nameen = AddDataType.CategoryTypedata.namear
+            "
+            ><i class="fa fa-copy"></i
+          ></a>
+        </div>
+      </div>
+
+      <div class="flex gap-2 items-end mt-3">
+          <mat-slide-toggle
+            color="primary"
+            [(ngModel)]="AddDataType.CategoryTypedata.status"
+            [ngModelOptions]="{ standalone: true }"
+          >
+            <span>{{'التصنيف نشط'}}</span>
+          </mat-slide-toggle>
+        </div>
+
+    </form>
+    <div class="max-h-80 overflow-auto px-2">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>{{ "nameAr" | translate }}</th>
+            <th>{{ "nameEn" | translate }}</th>
+            <th>{{ "status" | translate }}</th>
+            <th
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'خيارات',
+                en: 'Operations'
+              }"
+            ></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let type of CategoryTypePopup"
+            (dblclick)="setCategoryTypeInSelect(type, modal); modal.dismiss('Cross click')">
+            <td>{{ type.name }}</td>
+            <td>{{ type.nameEn }}</td>
+            <td style="color: #0ea516;font-size: 17px;font-weight: bold;" *ngIf="type.status == true">{{ type.statusName }}</td>
+            <td style="color: #b20b0b;font-size: 17px;font-weight: bold;" *ngIf="type.status == false">{{ type.statusName }}</td>
+            <td class="flex gap-2 justify-center">
+              <button
+                class="p-2 bg-orange-100 hover:bg-orange-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+                (click)="
+                  AddDataType.CategoryTypedata.id = type.id;
+                  AddDataType.CategoryTypedata.namear = type.name;
+                  AddDataType.CategoryTypedata.nameen = type.nameEn;
+                  AddDataType.CategoryTypedata.status = type.status">
+                <i class="fa-regular fa-pen-to-square"></i>
+              </button>
+              <button
+                (click)="getCategoryTypeRow(type);open(deleteCategoryType, AddDataType.CategoryTypedata,'deleteCategoryType')"
+                class="p-2 bg-red-100 hover:bg-red-500 rounded-lg duration-300 hover:text-white aspect-square w-10">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="flex gap-2 mt-3 pt-3 border-t border-neutral-300">
+      <button
+        class="btn bg-base text-white"
+        type="submit"
+        [disabled]="!AddDataType.CategoryTypedata.namear"
+        (click)="saveCategoryType()"
+      >
+        {{ "Save" | translate }}
+      </button>
+      <button (click)="modal.dismiss()" class="btn btn-secondary">
+        {{ "Back" | translate }}
+      </button>
+      <button (click)="resetCategoryType()" class="btn bg-base text-white">
+        {{ "جديد" | translate }}
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<!-- deleteCategoryTypeModal -->
+<ng-template #deleteCategoryType let-modal>
+  <div class="modal-body text-center">
+    <p
+      [translate]="'name'"
+      [translateParams]="{
+        ar: 'هل تريد بالتأكيد حذف هذا الصف',
+        en: 'Are you sure to delete this row ?'
+      }"
+    ></p>
+    <div class="flex gap-2 justify-center mt-3">
+      <button
+        type="button"
+        mat-raised-button
+        color="warn"
+        (click)="confirmCategoryTypeDelete(); modal.dismiss()"
+      >
+        {{ "Yes" | translate }}
+      </button>
+      <button
+        type="button"
+        (click)="modal.dismiss()"
+        mat-raised-button
+        color="basic"
+      >
+        {{ "No" | translate }}
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Add AddUnitPopup -->
+<ng-template #AddUnitPopup let-modal>
+  <div
+    style="background-color: var(--base-color)"
+    class="modal-header text-white flex justify-between items-center"
+  >
+    <h4 class="m-0">
+      <span class="text-2xl"> وحدة جديدة </span>
+    </h4>
+    <button
+      type="button"
+      class="text-2xl text-white m-0"
+      (click)="modal?.dismiss()"
+    >
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+  <div class="modal-body text-center">
+    <form #addUnit="ngForm" class="grid grid-cols-1 md:grid-cols-2 gap-2">
+      <div class="form-group">
+        <label for="UnitNameArtxt3" class="text-right col-form-label block">
+          {{ "nameAr" | translate }}
+          <span class="text-danger">*</span></label
+        >
+        <input
+          required
+          #UnitNameAr="ngModel"
+          [(ngModel)]="AddDataType.Unitdata.namear"
+          class="form-control"
+          type="text"
+          id="UnitNameArtxt3"
+          name="UnitNameArtxt3"
+          autocomplete="off"
+          [placeholder]="('Write' | translate) + ' ' + ('nameAr' | translate)"
+        />
+      </div>
+      <div class="form-group">
+        <label for="UnitNameEntxt3" class="text-right col-form-label block">
+          {{ "nameEn" | translate }}
+          <span class="text-danger">*</span></label
+        >
+        <div style="display: inline-flex; width: 100%">
+          <input
+            required
+            #UnitNameEnValue
+            #UnitNameEn="ngModel"
+            [(ngModel)]="AddDataType.Unitdata.nameen"
+            class="form-control"
+            type="text"
+            id="UnitNameEntxt3"
+            name="UnitNameEntxt3"
+            autocomplete="off"
+            [placeholder]="('Write' | translate) + ' ' + ('nameEn' | translate)"
+          />
+          <a
+            class="btn"
+            id="CopyUnitName2"
+            (click)="
+              AddDataType.Unitdata.nameen = AddDataType.Unitdata.namear
+            "
+            ><i class="fa fa-copy"></i
+          ></a>
+        </div>
+      </div>
+
+      <div class="flex gap-2 items-end mt-3">
+          <mat-slide-toggle
+            color="primary"
+            [(ngModel)]="AddDataType.Unitdata.status"
+            [ngModelOptions]="{ standalone: true }"
+          >
+            <span>{{'التصنيف نشط'}}</span>
+          </mat-slide-toggle>
+        </div>
+
+    </form>
+    <div class="max-h-80 overflow-auto px-2">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>{{ "nameAr" | translate }}</th>
+            <th>{{ "nameEn" | translate }}</th>
+            <th>{{ "status" | translate }}</th>
+            <th
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'خيارات',
+                en: 'Operations'
+              }"
+            ></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let type of UnitPopup"
+            (dblclick)="setUnitInSelect(type, modal); modal.dismiss('Cross click')">
+            <td>{{ type.name }}</td>
+            <td>{{ type.nameEn }}</td>
+            <td style="color: #0ea516;font-size: 17px;font-weight: bold;" *ngIf="type.status == true">{{ type.statusName }}</td>
+            <td style="color: #b20b0b;font-size: 17px;font-weight: bold;" *ngIf="type.status == false">{{ type.statusName }}</td>
+            <td class="flex gap-2 justify-center">
+              <button
+                class="p-2 bg-orange-100 hover:bg-orange-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+                (click)="
+                  AddDataType.Unitdata.id = type.id;
+                  AddDataType.Unitdata.namear = type.name;
+                  AddDataType.Unitdata.nameen = type.nameEn;
+                  AddDataType.Unitdata.status = type.status">
+                <i class="fa-regular fa-pen-to-square"></i>
+              </button>
+              <button
+                (click)="getUnitRow(type);open(deleteUnit, AddDataType.Unitdata,'deleteUnit')"
+                class="p-2 bg-red-100 hover:bg-red-500 rounded-lg duration-300 hover:text-white aspect-square w-10">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="flex gap-2 mt-3 pt-3 border-t border-neutral-300">
+      <button
+        class="btn bg-base text-white"
+        type="submit"
+        [disabled]="!AddDataType.Unitdata.namear"
+        (click)="saveUnit()"
+      >
+        {{ "Save" | translate }}
+      </button>
+      <button (click)="modal.dismiss()" class="btn btn-secondary">
+        {{ "Back" | translate }}
+      </button>
+      <button (click)="resetUnit()" class="btn bg-base text-white">
+        {{ "جديد" | translate }}
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<!-- deleteUnitModal -->
+<ng-template #deleteUnit let-modal>
+  <div class="modal-body text-center">
+    <p
+      [translate]="'name'"
+      [translateParams]="{
+        ar: 'هل تريد بالتأكيد حذف هذا الصف',
+        en: 'Are you sure to delete this row ?'
+      }"
+    ></p>
+    <div class="flex gap-2 justify-center mt-3">
+      <button
+        type="button"
+        mat-raised-button
+        color="warn"
+        (click)="confirmUnitDelete(); modal.dismiss()"
+      >
+        {{ "Yes" | translate }}
+      </button>
+      <button
+        type="button"
+        (click)="modal.dismiss()"
+        mat-raised-button
+        color="basic"
+      >
+        {{ "No" | translate }}
+      </button>
+    </div>
+  </div>
+</ng-template>

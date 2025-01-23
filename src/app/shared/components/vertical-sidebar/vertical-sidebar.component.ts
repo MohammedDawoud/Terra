@@ -249,6 +249,26 @@ export class VerticalSidebarComponent implements OnInit {
         ],
       },
       {
+        name: { ar: 'الحسابات', en: 'Accounts' },
+        link: null,
+        type: 'multiple',
+        icon: '/assets/sidebar-icons/accounting.png',
+        title:"552723",
+        show: this.userG?.pagesList.includes(552723),
+        // show: this.userG?.userPrivileges.includes(12),
+        children: [
+          {
+            name: { ar: 'الأصناف', en: 'Category' },
+            link: '/accounts/Categories',
+            type: 'single',
+            icon: '/assets/sidebar-icons/md-paper.png',
+            title:"5611341",
+            show: this.userG?.pagesList.includes(5611341),
+            // show: this.userG?.userPrivileges.includes(1210),
+          },
+        ],
+      },
+      {
         name: { ar: 'لوحة التحكم', en: 'Control Panel' },
         link: null,
         type: 'multiple',
