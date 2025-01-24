@@ -78,32 +78,32 @@
         </ng-select>
       </div>
       <div class="max-w-xs">
-        <label class="col-form-label"> {{ "رقم تليفون الصنف" | translate }}</label>
+        <label class="col-form-label"> {{ "التصنيف" | translate }}</label>
   
         <ng-select
           #CustomerName
-          [items]="dataSearch.filter.ListPhone"
+          [items]="dataSearch.filter.ListCategoryType"
           bindLabel="name"
           bindValue="id"
           [clearable]="true"
           class="w-full p-0"
-          [(ngModel)]="dataSearch.filter.categoryId"
+          [(ngModel)]="dataSearch.filter.categoryTypeId"
           placeholder="{{ 'Chose' | translate }}"
           (change)="RefreshData()"
         >
         </ng-select>
       </div>
       <div class="max-w-xs">
-        <label class="col-form-label"> {{ "الوظيفة" | translate }}</label>
+        <label class="col-form-label"> {{ "الوحدة" | translate }}</label>
   
         <ng-select
           #CustomerName
-          [items]="dataSearch.filter.ListJob"
+          [items]="dataSearch.filter.ListUnit"
           bindLabel="name"
           bindValue="id"
           [clearable]="true"
           class="w-full p-0"
-          [(ngModel)]="dataSearch.filter.jobId"
+          [(ngModel)]="dataSearch.filter.unitId"
           placeholder="{{ 'Chose' | translate }}"
           (change)="RefreshData()"
         >
@@ -161,13 +161,13 @@
         </ng-container>
 
         <!-- nationalId Column -->
-        <ng-container matColumnDef="categoryCode">
+        <ng-container matColumnDef="code">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
             <span>{{'كود الصنف '}}</span>
 
           </th>
           <td mat-cell *matCellDef="let element">
-            {{ element.categoryCode }}
+            {{ element.code }}
           </td>
         </ng-container>
 
@@ -179,52 +179,16 @@
           <td mat-cell *matCellDef="let element">
             {{ element.nameAr }}
           </td>
-        </ng-container>
-        
-
+        </ng-container>     
         <!-- phone Column -->
-        <ng-container matColumnDef="mainPhoneNo">
+        <ng-container matColumnDef="amount">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
-            <span>{{'تليفون الصنف'}}</span>
+            <span>{{'السعر'}}</span>
           </th>
           <td mat-cell *matCellDef="let element">
-            {{ element.mainPhoneNo }}
+            {{ element.amount }}
           </td>
         </ng-container>
-        <ng-container matColumnDef="salary">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>
-            <span>{{'الراتب'}}</span>
-          </th>
-          <td mat-cell *matCellDef="let element">
-            {{ element.salary }}
-          </td>
-        </ng-container>
-        <ng-container matColumnDef="address">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>
-            <span>{{'العنوان'}}</span>
-          </th>
-          <td mat-cell *matCellDef="let element">
-            {{ element.address }}
-          </td>
-        </ng-container>
-        <ng-container matColumnDef="jobName">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>
-            <span>{{'الوظيفة'}}</span>
-          </th>
-          <td mat-cell *matCellDef="let element" >
-            {{ element.jobName }}
-
-          </td>
-        </ng-container>
-        <ng-container matColumnDef="managerName">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>
-            <span>{{'المدير المباشر'}}</span>
-          </th>
-          <td mat-cell *matCellDef="let element" >
-            {{ element.managerName }}
-          </td>
-        </ng-container>
-
         <ng-container matColumnDef="statusName">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
             <span>{{'حالة الصنف'}}</span>
@@ -238,7 +202,37 @@
             </span>
           </td>
         </ng-container>
+        <ng-container matColumnDef="categoryTypeName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span>{{'اسم التصنيف'}}</span>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.categoryTypeName }}
+          </td>
+        </ng-container>
 
+        <ng-container matColumnDef="categoryTypeStatusName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span>{{'حالة الصنف'}}</span>
+          </th>
+          <td mat-cell *matCellDef="let element" >
+            <span style="color: #0ea516;font-size: 17px;font-weight: bold;" *ngIf="element.categoryTypeStatus == true">
+              {{ element.categoryTypeStatusName }}
+            </span>
+            <span style="color: #b20b0b;font-size: 17px;font-weight: bold;" *ngIf="element.categoryTypeStatus == false">
+              {{ element.categoryTypeStatusName }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="unitName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span>{{'الوحدة'}}</span>
+          </th>
+          <td mat-cell *matCellDef="let element" >
+            {{ element.unitName }}
+          </td>
+        </ng-container>
         <ng-container matColumnDef="addDate">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
             <span>{{'تاريخ الإنشاء'}}</span>
@@ -322,7 +316,7 @@
 
 
             <div class="form-group">
-              <label for="categoryCode" class="col-form-label">
+              <label for="code" class="col-form-label">
                 <ng-container>
                   {{ "كود الصنف" | translate }}
                 </ng-container>
@@ -330,17 +324,17 @@
               <input
                 type="text"
                 class="form-control"
-                id="categoryCode"
+                id="code"
                 autocomplete="off"
-                #categoryCode="ngModel"
+                #code="ngModel"
                 required
                 class="form-control"
-                name="categoryCode"
+                name="code"
                 disabled
                 placeholder="{{ 'Write' | translate }} {{
                   'كود الصنف' | translate
                 }} "
-                [(ngModel)]="modalDetails.categoryCode"
+                [(ngModel)]="modalDetails.code"
               />
             </div>
 
@@ -468,7 +462,7 @@
               type="button"
               class="btn bg-base text-white"
               style="padding: 5px 10px"
-              (click)="open(AddCategoryTypePopup, null, 'addCategoryType')"
+              (click)="open(AddCategoryTypePopup, null, 'addCategoryType');resetCategoryType();"
             >
               <i class="fa fa-plus"></i>
             </button>
@@ -481,7 +475,7 @@
               <div class="flex">
                 <ng-select
                 class="w-full p-0 form-control {{modalDetails.unitId == null ? 'errorInput': ''}}"
-                placeholder="{{ 'التصنيف' | translate }}"
+                placeholder="{{ 'الوحدة' | translate }}"
                 [(ngModel)]="modalDetails.unitId"
                 [ngModelOptions]="{ standalone: true }"
               >
@@ -493,7 +487,7 @@
               type="button"
               class="btn bg-base text-white"
               style="padding: 5px 10px"
-              (click)="open(AddUnitPopup, null, 'addUnit')"
+              (click)="open(AddUnitPopup, null, 'addUnit');resetUnit();"
             >
               <i class="fa fa-plus"></i>
             </button>
@@ -671,6 +665,23 @@
         </div>
       </div>
 
+      <div class="form-group">
+        <label for="CategoryTypeCode3" class="text-right col-form-label block">
+          {{ "Code" | translate }}<span class="text-danger">*</span></label>
+        <input
+          required
+          #CategoryTypeCode="ngModel"
+          [(ngModel)]="AddDataType.CategoryTypedata.code"
+          class="form-control"
+          type="text"
+          disabled
+          id="CategoryTypeCode3"
+          name="CategoryTypeCode3"
+          autocomplete="off"
+          [placeholder]="('Code' | translate)"
+        />
+      </div>
+
       <div class="flex gap-2 items-end mt-3">
           <mat-slide-toggle
             color="primary"
@@ -686,6 +697,7 @@
       <table class="table table-hover">
         <thead>
           <tr>
+            <th>{{ "Code" | translate }}</th>
             <th>{{ "nameAr" | translate }}</th>
             <th>{{ "nameEn" | translate }}</th>
             <th>{{ "status" | translate }}</th>
@@ -702,6 +714,7 @@
           <tr
             *ngFor="let type of CategoryTypePopup"
             (dblclick)="setCategoryTypeInSelect(type, modal); modal.dismiss('Cross click')">
+            <td>{{ type.code }}</td>
             <td>{{ type.name }}</td>
             <td>{{ type.nameEn }}</td>
             <td style="color: #0ea516;font-size: 17px;font-weight: bold;" *ngIf="type.status == true">{{ type.statusName }}</td>
@@ -711,6 +724,7 @@
                 class="p-2 bg-orange-100 hover:bg-orange-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
                 (click)="
                   AddDataType.CategoryTypedata.id = type.id;
+                  AddDataType.CategoryTypedata.code = type.code;
                   AddDataType.CategoryTypedata.namear = type.name;
                   AddDataType.CategoryTypedata.nameen = type.nameEn;
                   AddDataType.CategoryTypedata.status = type.status">
@@ -841,6 +855,23 @@
         </div>
       </div>
 
+      <div class="form-group">
+        <label for="UnitCode3" class="text-right col-form-label block">
+          {{ "Code" | translate }}<span class="text-danger">*</span></label>
+        <input
+          required
+          #UnitCode="ngModel"
+          [(ngModel)]="AddDataType.Unitdata.code"
+          class="form-control"
+          type="text"
+          disabled
+          id="UnitCode3"
+          name="UnitCode3"
+          autocomplete="off"
+          [placeholder]="('Code' | translate)"
+        />
+      </div>
+
       <div class="flex gap-2 items-end mt-3">
           <mat-slide-toggle
             color="primary"
@@ -856,6 +887,7 @@
       <table class="table table-hover">
         <thead>
           <tr>
+            <th>{{ "Code" | translate }}</th>
             <th>{{ "nameAr" | translate }}</th>
             <th>{{ "nameEn" | translate }}</th>
             <th>{{ "status" | translate }}</th>
@@ -872,6 +904,7 @@
           <tr
             *ngFor="let type of UnitPopup"
             (dblclick)="setUnitInSelect(type, modal); modal.dismiss('Cross click')">
+            <td>{{ type.code }}</td>
             <td>{{ type.name }}</td>
             <td>{{ type.nameEn }}</td>
             <td style="color: #0ea516;font-size: 17px;font-weight: bold;" *ngIf="type.status == true">{{ type.statusName }}</td>
@@ -881,6 +914,7 @@
                 class="p-2 bg-orange-100 hover:bg-orange-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
                 (click)="
                   AddDataType.Unitdata.id = type.id;
+                  AddDataType.Unitdata.code = type.code;
                   AddDataType.Unitdata.namear = type.name;
                   AddDataType.Unitdata.nameen = type.nameEn;
                   AddDataType.Unitdata.status = type.status">
