@@ -224,6 +224,9 @@ export class CategoriesComponent implements OnInit {
       this.load_BranchUserId = data;
       if (this.load_BranchUserId.length == 1) {
         this.modalDetails.branchId = this.load_BranchUserId[0].id;
+        if (modalType == 'addCategory'){
+          this.BranchChange(this.modalDetails.branchId,modalType);
+        }
       }
       else
       {
