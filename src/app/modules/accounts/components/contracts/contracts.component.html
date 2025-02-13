@@ -1,0 +1,1691 @@
+<div class="contract pb-4">
+    <app-navigator [title]="title"></app-navigator>
+  
+    <div class="tables-data mt-3 overflow-hidden">
+      <!-- buttons -->
+      <div class="flex justify-between gap-2 items-center my-3 flex-wrap">
+  
+        <!---------------------------------------------------------------------------->
+        <div class="flex gap-2 controler">
+          <button
+            class="flex gap-1 btn btn-primary"
+            (click)="openModal(dataModal, null, 'addContract')">
+            <span
+              class="hidden md:block"
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'عقد جديد ',
+                en: 'New Contract '
+              }"
+            ></span>
+            <i class="fa-solid fa-user-plus"></i>
+          </button>
+          <button class="flex gap-1 btn btn-danger" (click)="dataSearch.filter.showFilters = !dataSearch.filter.showFilters;">
+            <span
+              class="hidden md:block"
+              [translate]="'name'" [translateParams]="{ar: 'بحث ',en: 'Search '}"></span>
+            <i class="fa-solid fa-search"></i>
+            </button>
+          <button
+            class="flex gap-1 btn btn-warning"
+            (click)="exportData()"
+          >
+            <span
+              class="hidden md:block"
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'تصدير ملف إكسل',
+                en: 'Export To Excel'
+              }"
+            ></span>
+            <i class="fa-solid fa-file-export"></i>
+          </button>
+        </div>
+      </div>
+  
+      <div *ngIf="dataSearch.filter.showFilters" class="flex gap-6 flex-wrap items-end mb-4">
+  
+        <div class="max-w-xs">
+          <label class="col-form-label"> {{ "أسم العميل" | translate }}</label>
+    
+          <ng-select
+            #CustomerName
+            [items]="dataSearch.filter.ListName"
+            bindLabel="name"
+            bindValue="id"
+            [clearable]="true"
+            class="w-full p-0"
+            [(ngModel)]="dataSearch.filter.customerId"
+            placeholder="{{ 'Chose' | translate }}"
+            (change)="RefreshData()"
+          >
+          </ng-select>
+        </div>
+        <div class="max-w-xs">
+          <label class="col-form-label"> {{ "كود العميل" | translate }}</label>
+    
+          <ng-select
+            #CustomerName
+            [items]="dataSearch.filter.ListCode"
+            bindLabel="name"
+            bindValue="id"
+            [clearable]="true"
+            class="w-full p-0"
+            [(ngModel)]="dataSearch.filter.customerId"
+            placeholder="{{ 'Chose' | translate }}"
+            (change)="RefreshData()"
+          >
+          </ng-select>
+        </div>
+        <div class="max-w-xs">
+          <label class="col-form-label"> {{ "رقم تليفون العميل" | translate }}</label>
+    
+          <ng-select
+            #CustomerName
+            [items]="dataSearch.filter.ListPhone"
+            bindLabel="name"
+            bindValue="id"
+            [clearable]="true"
+            class="w-full p-0"
+            [(ngModel)]="dataSearch.filter.customerId"
+            placeholder="{{ 'Chose' | translate }}"
+            (change)="RefreshData()"
+          >
+          </ng-select>
+        </div>
+        <div class="max-w-xs">
+          <label class="col-form-label"> {{ "القائم بالإجتماع" | translate }}</label>
+    
+          <ng-select
+            #CustomerName
+            [items]="dataSearch.filter.ListEmployee"
+            bindLabel="name"
+            bindValue="id"
+            [clearable]="true"
+            class="w-full p-0"
+            [(ngModel)]="dataSearch.filter.contractChairperson"
+            placeholder="{{ 'Chose' | translate }}"
+            (change)="RefreshData()"
+          >
+          </ng-select>
+        </div>
+        <div class="max-w-xs">
+          <label class="col-form-label"> {{ "حالة العقد" | translate }}</label>
+    
+          <ng-select
+            #CustomerName
+            [items]="dataSearch.filter.ListContractStatus"
+            bindLabel="name"
+            bindValue="id"
+            [clearable]="true"
+            class="w-full p-0"
+            [(ngModel)]="dataSearch.filter.contractStatusId"
+            placeholder="{{ 'Chose' | translate }}"
+            (change)="RefreshData()"
+          >
+          </ng-select>
+        </div>
+        <button
+          class="btn btn-primary"
+          (click)="dataSearch.filter.enable = !dataSearch.filter.enable;ClearDate();"
+          [translate]="'name'"
+          [translateParams]="{
+            ar: 'فلترة بالوقت',
+            en: 'Time Filter'
+          }"
+        ></button>
+        <div class="form-group col-md-2 timeInput" *ngIf="dataSearch.filter.enable">
+          <input
+            placeholder="{{ 'Chose Date' | translate }}"
+            [(ngModel)]="dataSearch.filter.date"
+            type="text"
+            (ngModelChange)="CheckDate($event)"
+            class="form-control"
+            [bsConfig]="{ rangeInputFormat: 'DD/MM/YYYY' }"
+            bsDaterangepicker
+            #dpr="bsDaterangepicker"
+          />
+        </div>
+    
+        <div class="w-fit">
+          <input
+            class="form-control"
+            (keyup)="applyFilter($event)"
+            placeholder="{{ 'search' | translate }}"
+            #input
+          />
+        </div>
+      </div>
+      <!-- table -->
+      <div class="overflow-auto">
+        <table
+          mat-table
+          [dataSource]="dataSource"
+          matSort
+          class="mat-elevation-z8 rounded-t-lg overflow-hidden w-max"
+        >
+          <!-- name Column -->
+          <ng-container matColumnDef="branchName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              <span>{{'اسم الفرع'}}</span>
+  
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.branchName }}
+            </td>
+          </ng-container>
+  
+          <ng-container matColumnDef="orderBarcode">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              <span>{{'باركود العمليات '}}</span>
+  
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.orderBarcode }}
+            </td>
+          </ng-container>
+  
+          <ng-container matColumnDef="previewTypeName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              <span>{{'نوع المعاينة '}}</span>
+  
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.previewTypeName }}
+            </td>
+          </ng-container>
+  
+          <ng-container matColumnDef="contractCode">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              <span>{{'كود العقد'}}</span>
+  
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.contractCode }}
+            </td>
+          </ng-container>
+          
+          <ng-container matColumnDef="customerCode">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              <span>{{'كود العميل'}}</span>
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.customerCode }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="customerName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              <span>{{'اسم العميل'}}</span>
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.customerName }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="mainPhoneNo">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              <span>{{'تليفون العميل'}}</span>
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.mainPhoneNo }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="address">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              <span>{{'عنوان العميل'}}</span>
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.address }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="chairpersonName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              <span>{{'القائم بالعقد'}}</span>
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.chairpersonName }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              <span>{{'تاريخ العقد'}}</span>
+            </th>
+            <td mat-cell *matCellDef="let element" >
+              {{ element.date | date : " hh:mm yyyy-MM-dd" }}
+  
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="contractStatustxt">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              <span>{{'حالة العقد'}}</span>
+            </th>
+            <td mat-cell *matCellDef="let element" >
+              {{ element.contractStatustxt }}
+  
+            </td>
+          </ng-container>
+
+  
+          <ng-container matColumnDef="addDate">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              <span>{{'تاريخ الإنشاء'}}</span>
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.addDate | date : " hh:mm yyyy-MM-dd" }}
+            </td>
+          </ng-container>
+  
+          <!-- <ng-container matColumnDef="contractConverttxt">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              <span>{{'حالة التحويل'}}</span>
+            </th>
+            <td mat-cell *matCellDef="let element" >
+              <span style="color: #0ea516;font-size: 14px;font-weight: bold;" *ngIf="element.contractConvert == true">
+                {{ element.contractConverttxt }}
+              </span>
+              <span style="color: #b20b0b;font-size: 14px;font-weight: bold;" *ngIf="element.contractConvert == false">
+                {{ element.contractConverttxt }}
+              </span>
+            </td>
+          </ng-container> -->
+  
+          <!-- operations Column -->
+          <ng-container matColumnDef="operations">
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'خيارات',
+                en: 'Operations'
+              }"
+            ></th>
+            <td mat-cell *matCellDef="let element">
+              <div class="flex gap-1 justify-center py-2">
+                <button *ngIf="element.contractStatus!=3"
+                class="min-w-max p-2 bg-orange-100 hover:bg-orange-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+                  (click)="openModal(dataModal, element, 'editContract')"
+                >
+                  <i class="fa-regular fa-pen-to-square"></i>
+                </button>
+  
+                <button
+                class="min-w-max p-2 bg-green-100 hover:bg-green-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+                (click)="open(uploadFileModal, element, 'uploadFile')" >
+                <i class="fa fa-upload"></i>
+                </button>
+                <button 
+                class="min-w-max p-2 bg-blue-100 hover:bg-blue-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+                (click)="open(ShowContractFilesModal, element, 'ShowContractFiles')" >
+                <!-- <i class="fa fa-eye"></i> -->
+                <i class="fa-solid fa-download"></i>
+                </button>
+  
+                <!-- <button *ngIf="element.contractStatus==3 && !element.contractConvert"
+                class="min-w-max p-2 bg-green-100 hover:bg-green-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+                (click)="openModal(convertModal, element, 'convertContract')"
+              >
+              <i class="fa-solid fa-arrow-rotate-right"></i>
+              </button> -->
+              <button *ngIf="!element.contractConvert"
+                  class="min-w-max p-2 bg-red-100 hover:bg-red-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+                  (click)="openModal(deleteModal, element, 'delete')"
+                >
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+  
+          <!-- Symbol Column -->
+  
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  
+          <tr
+            mat-row
+            *matRowDef="let row; columns: displayedColumns"
+            class="duration-300 hover:bg-slate-100"
+            (dblclick)="openModal(dataModal, row, 'ContractView')"
+            ></tr>
+          <!-- Row shown when there is no matching data. -->
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" colspan="14">
+              {{ "لا يوجد نتائج" }} 
+            </td>
+          </tr>
+        </table>
+      </div>
+      <mat-paginator [pageSizeOptions]="[10, 25, 100, dataSource.data.length]">
+      </mat-paginator>
+    </div>
+  
+
+    <!-- modals  -->
+    <ng-template #dataModal>
+        <div
+        style="background-color: var(--base-color)"
+        class="modal-header text-white flex justify-between items-center">
+        <h4 class="m-0">
+          <span class="text-2xl">{{ 'العقد' | translate }}</span>
+        </h4>
+        <button
+          type="button"
+          class="text-2xl text-white m-0"
+          (click)="modal?.hide()"
+        >
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+    <div class="content">
+        <mat-stepper linear #stepper >
+            <!-- 1 -->
+            <mat-step [stepControl]="FormGroup01">
+            <ng-template matStepLabel>{{"Contract data" | translate}}</ng-template>
+            <form [formGroup]="FormGroup01">
+                <div class="step-content " style="padding-bottom: 11% !important;">
+                    
+                <div class="row align-items-end mb-4">
+                    <div class="form-group col-md-3">
+                        <label class="col-form-label">
+                          {{ "فرع العقد" | translate }}</label
+                        >
+          
+                        <ng-select
+                          style="min-width: max-content"
+                          required
+                          class="w-full p-0"
+                          [disabled]="load_BranchUserId?.length == 1"
+                          [clearable]="false"
+                          name="branchId"
+                          placeholder=" {{ 'فرع العقد' | translate }}"
+                          id="branchId"
+                          name="branchId"
+                          formControlName="branchId">
+                          <ng-option
+                            *ngFor="let branch of load_BranchUserId"
+                            [value]="branch.id"
+                            >{{ branch.name }}</ng-option
+                          >
+                        </ng-select>
+                      </div>
+          
+                      <div class="form-group col-md-3">
+                        <label class="col-form-label">
+                          {{ "رقم المعاينة" | translate }}</label>
+          
+                        <ng-select
+                          style="min-width: max-content"
+                          required
+                          [disabled]="modalDetails.type!='addContract'"
+                          class="w-full p-0"
+                          [clearable]="false"
+                          placeholder=" {{ 'رقم المعاينة' | translate }}"
+                          id="previewId"
+                          name="previewId"
+                          formControlName="previewId"
+                          (change)="getcontractdata(modalDetails.previewId)"
+          
+                        >
+                          <ng-option
+                            *ngFor="let prev of load_BarcodesCodes"
+                            [value]="prev.id"
+                            >{{ prev.name }}</ng-option>
+                        </ng-select>
+                      </div>
+          
+                      <div class="form-group col-md-3">
+                        <label class="col-form-label">{{ "نوع المعاينة" | translate }}</label>
+                        <ng-select
+                          style="min-width: max-content"
+                          [disabled]="modalDetails.type!='addContract'"
+                          class="w-full p-0"
+                          [clearable]="true"
+                          (change)="previewTypeChange(modalDetails.previewTypeId)"
+          
+                          placeholder=" {{ 'نوع المعاينة' | translate }}"
+                          id="previewTypeId"
+                          name="previewTypeId"
+                          formControlName="previewTypeId"
+                        >
+                          <ng-option
+                            *ngFor="let item of PreviewTypesList"
+                            [value]="item.id"
+                            >{{ item.name }}</ng-option
+                          >
+                        </ng-select>
+                      </div>
+          
+                      <div class="form-group col-md-3">
+                        <label class="col-form-label">
+                          {{ "رقم الإجتماع" | translate }}</label>
+          
+                        <ng-select
+                          style="min-width: max-content"
+                          required
+                          [disabled]="modalDetails.type!='addContract'"
+                          class="w-full p-0"
+                          [clearable]="false"
+                          placeholder=" {{ 'رقم الإجتماع' | translate }}"
+                          id="previewId"
+                          name="previewId"
+                          formControlName="previewId"
+                          (change)="getcontractdata(modalDetails.previewId)"
+          
+                        >
+                          <ng-option
+                            *ngFor="let prev of load_BarcodesCodes"
+                            [value]="prev.id"
+                            >{{ prev.meetingCode }}</ng-option>
+                        </ng-select>
+                      </div>
+
+                      <div class="form-group col-md-3">
+                        <label class="col-form-label">
+                          {{ "باركود العمليات" | translate }}</label>
+          
+                        <ng-select
+                          style="min-width: max-content"
+                          required
+                          [disabled]="modalDetails.type!='addContract'"
+                          class="w-full p-0"
+                          [clearable]="false"
+                          placeholder=" {{ 'باركود العمليات' | translate }}"
+                          id="previewId"
+                          name="previewId"
+                          formControlName="previewId"
+                          (change)="getcontractdata(modalDetails.previewId)"
+                          >
+                          <ng-option
+                            *ngFor="let prev of load_BarcodesCodes"
+                            [value]="prev.id"
+                            >{{ prev.orderBarcode }}</ng-option>
+                        </ng-select>
+                      </div>
+          
+
+          
+                      <div class="form-group col-md-3">
+                        <label class="col-form-label">{{ "كود العميل" | translate }}</label>
+                        <ng-select
+                          style="min-width: max-content"
+                          required
+                          class="w-full p-0"
+                          [clearable]="true"
+                          [disabled]="modalDetails.type!='addContract'"
+                          (change)="CustomerChange(modalDetails.customerId)"
+          
+                          name="customerId"
+                          placeholder=" {{ 'كود العميل' | translate }}"
+                          id="customerId"
+                          name="customerId"
+                          formControlName="customerId"
+                        >
+                          <ng-option
+                            *ngFor="let cus of load_Customers"
+                            [value]="cus.customerId"
+                            >{{ cus.customerCode }}</ng-option
+                          >
+                        </ng-select>
+                      </div>
+          
+                      <div class="form-group col-md-3">
+                        <label class="col-form-label">{{ "اسم العميل" | translate }}</label>
+                        <ng-select
+                          style="min-width: max-content"
+                          [disabled]="modalDetails.type!='addContract'"
+                          (change)="CustomerChange(modalDetails.customerId)"
+                          class="w-full p-0"
+                          [clearable]="true"
+                          placeholder=" {{ 'اسم العميل' | translate }}"
+                          id="customerId"
+                          name="customerId"
+                          formControlName="customerId"
+                        >
+                          <ng-option
+                            *ngFor="let cus of load_Customers"
+                            [value]="cus.customerId"
+                            >{{ cus.nameAr }}</ng-option
+                          >
+                        </ng-select>
+                      </div>
+                      
+                      <div class="form-group col-md-3">
+                        <label class="col-form-label">{{ "رقم التليفون" | translate }}</label>
+                        <ng-select
+                          style="min-width: max-content"
+                          class="w-full p-0"
+                          [clearable]="true"
+                          placeholder=" {{ 'رقم التليفون' | translate }}"
+                          id="customerId"
+                          name="customerId"
+                          formControlName="customerId"
+                        >
+                          <ng-option
+                            *ngFor="let cus of load_Customers"
+                            [value]="cus.customerId"
+                            >{{ cus.mainPhoneNo }}</ng-option
+                          >
+                        </ng-select>
+                      </div>
+                      
+                      <div class="form-group col-md-3">
+                        <label class="col-form-label">{{ "رقم التليفون 2" | translate }}</label>
+                        <ng-select
+                          style="min-width: max-content"
+                          class="w-full p-0"
+                          [clearable]="true"
+                          placeholder=" {{ 'رقم التليفون 2' | translate }}"
+                          id="customerId"
+                          name="customerId"
+                          formControlName="customerId"
+                        >
+                          <ng-option
+                            *ngFor="let cus of load_Customers"
+                            [value]="cus.customerId"
+                            >{{ cus.subMainPhoneNo }}</ng-option
+                          >
+                        </ng-select>
+                      </div>
+          
+                      <div class="form-group col-md-3">
+                        <label class="col-form-label">{{ "منطقة العميل" | translate }}</label>
+                        <ng-select
+                          style="min-width: max-content"
+                          class="w-full p-0"
+                          [clearable]="true"                         
+                          placeholder=" {{ 'منطقة العميل' | translate }}"
+                          id="customerId"
+                          name="customerId"
+                          formControlName="customerId"
+                        >
+                          <ng-option
+                            *ngFor="let cus of load_Customers"
+                            [value]="cus.customerId"
+                            >{{ cus.cityName }}</ng-option
+                          >
+                        </ng-select>
+                      </div>
+          
+                      <div class="form-group col-md-3">
+                        <label class="col-form-label">{{ "العنوان" | translate }}</label>
+                        <ng-select
+                          style="min-width: max-content"
+                          class="w-full p-0"
+                          [clearable]="true"
+                          placeholder=" {{ 'العنوان' | translate }}"
+                          id="customerId"
+                          name="customerId"
+                          formControlName="customerId"
+                        >
+                          <ng-option
+                            *ngFor="let cus of load_Customers"
+                            [value]="cus.customerId"
+                            >{{ cus.address }}</ng-option
+                          >
+                        </ng-select>
+                      </div>
+          
+                      <div class="form-group col-md-3">
+                        <label class="col-form-label">{{ "عرفتنا عن طريق" | translate }}</label>
+                        <ng-select
+                          style="min-width: max-content"
+                          class="w-full p-0"
+                          [clearable]="true"
+                          placeholder=" {{ 'عرفتنا عن طريق' | translate }}"
+                          id="customerId"
+                          name="customerId"
+                          formControlName="customerId"
+                        >
+                          <ng-option
+                            *ngFor="let cus of load_Customers"
+                            [value]="cus.customerId"
+                            >{{ cus.socialMediaName }}</ng-option
+                          >
+                        </ng-select>
+                      </div>
+
+                      <div class="form-group col-md-3">
+                        <label class="col-form-label">{{ "رقم الهوية" | translate }}</label>
+                        <ng-select
+                          style="min-width: max-content"
+                          class="w-full p-0"
+                          [clearable]="true"
+                          placeholder=" {{ 'رقم الهوية' | translate }}"
+                          id="customerId"
+                          name="customerId"
+                          formControlName="customerId"
+                        >
+                          <ng-option
+                            *ngFor="let cus of load_Customers"
+                            [value]="cus.customerId"
+                            >{{ cus.nationalId }}</ng-option
+                          >
+                        </ng-select>
+                      </div>
+
+                      <div class="form-group col-md-3">
+                        <label class="col-form-label">{{ "طريقة الدفع" | translate }}</label>
+                        <ng-select
+                          style="min-width: max-content"
+                          class="w-full p-0"
+                          [clearable]="true"
+                          placeholder=" {{ 'طريقة الدفع' | translate }}"
+                          id="customerId"
+                          name="customerId"
+                          formControlName="customerId"
+                        >
+                          <ng-option
+                            *ngFor="let cus of load_Customers"
+                            [value]="cus.customerId"
+                            >{{ cus.paytypeName }}</ng-option
+                          >
+                        </ng-select>
+                      </div>
+
+                      <div class="form-group col-md-3">
+                        <label for="contractCode" class="col-form-label">
+                          <ng-container>
+                            {{ "رقم العقد" | translate }}
+                          </ng-container>
+                        </label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          autocomplete="off"
+                          required
+                          class="form-control"
+                          placeholder="{{ 'Write' | translate }} {{
+                            'رقم العقد' | translate
+                          }} "
+                          id="contractCode"
+                          name="contractCode"
+                          formControlName="contractCode"
+                        />
+                      </div>
+
+                      <div class="form-group col-md-3">
+                        <label for="contractCode" class="col-form-label">
+                          <ng-container>
+                            {{ "رقم المستند" | translate }}
+                          </ng-container>
+                        </label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          autocomplete="off"
+                          required
+                          class="form-control"
+                          placeholder="{{ 'Write' | translate }} {{
+                            'رقم المستند' | translate
+                          }} "
+                          id="documentNo"
+                          name="documentNo"
+                          formControlName="documentNo"
+                        />
+                      </div>
+
+                      <div class="form-group col-md-3" style="padding-bottom: 20px;">
+                        <label class="col-form-label">{{ "حالة المستند" | translate }}</label>
+                        <ng-select
+                          style="min-width: max-content"
+                          class="w-full p-0"
+                          [clearable]="true"
+                          placeholder=" {{ 'حالة المستند' | translate }}"
+                          id="documentStatus"
+                          name="documentStatus"
+                          formControlName="documentStatus"
+                        >
+                          <ng-option
+                            *ngFor="let cus of load_Customers"
+                            [value]="cus.customerId"
+                            >{{ cus.socialMediaName }}</ng-option
+                          >
+                        </ng-select>
+                      </div>
+
+
+                      <div class="form-group col-md-3" style="padding-bottom: 20px;">
+                        <label for="date" class="text-right col-form-label block">
+                          {{ "تاريخ التعاقد" | translate }}
+                        </label>
+                        <input
+                          placeholder="{{ 'Chose' | translate }}"
+                          type="text"
+                          class="form-control"
+                          bsDatepicker
+                          #dpr="bsDatepicker"
+                          autocomplete="off"
+                          [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
+                          id="date"
+                          name="date"
+                          formControlName="date"
+                        />
+                      </div>
+          
+                      <div class="col-md-3">
+                        <div class="form-group">
+                          <span style="padding-right: 28%; color: #cd2a2a">{{
+                            "minute" | translate
+                          }}</span>
+                          <span style="padding-right: 15%; color: #cd2a2a">{{
+                            "hour" | translate
+                          }}</span>
+                          <div class="form-group timeInput">
+                            <timepicker
+                              style="direction: ltr"
+                              autocomplete="off"
+                              id="conDateTime"
+                              name="conDateTime"
+                              formControlName="conDateTime"
+                            ></timepicker>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="form-group col-md-3">
+                      </div>
+                      <div class="form-group col-md-3" style="padding-bottom: 20px;">
+                        <label for="date" class="text-right col-form-label block">
+                          {{ "تاريخ التعاقد" | translate }}
+                        </label>
+                        <input
+                          placeholder="{{ 'Chose' | translate }}"
+                          type="text"
+                          class="form-control"
+                          bsDatepicker
+                          #dpr="bsDatepicker"
+                          autocomplete="off"
+                          [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
+                          id="deliveryDate"
+                          name="deliveryDate"
+                          formControlName="deliveryDate"
+                        />
+                      </div>
+          
+                      <div class="col-md-3">
+                        <div class="form-group">
+                          <span style="padding-right: 28%; color: #cd2a2a">{{
+                            "minute" | translate
+                          }}</span>
+                          <span style="padding-right: 15%; color: #cd2a2a">{{
+                            "hour" | translate
+                          }}</span>
+                          <div class="form-group timeInput">
+                            <timepicker
+                              style="direction: ltr"
+                              autocomplete="off"
+                              id="delDateTime"
+                              name="delDateTime"
+                              formControlName="delDateTime"
+                            ></timepicker>
+                          </div>
+                        </div>
+                      </div>
+
+
+                      <div class="form-group col-md-3" style="padding-bottom: 20px;">
+                        <label for="date" class="text-right col-form-label block">
+                          {{ "تاريخ التخزين" | translate }}
+                        </label>
+                        <input
+                          placeholder="{{ 'Chose' | translate }}"
+                          type="text"
+                          class="form-control"
+                          bsDatepicker
+                          #dpr="bsDatepicker"
+                          autocomplete="off"
+                          [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
+                          id="storageDate"
+                          name="storageDate"
+                          formControlName="storageDate"
+                        />
+                      </div>
+          
+                      <div class="col-md-3">
+                        <div class="form-group">
+                          <span style="padding-right: 28%; color: #cd2a2a">{{
+                            "minute" | translate
+                          }}</span>
+                          <span style="padding-right: 15%; color: #cd2a2a">{{
+                            "hour" | translate
+                          }}</span>
+                          <div class="form-group timeInput">
+                            <timepicker
+                              style="direction: ltr"
+                              autocomplete="off"
+                              id="stoDateTime"
+                              name="stoDateTime"
+                              formControlName="stoDateTime"
+                            ></timepicker>
+                          </div>
+                        </div>
+                      </div>
+
+
+
+
+                      <div class="form-group col-span-4">
+                        <label for="example-text-input" class="col-form-label">{{
+                          "Notes" | translate
+                        }}</label>
+          
+                        <button *ngIf="modalDetails.previewNotes"
+                        class="min-w-max p-2 bg-red-100 hover:bg-red-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+                        (click)="open(PreviewNotesModal, null, 'Notes')"
+                          >
+                          <i class="fa-solid fa-comment-dots"></i>
+                        </button>
+                        <button *ngIf="modalDetails.meetingNotes"
+                        class="min-w-max p-2 bg-green-100 hover:bg-green-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+                        (click)="open(MeetingNotesModal, null, 'Notes')"
+                          >
+                          <i class="fa-solid fa-comment-dots"></i>
+                        </button>
+                        <button *ngIf="modalDetails.designNotes"
+                        class="min-w-max p-2 bg-blue-100 hover:bg-blue-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+                        (click)="open(DesignNotesModal, null, 'Notes')"
+                          >
+                          <i class="fa-solid fa-comment-dots"></i>
+                        </button>
+          
+                        <textarea
+                          class="form-control autosizeme"
+                          style="
+                            border: 1px solid #b0b1b2;
+                            border-radius: 6px !important;
+                            padding: 5px 6px;
+                          "
+                          cols="30"
+                          rows="4"
+                          [disabled]="modalDetails.type=='DesignView'"
+                          autocomplete="off"
+                          placeholder="Notes"
+                          id="notes"
+                          name="notes"
+                          formControlName="notes"
+                        ></textarea>
+                      </div>
+
+                </div>
+                </div>
+                <div class="d-flex justify-end w-100">
+                <button mat-button matStepperNext class="bg-base text-white">
+                    {{ "Next" | translate }}
+                </button>
+                </div>
+            </form>
+            </mat-step>
+            <!-- 2 -->
+            <mat-step [stepControl]="FormGroup02">
+            <form [formGroup]="FormGroup02">
+                <ng-template matStepLabel>{{
+                "Financial details" | translate
+                }}</ng-template>
+                <div class="step-content">
+                <div class="row mb-3">
+
+                    <h3 class="flex items-center justify-start fw-bold">
+                    {{ "services" | translate }}
+                    <button
+                        type="button "
+                        class="add-btn mx-2"
+                        (click)="addServiceContractNew()"
+                        >
+                        <i class="fa fa-plus"></i>
+                    </button>
+                    </h3>
+    
+                    <div class="editable shadow mb-4">
+                    <table
+                        class="table table-responsive table-striped table-bordered text-center"
+                        style="vertical-align: middle; font-size: 14px"
+                    >
+                        <thead
+                        class="bg-base text-white"
+                        style="line-height: 30px; font-size: 13px"
+                        >
+                        <tr>
+                            <th>{{ "ServiceNo" | translate }}</th>
+                            <th style="width: 30% !important;">{{ "ServiceName" | translate }}</th>
+                            <th>{{ "Unit" | translate }}</th>
+                            <th>{{ "Quantity" | translate }}</th>
+                            <th>{{ "price" | translate }}</th>
+                            <th>{{ "VATTax" | translate }}</th>
+                            <th>{{ "netTax" | translate }}</th>
+                            <th>{{ "action" | translate }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <tr
+                        *ngFor="let item of ContractNewServices; let i = index"
+                        style="line-height: 5px"
+                        >
+                        <td>{{ item.idRow }}</td>
+                        <td (click)="open(servicesListModal_Contract, null, 'servicesList_Contract', item.idRow)">
+                            <input
+                            type="text"
+                            name="os-name{{ item.idRow }}"
+                            [(ngModel)]="item.accountJournaltxt"
+                            [ngModelOptions]="{standalone: true}"
+                            readonly
+                            />
+                        </td>
+                        <td>
+                            <input
+                            type="text"
+                            name="os-unit{{ item.idRow  }}"
+                            [(ngModel)]="item.UnitConst"
+                            [ngModelOptions]="{standalone: true}"
+                            readonly
+                            />
+                        </td>
+    
+                        <td>
+                            <input
+                            type="text"
+                            name="os-amount{{ item.idRow  }}"
+                            [(ngModel)]="item.QtyConst"
+                            [ngModelOptions]="{standalone: true}"
+                            (keyup)="CalculateTotal_ContractNew()"
+                            />
+                        </td>
+    
+                        <td>
+                            <div class="flex">
+                            <input
+                            type="number"
+                            name="os-price{{ item.idRow  }}"
+                            [(ngModel)]="item.Amounttxt"
+                            [ngModelOptions]="{standalone: true}"
+                            (keyup)="CalculateTotal_ContractNew()"
+                            />
+                            <span *ngIf="item.Amounttxt" style="align-self: center;">ر.س</span>
+                            </div>
+                        </td>
+    
+                        <td>
+                            <div class="flex">
+                            <input
+                            type="number"
+                            name="os-vatTax{{ item.idRow  }}"
+                            [(ngModel)]="item.taxAmounttxt"
+                            [ngModelOptions]="{standalone: true}"
+                            readonly
+                            />
+                            <span *ngIf="item.taxAmounttxt" style="align-self: center;">ر.س</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="flex">
+                            <input
+                            type="number"
+                            name="os-taxes{{ item.idRow  }}"
+                            [(ngModel)]="item.TotalAmounttxt"
+                            [ngModelOptions]="{standalone: true}"
+                            readonly
+                            />
+                            <span *ngIf="item.TotalAmounttxt" style="align-self: center;">ر.س</span>
+                            </div>
+                        </td>
+                        <td class="flex">
+                            <button
+                            class="p-2 bg-red-100 hover:bg-red-500 rounded-lg duration-300 hover:text-white w-10"
+                            (click)="deleteServiceContractNew(item.idRow)"
+                            >
+                            <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    </div>
+    
+                    <div class="boxContainer w-80 py-3 px-3">
+                    <div class="row">
+                        <div class="col-md-2">
+                        <label for="tax type" class=" " for="tax type">
+                            {{ "tax type" | translate }}
+                        </label>
+                        </div>
+                        <div class="col-md-10">
+                        <ng-select
+                            class="w-100"
+                            placeholder="{{ 'Chose' | translate }}"
+                            name="include_tax"
+                            [(ngModel)]="modalDetailsContractNew.taxtype"
+                            [ngModelOptions]="{standalone: true}"
+                            (change)="CalculateTotal_ContractNew()"
+                            [clearable]="false"
+                        >
+                            <ng-option [value]="2">{{
+                            "Excluding tax" | translate
+                            }}</ng-option>
+                            <ng-option [value]="3">{{
+                            "Taxes included" | translate
+                            }}</ng-option>
+                        </ng-select>
+                        </div>
+                    </div>
+    
+                    <div class="row">
+                        <div class="col-md-12">
+                        <div class="col-md-2">
+                            <label
+                            for="Total amount"
+                            class="text-gren"
+                            for="Total amount"
+                            >
+                            {{ "Total amount" | translate }}
+                            </label>
+                        </div>
+                        <div class="col-md-10">
+                            <input
+                            id="Total amount"
+                            class="form-control text-center"
+                            type="number"
+                            [(ngModel)]="modalDetailsContractNew.total_amount"
+                            [ngModelOptions]="{standalone: true}"
+                            readonly
+                            />
+                        </div>
+                        </div>
+                    </div>
+    
+                    <div class="row">
+                        <div class="col-md-12">
+                        <div class="col-md-2">
+                            <label
+                            for="total in writing"
+                            class="text-orange"
+                            for="total in writing"
+                            >
+                            {{ "total in writing" | translate }}
+                            </label>
+                        </div>
+                        <div class="col-md-10">
+                            <input
+                            id="total in writing"
+                            class="form-control text-center"
+                            type="text"
+                            [(ngModel)]="modalDetailsContractNew.total_amount_text"
+                            [ngModelOptions]="{standalone: true}"
+                            readonly
+                            />
+                        </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+    
+                </div>
+    
+                <div class="d-flex w-100 justify-between items-center">
+                <button
+                    mat-button
+                    matStepperPrevious
+                    class="btn btn-outline-secondary"
+                >
+                    {{ "Previous" | translate }}
+                </button>
+                <button 
+                    mat-button
+                    matStepperNext
+                    class="btn bg-base text-white"
+                >
+                    {{ "Next" | translate }}
+                </button>
+                </div>
+            </form>
+            </mat-step>
+        </mat-stepper>
+        </div>
+    </ng-template>
+  
+    <!-- confirm delete -->
+    <ng-template #deleteModal>
+      <div class="modal-body text-center">
+        <p
+          [translate]="'name'"
+          [translateParams]="{
+            ar: 'هل تريد بالتأكيد حذف هذا الصف',
+            en: 'Are you sure to delete this row ?'
+          }"
+        ></p>
+        <div class="flex gap-2 justify-center">
+          <button
+            type="button"
+            mat-raised-button
+            color="warn"
+            (click)="confirm()"
+          >
+            {{ "Yes" | translate }}
+          </button>
+          <button
+            type="button"
+            (click)="decline()"
+            mat-raised-button
+            color="basic"
+          >
+            {{ "No" | translate }}
+          </button>
+        </div>
+      </div>
+    </ng-template>
+    <!-- confirm convert -->
+    <ng-template #convertModal>
+      <div class="modal-body text-center">
+        <p
+          [translate]="'name'"
+          [translateParams]="{
+            ar: 'هل تريد تحويل هذه العقد للعقد',
+            en: 'Are you sure to convert this contract to contract ?'
+          }"
+        ></p>
+        <div class="flex gap-2 justify-center">
+          <button
+            type="button"
+            mat-raised-button
+            color="warn"
+            (click)="confirmConvert()"
+          >
+            {{ "Yes" | translate }}
+          </button>
+          <button
+            type="button"
+            (click)="decline()"
+            mat-raised-button
+            color="basic"
+          >
+            {{ "No" | translate }}
+          </button>
+        </div>
+      </div>
+    </ng-template>
+  
+  
+  <!-- uploadFileModal -->
+  <ng-template #uploadFileModal let-modal>
+    <div class="modal-header bg-base text-white">
+      <h4
+        class="modal-title mb-0"
+        id="modal-basic-title">{{"رفع ملف علي عقد"}}</h4>
+      <button type="button" class="m-0" (click)="modal.dismiss('Cross click')">
+        <i class="fa fa-close"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form #uploadForm="ngForm">
+        <div class="row items-end uploadDiv">
+          <div class="col-md-4 mb-3">
+            <div class="form-input-group">
+              <label
+                for=""
+                class="block"
+                [translate]="'name'"
+                [translateParams]="{ ar: 'اسم الملف', en: 'File name' }"
+              ></label>
+              <input type="text" class="form-control" [ngModelOptions]="{standalone: true}"
+               [(ngModel)]="dataFile.FileName" name="file_name" autocomplete="off"/>
+            </div>
+          </div>
+  
+          <div class="upload row-span-2">
+            <file-upload class="h-full" [control]="control" (click)="clickfile($event)" (focus)="focusfile($event)" (blur)="blurfile($event)">
+              <ng-template
+                let-isFileDragDropAvailable="isFileDragDropAvailable"
+                #placeholder
+              >
+                <div class="px-5 flex flex-column justify-center items-center gap-2"*ngIf="control.size === 0">
+                  <div class="icon">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      height="1em"
+                      viewBox="0 0 640 512"
+                    >
+                      <path
+                        d="M144 480C64.5 480 0 415.5 0 336c0-62.8 40.2-116.2 96.2-135.9c-.1-2.7-.2-5.4-.2-8.1c0-88.4 71.6-160 160-160c59.3 0 111 32.2 138.7 80.2C409.9 102 428.3 96 448 96c53 0 96 43 96 96c0 12.2-2.3 23.8-6.4 34.6C596 238.4 640 290.1 640 352c0 70.7-57.3 128-128 128H144zm79-217c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l39-39V392c0 13.3 10.7 24 24 24s24-10.7 24-24V257.9l39 39c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-80-80c-9.4-9.4-24.6-9.4-33.9 0l-80 80z"
+                      />
+                    </svg>
+                  </div>
+  
+                  <div class="upload-text">
+                    {{ "Upload File" | translate }} 😶
+                  </div>
+                </div>
+              </ng-template>
+  
+              <ng-template
+                let-i="index"
+                let-file="file"
+                let-control="control"
+                #item
+              >
+              <div *ngIf="file">
+                <span class="delete-button" style="display: flex;" (click)="control.removeFile(file)"> <span> حذف ❌ </span>
+                  <svg viewBox="0 0 448 512">
+                    <path
+                      d="M32 464a48 48 0 0 0 48 48h288a48 48 0 0 0 48-48V128H32zm272-256a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zM432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16z"
+                    ></path>
+                  </svg>
+                </span>
+                <img class="max-h-44" *ngIf="control.valid" [src]="uploadedFile | async"/>
+  
+                <section class="file-info">
+                  <span style="font-size: 16px;font-weight: 700;">تفاصيل الملف</span>
+                  <hr/>
+                  <ul>
+                    <li><span style="color:red;">Name: </span>{{file.name}}</li>
+                    <li><span style="color:red;">Type: </span>{{file.type}}</li>
+                    <li><span style="color:red;">Size: </span>{{file.size}} bytes</li>
+                  </ul>
+                </section>
+                <section *ngIf="!(control.size === 0)">
+                  <p>تم تحديد الملف بنجاح، ولرفع الملف علي المعاينة اضغط زر رفع الملف ✅ </p>
+                </section>
+              </div>
+              </ng-template>
+            </file-upload>
+          </div>
+          <mat-progress-bar style="height: 12px;" mode="determinate" value="{{progress}}"></mat-progress-bar>
+          <p style="text-align: center;color: #950101;" *ngIf="uploading"> جاري التحميل ... ⏳ </p>
+          <p style="font-weight: 700;">يرجي الانتباه للاتي عند رفع ملف : </p>
+          <p><span style="color:red">أولا</span> : تأكد من فحص الملف بواسطة مكافح الفيروسات والتأكد منه قبل رفعه علي النظام</p>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer justify-content-end" style="border-top: none">
+      <button
+        type="button"
+        class="btn btn-light py-2 px-3 mt-0"
+        (click)="modal.dismiss('Cross click')"
+      >
+        {{ "close" | translate }}
+      </button>
+      <button
+        [disabled]="control.size === 0 || disableButtonSave_File"
+        type="button"
+        class="btn submit-btn bg-base text-white py-2 px-3 mt-0"
+        (click)="SaveprojectFiles('add',uploadForm.value,1)"
+      >
+        {{ "رفع الملف" | translate }}
+        <i class="fa fa-upload"></i>
+      </button>
+    </div>
+  </ng-template>
+  
+  <!-- ShowContractFilesModal -->
+  <ng-template #ShowContractFilesModal let-modal>
+    <div
+      style="background-color: var(--base-color)"
+      class="modal-header text-white flex justify-between items-center"
+    >
+      <h4 class="m-0">
+        <span class="text-2xl"> عرض الملفات </span>
+      </h4>
+      <button
+        type="button"
+        class="text-2xl text-white m-0"
+        (click)="modal?.dismiss()"
+      >
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="modal-body text-center">
+      <h3 style="text-align: right;color: red;font-weight: bold;text-decoration-line: underline;">ملفات العقد</h3>
+  
+      <div class="max-h-80 overflow-auto px-2">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>{{ "أسم الملف" | translate }}</th>
+              <th>{{ "تاريخ رفع الملف" | translate }}</th>
+              <th
+                [translate]="'name'"
+                [translateParams]="{
+                  ar: 'خيارات',
+                  en: 'Operations'
+                }"
+              ></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let type of ContractFilesList">
+              <td>{{ type.fileName }}</td>
+              <td>{{type.addDate | date : " hh:mm yyyy-MM-dd"}}</td>
+              <td class="flex gap-2 justify-center">
+                <button
+                  class="p-2 bg-orange-100 hover:bg-orange-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+                  (click)="downloadFile(type)">
+                  <!-- <i class="fa fa-eye"></i> -->
+                  <i class="fa-solid fa-download"></i>
+                </button>
+                <button *ngIf="!modalDetails.contractConvert"
+                (click)="getContractFileRow(type);open(deleteContractFile,type,'deleteContractFile')"
+                class="p-2 bg-red-100 hover:bg-red-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+              >
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <h3 style="text-align: right;color: red;font-weight: bold;text-decoration-line: underline;">ملفات الإجتماع</h3>
+  
+      <div class="max-h-80 overflow-auto px-2">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>{{ "أسم الملف" | translate }}</th>
+              <th>{{ "تاريخ رفع الملف" | translate }}</th>
+              <th
+                [translate]="'name'"
+                [translateParams]="{
+                  ar: 'خيارات',
+                  en: 'Operations'
+                }"
+              ></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let type of MeetingFilesList">
+              <td>{{ type.fileName }}</td>
+              <td>{{type.addDate | date : " hh:mm yyyy-MM-dd"}}</td>
+              <td class="flex gap-2 justify-center">
+                <button
+                  class="p-2 bg-orange-100 hover:bg-orange-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+                  (click)="downloadFile(type)">
+                  <!-- <i class="fa fa-eye"></i> -->
+                  <i class="fa-solid fa-download"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <h3 style="text-align: right;color: red;font-weight: bold;text-decoration-line: underline;">ملفات المعاينة</h3>
+  
+      <div class="max-h-80 overflow-auto px-2">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>{{ "أسم الملف" | translate }}</th>
+              <th>{{ "تاريخ رفع الملف" | translate }}</th>
+              <th
+                [translate]="'name'"
+                [translateParams]="{
+                  ar: 'خيارات',
+                  en: 'Operations'
+                }"
+              ></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let type of PreviewFilesList">
+              <td>{{ type.fileName }}</td>
+              <td>{{type.addDate | date : " hh:mm yyyy-MM-dd"}}</td>
+              <td class="flex gap-2 justify-center">
+                <button
+                  class="p-2 bg-orange-100 hover:bg-orange-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+                  (click)="downloadFile(type)">
+                  <!-- <i class="fa fa-eye"></i> -->
+                  <i class="fa-solid fa-download"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="flex gap-2 mt-3 pt-3 border-t border-neutral-300">
+        <button (click)="modal.dismiss()" class="btn btn-secondary">
+          {{ "Back" | translate }}
+        </button>
+      </div>
+    </div>
+  </ng-template>
+  
+  <!-- deleteContractFile -->
+  <ng-template #deleteContractFile let-modal>
+    <div class="modal-body text-center">
+      <p
+        [translate]="'name'"
+        [translateParams]="{
+          ar: 'هل تريد بالتأكيد حذف هذا الصف',
+          en: 'Are you sure to delete this row ?'
+        }"
+      ></p>
+      <div class="flex gap-2 justify-center mt-3">
+        <button
+          type="button"
+          mat-raised-button
+          color="warn"
+          (click)="confirmDeleteContractFile(); modal.dismiss()"
+        >
+          {{ "Yes" | translate }}
+        </button>
+        <button
+          type="button"
+          (click)="modal.dismiss()"
+          mat-raised-button
+          color="basic"
+        >
+          {{ "No" | translate }}
+        </button>
+      </div>
+    </div>
+  </ng-template>
+  
+  
+  <!-- PreviewNotesModal -->
+  <ng-template #PreviewNotesModal let-modal>
+    <div class="modal-header bg-base text-white">
+      <h4
+        class="modal-title mb-0"
+        id="modal-basic-title">{{"ملاحظات المعاينة"}}</h4>
+      <button type="button" class="m-0" (click)="modal.dismiss('Cross click')">
+        <i class="fa fa-close"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div>
+        <div class="form-group col-span-4">
+          <label for="example-text-input" class="col-form-label">{{
+            "Notes" | translate
+          }}</label>
+          <textarea
+            class="form-control autosizeme"
+            style="
+              border: 1px solid #b0b1b2;
+              border-radius: 6px !important;
+              padding: 5px 6px;
+            "
+            cols="30"
+            rows="4"
+            disabled
+            id="Notesptxt"
+            autocomplete="off"
+            name="Notesptxt"
+            placeholder="Notes"
+            [(ngModel)]="modalDetails.previewNotes"
+          ></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer justify-content-end" style="border-top: none">
+      <button
+        type="button"
+        class="btn btn-light py-2 px-3 mt-0"
+        (click)="modal.dismiss('Cross click')"
+      >
+        {{ "close" | translate }}
+      </button>
+    </div>
+  </ng-template>
+  <!-- MeetingNotesModal -->
+  <ng-template #MeetingNotesModal let-modal>
+    <div class="modal-header bg-base text-white">
+      <h4
+        class="modal-title mb-0"
+        id="modal-basic-title">{{"ملاحظات الإجتماع"}}</h4>
+      <button type="button" class="m-0" (click)="modal.dismiss('Cross click')">
+        <i class="fa fa-close"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div>
+        <div class="form-group col-span-4">
+          <label for="example-text-input" class="col-form-label">{{
+            "Notes" | translate
+          }}</label>
+          <textarea
+            class="form-control autosizeme"
+            style="
+              border: 1px solid #b0b1b2;
+              border-radius: 6px !important;
+              padding: 5px 6px;
+            "
+            cols="30"
+            rows="4"
+            disabled
+            id="Notesmtxt"
+            autocomplete="off"
+            name="Notesmtxt"
+            placeholder="Notes"
+            [(ngModel)]="modalDetails.meetingNotes"
+          ></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer justify-content-end" style="border-top: none">
+      <button
+        type="button"
+        class="btn btn-light py-2 px-3 mt-0"
+        (click)="modal.dismiss('Cross click')"
+      >
+        {{ "close" | translate }}
+      </button>
+    </div>
+  </ng-template>
+
+  <!-- DesignNotesModal -->
+  <ng-template #DesignNotesModal let-modal>
+    <div class="modal-header bg-base text-white">
+      <h4
+        class="modal-title mb-0"
+        id="modal-basic-title">{{"ملاحظات التصميم"}}</h4>
+      <button type="button" class="m-0" (click)="modal.dismiss('Cross click')">
+        <i class="fa fa-close"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div>
+        <div class="form-group col-span-4">
+          <label for="example-text-input" class="col-form-label">{{
+            "Notes" | translate
+          }}</label>
+          <textarea
+            class="form-control autosizeme"
+            style="
+              border: 1px solid #b0b1b2;
+              border-radius: 6px !important;
+              padding: 5px 6px;
+            "
+            cols="30"
+            rows="4"
+            disabled
+            id="Notesmtxt"
+            autocomplete="off"
+            name="Notesmtxt"
+            placeholder="Notes"
+            [(ngModel)]="modalDetails.designNotes"
+          ></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer justify-content-end" style="border-top: none">
+      <button
+        type="button"
+        class="btn btn-light py-2 px-3 mt-0"
+        (click)="modal.dismiss('Cross click')"
+      >
+        {{ "close" | translate }}
+      </button>
+    </div>
+  </ng-template>
+  
+  </div>
+  
+  
+  
+    <!-- servicesListModal_Contract -->
+<ng-template #servicesListModal_Contract let-modal>
+    <div
+      style="background-color: var(--base-color)"
+      class="modal-header text-white flex justify-between items-center"
+    >
+      <h4 class="m-0">
+        <span class="text-2xl">{{ "servicesList" | translate }}</span>
+      </h4>
+      <button
+        type="button"
+        class="text-2xl text-white m-0"
+        (click)="modal.dismiss()"
+      >
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="modal-body" style="overflow-y: scroll;max-height: 600px;">
+      <mat-form-field class="w-full">
+        <mat-label>{{ "search" | translate }}</mat-label>
+        <input matInput (keyup)="applyFilterServiceList_ContractNew($event)" #input />
+      </mat-form-field>
+  
+      <div class="table">
+        <table
+          mat-table
+          [dataSource]="serviceListDataSource_ContractNew"
+          class="mat-elevation-z8 table table-responsive table-striped table-bordered text-center"
+          style="vertical-align: middle; font-size: 14px"
+        >
+          <!-- Name Column -->
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>
+              {{ "ServiceName" | translate }}
+            </th>
+            <td mat-cell *matCellDef="let element">{{ element.servicesName }}</td>
+          </ng-container>
+  
+          <!-- price Column -->
+          <ng-container matColumnDef="price">
+            <th mat-header-cell *matHeaderCellDef>{{ "price" | translate }}</th>
+            <td mat-cell *matCellDef="let element">{{ element.amount }}</td>
+          </ng-container>
+  
+          <tr mat-header-row *matHeaderRowDef="servicesListdisplayedColumns"></tr>
+          <tr
+            mat-row
+            *matRowDef="
+              let row;
+              let i = index;
+              columns: servicesListdisplayedColumns
+            "
+            (dblclick)="setServiceRowValue_ContractNew(row); modal.dismiss()"
+          ></tr>
+  
+          <!-- Row shown when there is no matching data. -->
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" colspan="4">
+              {{ "noResult" | translate }} "{{ input.value }}"
+            </td>
+          </tr>
+        </table>
+      </div>
+  
+      <div class="text-end mt-2">
+        <button (click)="modal?.dismiss()" class="btn btn-secondary">
+          {{ "Back" | translate }}
+        </button>
+      </div>
+    </div>
+  </ng-template>

@@ -7,7 +7,7 @@ import { ExportationService } from '../exportation-service/exportation.service';
 @Injectable({
   providedIn: 'root',
 })
-export class DesignService {
+export class ContractService {
 
   private apiEndPoint: string = '';
   constructor(private http:HttpClient,
@@ -15,21 +15,21 @@ export class DesignService {
     this.apiEndPoint = environment.apiEndPoint;
   }
 
-  GetAllDesigns_Branch(){
-    return this.http.get<any>(this.apiEndPoint + 'Design/GetAllDesigns_Branch');
+  GetAllContracts_Branch(){
+    return this.http.get<any>(this.apiEndPoint + 'Contract/GetAllContracts_Branch');
   }
-  GetDesignById(DesignId:any) {
-    var url=`${environment.apiEndPoint}Design/GetDesignById?DesignId=${DesignId}`;
+  GetContractById(ContractId:any) {
+    var url=`${environment.apiEndPoint}Contract/GetContractById?ContractId=${ContractId}`;
     return this.http.get<any>(url);
   }
-  DeleteDesign(DesignId:any) {
-    return this.http.post<any>(this.apiEndPoint + 'Design/DeleteDesign?DesignId='+DesignId,{});
+  DeleteContract(ContractId:any) {
+    return this.http.post<any>(this.apiEndPoint + 'Contract/DeleteContract?ContractId='+ContractId,{});
   }
-  ConvertDesign(DesignId:any) {
-    return this.http.post<any>(this.apiEndPoint + 'Design/ConvertDesign?DesignId='+DesignId,{});
+  ConvertContract(ContractId:any) {
+    return this.http.post<any>(this.apiEndPoint + 'Contract/ConvertContract?ContractId='+ContractId,{});
   }
-  SaveDesign(model: any) {
-    return this.http.post<any>(this.apiEndPoint + 'Design/SaveDesign', model);
+  SaveContract(model: any) {
+    return this.http.post<any>(this.apiEndPoint + 'Contract/SaveContract', model);
   }
 
   GetCustMainAccByBranchId(BranchId:any) {
@@ -40,24 +40,20 @@ export class DesignService {
     var url=`${environment.apiEndPoint}Account/GetEmpMainAccByBranchId?BranchId=${BranchId}`;
     return this.http.get<any>(url);
   }
-  GetDesignsByDesignId(DesignId:any) {
-    var url=`${environment.apiEndPoint}Design/GetDesignsByDesignId?DesignId=${DesignId}`;
+  GetContractsByContractId(ContractId:any) {
+    var url=`${environment.apiEndPoint}Contract/GetContractsByContractId?ContractId=${ContractId}`;
     return this.http.get<any>(url);
   }
-  GenerateDesignNumber() {
-    var url=`${environment.apiEndPoint}Design/GenerateDesignNumber`;
+  GenerateContractNumber() {
+    var url=`${environment.apiEndPoint}Contract/GenerateContractNumber`;
     return this.http.get<any>(url);
   }
-  GenerateDesignNumberByBarcodeNum(OrderBarcode:any ) {
-    var url=`${environment.apiEndPoint}Design/GenerateDesignNumberByBarcodeNum?OrderBarcode=${OrderBarcode}`;
+  GenerateContractNumberByBarcodeNum(OrderBarcode:any ) {
+    var url=`${environment.apiEndPoint}Contract/GenerateContractNumberByBarcodeNum?OrderBarcode=${OrderBarcode}`;
     return this.http.get<any>(url);
   }
   GenerateOrderBarcodeNumber() {
-    var url=`${environment.apiEndPoint}Design/GenerateOrderBarcodeNumber`;
-    return this.http.get<any>(url);
-  }
-  ContractNumber_Reservation(BranchId:any) {
-    var url=`${environment.apiEndPoint}Contract/ContractNumber_Reservation?BranchId=${BranchId}`;
+    var url=`${environment.apiEndPoint}Contract/GenerateOrderBarcodeNumber`;
     return this.http.get<any>(url);
   }
   FillCitySelect() {
@@ -66,11 +62,11 @@ export class DesignService {
   FillJobSelect() {
     return this.http.get<any>(environment.apiEndPoint+'Organizations/FillJobSelect');
   }
-  FillDesignselect() {
-    return this.http.get<any>(environment.apiEndPoint+'Design/FillDesignselect');
+  FillContractselect() {
+    return this.http.get<any>(environment.apiEndPoint+'Contract/FillContractselect');
   }
-  FillDesignselectW(DesignId:any) {
-    var url=`${environment.apiEndPoint}Design/FillDesignselectW?DesignId=${DesignId}`;
+  FillContractselectW(ContractId:any) {
+    var url=`${environment.apiEndPoint}Contract/FillContractselectW?ContractId=${ContractId}`;
     return this.http.get<any>(url);
   }
   FillPayTypeSelect() {
@@ -79,15 +75,15 @@ export class DesignService {
   FillSocialMediaSelect() {
     return this.http.get<any>(environment.apiEndPoint+'Organizations/FillSocialMediaSelect');
   }
-  FillDesignTypesSelect() {
-    return this.http.get<any>(environment.apiEndPoint+'Organizations/FillDesignTypesSelect');
+  FillContractTypesSelect() {
+    return this.http.get<any>(environment.apiEndPoint+'Organizations/FillContractTypesSelect');
   }
   FillBranchByUserIdSelect(){
     return this.http.get<any>(this.apiEndPoint + 'Branches/FillBranchByUserIdSelect');
   }
 
-  GetAllDesignsSelectBarcode(){
-    return this.http.get<any>(this.apiEndPoint + 'Design/GetAllDesignsSelectBarcode');
+  GetAllContractsSelectBarcode(){
+    return this.http.get<any>(this.apiEndPoint + 'Contract/GetAllContractsSelectBarcode');
   }
   customExportExcel(dataExport: any, nameExport: any) {
 
@@ -136,15 +132,15 @@ export class DesignService {
   }
 
 
-  // SearchFn(_DesignVM: DesignVM): Observable<any> {
+  // SearchFn(_ContractVM: ContractVM): Observable<any> {
   //   const headers = { 'content-type': 'application/json' };
-  //   const body = JSON.stringify(_DesignVM);
+  //   const body = JSON.stringify(_ContractVM);
   //   return this.http.post(this.customerSearchUrl, body, { headers: headers });
   // }
 
-  // getAllDesignsByDesignTypeId(type: any) {
+  // getAllContractsByContractTypeId(type: any) {
   //   return this.http.get<any>(
-  //     this.getAllDesignsByDesignTypeIdUrl + '?DesignTypeId=' + type
+  //     this.getAllContractsByContractTypeIdUrl + '?ContractTypeId=' + type
   //   );
   // }
 

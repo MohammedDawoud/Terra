@@ -2,14 +2,14 @@
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import {AfterViewInit,ChangeDetectorRef,Component,OnInit,TemplateRef,ViewChild,
   HostListener,Pipe,PipeTransform,} from '@angular/core';
-import { EmailValidator, NgForm } from '@angular/forms';
+import { EmailValidator, FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import {FileUploadControl,FileUploadValidators,} from '@iplab/ngx-file-upload';
 import {BsModalService,BsModalRef,ModalDirective,} from 'ngx-bootstrap/modal';
 import { BehaviorSubject, Subscription } from 'rxjs';
-import { DesignService } from 'src/app/core/services/project-services/design.service';
+import { ContractService } from 'src/app/core/services/project-services/contract.service';
 import { ExportationService } from 'src/app/core/services/exportation-service/exportation.service';
 import { fade } from 'src/app/shared/animations/toggleBtn.animation';
 import { RestApiService } from 'src/app/shared/services/api.service';
@@ -39,31 +39,28 @@ import { EmployeeService } from 'src/app/core/services/employee-services/employe
 import { PreviewService } from 'src/app/core/services/project-services/preview.service';
 import { HttpEventType } from '@angular/common/http';
 import { filesservice } from 'src/app/core/services/sys_Services/files.service';
-
-const hijriSafe = require('hijri-date/lib/safe');
-const HijriDate = hijriSafe.default;
-const toHijri = hijriSafe.toHijri;
+import { CategoryService } from 'src/app/core/services/acc_Services/category.service';
 
 
 @Component({
-  selector: 'app-design',
-  templateUrl: './design.component.html',
-  styleUrls: ['./design.component.scss'],
-  animations: [fade],
+  selector: 'app-contracts',
+  templateUrl: './contracts.component.html',
+  styleUrls: ['./contracts.component.scss']
 })
-export class DesignComponent implements OnInit {
+
+export class ContractsComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   dataSourceTemp: any = [];
   dataSource: MatTableDataSource<any> = new MatTableDataSource([{}]);
-  _DesignSMS: any = null;
+  _ContractSMS: any = null;
   modal?: BsModalRef;
   modalDetails: any = {};
   load_BranchAccount: any;
   load_CityAndAreas: any;
   customrRowSelected: any;
   BranchId: number;
-  allDesignCount = 0;
+  allContractCount = 0;
   load_BranchUserId: any;
   nameAr: any;
   nameEn: any;
@@ -81,14 +78,14 @@ export class DesignComponent implements OnInit {
   title: any = {
     main: {
       name: {
-        ar: 'إدارة المشاريع',
-        en: 'Projects',
+        ar: 'الحسابات',
+        en: 'Accounts',
       },
-      link: '/projects/design',
+      link: '/accounts/contract',
     },
     sub: {
-      ar: 'التصميمات',
-      en: 'Design',
+      ar: 'العقود',
+      en: 'Contract',
     },
   };
 
@@ -115,15 +112,14 @@ export class DesignComponent implements OnInit {
     'branchName',
     'orderBarcode',
     'previewTypeName',
-    'designCode',
+    'contractCode',
     'customerCode',
     'customerName',
     'mainPhoneNo',
     'address',
     'chairpersonName',
     'date',
-    'designStatustxt',
-    'contractCode', 
+    'contractStatustxt',
     'addDate', 
     'operations',
   ];
@@ -135,27 +131,29 @@ export class DesignComponent implements OnInit {
     filter: {
       enable: true,
       date: null,
-      search_DesignName: '',
-      search_designEmail: '',
-      search_designMobile: '',
+      search_ContractName: '',
+      search_contractEmail: '',
+      search_contractMobile: '',
       isChecked: false,
     },
   };
 
   EditModel: any = {
-    DesignId: 0,
+    ContractId: 0,
     nameAr: null,
     nameEn: null,
   };
 
   constructor(
-    private service: DesignService,
+    private service: ContractService,
+    private category: CategoryService,
     private previewservice: PreviewService,
     private modalService: BsModalService,
     private api: RestApiService,
     private changeDetection: ChangeDetectorRef,
     private toast: ToastrService,
     private files: filesservice,
+    private _formBuilder: FormBuilder,
     private ngbModalService: NgbModal,
     private _sharedService: SharedService,
     private authenticationService: AuthenticationService,
@@ -194,27 +192,223 @@ export class DesignComponent implements OnInit {
   existValue: any = true;
 
   selectAllValue = false;
-  DesignStatusList: any;
+  ContractStatusList: any;
 
   ngOnInit(): void {
-    this.DesignStatusList = [
-      { id: 1, name: { ar: 'قيد الإنتظار', en: 'pending' } },
-      { id: 2, name: { ar: 'قيد التشغيل', en: 'in progress' } },
-      { id: 3, name: { ar: 'منتهية', en: 'finished' } },
+    this.ContractStatusList = [
+      { id: 1, name: 'مبدئي' },
+      { id: 2, name: 'مراجع' },
+      { id: 3, name: 'نهائي' },
     ];
-    this.getAllDesigns();
+    this.getAllContracts();
     this.FillCustomerSelect();
     this.FillEmployeeselect();
     this.FilltAllPreviewTypes();
-    // this.FillDesignTypesSelect();
+    this.SetContractDefData();
   }
 
-  // DesignTypesList: any;
-  // FillDesignTypesSelect() {
-  //   this.service.FillDesignTypesSelect().subscribe((data) => {
-  //     this.DesignTypesList = data;
+  SetContractDefData(){
+    this.intialForms();
+    this.DisabledBtn();
+    this.resetContractDataList();
+  }
+
+  intialForms() {
+    console.log("this.modalDetails",this.modalDetails)
+
+    this.FormGroup01 = this._formBuilder.group({
+      branchId: [null],
+      previewId: [null],
+      previewTypeId: [null],
+      customerId: [null],
+      contractCode: [null, [Validators.required]],
+      documentNo: [null],
+      documentStatus: [null],
+      date: [null],
+      conDateTime: [null],
+      deliveryDate: [null],
+      delDateTime: [null],
+      storageDate: [null],
+      stoDateTime: [null],
+      notes: [null],
+      previewNotes: [null],
+      meetingNotes: [null],
+      designNotes: [null],
+      type: [null],   
+      check:[false],
+    });
+    this.FormGroup02 = this._formBuilder.group({
+      total_amount: [null],
+    });
+  }
+
+  SetFormData(data:any){
+    this.FormGroup01.controls['branchId'].setValue(data.branchId);
+    this.FormGroup01.controls['previewId'].setValue(data.previewId);
+    this.FormGroup01.controls['previewTypeId'].setValue(data.previewTypeId);
+    this.FormGroup01.controls['customerId'].setValue(data.customerId);
+    this.FormGroup01.controls['contractCode'].setValue(data.contractCode);
+    this.FormGroup01.controls['date'].setValue(data.date);
+    this.FormGroup01.controls['conDateTime'].setValue(data.conDateTime);
+  }
+
+
+  DisabledBtn(){
+    // this.FormGroup01.controls['branchId'].disable();
+    // this.FormGroup01.controls['previewId'].disable();
+    // this.FormGroup01.controls['previewTypeId'].disable();
+    // this.FormGroup01.controls['customerId'].disable();
+    // this.FormGroup01.controls['contractCode'].disable();
+  }
+
+  resetContractDataList(){
+    this.ContractNewServices=[];
+  }
+
+  FormGroup01: FormGroup;
+  FormGroup02: FormGroup;
+  ContractNewServices: any = [];
+  servicesListdisplayedColumns: string[] = ['name', 'price'];
+
+  modalDetailsContractNew:any={
+    total_amount:null,
+    ContractAmountBefore:null,
+    ContractTax:null,
+    total_amount_text:null,
+  }
+  resetmodalDetailsContractNew(){
+    this.ContractNewServices=[];
+    this.modalDetailsContractNew={
+      taxtype:2,
+      total_amount:null,
+      ContractAmountBefore:null,
+      ContractTax:null,
+      total_amount_text:null,
+    }
+  }
+
+  addServiceContractNew() {
+    var maxVal=0;
+    if(this.ContractNewServices.length>0)
+    {
+      maxVal = Math.max(...this.ContractNewServices.map((o: { idRow: any; }) => o.idRow))
+    }
+    else{
+      maxVal=0;
+    }
+
+
+    this.ContractNewServices?.push({
+      idRow: maxVal+1,
+      AccJournalid: null,
+      UnitConst: null,
+      QtyConst: null,
+      accountJournaltxt: null,
+      Amounttxt: null,
+      taxAmounttxt: null,
+      TotalAmounttxt: null,
+    });
+  }
+
+  deleteServiceContractNew(idRow: any) {
+    let index = this.ContractNewServices.findIndex((d: { idRow: any; }) => d.idRow == idRow);
+    this.ContractNewServices.splice(index, 1);
+    this.CalculateTotal_ContractNew();
+  }
+
+  selectedServiceRowContractNew: any;
+
+  setServiceRowValue_ContractNew(element: any) {
+    this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==this.selectedServiceRowContractNew)[0].AccJournalid = element.servicesId;
+    this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==this.selectedServiceRowContractNew)[0].UnitConst = element.serviceTypeName;
+    this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==this.selectedServiceRowContractNew)[0].QtyConst = 1;
+    this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==this.selectedServiceRowContractNew)[0].accountJournaltxt = element.servicesName;
+    this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==this.selectedServiceRowContractNew)[0].Amounttxt = element.amount;
+    //this.SetAmountPackage(this.selectedServiceRowOffer, element);
+    this.CalculateTotal_ContractNew();
+  }
+
+  setServiceRowValueNew_ContractNew(indexRow:any,item: any, Qty: any,servamount: any) {
+    debugger
+    this.addServiceContractNew();
+    this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==indexRow)[0].AccJournalid = item.servicesId;
+    this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==indexRow)[0].UnitConst = item.serviceTypeName;
+    this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==indexRow)[0].QtyConst = Qty;
+    this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==indexRow)[0].accountJournaltxt = item.name;
+    this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==indexRow)[0].Amounttxt = servamount;
+    this.CalculateTotal_ContractNew();
+  }
+
+
+  CalculateTotal_ContractNew() {
+    var totalwithtaxes = 0;var totalAmount = 0;var totaltax = 0;var totalAmountIncludeT = 0;var vAT_TaxVal = parseFloat(this.userG.orgVAT??0);
+    debugger
+    this.ContractNewServices.forEach((element: any) => {
+      var Value = parseFloat((element.Amounttxt??0).toString()).toFixed(2);
+      var FVal = +Value * element.QtyConst;
+      var FValIncludeT = FVal;
+      var taxAmount = 0;
+      var totalwithtax = 0;
+      var TaxV8erS = parseFloat((+parseFloat((+Value * vAT_TaxVal).toString()).toFixed(2) / 100).toString()).toFixed(2);
+      var TaxVS =parseFloat((+Value- +parseFloat((+Value/((vAT_TaxVal / 100) + 1)).toString()).toFixed(2)).toString()).toFixed(2);
+      if (this.modalDetailsContractNew.taxtype == 2) {
+          taxAmount = +TaxV8erS * element.QtyConst;
+          totalwithtax = +parseFloat((+parseFloat(Value) + +parseFloat(TaxV8erS)).toString()).toFixed(2);
+      }
+      else {
+          taxAmount=+TaxVS * element.QtyConst;
+          FValIncludeT = +parseFloat((+parseFloat(Value).toFixed(2) - +TaxVS).toString()).toFixed(2);
+          totalwithtax = +parseFloat(Value).toFixed(2);
+      }
+      this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==element.idRow)[0].taxAmounttxt= parseFloat(taxAmount.toString()).toFixed(2);
+      this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==element.idRow)[0].TotalAmounttxt= parseFloat((totalwithtax * element.QtyConst).toString()).toFixed(2);
+
+      totalwithtaxes += totalwithtax;
+      totalAmount +=(FVal) ;
+      totalAmountIncludeT += (totalwithtax);
+      totaltax += taxAmount;
+    });
+    this.CalcSumTotal_ContractNew();
+    //this.CalcOfferDet(1);
+  }
+  CalcSumTotal_ContractNew(){
+    let sum=0;
+    let sumbefore=0;
+    let sumtax=0;
+    debugger
+    this.ContractNewServices.forEach((element: any) => {
+      sum= +sum + +parseFloat((element.TotalAmounttxt??0)).toFixed(2);
+      sumbefore= +sumbefore + (+parseFloat((element.Amounttxt??0)).toFixed(2) * +parseFloat((element.QtyConst??0)).toFixed(2));
+      sumtax= +sumtax + +parseFloat((element.taxAmounttxt??0)).toFixed(2);   
+    });
+    this.modalDetailsContractNew.total_amount=parseFloat(sum.toString()).toFixed(2);
+    this.modalDetailsContractNew.ContractAmountBefore=parseFloat(sumbefore.toString()).toFixed(2);
+    this.modalDetailsContractNew.ContractTax=parseFloat(sumtax.toString()).toFixed(2);
+    //this.ConvertNumToString_Contract(this.modalDetailsContractNew.total_amount);
+  }
+  // ConvertNumToString_Contract(val:any){
+  //   this._contractService.ConvertNumToString(val).subscribe(data=>{
+  //     this.modalDetailsContractNew.total_amount_text=data?.reasonPhrase;
   //   });
   // }
+  applyFilterServiceList_ContractNew(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.serviceListDataSource_ContractNew.filter = filterValue.trim().toLowerCase();
+  }
+
+  serviceListDataSourceTemp_ContractNew:any=[];
+  servicesList_ContractNew: any;
+  serviceListDataSource_ContractNew = new MatTableDataSource();
+
+  GetAllServicesPrice_ContractNew(){
+    this.category.GetAllCategories_Branch().subscribe(data=>{
+        this.serviceListDataSource_ContractNew = new MatTableDataSource(data.result);
+        this.servicesList_ContractNew=data.result;
+        this.serviceListDataSourceTemp_ContractNew=data.result;
+    });
+  }
+
+
 
 
   applyFilter(event: any) {
@@ -227,8 +421,8 @@ export class DesignComponent implements OnInit {
             d.branchName?.trim().toLowerCase().indexOf(val) !== -1) ||
           (d.nationalId &&
             d.nationalId?.trim().toLowerCase().indexOf(val) !== -1) ||
-          (d.designCode &&
-            d.designCode?.trim().toLowerCase().indexOf(val) !== -1) ||
+          (d.contractCode &&
+            d.contractCode?.trim().toLowerCase().indexOf(val) !== -1) ||
           (d.nameAr &&
             d.nameAr?.trim().toLowerCase().indexOf(val) !== -1) ||
           (d.mainPhoneNo &&
@@ -246,7 +440,7 @@ export class DesignComponent implements OnInit {
 
   // checkValue(event: any) {
   //   if (event == 'A') {
-  //     this.getAllDesigns();
+  //     this.getAllContracts();
   //   } else {
   //     this.RefreshData();
   //   }
@@ -254,10 +448,10 @@ export class DesignComponent implements OnInit {
 
   resetandRefresh() {
     if (this.searchBox.open == false) {
-      this.data2.filter.search_DesignName = null;
-      this.data2.filter.search_designMobile = null;
+      this.data2.filter.search_ContractName = null;
+      this.data2.filter.search_contractMobile = null;
       this.data.type = 0;
-      this.getAllDesigns();
+      this.getAllContracts();
     }
   }
   //------------------ Fill DATA ----------------------------------
@@ -274,7 +468,7 @@ export class DesignComponent implements OnInit {
   FillCustomerSelect() {
     this.customerService.FillCustomerSelect().subscribe((data) => {
       this.load_Customers = data.result;
-      console.log(this.load_Customers);
+      console.log("customer : ",this.load_Customers);
     });
   }
 
@@ -316,26 +510,19 @@ export class DesignComponent implements OnInit {
       this.load_Employees = data;
     });
   }
-  load_Employees_Con: any=[];
-  FillEmployeeselect_Des() {
-    this.employeeService.FillEmployeeselect(5).subscribe((data) => {
-      this.load_Employees_Con = data;
-    });
-  }
 
-
-  GenerateDesignNumber(){
+  GenerateContractNumber(){
     debugger
-    this.service.GenerateDesignNumber().subscribe(data=>{
-      this.modalDetails.designCode=data.reasonPhrase;
+    this.service.GenerateContractNumber().subscribe(data=>{
+      this.modalDetails.contractCode=data.reasonPhrase;
     });
   }
-  GenerateDesignNumberByBarcodeNum(){
+  GenerateContractNumberByBarcodeNum(){
     debugger
     if(!(this.modalDetails.orderBarcode==null || this.modalDetails.orderBarcode==""))
     {
-      this.service.GenerateDesignNumberByBarcodeNum(this.modalDetails.orderBarcode).subscribe(data=>{
-        this.modalDetails.designCode=data.reasonPhrase;
+      this.service.GenerateContractNumberByBarcodeNum(this.modalDetails.orderBarcode).subscribe(data=>{
+        this.modalDetails.contractCode=data.reasonPhrase;
       });
     }  
   }
@@ -347,35 +534,32 @@ export class DesignComponent implements OnInit {
     //this.GetAllPreviewsSelectBarcodeFinished();
 
     debugger
-    if (modalType == 'addDesign') {
+    if (modalType == 'addContract') {     
       this.GetAllPreviewsCodeFinishedMeeting();
-      //this.GenerateDesignNumber(); 
+      //this.GenerateContractNumber(); 
     }
-    console.log('this.modalDetails');
-    console.log(this.modalDetails);
-
 
     if (data) {
       this.modalDetails = data;
       this.fillBranchByUserId();
-      if (modalType == 'editDesign' || modalType == 'DesignView') {
+      if (modalType == 'editContract' || modalType == 'ContractView') {
         this.GetAllPreviewsCodeAll();
         if(this.modalDetails.date!=null)
         {
           this.modalDetails.date = this._sharedService.String_TO_date(this.modalDetails.date);
-          this.modalDetails.desDateTime = this.modalDetails.date;
+          this.modalDetails.conDateTime = this.modalDetails.date;
         }
-        // if(this.modalDetails.designDate!=null)
+        // if(this.modalDetails.contractDate!=null)
         // {
-        //   this.modalDetails.designDate = this._sharedService.String_TO_date(this.modalDetails.designDate);
+        //   this.modalDetails.contractDate = this._sharedService.String_TO_date(this.modalDetails.contractDate);
         // }    
         if (data.agentAttachmentUrl != null) {
           this.modalDetails.attachmentUrl =
             environment.PhotoURL + data.agentAttachmentUrl;
           //this.modalDetails.attachmentUrl = this.domSanitizer.bypassSecurityTrustUrl(environment.PhotoURL+data.agentAttachmentUrl)
         }
+        this.SetFormData(this.modalDetails);
       }
-      console.log(this.modalDetails);
     }
     else
     {
@@ -401,9 +585,8 @@ export class DesignComponent implements OnInit {
   publicidRow: any;
 
   InvoiceModelPublic: any;
-  ConvertToContract:boolean=false;
+
   open(content: any, data?: any, type?: any, idRow?: any, model?: any) {
-    this.ConvertToContract=false;
     this.publicidRow = 0;
 
     if (idRow != null) {
@@ -415,7 +598,7 @@ export class DesignComponent implements OnInit {
     if (type === 'deleteModalPerm') {
       this.publicidRow = data.idRow;
     }
-    if(type === 'ShowDesignFiles')
+    if(type === 'ShowContractFiles')
     {
       this.GetAllDesignFiles(this.modalDetails.designId,this.modalDetails.meetingId,this.modalDetails.previewId);
     }
@@ -423,7 +606,8 @@ export class DesignComponent implements OnInit {
       .open(content, {
         ariaLabelledBy: 'modal-basic-title',
         size: type ? 'xl' : 'lg',
-        centered:type == 'PreviewNotes' ? true : type == 'MeetingNotes' ? true :  !type ? true : false,
+        centered:type == 'Notes' ? true :
+         !type ? true : false,
         backdrop: 'static',
         keyboard: false,
       })
@@ -464,16 +648,16 @@ export class DesignComponent implements OnInit {
   }
 
 
-  DesignIdPublic: any = 0;
-  setDesignid_P(id: any) {
-    this.DesignIdPublic = id;
-    console.log('this.DesignIdPublic');
-    console.log(this.DesignIdPublic);
+  ContractIdPublic: any = 0;
+  setContractid_P(id: any) {
+    this.ContractIdPublic = id;
+    console.log('this.ContractIdPublic');
+    console.log(this.ContractIdPublic);
   }
 
-  disableButtonSave_Design = false;
+  disableButtonSave_Contract = false;
 
-  addDesign() {
+  addContract() {
     debugger;
     var val = this.validateForm();
     if (val.status == false) {
@@ -481,35 +665,35 @@ export class DesignComponent implements OnInit {
       return;
     }
     var prevObj: any = {};
-    prevObj.designId = this.modalDetails.designId;
+    prevObj.contractId = this.modalDetails.contractId;
 
-    if(this.modalDetails.designStatus==3 || this.ConvertToContract==true){
-      if(this.modalDetails.contractDate==null){
-        this.toast.error(this.translate.instant("من فضلك أختر تاريخ العقد"),this.translate.instant('Message'));
-        return;
-      }
-      // if(this.modalDetails.contractChairperson==null){
-      //   this.toast.error(this.translate.instant("من فضلك أختر القائم بالعقد"),this.translate.instant('Message'));
-      //   return;
-      // }
-      if (this.modalDetails.contractDate != null) {
-        prevObj.contractDate = this._sharedService.date_TO_String(this.modalDetails.contractDate);
-      }
-      if (this.modalDetails.conDateTime != null) {
-        prevObj.conDateTime = this._sharedService.formatAMPM(this.modalDetails.conDateTime);
-      }
-      //prevObj.contractChairperson=this.modalDetails.contractChairperson;
-      prevObj.contractCode=this.modalDetails.contractCode;
-    }
+    // if(this.modalDetails.contractStatus==3){
+    //   if(this.modalDetails.contractDate==null){
+    //     this.toast.error(this.translate.instant("من فضلك أختر تاريخ العقد"),this.translate.instant('Message'));
+    //     return;
+    //   }
+    //   if(this.modalDetails.contractChairperson==null){
+    //     this.toast.error(this.translate.instant("من فضلك أختر القائم بالعقد"),this.translate.instant('Message'));
+    //     return;
+    //   }
+    //   if (this.modalDetails.contractDate != null) {
+    //     prevObj.contractDate = this._sharedService.date_TO_String(this.modalDetails.contractDate);
+    //   }
+    //   if (this.modalDetails.desDateTime != null) {
+    //     prevObj.desDateTime = this._sharedService.formatAMPM(this.modalDetails.desDateTime);
+    //   }
+    //   prevObj.contractChairperson=this.modalDetails.contractChairperson;
+    //   prevObj.contractCode=this.modalDetails.contractCode;
+    // }
     
     prevObj.branchId = this.modalDetails.branchId;
     prevObj.previewId = this.modalDetails.previewId;
     prevObj.meetingId = this.modalDetails.meetingId;
-    prevObj.designCode = this.modalDetails.designCode;
+    prevObj.contractCode = this.modalDetails.contractCode;
     prevObj.customerId = this.modalDetails.customerId;
-    prevObj.designChairperson = this.modalDetails.designChairperson;
-    // prevObj.designTypeId = this.modalDetails.designTypeId;
-    prevObj.designStatus = this.modalDetails.designStatus;
+    prevObj.contractChairperson = this.modalDetails.contractChairperson;
+    // prevObj.contractTypeId = this.modalDetails.contractTypeId;
+    prevObj.contractStatus = this.modalDetails.contractStatus;
     if (this.modalDetails.date != null) {
       prevObj.date = this._sharedService.date_TO_String(this.modalDetails.date);
     }
@@ -525,18 +709,18 @@ export class DesignComponent implements OnInit {
     for (const key of Object.keys(prevObj)) {
       const value = prevObj[key] == null ? '' : prevObj[key];
       formData.append(key, value);
-      formData.append('DesignId', prevObj.designId.toString());
+      formData.append('ContractId', prevObj.contractId.toString());
     }
-    this.disableButtonSave_Design = true;
+    this.disableButtonSave_Contract = true;
     setTimeout(() => {
-      this.disableButtonSave_Design = false;
+      this.disableButtonSave_Contract = false;
     }, 5000);
-    this.service.SaveDesign(formData).subscribe((result: any) => {
+    this.service.SaveContract(formData).subscribe((result: any) => {
       if (result.statusCode == 200) {
         this.toast.success(
           this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
         this.decline();
-        this.getAllDesigns();
+        this.getAllContracts();
         this.ngbModalService.dismissAll();
       } else {
         this.toast.error(result.reasonPhrase, 'رسالة');
@@ -551,7 +735,7 @@ export class DesignComponent implements OnInit {
       this.modalDetails.branchId == null ||
       this.modalDetails.branchId == ''
     ) {
-      this.ValidateObjMsg = { status: false, msg: 'أختر فرع التصميم' };
+      this.ValidateObjMsg = { status: false, msg: 'أختر فرع العقد' };
       return this.ValidateObjMsg;
     } else if (
       this.modalDetails.previewId == null ||
@@ -559,8 +743,8 @@ export class DesignComponent implements OnInit {
     ) {
       this.ValidateObjMsg = { status: false, msg: 'أدخل كود المعاينة' };
       return this.ValidateObjMsg;
-    } else if (this.modalDetails.designCode == null || this.modalDetails.designCode == '') {
-      this.ValidateObjMsg = { status: false, msg: 'اختر كود التصميم' };
+    } else if (this.modalDetails.contractCode == null || this.modalDetails.contractCode == '') {
+      this.ValidateObjMsg = { status: false, msg: 'اختر كود العقد' };
       return this.ValidateObjMsg;
     } else if (
       this.modalDetails.customerId == null ||
@@ -569,27 +753,27 @@ export class DesignComponent implements OnInit {
       this.ValidateObjMsg = { status: false, msg: 'اختر عميل' };
       return this.ValidateObjMsg;
     }
-    else if ((this.modalDetails.designChairperson == null ||this.modalDetails.designChairperson == '')
+    else if ((this.modalDetails.contractChairperson == null ||this.modalDetails.contractChairperson == '')
     ) {
-      this.ValidateObjMsg = { status: false, msg: 'اختر القائم بالتصميم' };
+      this.ValidateObjMsg = { status: false, msg: 'اختر القائم بالعقد' };
       return this.ValidateObjMsg;
     }
-    else if ((this.modalDetails.designStatus == null ||this.modalDetails.designStatus == '')
+    else if ((this.modalDetails.contractStatus == null ||this.modalDetails.contractStatus == '')
     ) {
-      this.ValidateObjMsg = { status: false, msg: 'اختر حالة التصميم' };
+      this.ValidateObjMsg = { status: false, msg: 'اختر حالة العقد' };
       return this.ValidateObjMsg;
     }
     else if ((this.modalDetails.date == null ||this.modalDetails.date == '')) {
       this.ValidateObjMsg = {
         status: false,
-        msg: 'ادخل تاريخ التصميم',
+        msg: 'ادخل تاريخ العقد',
       };
       return this.ValidateObjMsg;
     }
     else if ((this.modalDetails.desDateTime == null ||this.modalDetails.desDateTime == '')) {
       this.ValidateObjMsg = {
         status: false,
-        msg: 'ادخل وقت التصميم',
+        msg: 'ادخل وقت العقد',
       };
       return this.ValidateObjMsg;
     }
@@ -605,58 +789,35 @@ export class DesignComponent implements OnInit {
         branchName: this.dataSourceTemp[index].branchName,
         orderBarcode: this.dataSourceTemp[index].orderBarcode,
         previewCode: this.dataSourceTemp[index].previewCode,      
-        designCode: this.dataSourceTemp[index].designCode,
+        contractCode: this.dataSourceTemp[index].contractCode,
         customerName: this.dataSourceTemp[index].customerName,
         chairpersonName: this.dataSourceTemp[index].chairpersonName,
-        designStatus: this.dataSourceTemp[index].designStatustxt,
-        designConvert: this.dataSourceTemp[index].designConverttxt,
+        contractStatus: this.dataSourceTemp[index].contractStatustxt,
+        contractConvert: this.dataSourceTemp[index].contractConverttxt,
       });
     }
-    this.service.customExportExcel(x, 'Designs');
+    this.service.customExportExcel(x, 'Contracts');
   }
 
-  ContractNumber_Reservation(BranchId:any,modalType:any){
-    debugger
-    if(!(BranchId==null))
-    {
-      this.service.ContractNumber_Reservation(BranchId).subscribe(data=>{
-        this.modalDetails.contractCode=data.reasonPhrase;
-      });
-    }
-  }
-
-  designStatusChange(){
-    if(this.modalDetails.designStatus==3)
-    {
-      this.ContractNumber_Reservation(this.modalDetails.branchId,this.modalDetails.type);
-    }
-  }
-  designStatusChangebtn(){
-    if(this.modalDetails.designStatus==2)
-      {
-        this.ContractNumber_Reservation(this.modalDetails.branchId,this.modalDetails.type);
-      }
-  }
-
-  getAllDesigns() {
-    this.service.GetAllDesigns_Branch().subscribe((data: any) => {
+  getAllContracts() {
+    this.service.GetAllContracts_Branch().subscribe((data: any) => {
       this.dataSource = new MatTableDataSource(data);
       this.dataSourceTemp = data;
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
-      this.allDesignCount = data.length;
+      this.allContractCount = data.length;
       this.FillSerachLists(data);
     });
   }
 
-  getdesigndata(previewId:any){
+  getcontractdata(previewId:any){
     let data = this.load_BarcodesCodes.filter((d: { id: any }) => d.id == previewId); 
     this.modalDetails.orderBarcode=data[0].name;
     this.modalDetails.customerId=data[0].customerId;
     this.modalDetails.previewTypeId=data[0].previewTypeId;
     this.modalDetails.meetingId=data[0].meetingId;
 
-    this.GenerateDesignNumberByBarcodeNum();
+    this.GenerateContractNumberByBarcodeNum();
   }
 
   CustomerChange(customerId:any){
@@ -677,7 +838,7 @@ export class DesignComponent implements OnInit {
       this.modalDetails.previewId=data[0].id;
       this.modalDetails.previewTypeId=data[0].previewTypeId;
       this.modalDetails.meetingId=data[0].meetingId;
-      this.getdesigndata(data[0].id);  
+      this.getcontractdata(data[0].id);  
     }
   }
   previewTypeChange(previewTypeId:any){
@@ -697,7 +858,7 @@ export class DesignComponent implements OnInit {
       this.modalDetails.previewId=data[0].id;
       this.modalDetails.customerId=data[0].customerId;
       this.modalDetails.meetingId=data[0].meetingId;
-      this.getdesigndata(data[0].id);  
+      this.getcontractdata(data[0].id);  
     }
   }
 
@@ -711,18 +872,18 @@ export class DesignComponent implements OnInit {
         nameAr: '',
         nameEn: '',
       },
-      type: 'addDesign',
+      type: 'addContract',
       nameAr: null,
       nameEn: null,
       id: null,
       name: null,
-      designId: 0,
+      contractId: 0,
       branchId: null,
       orderBarcode:null,
       previewId: null,
       previewTypeId:null,
       meetingId:null,
-      designCode: null,
+      contractCode: null,
       nationalId: null,
       address: null,
       mainPhoneNo: null,
@@ -736,8 +897,7 @@ export class DesignComponent implements OnInit {
       accountName: null,
       addDate: null,
       addUser: [],
-      addeddesignImg: null,
-      contractCode: null,
+      addedcontractImg: null,
       contractDate: null,
       contractChairperson: null,
       desDateTime:null,
@@ -745,10 +905,10 @@ export class DesignComponent implements OnInit {
   }
 
   confirm(): void {
-    this.service.DeleteDesign(this.modalDetails.designId).subscribe((result) => {
+    this.service.DeleteContract(this.modalDetails.contractId).subscribe((result) => {
         if (result.statusCode == 200) {
           this.toast.success(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
-          this.getAllDesigns();
+          this.getAllContracts();
           this.modal?.hide();
         } else {
           this.toast.error(result.reasonPhrase, this.translate.instant('Message'));
@@ -757,10 +917,10 @@ export class DesignComponent implements OnInit {
   }
 
   confirmConvert(): void {
-    this.service.ConvertDesign(this.modalDetails.designId).subscribe((result) => {
+    this.service.ConvertContract(this.modalDetails.contractId).subscribe((result) => {
         if (result.statusCode == 200) {
           this.toast.success(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
-          this.getAllDesigns();
+          this.getAllContracts();
           this.modal?.hide();
         } else {
           this.toast.error(result.reasonPhrase, this.translate.instant('Message'));
@@ -838,7 +998,7 @@ export class DesignComponent implements OnInit {
       }
         var _Files: any = {};
         _Files.fileId=0;
-        _Files.designId=this.modalDetails.designId;
+        _Files.contractId=this.modalDetails.contractId;
         _Files.fileName=this.dataFile.FileName;
         _Files.transactionTypeId=39;
         _Files.notes=null;
@@ -859,7 +1019,7 @@ export class DesignComponent implements OnInit {
             if(result?.body?.statusCode==200){
               this.control.removeFile(this.control?.value[0]);
               this.toast.success(this.translate.instant(result?.body?.reasonPhrase),'رسالة');
-              this.getAllDesigns();
+              this.getAllContracts();
               this.ClearField();
               this.resetprog();
             }
@@ -912,17 +1072,17 @@ export class DesignComponent implements OnInit {
       }
     }
   
-    DesignFileRowSelected: any;
+    ContractFileRowSelected: any;
     
-    getDesignFileRow(row: any) {
+    getContractFileRow(row: any) {
       debugger
-      this. DesignFileRowSelected = row;
+      this. ContractFileRowSelected = row;
     }
-    confirmDeleteDesignFile(): void {
-      this.files.DeleteFiles(this. DesignFileRowSelected.fileId).subscribe((result) => {
+    confirmDeleteContractFile(): void {
+      this.files.DeleteFiles(this. ContractFileRowSelected.fileId).subscribe((result) => {
           if (result.statusCode == 200) {
             this.toast.success(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
-            this.GetAllDesignFiles(this.DesignFileRowSelected.designId,this.DesignFileRowSelected.meetingId,this.DesignFileRowSelected.previewId);
+            this.GetAllDesignFiles(this.ContractFileRowSelected.designId,this.ContractFileRowSelected.meetingId,this.ContractFileRowSelected.previewId);
             this.modal?.hide();
           } else {
             this.toast.error(result.reasonPhrase, this.translate.instant('Message'));
@@ -930,13 +1090,12 @@ export class DesignComponent implements OnInit {
         });
     }
     
-    DesignFilesList: any=[];
+    ContractFilesList: any=[];
     
     GetAllDesignFiles(DesignId:any,MeetingId:any,PreviewId:any) {
-      this.DesignFilesList=[];
+      this.ContractFilesList=[];
       this.files.GetAllDesignFiles(DesignId).subscribe((data: any) => {
-        this.DesignFilesList = data;
-        console.log(data);
+        this.ContractFilesList = data;
       });
       this.GetAllMeetingFiles(MeetingId);
       this.GetAllPreviewFiles(PreviewId);
@@ -947,7 +1106,6 @@ export class DesignComponent implements OnInit {
       this.MeetingFilesList=[];
       this.files.GetAllMeetingFiles(MeetingId).subscribe((data: any) => {
         this.MeetingFilesList = data;
-        console.log(data);
       });
     }
     PreviewFilesList: any=[];
@@ -956,7 +1114,6 @@ export class DesignComponent implements OnInit {
       this.PreviewFilesList=[];
       this.files.GetAllPreviewFiles(PreviewId).subscribe((data: any) => {
         this.PreviewFilesList = data;
-        console.log(data);
       });
     }
     
@@ -976,11 +1133,11 @@ dataSearch: any = {
     ListCode:[],
     ListPhone:[],
     ListEmployee:[],
-    ListDesignStatus:[],
-    ListDesignValue:[],
+    ListContractStatus:[],
+    ListContractValue:[],
     customerId:null,
-    designChairperson:null,
-    designStatusId:null,
+    contractChairperson:null,
+    contractStatusId:null,
     showFilters:false
   },
 };
@@ -990,7 +1147,7 @@ dataSearch: any = {
     this.FillCustomerListCode(dataT);
     this.FillCustomerListPhone(dataT);
     this.FillCustomerListEmployee(dataT);
-    this.FillListDesignStatus();
+    this.FillListContractStatus();
   }
 
   FillCustomerListName(dataT:any){
@@ -1018,8 +1175,8 @@ dataSearch: any = {
     this.dataSearch.filter.ListPhone=arrayUniqueByKey;
   }
   FillCustomerListEmployee(dataT:any){
-    const ListLoad = dataT.map((item: { designChairperson: any; chairpersonName: any; }) => {
-      const container:any = {}; container.id = item.designChairperson; container.name = item.chairpersonName; console.log("container",container); return container;   
+    const ListLoad = dataT.map((item: { contractChairperson: any; chairpersonName: any; }) => {
+      const container:any = {}; container.id = item.contractChairperson; container.name = item.chairpersonName; console.log("container",container); return container;   
     })
     const key = 'id';
     const arrayUniqueByKey = [...new Map(ListLoad.map((item: { [x: string]: any; }) => [item[key], item])).values()];
@@ -1027,8 +1184,8 @@ dataSearch: any = {
     this.dataSearch.filter.ListEmployee = this.dataSearch.filter.ListEmployee.filter((d: { id: any }) => (d.id !=null && d.id!=0));
   }
 
-  FillListDesignStatus(){
-    this.dataSearch.filter.ListDesignStatus= [
+  FillListContractStatus(){
+    this.dataSearch.filter.ListContractStatus= [
       { id: 1, name: 'قيد الإنتظار' },
       { id: 2, name: 'قيد التشغيل' },
       { id: 3, name: 'منتهية' },
@@ -1052,13 +1209,13 @@ dataSearch: any = {
     {
       this.dataSource.data = this.dataSource.data.filter((d: { customerId: any }) => d.customerId == this.dataSearch.filter.customerId);
     }
-    if(this.dataSearch.filter.designChairperson!=null && this.dataSearch.filter.designChairperson!="")
+    if(this.dataSearch.filter.contractChairperson!=null && this.dataSearch.filter.contractChairperson!="")
     {
-      this.dataSource.data = this.dataSource.data.filter((d: { designChairperson: any }) => d.designChairperson == this.dataSearch.filter.designChairperson);
+      this.dataSource.data = this.dataSource.data.filter((d: { contractChairperson: any }) => d.contractChairperson == this.dataSearch.filter.contractChairperson);
     } 
-    if(this.dataSearch.filter.designStatusId!=null && this.dataSearch.filter.designStatusId!="")
+    if(this.dataSearch.filter.contractStatusId!=null && this.dataSearch.filter.contractStatusId!="")
     {
-      this.dataSource.data = this.dataSource.data.filter((d: { designStatus: any }) => d.designStatus == this.dataSearch.filter.designStatusId);
+      this.dataSource.data = this.dataSource.data.filter((d: { contractStatus: any }) => d.contractStatus == this.dataSearch.filter.contractStatusId);
     } 
    
   }

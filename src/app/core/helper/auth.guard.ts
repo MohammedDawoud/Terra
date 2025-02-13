@@ -30,6 +30,7 @@ export class AuthGuard implements CanActivate {
           else if(state.url=="/controlpanel/organization" && userG?.pagesList.includes(4117341))return true;                                      
           else if(state.url=="/accounts/Accounts_guide" && userG?.pagesList.includes(4132216))return true;
           else if(state.url=="/accounts/Categories" && userG?.pagesList.includes(5611341))return true;
+          else if(state.url=="/accounts/contracts" && userG?.pagesList.includes(5622321))return true;
           else if(state.url=="/dash/home")return true;     
           else return false;        
         }

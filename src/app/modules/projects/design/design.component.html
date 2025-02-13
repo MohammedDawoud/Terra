@@ -308,7 +308,7 @@
           ></th>
           <td mat-cell *matCellDef="let element">
             <div class="flex gap-1 justify-center py-2">
-              <button *ngIf="element.designStatus!=3"
+              <button *ngIf="!element.designConvert"
               class="min-w-max p-2 bg-orange-100 hover:bg-orange-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
                 (click)="openModal(dataModal, element, 'editDesign')"
               >
@@ -802,71 +802,111 @@
                 placeholder=" {{ 'حالة التصميم' | translate }}"
                 [(ngModel)]="modalDetails.designStatus"
                 [ngModelOptions]="{ standalone: true }"
+                (change)="designStatusChange()"
               >
               <ng-option *ngFor="let type of DesignStatusList" [value]="type.id" [translate]="'name'"
                 [translateParams]="{ar: type.name?.ar,en: type.name?.en}"></ng-option>
               </ng-select>
             </div>
+            <div class="form-group" *ngIf="modalDetails.designStatus==2">
+              <label for="designCode" class="col-form-label" style="color: red;">
+                <ng-container>
+                  {{ "هل تريد تحويل التصميم لعقد" | translate }}
+                </ng-container>
+              </label>
+              <button 
+              class="btn bg-base text-white"
+              (click)="designStatusChangebtn();ConvertToContract=true;">
+              {{ "تحويل لعقد" | translate }}
+            </button>
+            </div>
 
-               
-          <div class="form-group" *ngIf="modalDetails.designStatus==3">
-            <label for="designCode" class="col-form-label" style="color: red;">
-              <ng-container>
-                {{ "كود العقد" | translate }}
-              </ng-container>
-            </label>
-            <input
-              type="text"
-              class="form-control"
-              id="designCode"
-              autocomplete="off"
-              #designCode="ngModel"
-              disabled
-              class="form-control"
-              name="designCode"
-              placeholder="{{
-                'كود التصميم' | translate
-              }} "
-              [(ngModel)]="modalDetails.contractCode"
-            />
-          </div>
+           
+
+            <div class="form-group" *ngIf="modalDetails.designStatus==3 || ConvertToContract==true">
+              <label for="designCode" class="col-form-label" style="color: red;">
+                <ng-container>
+                  {{ "كود العقد" | translate }}
+                </ng-container>
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                id="contractCode"
+                autocomplete="off"
+                #contractCode="ngModel"
+                disabled
+                class="form-control"
+                name="contractCode"
+                placeholder="{{
+                  'كود العقد' | translate
+                }} "
+                [(ngModel)]="modalDetails.contractCode"
+              />
+            </div>
+  
+
+            <div class="form-group" *ngIf="modalDetails.designStatus==3 || ConvertToContract==true">
+              <label for="date" class="text-right col-form-label block" style="color: red;">
+                {{ "تاريخ العقد" | translate }}
+              </label>
+              <input
+                placeholder="{{ 'Chose' | translate }}"
+                name="contractDate"
+                type="text"
+                class="form-control"
+                [disabled]="modalDetails.type=='DesignView'"
+                bsDatepicker
+                #dpr="bsDatepicker"
+                autocomplete="off"
+                [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
+                [(ngModel)]="modalDetails.contractDate"
+                [ngModelOptions]="{ standalone: true }"
+              />
+            </div>
+  
+            <div class="col-md-3"  *ngIf="modalDetails.designStatus==3 || ConvertToContract==true">
+              <div class="form-group">
+                <!-- <label class="text-right col-form-label block">
+                  {{ "from the hour" | translate }}
+                </label> -->
+                <span style="padding-right: 110%; color: #cd2a2a">{{
+                  "minute" | translate
+                }}</span>
+                <span style="padding-right: 52%; color: #cd2a2a">{{
+                  "hour" | translate
+                }}</span>
+                <div class="form-group timeInput">
+                  <timepicker
+                    [(ngModel)]="modalDetails.conDateTime"
+                    style="direction: ltr"
+                    [ngModelOptions]="{ standalone: true }"
+                    name="conDateTime"
+                    autocomplete="off"
+  
+                  ></timepicker>
+                </div>
+              </div>
+            </div>
+  
+            <div class="form-group" *ngIf="modalDetails.designStatus==4">
+              <label class="col-form-label" style="color: red;">
+                {{ "القائم بالعقد" | translate }}
+              </label>
+              <ng-select
+                class="w-full p-0"
+                placeholder="{{ 'القائم بالعقد' | translate }}"
+                [(ngModel)]="modalDetails.contractChairperson"
+                [disabled]="modalDetails.type=='DesignView'"
+                [ngModelOptions]="{ standalone: true }"
+              >
+                <ng-option *ngFor="let emp of load_Employees_Con" [value]="emp.employeeId">{{
+                  emp.nameAr
+                }}</ng-option>
+              </ng-select>
+            </div>  
 
 
-          <div class="form-group" *ngIf="modalDetails.designStatus==3">
-            <label for="date" class="text-right col-form-label block" style="color: red;">
-              {{ "تاريخ العقد" | translate }}
-            </label>
-            <input
-              placeholder="{{ 'Chose' | translate }}"
-              name="designDate"
-              type="text"
-              class="form-control"
-              [disabled]="modalDetails.type=='DesignView'"
-              bsDatepicker
-              #dpr="bsDatepicker"
-              autocomplete="off"
-              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
-              [(ngModel)]="modalDetails.contractDate"
-              [ngModelOptions]="{ standalone: true }"
-            />
-          </div>
-
-          <div class="form-group" *ngIf="modalDetails.designStatus==3">
-            <label class="col-form-label" style="color: red;">
-              {{ "القائم بالعقد" | translate }}
-            </label>
-            <ng-select
-              class="w-full p-0"
-              placeholder="{{ 'القائم بالتصميم' | translate }}"
-              [(ngModel)]="modalDetails.contractChairperson"
-              [disabled]="modalDetails.type=='DesignView'"
-              [ngModelOptions]="{ standalone: true }"
-            >
-              <ng-option *ngFor="let emp of load_Employees" [value]="emp.employeeId">{{
-                emp.nameAr
-              }}</ng-option>
-            </ng-select>
-          </div>
 
           </div>
 

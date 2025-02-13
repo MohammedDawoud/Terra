@@ -266,6 +266,14 @@ export class VerticalSidebarComponent implements OnInit {
             show: this.userG?.pagesList.includes(5611341),
             // show: this.userG?.userPrivileges.includes(1210),
           },
+          {
+            name: { ar: 'عقود العملاء', en: 'Contracts' },
+            link: '/accounts/contracts',
+            type: 'single',
+            icon: '/assets/sidebar-icons/user-multiple.png',
+            title:"5622321",
+            show: this.userG?.pagesList.includes(5622321),
+          },
         ],
       },
       {
