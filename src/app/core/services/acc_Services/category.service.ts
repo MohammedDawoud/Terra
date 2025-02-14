@@ -20,6 +20,9 @@ export class CategoryService {
   GetAllCategories_Branch(){
     return this.http.get<any>(this.apiEndPoint + 'Category/GetAllCategories_Branch');
   }
+  GetAllCategories_BranchActive(){
+    return this.http.get<any>(this.apiEndPoint + 'Category/GetAllCategories_BranchActive');
+  }
   DeleteCategory(CategoryId:any) {
     return this.http.post<any>(this.apiEndPoint + 'Category/DeleteCategory?CategoryId='+CategoryId,{});
   }

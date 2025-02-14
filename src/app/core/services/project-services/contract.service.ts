@@ -52,6 +52,10 @@ export class ContractService {
     var url=`${environment.apiEndPoint}Contract/GenerateContractNumberByBarcodeNum?OrderBarcode=${OrderBarcode}`;
     return this.http.get<any>(url);
   }
+  GetCategoriesByContractId(ContractId:any ) {
+    var url=`${environment.apiEndPoint}Contract/GetCategoriesByContractId?ContractId=${ContractId}`;
+    return this.http.get<any>(url);
+  }
   GenerateOrderBarcodeNumber() {
     var url=`${environment.apiEndPoint}Contract/GenerateOrderBarcodeNumber`;
     return this.http.get<any>(url);

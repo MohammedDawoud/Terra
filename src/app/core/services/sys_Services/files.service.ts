@@ -57,6 +57,10 @@ export class filesservice {
     var url=`${environment.apiEndPoint}Files/GetAllDesignFiles?DesignId=${DesignId}`;
     return this.http.get<any>(url);
   }
+  GetAllContractFiles(ContractId:any) {
+    var url=`${environment.apiEndPoint}Files/GetAllContractFiles?ContractId=${ContractId}`;
+    return this.http.get<any>(url);
+  }
   GetAllEmployeeFiles(EmployeeId:any) {
     var url=`${environment.apiEndPoint}Files/GetAllEmployeeFiles?EmployeeId=${EmployeeId}`;
     return this.http.get<any>(url);

@@ -93,7 +93,7 @@
           >
           </ng-select>
         </div>
-        <div class="max-w-xs">
+        <!-- <div class="max-w-xs">
           <label class="col-form-label"> {{ "القائم بالإجتماع" | translate }}</label>
     
           <ng-select
@@ -108,7 +108,7 @@
             (change)="RefreshData()"
           >
           </ng-select>
-        </div>
+        </div> -->
         <div class="max-w-xs">
           <label class="col-form-label"> {{ "حالة العقد" | translate }}</label>
     
@@ -119,7 +119,7 @@
             bindValue="id"
             [clearable]="true"
             class="w-full p-0"
-            [(ngModel)]="dataSearch.filter.contractStatusId"
+            [(ngModel)]="dataSearch.filter.documentStatus"
             placeholder="{{ 'Chose' | translate }}"
             (change)="RefreshData()"
           >
@@ -195,6 +195,15 @@
             </td>
           </ng-container>
   
+          <ng-container matColumnDef="designCode">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              <span>{{'كود التصميم'}}</span>
+  
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.designCode }}
+            </td>
+          </ng-container>
           <ng-container matColumnDef="contractCode">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               <span>{{'كود العقد'}}</span>
@@ -235,14 +244,6 @@
             </th>
             <td mat-cell *matCellDef="let element">
               {{ element.address }}
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="chairpersonName">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              <span>{{'القائم بالعقد'}}</span>
-            </th>
-            <td mat-cell *matCellDef="let element">
-              {{ element.chairpersonName }}
             </td>
           </ng-container>
           <ng-container matColumnDef="date">
@@ -308,11 +309,11 @@
                   <i class="fa-regular fa-pen-to-square"></i>
                 </button>
   
-                <button
+                <!-- <button
                 class="min-w-max p-2 bg-green-100 hover:bg-green-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
                 (click)="open(uploadFileModal, element, 'uploadFile')" >
                 <i class="fa fa-upload"></i>
-                </button>
+                </button> -->
                 <button 
                 class="min-w-max p-2 bg-blue-100 hover:bg-blue-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
                 (click)="open(ShowContractFilesModal, element, 'ShowContractFiles')" >
@@ -326,12 +327,13 @@
               >
               <i class="fa-solid fa-arrow-rotate-right"></i>
               </button> -->
-              <button *ngIf="!element.contractConvert"
+
+              <!-- <button *ngIf="!element.contractConvert"
                   class="min-w-max p-2 bg-red-100 hover:bg-red-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
                   (click)="openModal(deleteModal, element, 'delete')"
                 >
                   <i class="fa-solid fa-trash-can"></i>
-                </button>
+                </button> -->
               </div>
             </td>
           </ng-container>
@@ -712,7 +714,6 @@
                           type="text"
                           class="form-control"
                           autocomplete="off"
-                          required
                           class="form-control"
                           placeholder="{{ 'Write' | translate }} {{
                             'رقم المستند' | translate
@@ -735,13 +736,14 @@
                           formControlName="documentStatus"
                         >
                           <ng-option
-                            *ngFor="let cus of load_Customers"
-                            [value]="cus.customerId"
-                            >{{ cus.socialMediaName }}</ng-option
+                            *ngFor="let item of ContractStatusList"
+                            [value]="item.id"
+                            >{{ item.name }}</ng-option
                           >
                         </ng-select>
                       </div>
-
+                      <div class="form-group col-md-9">
+                      </div>
 
                       <div class="form-group col-md-3" style="padding-bottom: 20px;">
                         <label for="date" class="text-right col-form-label block">
@@ -780,11 +782,11 @@
                           </div>
                         </div>
                       </div>
-                      <div class="form-group col-md-3">
-                      </div>
+                      <!-- <div class="form-group col-md-3">
+                      </div> -->
                       <div class="form-group col-md-3" style="padding-bottom: 20px;">
                         <label for="date" class="text-right col-form-label block">
-                          {{ "تاريخ التعاقد" | translate }}
+                          {{ "تاريخ التسليم" | translate }}
                         </label>
                         <input
                           placeholder="{{ 'Chose' | translate }}"
@@ -820,8 +822,16 @@
                         </div>
                       </div>
 
-
-                      <div class="form-group col-md-3" style="padding-bottom: 20px;">
+                      <div class="form-group col-md-3 flex gap-2 items-end mt-3">
+                        <mat-slide-toggle style="height: 88px !important;"
+                          color="primary"
+                          [(ngModel)]="modalDetails.storageDateStatus"
+                          [ngModelOptions]="{ standalone: true }"
+                        >
+                          <span>{{'تاريخ التخزين نشط'}}</span>
+                        </mat-slide-toggle>
+                      </div>
+                      <div class="form-group col-md-3" style="padding-bottom: 20px;" *ngIf="modalDetails.storageDateStatus">
                         <label for="date" class="text-right col-form-label block">
                           {{ "تاريخ التخزين" | translate }}
                         </label>
@@ -839,7 +849,7 @@
                         />
                       </div>
           
-                      <div class="col-md-3">
+                      <div class="col-md-3" *ngIf="modalDetails.storageDateStatus">
                         <div class="form-group">
                           <span style="padding-right: 28%; color: #cd2a2a">{{
                             "minute" | translate
@@ -923,7 +933,7 @@
                 <div class="row mb-3">
 
                     <h3 class="flex items-center justify-start fw-bold">
-                    {{ "services" | translate }}
+                    {{ "الأصناف" | translate }}
                     <button
                         type="button "
                         class="add-btn mx-2"
@@ -943,13 +953,13 @@
                         style="line-height: 30px; font-size: 13px"
                         >
                         <tr>
-                            <th>{{ "ServiceNo" | translate }}</th>
-                            <th style="width: 30% !important;">{{ "ServiceName" | translate }}</th>
-                            <th>{{ "Unit" | translate }}</th>
-                            <th>{{ "Quantity" | translate }}</th>
-                            <th>{{ "price" | translate }}</th>
-                            <th>{{ "VATTax" | translate }}</th>
-                            <th>{{ "netTax" | translate }}</th>
+                            <th>{{ "رقم" | translate }}</th>
+                            <th>{{ "التصنيف" | translate }}</th>
+                            <th style="width: 30% !important;">{{ "الصنف" | translate }}</th>
+                            <th>{{ "السعر" | translate }}</th>
+                            <th>{{ "الوحدة" | translate }}</th>
+                            <th>{{ "الكمية" | translate }}</th>
+                            <th>{{ "الإجمالي" | translate }}</th>
                             <th>{{ "action" | translate }}</th>
                             </tr>
                         </thead>
@@ -959,70 +969,68 @@
                         style="line-height: 5px"
                         >
                         <td>{{ item.idRow }}</td>
+                        <td >
+                            <input
+                            type="text"
+                            name="os-categoryTypeName{{ item.idRow }}"
+                            [(ngModel)]="item.categoryTypeName"
+                            [ngModelOptions]="{standalone: true}"
+                            readonly
+                            />
+                        </td>
                         <td (click)="open(servicesListModal_Contract, null, 'servicesList_Contract', item.idRow)">
                             <input
                             type="text"
-                            name="os-name{{ item.idRow }}"
-                            [(ngModel)]="item.accountJournaltxt"
+                            name="os-nameAr{{ item.idRow  }}"
+                            [(ngModel)]="item.nameAr"
                             [ngModelOptions]="{standalone: true}"
                             readonly
                             />
                         </td>
+  
                         <td>
+                            <div class="flex">
                             <input
-                            type="text"
-                            name="os-unit{{ item.idRow  }}"
-                            [(ngModel)]="item.UnitConst"
-                            [ngModelOptions]="{standalone: true}"
-                            readonly
-                            />
-                        </td>
-    
-                        <td>
-                            <input
-                            type="text"
+                            type="number"
                             name="os-amount{{ item.idRow  }}"
-                            [(ngModel)]="item.QtyConst"
-                            [ngModelOptions]="{standalone: true}"
-                            (keyup)="CalculateTotal_ContractNew()"
-                            />
-                        </td>
-    
-                        <td>
-                            <div class="flex">
-                            <input
-                            type="number"
-                            name="os-price{{ item.idRow  }}"
-                            [(ngModel)]="item.Amounttxt"
-                            [ngModelOptions]="{standalone: true}"
-                            (keyup)="CalculateTotal_ContractNew()"
-                            />
-                            <span *ngIf="item.Amounttxt" style="align-self: center;">ر.س</span>
-                            </div>
-                        </td>
-    
-                        <td>
-                            <div class="flex">
-                            <input
-                            type="number"
-                            name="os-vatTax{{ item.idRow  }}"
-                            [(ngModel)]="item.taxAmounttxt"
+                            [(ngModel)]="item.amount"
                             [ngModelOptions]="{standalone: true}"
                             readonly
+                            (keyup)="CalculateTotal_ContractNew()"
                             />
-                            <span *ngIf="item.taxAmounttxt" style="align-self: center;">ر.س</span>
+                            <!-- <span *ngIf="item.Amounttxt" style="align-self: center;">ر.س</span> -->
                             </div>
                         </td>
                         <td>
+                          <input
+                          type="text"
+                          name="os-unitName{{ item.idRow  }}"
+                          [(ngModel)]="item.unitName"
+                          [ngModelOptions]="{standalone: true}"
+                          readonly
+                          />
+                      </td>
+
+                        <td>
+                          <input
+                          type="text"
+                          name="os-qty{{ item.idRow  }}"
+                          [(ngModel)]="item.qty"
+                          [ngModelOptions]="{standalone: true}"
+                          (keyup)="CalculateTotal_ContractNew()"
+                          />
+                      </td>
+
+                        <td>
                             <div class="flex">
                             <input
                             type="number"
-                            name="os-taxes{{ item.idRow  }}"
-                            [(ngModel)]="item.TotalAmounttxt"
+                            name="os-totalValue{{ item.idRow  }}"
+                            [(ngModel)]="item.totalValue"
                             [ngModelOptions]="{standalone: true}"
                             readonly
                             />
-                            <span *ngIf="item.TotalAmounttxt" style="align-self: center;">ر.س</span>
+                            <!-- <span *ngIf="item.TotalValuetxt" style="align-self: center;">ر.س</span> -->
                             </div>
                         </td>
                         <td class="flex">
@@ -1038,80 +1046,120 @@
                     </table>
                     </div>
     
-                    <div class="boxContainer w-80 py-3 px-3">
-                    <div class="row">
-                        <div class="col-md-2">
-                        <label for="tax type" class=" " for="tax type">
-                            {{ "tax type" | translate }}
-                        </label>
-                        </div>
-                        <div class="col-md-10">
-                        <ng-select
-                            class="w-100"
-                            placeholder="{{ 'Chose' | translate }}"
-                            name="include_tax"
-                            [(ngModel)]="modalDetailsContractNew.taxtype"
-                            [ngModelOptions]="{standalone: true}"
-                            (change)="CalculateTotal_ContractNew()"
-                            [clearable]="false"
-                        >
-                            <ng-option [value]="2">{{
-                            "Excluding tax" | translate
-                            }}</ng-option>
-                            <ng-option [value]="3">{{
-                            "Taxes included" | translate
-                            }}</ng-option>
-                        </ng-select>
-                        </div>
+                  <div class="boxContainer w-80 py-3 px-3">
+                  <!-- <div class="row">
+                      <div class="col-md-2">
+                      <label for="tax type" class=" " for="tax type">
+                          {{ "tax type" | translate }}
+                      </label>
+                      </div>
+                      <div class="col-md-10">
+                      <ng-select
+                          class="w-100"
+                          placeholder="{{ 'Chose' | translate }}"
+                          name="include_tax"
+                          [(ngModel)]="modalDetailsContractNew.taxtype"
+                          [ngModelOptions]="{standalone: true}"
+                          (change)="CalculateTotal_ContractNew()"
+                          [clearable]="false"
+                      >
+                          <ng-option [value]="2">{{
+                          "Excluding tax" | translate
+                          }}</ng-option>
+                          <ng-option [value]="3">{{
+                          "Taxes included" | translate
+                          }}</ng-option>
+                      </ng-select>
+                      </div>
+                  </div>
+    -->
+                  <div class="row">
+                      <div class="col-md-12">
+                      <div class="col-md-2">
+                          <label for="sumtotal" class="text-gren">{{ "إجمالي العقد" | translate }}</label>
+                      </div>
+                      <div class="col-md-10">
+                          <input
+                          id="sumtotal"
+                          class="form-control text-center"
+                          type="number"
+                          [(ngModel)]="modalDetailsContractNew.sumtotal"
+                          [ngModelOptions]="{standalone: true}"
+                          readonly
+                          />
+                      </div>
+                      </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-12">
+                    <div class="col-md-2">
+                        <label for="discountValue" class="text-gren">{{ "الخصم" | translate }}</label>
                     </div>
-    
-                    <div class="row">
-                        <div class="col-md-12">
-                        <div class="col-md-2">
-                            <label
-                            for="Total amount"
-                            class="text-gren"
-                            for="Total amount"
-                            >
-                            {{ "Total amount" | translate }}
-                            </label>
-                        </div>
-                        <div class="col-md-10">
-                            <input
-                            id="Total amount"
-                            class="form-control text-center"
-                            type="number"
-                            [(ngModel)]="modalDetailsContractNew.total_amount"
-                            [ngModelOptions]="{standalone: true}"
-                            readonly
-                            />
-                        </div>
-                        </div>
+                    <div class="col-md-4">
+                        <input
+                        id="discountValue"
+                        class="form-control text-center"
+                        type="number"
+                        [(ngModel)]="modalDetailsContractNew.discountValue"
+                        [ngModelOptions]="{standalone: true}"
+                        (keyup)="CalcDisc(1);"
+                        
+                        />
                     </div>
-    
-                    <div class="row">
-                        <div class="col-md-12">
-                        <div class="col-md-2">
-                            <label
-                            for="total in writing"
-                            class="text-orange"
-                            for="total in writing"
-                            >
-                            {{ "total in writing" | translate }}
-                            </label>
-                        </div>
-                        <div class="col-md-10">
-                            <input
-                            id="total in writing"
-                            class="form-control text-center"
-                            type="text"
-                            [(ngModel)]="modalDetailsContractNew.total_amount_text"
-                            [ngModelOptions]="{standalone: true}"
-                            readonly
-                            />
-                        </div>
-                        </div>
+                    <div class="col-md-2" style="padding-right: 6%;">
+                      <label for="discountPercentage" class="text-gren">{{ "نسبة" | translate }}</label>
+                  </div>
+                  <div class="col-md-4">
+                      <input
+                      id="discountPercentage"
+                      class="form-control text-center"
+                      type="number"
+                      [(ngModel)]="modalDetailsContractNew.discountPercentage"
+                      [ngModelOptions]="{standalone: true}"
+                      (keyup)="CalcDisc(2);"                     
+                      />
+                      <span style="font-size: 28px;padding-top: 5px;padding-right: 6px;">%</span>
+                  </div>
                     </div>
+                </div>
+
+                  <div class="row">
+                    <div class="col-md-12">
+                    <div class="col-md-2">
+                        <label for="sumtotalAfterDisc" class="text-gren">{{ "الإجمالي بعد الخصم" | translate }}</label>
+                    </div>
+                    <div class="col-md-10">
+                        <input
+                        id="sumtotalAfterDisc"
+                        class="form-control text-center"
+                        type="number"
+                        [(ngModel)]="modalDetailsContractNew.sumtotalAfterDisc"
+                        [ngModelOptions]="{standalone: true}"
+                        readonly
+                        />
+                    </div>
+                    </div>
+                </div>
+  
+                  <!-- <div class="row">
+                      <div class="col-md-12">
+                      <div class="col-md-2">
+                          <label for="total in writing" class="text-orange" for="total in writing">
+                          {{ "total in writing" | translate }} </label>
+                      </div>
+                      <div class="col-md-10">
+                          <input
+                          id="total in writing"
+                          class="form-control text-center"
+                          type="text"
+                          [(ngModel)]="modalDetailsContractNew.total_amount_text"
+                          [ngModelOptions]="{standalone: true}"
+                          readonly
+                          />
+                      </div>
+                      </div>
+                  </div> -->
                     </div>
                 </div>
     
@@ -1125,12 +1173,18 @@
                 >
                     {{ "Previous" | translate }}
                 </button>
-                <button 
+                <!-- <button 
                     mat-button
                     matStepperNext
                     class="btn bg-base text-white"
                 >
                     {{ "Next" | translate }}
+                </button> -->
+
+                <button  [disabled]="disableButtonSave_Contract"
+                (click)="saveContractbtn(modal);"
+                 mat-button class="bg-base text-white">
+                  {{ "save" | translate }}
                 </button>
                 </div>
             </form>
@@ -1329,9 +1383,9 @@
       </button>
     </div>
     <div class="modal-body text-center">
-      <h3 style="text-align: right;color: red;font-weight: bold;text-decoration-line: underline;">ملفات العقد</h3>
+      <h3 style="display: none;text-align: right;color: red;font-weight: bold;text-decoration-line: underline;">ملفات العقد</h3>
   
-      <div class="max-h-80 overflow-auto px-2">
+      <div style="display: none;" class="max-h-80 overflow-auto px-2">
         <table class="table table-hover">
           <thead>
             <tr>
@@ -1364,6 +1418,40 @@
               >
                 <i class="fa-solid fa-trash-can"></i>
               </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <h3 style="text-align: right;color: red;font-weight: bold;text-decoration-line: underline;">ملفات التصميم</h3>
+  
+      <div class="max-h-80 overflow-auto px-2">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>{{ "أسم الملف" | translate }}</th>
+              <th>{{ "تاريخ رفع الملف" | translate }}</th>
+              <th
+                [translate]="'name'"
+                [translateParams]="{
+                  ar: 'خيارات',
+                  en: 'Operations'
+                }"
+              ></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let type of DesignFilesList">
+              <td>{{ type.fileName }}</td>
+              <td>{{type.addDate | date : " hh:mm yyyy-MM-dd"}}</td>
+              <td class="flex gap-2 justify-center">
+                <button
+                  class="p-2 bg-orange-100 hover:bg-orange-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+                  (click)="downloadFile(type)">
+                  <!-- <i class="fa fa-eye"></i> -->
+                  <i class="fa-solid fa-download"></i>
+                </button>
               </td>
             </tr>
           </tbody>
@@ -1625,7 +1713,7 @@
       class="modal-header text-white flex justify-between items-center"
     >
       <h4 class="m-0">
-        <span class="text-2xl">{{ "servicesList" | translate }}</span>
+        <span class="text-2xl">{{ "الأصناف" | translate }}</span>
       </h4>
       <button
         type="button"
@@ -1649,16 +1737,24 @@
           style="vertical-align: middle; font-size: 14px"
         >
           <!-- Name Column -->
-          <ng-container matColumnDef="name">
+
+          <ng-container matColumnDef="categoryTypeName">
             <th mat-header-cell *matHeaderCellDef>
-              {{ "ServiceName" | translate }}
+              {{ "التصنيف" | translate }}
             </th>
-            <td mat-cell *matCellDef="let element">{{ element.servicesName }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.categoryTypeName }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="nameAr">
+            <th mat-header-cell *matHeaderCellDef>
+              {{ "اسم الصنف" | translate }}
+            </th>
+            <td mat-cell *matCellDef="let element">{{ element.nameAr }}</td>
           </ng-container>
   
           <!-- price Column -->
-          <ng-container matColumnDef="price">
-            <th mat-header-cell *matHeaderCellDef>{{ "price" | translate }}</th>
+          <ng-container matColumnDef="amount">
+            <th mat-header-cell *matHeaderCellDef>{{ "السعر" | translate }}</th>
             <td mat-cell *matCellDef="let element">{{ element.amount }}</td>
           </ng-container>
   

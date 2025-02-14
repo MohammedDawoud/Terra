@@ -112,12 +112,12 @@ export class ContractsComponent implements OnInit {
     'branchName',
     'orderBarcode',
     'previewTypeName',
+    'designCode',
     'contractCode',
     'customerCode',
     'customerName',
     'mainPhoneNo',
     'address',
-    'chairpersonName',
     'date',
     'contractStatustxt',
     'addDate', 
@@ -205,6 +205,7 @@ export class ContractsComponent implements OnInit {
     this.FillEmployeeselect();
     this.FilltAllPreviewTypes();
     this.SetContractDefData();
+    this.GetAllServicesPrice_ContractNew();
   }
 
   SetContractDefData(){
@@ -221,9 +222,10 @@ export class ContractsComponent implements OnInit {
       previewId: [null],
       previewTypeId: [null],
       customerId: [null],
+      contractId: [null],
       contractCode: [null, [Validators.required]],
       documentNo: [null],
-      documentStatus: [null],
+      documentStatus: [null,[Validators.required]],
       date: [null],
       conDateTime: [null],
       deliveryDate: [null],
@@ -243,23 +245,56 @@ export class ContractsComponent implements OnInit {
   }
 
   SetFormData(data:any){
+    debugger
     this.FormGroup01.controls['branchId'].setValue(data.branchId);
     this.FormGroup01.controls['previewId'].setValue(data.previewId);
     this.FormGroup01.controls['previewTypeId'].setValue(data.previewTypeId);
     this.FormGroup01.controls['customerId'].setValue(data.customerId);
+    this.FormGroup01.controls['contractId'].setValue(data.contractId);
     this.FormGroup01.controls['contractCode'].setValue(data.contractCode);
     this.FormGroup01.controls['date'].setValue(data.date);
     this.FormGroup01.controls['conDateTime'].setValue(data.conDateTime);
+    this.FormGroup01.controls['deliveryDate'].setValue(data.deliveryDate);
+    this.FormGroup01.controls['delDateTime'].setValue(data.delDateTime);
+    this.FormGroup01.controls['storageDate'].setValue(data.storageDate);
+    this.FormGroup01.controls['stoDateTime'].setValue(data.stoDateTime);
+    this.FormGroup01.controls['documentNo'].setValue(data.documentNo);
+    this.FormGroup01.controls['documentStatus'].setValue(data.documentStatus);
+    this.FormGroup01.controls['notes'].setValue(data.notes);
+    this.resetmodalDetailsContractNew();
+    this.modalDetailsContractNew.discountValue=data.discountValue;
+    this.modalDetailsContractNew.discountPercentage=data.discountPercentage;
+    this.GetCategoriesByContractId();
   }
 
 
   DisabledBtn(){
-    // this.FormGroup01.controls['branchId'].disable();
-    // this.FormGroup01.controls['previewId'].disable();
-    // this.FormGroup01.controls['previewTypeId'].disable();
-    // this.FormGroup01.controls['customerId'].disable();
-    // this.FormGroup01.controls['contractCode'].disable();
+    this.FormGroup01.controls['branchId'].disable();
+    this.FormGroup01.controls['previewId'].disable();
+    this.FormGroup01.controls['previewTypeId'].disable();
+    this.FormGroup01.controls['customerId'].disable();
+    this.FormGroup01.controls['contractCode'].disable();
   }
+
+
+  GetCategoriesByContractId(){
+    var contractId=(this.FormGroup01.controls['contractId'].value??0);
+    this.service.GetCategoriesByContractId(contractId).subscribe(data=>{
+      data.forEach((element: any) => {
+        var maxVal=0;
+        if(this.ContractNewServices.length>0)
+        {
+          maxVal = Math.max(...this.ContractNewServices.map((o: { idRow: any; }) => o.idRow))
+        }
+        else{
+          maxVal=0;
+        }
+        this.setServiceRowValueNew_ContractNew(maxVal+1,element);
+      });    
+    });
+  }
+
+
 
   resetContractDataList(){
     this.ContractNewServices=[];
@@ -268,22 +303,25 @@ export class ContractsComponent implements OnInit {
   FormGroup01: FormGroup;
   FormGroup02: FormGroup;
   ContractNewServices: any = [];
-  servicesListdisplayedColumns: string[] = ['name', 'price'];
+  servicesListdisplayedColumns: string[] = ['categoryTypeName', 'nameAr', 'amount'];
 
   modalDetailsContractNew:any={
-    total_amount:null,
-    ContractAmountBefore:null,
-    ContractTax:null,
-    total_amount_text:null,
+    sumamount:null,
+    sumtotal:null,
+    sumqty:null,
+    discountValue:null,
+    discountPercentage:null,
+    sumtotalAfterDisc:null,
   }
   resetmodalDetailsContractNew(){
     this.ContractNewServices=[];
     this.modalDetailsContractNew={
-      taxtype:2,
-      total_amount:null,
-      ContractAmountBefore:null,
-      ContractTax:null,
-      total_amount_text:null,
+      sumamount:null,
+      sumtotal:null,
+      sumqty:null,
+      discountValue:null,
+      discountPercentage:null,
+      sumtotalAfterDisc:null,
     }
   }
 
@@ -296,21 +334,28 @@ export class ContractsComponent implements OnInit {
     else{
       maxVal=0;
     }
-
-
     this.ContractNewServices?.push({
       idRow: maxVal+1,
-      AccJournalid: null,
-      UnitConst: null,
-      QtyConst: null,
-      accountJournaltxt: null,
-      Amounttxt: null,
-      taxAmounttxt: null,
-      TotalAmounttxt: null,
+      categoryTypeId: null,
+      categoryTypeName: null,
+      nameAr: null,
+      unitId: null,
+      unitName: null,
+      qty: null,
+      amount: null,
+      totalValue: null,
     });
   }
 
   deleteServiceContractNew(idRow: any) {
+    this.modalDetailsContractNew={
+      sumamount:null,
+      sumtotal:null,
+      sumqty:null,
+      discountValue:0,
+      discountPercentage:0,
+      sumtotalAfterDisc:null,
+    }
     let index = this.ContractNewServices.findIndex((d: { idRow: any; }) => d.idRow == idRow);
     this.ContractNewServices.splice(index, 1);
     this.CalculateTotal_ContractNew();
@@ -319,73 +364,215 @@ export class ContractsComponent implements OnInit {
   selectedServiceRowContractNew: any;
 
   setServiceRowValue_ContractNew(element: any) {
-    this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==this.selectedServiceRowContractNew)[0].AccJournalid = element.servicesId;
-    this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==this.selectedServiceRowContractNew)[0].UnitConst = element.serviceTypeName;
-    this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==this.selectedServiceRowContractNew)[0].QtyConst = 1;
-    this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==this.selectedServiceRowContractNew)[0].accountJournaltxt = element.servicesName;
-    this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==this.selectedServiceRowContractNew)[0].Amounttxt = element.amount;
-    //this.SetAmountPackage(this.selectedServiceRowOffer, element);
+    this.modalDetailsContractNew={
+      sumamount:null,
+      sumtotal:null,
+      sumqty:null,
+      discountValue:0,
+      discountPercentage:0,
+      sumtotalAfterDisc:null,
+    }
+    this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==this.selectedServiceRowContractNew)[0].categoryTypeId = element.categoryTypeId;
+    this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==this.selectedServiceRowContractNew)[0].categoryTypeName = element.categoryTypeName;
+    this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==this.selectedServiceRowContractNew)[0].nameAr = element.nameAr;
+    this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==this.selectedServiceRowContractNew)[0].unitId = element.unitId;
+    this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==this.selectedServiceRowContractNew)[0].unitName = element.unitName;
+    this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==this.selectedServiceRowContractNew)[0].qty = 1;
+    this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==this.selectedServiceRowContractNew)[0].amount = element.amount;
     this.CalculateTotal_ContractNew();
   }
 
-  setServiceRowValueNew_ContractNew(indexRow:any,item: any, Qty: any,servamount: any) {
+  setServiceRowValueNew_ContractNew(indexRow:any,item: any) {
     debugger
     this.addServiceContractNew();
-    this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==indexRow)[0].AccJournalid = item.servicesId;
-    this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==indexRow)[0].UnitConst = item.serviceTypeName;
-    this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==indexRow)[0].QtyConst = Qty;
-    this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==indexRow)[0].accountJournaltxt = item.name;
-    this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==indexRow)[0].Amounttxt = servamount;
+    this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==indexRow)[0].categoryTypeId = item.categoryTypeId;
+    this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==indexRow)[0].categoryTypeName = item.categoryTypeName;
+    this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==indexRow)[0].nameAr = item.nameAr;
+    this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==indexRow)[0].unitId = item.unitId;
+    this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==indexRow)[0].unitName = item.unitName;
+    this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==indexRow)[0].qty = item.qty;
+    this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==indexRow)[0].amount = item.amount;
     this.CalculateTotal_ContractNew();
   }
 
-
   CalculateTotal_ContractNew() {
-    var totalwithtaxes = 0;var totalAmount = 0;var totaltax = 0;var totalAmountIncludeT = 0;var vAT_TaxVal = parseFloat(this.userG.orgVAT??0);
+    var amount_T = 0;var totalValue_T = 0;var qty_T = 0;
     debugger
     this.ContractNewServices.forEach((element: any) => {
-      var Value = parseFloat((element.Amounttxt??0).toString()).toFixed(2);
-      var FVal = +Value * element.QtyConst;
-      var FValIncludeT = FVal;
-      var taxAmount = 0;
-      var totalwithtax = 0;
-      var TaxV8erS = parseFloat((+parseFloat((+Value * vAT_TaxVal).toString()).toFixed(2) / 100).toString()).toFixed(2);
-      var TaxVS =parseFloat((+Value- +parseFloat((+Value/((vAT_TaxVal / 100) + 1)).toString()).toFixed(2)).toString()).toFixed(2);
-      if (this.modalDetailsContractNew.taxtype == 2) {
-          taxAmount = +TaxV8erS * element.QtyConst;
-          totalwithtax = +parseFloat((+parseFloat(Value) + +parseFloat(TaxV8erS)).toString()).toFixed(2);
-      }
-      else {
-          taxAmount=+TaxVS * element.QtyConst;
-          FValIncludeT = +parseFloat((+parseFloat(Value).toFixed(2) - +TaxVS).toString()).toFixed(2);
-          totalwithtax = +parseFloat(Value).toFixed(2);
-      }
-      this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==element.idRow)[0].taxAmounttxt= parseFloat(taxAmount.toString()).toFixed(2);
-      this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==element.idRow)[0].TotalAmounttxt= parseFloat((totalwithtax * element.QtyConst).toString()).toFixed(2);
-
-      totalwithtaxes += totalwithtax;
-      totalAmount +=(FVal) ;
-      totalAmountIncludeT += (totalwithtax);
-      totaltax += taxAmount;
+      var Value = parseFloat((element.amount??0).toString()).toFixed(2);
+      var FVal = +Value * element.qty;
+      var totalValue = 0;
+      this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==element.idRow)[0].totalValue= parseFloat((FVal).toString()).toFixed(2);
+      amount_T += element.amount;
+      totalValue_T +=(totalValue) ;
+      qty_T += (element.qty);
     });
     this.CalcSumTotal_ContractNew();
-    //this.CalcOfferDet(1);
+    this.CalcDisc(1)
   }
   CalcSumTotal_ContractNew(){
-    let sum=0;
-    let sumbefore=0;
-    let sumtax=0;
+    let sumamount=0;
+    let sumtotal=0;
+    let sumqty=0;
     debugger
     this.ContractNewServices.forEach((element: any) => {
-      sum= +sum + +parseFloat((element.TotalAmounttxt??0)).toFixed(2);
-      sumbefore= +sumbefore + (+parseFloat((element.Amounttxt??0)).toFixed(2) * +parseFloat((element.QtyConst??0)).toFixed(2));
-      sumtax= +sumtax + +parseFloat((element.taxAmounttxt??0)).toFixed(2);   
+      sumamount= +sumamount + +parseFloat((element.amount??0)).toFixed(2);
+      sumtotal= +sumtotal + +parseFloat((element.totalValue??0)).toFixed(2);
+      sumqty= +sumqty + +parseFloat((element.qty??0)).toFixed(2);
     });
-    this.modalDetailsContractNew.total_amount=parseFloat(sum.toString()).toFixed(2);
-    this.modalDetailsContractNew.ContractAmountBefore=parseFloat(sumbefore.toString()).toFixed(2);
-    this.modalDetailsContractNew.ContractTax=parseFloat(sumtax.toString()).toFixed(2);
-    //this.ConvertNumToString_Contract(this.modalDetailsContractNew.total_amount);
+    this.modalDetailsContractNew.sumamount=parseFloat(sumamount.toString()).toFixed(2);
+    this.modalDetailsContractNew.sumtotal=parseFloat(sumtotal.toString()).toFixed(2);
+    this.modalDetailsContractNew.sumqty=parseFloat(sumqty.toString()).toFixed(2);
   }
+
+  CalcDisc(type:any){
+    var ValueAmount = parseFloat((this.modalDetailsContractNew.sumtotal ?? 0).toString()).toFixed(2);
+    var DiscountValue_Det;
+    if (type == 1)
+       {
+        DiscountValue_Det = parseFloat((this.modalDetailsContractNew.discountValue ?? 0).toString()).toFixed(2);
+    } else {
+      var Discountper_Det = parseFloat((this.modalDetailsContractNew.discountPercentage ?? 0).toString()).toFixed(2);
+      DiscountValue_Det = parseFloat(((+Discountper_Det * +ValueAmount) / 100).toString()).toFixed(2);
+      this.modalDetailsContractNew.discountValue= parseFloat(DiscountValue_Det.toString()).toFixed(2);
+    }
+    var Value = parseFloat( (+ValueAmount - +DiscountValue_Det).toString()).toFixed(2);
+    if (!(+Value >= 0)) {
+      this.modalDetailsContractNew.discountValue=0;
+      this.modalDetailsContractNew.discountPercentage=0;
+      DiscountValue_Det = 0;
+      Value = parseFloat((+ValueAmount - +DiscountValue_Det).toString()).toFixed(2);
+    }
+    if (type == 1) {
+      var DiscountPercentage_Det;
+      if (+ValueAmount > 0) 
+        { DiscountPercentage_Det = (+DiscountValue_Det * 100) / +ValueAmount;
+      } else {
+        DiscountPercentage_Det = 0;
+      }
+      DiscountPercentage_Det = parseFloat( DiscountPercentage_Det.toString()).toFixed(2);
+      this.modalDetailsContractNew.discountPercentage=DiscountPercentage_Det;
+    }
+
+    this.modalDetailsContractNew.sumtotalAfterDisc = parseFloat((Value).toString()).toFixed(2);
+  }
+
+  disableButtonSave_Contract=false;
+
+  saveContractbtn(modal:any){
+    debugger
+    var contractId=(this.FormGroup01.controls['contractId'].value??0);
+    var sumtotalAfterDisc=(this.modalDetailsContractNew.sumtotalAfterDisc??0);
+    if(sumtotalAfterDisc<=0)
+    {
+      this.toast.error(this.translate.instant("لا مكنك حفظ عقد بقيمة لا تتخطي الصفر"),this.translate.instant("Message"));
+      return;
+    }
+    var ContractObj:any = {};
+    ContractObj.ContractId = contractId;
+    ContractObj.ContractCode = this.FormGroup01.controls['contractCode'].value;
+    if (this.FormGroup01.controls['date'].value != null) {
+      ContractObj.date = this._sharedService.date_TO_String(this.FormGroup01.controls['date'].value);
+    }
+    if (this.FormGroup01.controls['conDateTime'].value != null) {
+      ContractObj.conDateTime = this._sharedService.formatAMPM(this.FormGroup01.controls['conDateTime'].value);
+    }
+    if (this.FormGroup01.controls['deliveryDate'].value != null) {
+      ContractObj.deliveryDate = this._sharedService.date_TO_String(this.FormGroup01.controls['deliveryDate'].value);
+    }
+    if (this.FormGroup01.controls['delDateTime'].value != null) {
+      ContractObj.delDateTime = this._sharedService.formatAMPM(this.FormGroup01.controls['delDateTime'].value);
+    }
+    if (this.FormGroup01.controls['storageDate'].value != null) {
+      if(this.modalDetails.storageDateStatus)
+      {
+        ContractObj.storageDate = this._sharedService.date_TO_String(this.FormGroup01.controls['storageDate'].value);
+      }
+      else
+      {
+        ContractObj.storageDate=null;
+      }
+    }
+    if (this.FormGroup01.controls['stoDateTime'].value != null) {
+      if(this.modalDetails.storageDateStatus)
+      {
+        ContractObj.stoDateTime = this._sharedService.formatAMPM(this.FormGroup01.controls['stoDateTime'].value);
+      }
+      else
+      {
+        ContractObj.stoDateTime=null;
+      }
+    }
+
+    ContractObj.BranchId = this.FormGroup01.controls['branchId'].value;
+    ContractObj.PreviewId = this.FormGroup01.controls['previewId'].value;
+    ContractObj.PreviewTypeId = this.FormGroup01.controls['previewTypeId'].value;
+    ContractObj.CustomerId = this.FormGroup01.controls['customerId'].value;
+    ContractObj.DocumentNo = this.FormGroup01.controls['documentNo'].value;
+    ContractObj.DocumentStatus = this.FormGroup01.controls['documentStatus'].value;
+    ContractObj.Notes = this.FormGroup01.controls['notes'].value;
+
+
+    ContractObj.DiscountValue = (this.modalDetailsContractNew.discountValue??0);
+    ContractObj.DiscountPercentage = (this.modalDetailsContractNew.discountPercentage??0);
+    ContractObj.TotalValue = sumtotalAfterDisc;
+
+    var input = { valid: true, message: "" }
+    var ServicesDetailsList:any = [];
+    this.ContractNewServices.forEach((element: any) => {
+
+      if(element.categoryTypeId == null || element.categoryTypeName == null || element.categoryTypeName == "") {
+        input.valid = false; input.message = "من فضلك أختر تصنيف صحيح";return;
+      }
+      if (element.nameAr == null || element.nameAr == "") {
+        input.valid = false; input.message = "من فضلك أختر صنف صحيح";return;
+      }
+      if(element.unitId == null || element.unitName == null || element.unitName == "") {
+        input.valid = false; input.message = "من فضلك أختر وحدة صحيحة";return;
+      }
+      if (element.qty == null || element.qty == 0 || element.qty == "") {
+        input.valid = false; input.message = "من فضلك أختر كمية صحيحة";return;
+      }
+      if (element.amount == null || element.amount == 0 || element.amount == "") {
+        input.valid = false; input.message = "من فضلك أختر مبلغ صحيح";return;
+      }
+
+      var Contractserviceobj:any  = {};
+
+      Contractserviceobj.CategoryTypeId = element.categoryTypeId;
+      Contractserviceobj.NameAr = element.nameAr;
+      Contractserviceobj.UnitId = element.unitId;
+      Contractserviceobj.Amount = element.amount;
+      Contractserviceobj.Status = element.status;
+      Contractserviceobj.Qty = element.qty;
+      Contractserviceobj.TotalValue = element.totalValue;
+      ServicesDetailsList.push(Contractserviceobj);
+
+    });
+    if (!input.valid) {
+      this.toast.error(input.message);return;
+    }
+    ContractObj.ContractCategories = ServicesDetailsList;
+    console.log("ContractObj",ContractObj);
+
+    this.disableButtonSave_Contract = true;
+    setTimeout(() => { this.disableButtonSave_Contract = false }, 15000);
+
+    this.service.SaveContract(ContractObj).subscribe((result: any)=>{
+      debugger
+      if(result.statusCode==200){
+        this.toast.success(this.translate.instant(result.reasonPhrase),this.translate.instant("Message"));
+        this.getAllContracts();
+        modal?.hide();
+        this.disableButtonSave_Contract = false ;
+      }
+      else{
+        this.toast.error(this.translate.instant(result.reasonPhrase),this.translate.instant("Message"));
+      }
+    });
+  }
+
+
   // ConvertNumToString_Contract(val:any){
   //   this._contractService.ConvertNumToString(val).subscribe(data=>{
   //     this.modalDetailsContractNew.total_amount_text=data?.reasonPhrase;
@@ -401,10 +588,10 @@ export class ContractsComponent implements OnInit {
   serviceListDataSource_ContractNew = new MatTableDataSource();
 
   GetAllServicesPrice_ContractNew(){
-    this.category.GetAllCategories_Branch().subscribe(data=>{
-        this.serviceListDataSource_ContractNew = new MatTableDataSource(data.result);
-        this.servicesList_ContractNew=data.result;
-        this.serviceListDataSourceTemp_ContractNew=data.result;
+    this.category.GetAllCategories_BranchActive().subscribe(data=>{
+        this.serviceListDataSource_ContractNew = new MatTableDataSource(data);
+        this.servicesList_ContractNew=data;
+        this.serviceListDataSourceTemp_ContractNew=data;
     });
   }
 
@@ -412,6 +599,7 @@ export class ContractsComponent implements OnInit {
 
 
   applyFilter(event: any) {
+
     const val = event.target.value.toLowerCase();
     var tempsource = this.dataSourceTemp;
     if (val) {
@@ -423,8 +611,14 @@ export class ContractsComponent implements OnInit {
             d.nationalId?.trim().toLowerCase().indexOf(val) !== -1) ||
           (d.contractCode &&
             d.contractCode?.trim().toLowerCase().indexOf(val) !== -1) ||
-          (d.nameAr &&
-            d.nameAr?.trim().toLowerCase().indexOf(val) !== -1) ||
+          (d.previewTypeName &&
+            d.previewTypeName?.trim().toLowerCase().indexOf(val) !== -1) ||
+            (d.customerName &&
+            d.customerName?.trim().toLowerCase().indexOf(val) !== -1) ||
+            (d.address &&
+            d.address?.trim().toLowerCase().indexOf(val) !== -1) ||
+          (d.designCode &&
+            d.designCode?.trim().toLowerCase().indexOf(val) !== -1) ||
           (d.mainPhoneNo &&
             d.mainPhoneNo?.trim().toLowerCase().indexOf(val) !== -1) ||
           (d.subMainPhoneNo &&
@@ -549,6 +743,21 @@ export class ContractsComponent implements OnInit {
           this.modalDetails.date = this._sharedService.String_TO_date(this.modalDetails.date);
           this.modalDetails.conDateTime = this.modalDetails.date;
         }
+        if(this.modalDetails.deliveryDate!=null)
+        {
+          this.modalDetails.deliveryDate = this._sharedService.String_TO_date(this.modalDetails.deliveryDate);
+          this.modalDetails.delDateTime = this.modalDetails.deliveryDate;
+        }
+        if(this.modalDetails.storageDate!=null)
+        {
+          this.modalDetails.storageDate = this._sharedService.String_TO_date(this.modalDetails.storageDate);
+          this.modalDetails.stoDateTime = this.modalDetails.storageDate;
+          this.modalDetails.storageDateStatus=true;
+        }
+        else
+        {
+          this.modalDetails.storageDateStatus=false;
+        }
         // if(this.modalDetails.contractDate!=null)
         // {
         //   this.modalDetails.contractDate = this._sharedService.String_TO_date(this.modalDetails.contractDate);
@@ -600,7 +809,10 @@ export class ContractsComponent implements OnInit {
     }
     if(type === 'ShowContractFiles')
     {
-      this.GetAllDesignFiles(this.modalDetails.designId,this.modalDetails.meetingId,this.modalDetails.previewId);
+      this.GetAllContractFiles(this.modalDetails.contreactId,this.modalDetails.designId,this.modalDetails.meetingId,this.modalDetails.previewId);
+    }
+    if (idRow != null) {
+      this.selectedServiceRowContractNew = idRow;
     }
     this.ngbModalService
       .open(content, {
@@ -655,132 +867,6 @@ export class ContractsComponent implements OnInit {
     console.log(this.ContractIdPublic);
   }
 
-  disableButtonSave_Contract = false;
-
-  addContract() {
-    debugger;
-    var val = this.validateForm();
-    if (val.status == false) {
-      this.toast.error(val.msg, 'رسالة');
-      return;
-    }
-    var prevObj: any = {};
-    prevObj.contractId = this.modalDetails.contractId;
-
-    // if(this.modalDetails.contractStatus==3){
-    //   if(this.modalDetails.contractDate==null){
-    //     this.toast.error(this.translate.instant("من فضلك أختر تاريخ العقد"),this.translate.instant('Message'));
-    //     return;
-    //   }
-    //   if(this.modalDetails.contractChairperson==null){
-    //     this.toast.error(this.translate.instant("من فضلك أختر القائم بالعقد"),this.translate.instant('Message'));
-    //     return;
-    //   }
-    //   if (this.modalDetails.contractDate != null) {
-    //     prevObj.contractDate = this._sharedService.date_TO_String(this.modalDetails.contractDate);
-    //   }
-    //   if (this.modalDetails.desDateTime != null) {
-    //     prevObj.desDateTime = this._sharedService.formatAMPM(this.modalDetails.desDateTime);
-    //   }
-    //   prevObj.contractChairperson=this.modalDetails.contractChairperson;
-    //   prevObj.contractCode=this.modalDetails.contractCode;
-    // }
-    
-    prevObj.branchId = this.modalDetails.branchId;
-    prevObj.previewId = this.modalDetails.previewId;
-    prevObj.meetingId = this.modalDetails.meetingId;
-    prevObj.contractCode = this.modalDetails.contractCode;
-    prevObj.customerId = this.modalDetails.customerId;
-    prevObj.contractChairperson = this.modalDetails.contractChairperson;
-    // prevObj.contractTypeId = this.modalDetails.contractTypeId;
-    prevObj.contractStatus = this.modalDetails.contractStatus;
-    if (this.modalDetails.date != null) {
-      prevObj.date = this._sharedService.date_TO_String(this.modalDetails.date);
-    }
-    if (this.modalDetails.desDateTime != null) {
-      prevObj.desDateTime = this._sharedService.formatAMPM(this.modalDetails.desDateTime);
-    }
-
-    prevObj.notes = this.modalDetails.notes;
-
-    console.log('prevObj');
-    console.log(prevObj);
-    const formData = new FormData();
-    for (const key of Object.keys(prevObj)) {
-      const value = prevObj[key] == null ? '' : prevObj[key];
-      formData.append(key, value);
-      formData.append('ContractId', prevObj.contractId.toString());
-    }
-    this.disableButtonSave_Contract = true;
-    setTimeout(() => {
-      this.disableButtonSave_Contract = false;
-    }, 5000);
-    this.service.SaveContract(formData).subscribe((result: any) => {
-      if (result.statusCode == 200) {
-        this.toast.success(
-          this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
-        this.decline();
-        this.getAllContracts();
-        this.ngbModalService.dismissAll();
-      } else {
-        this.toast.error(result.reasonPhrase, 'رسالة');
-      }
-    });
-  }
-  ValidateObjMsg: any = { status: true, msg: null };
-  validateForm() {
-    this.ValidateObjMsg = { status: true, msg: null };
-
-    if (
-      this.modalDetails.branchId == null ||
-      this.modalDetails.branchId == ''
-    ) {
-      this.ValidateObjMsg = { status: false, msg: 'أختر فرع العقد' };
-      return this.ValidateObjMsg;
-    } else if (
-      this.modalDetails.previewId == null ||
-      this.modalDetails.previewId == ''
-    ) {
-      this.ValidateObjMsg = { status: false, msg: 'أدخل كود المعاينة' };
-      return this.ValidateObjMsg;
-    } else if (this.modalDetails.contractCode == null || this.modalDetails.contractCode == '') {
-      this.ValidateObjMsg = { status: false, msg: 'اختر كود العقد' };
-      return this.ValidateObjMsg;
-    } else if (
-      this.modalDetails.customerId == null ||
-      this.modalDetails.customerId == ''
-    ) {
-      this.ValidateObjMsg = { status: false, msg: 'اختر عميل' };
-      return this.ValidateObjMsg;
-    }
-    else if ((this.modalDetails.contractChairperson == null ||this.modalDetails.contractChairperson == '')
-    ) {
-      this.ValidateObjMsg = { status: false, msg: 'اختر القائم بالعقد' };
-      return this.ValidateObjMsg;
-    }
-    else if ((this.modalDetails.contractStatus == null ||this.modalDetails.contractStatus == '')
-    ) {
-      this.ValidateObjMsg = { status: false, msg: 'اختر حالة العقد' };
-      return this.ValidateObjMsg;
-    }
-    else if ((this.modalDetails.date == null ||this.modalDetails.date == '')) {
-      this.ValidateObjMsg = {
-        status: false,
-        msg: 'ادخل تاريخ العقد',
-      };
-      return this.ValidateObjMsg;
-    }
-    else if ((this.modalDetails.desDateTime == null ||this.modalDetails.desDateTime == '')) {
-      this.ValidateObjMsg = {
-        status: false,
-        msg: 'ادخل وقت العقد',
-      };
-      return this.ValidateObjMsg;
-    }
-    this.ValidateObjMsg = { status: true, msg: null };
-    return this.ValidateObjMsg;
-  }
-
   exportData() {
     let x = [];
 
@@ -789,11 +875,19 @@ export class ContractsComponent implements OnInit {
         branchName: this.dataSourceTemp[index].branchName,
         orderBarcode: this.dataSourceTemp[index].orderBarcode,
         previewCode: this.dataSourceTemp[index].previewCode,      
+        previewTypeName: this.dataSourceTemp[index].previewTypeName,
+        designCode: this.dataSourceTemp[index].designCode,
         contractCode: this.dataSourceTemp[index].contractCode,
+        customerCode: this.dataSourceTemp[index].customerCode,
         customerName: this.dataSourceTemp[index].customerName,
-        chairpersonName: this.dataSourceTemp[index].chairpersonName,
-        contractStatus: this.dataSourceTemp[index].contractStatustxt,
-        contractConvert: this.dataSourceTemp[index].contractConverttxt,
+        mainPhoneNo: this.dataSourceTemp[index].mainPhoneNo,
+        address: this.dataSourceTemp[index].address,
+        date: this.dataSourceTemp[index].date,
+        deliveryDate: this.dataSourceTemp[index].deliveryDate,
+        storageDate: this.dataSourceTemp[index].storageDate,
+        addDate: this.dataSourceTemp[index].addDate,
+        contractStatustxt: this.dataSourceTemp[index].contractStatustxt,
+
       });
     }
     this.service.customExportExcel(x, 'Contracts');
@@ -1082,7 +1176,7 @@ export class ContractsComponent implements OnInit {
       this.files.DeleteFiles(this. ContractFileRowSelected.fileId).subscribe((result) => {
           if (result.statusCode == 200) {
             this.toast.success(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
-            this.GetAllDesignFiles(this.ContractFileRowSelected.designId,this.ContractFileRowSelected.meetingId,this.ContractFileRowSelected.previewId);
+            this.GetAllContractFiles(this.ContractFileRowSelected.contractId,this.ContractFileRowSelected.designId,this.ContractFileRowSelected.meetingId,this.ContractFileRowSelected.previewId);
             this.modal?.hide();
           } else {
             this.toast.error(result.reasonPhrase, this.translate.instant('Message'));
@@ -1092,13 +1186,22 @@ export class ContractsComponent implements OnInit {
     
     ContractFilesList: any=[];
     
-    GetAllDesignFiles(DesignId:any,MeetingId:any,PreviewId:any) {
-      this.ContractFilesList=[];
-      this.files.GetAllDesignFiles(DesignId).subscribe((data: any) => {
-        this.ContractFilesList = data;
-      });
+    GetAllContractFiles(ContractId:any,DesignId:any,MeetingId:any,PreviewId:any) {
+      // this.ContractFilesList=[];
+      // this.files.GetAllContractFiles(ContractId).subscribe((data: any) => {
+      //   this.ContractFilesList = data;
+      // });
+      this.GetAllDesignFiles(DesignId);
       this.GetAllMeetingFiles(MeetingId);
       this.GetAllPreviewFiles(PreviewId);
+    }
+    DesignFilesList: any=[];
+  
+    GetAllDesignFiles(DesignId:any) {
+      this.DesignFilesList=[];
+      this.files.GetAllDesignFiles(DesignId).subscribe((data: any) => {
+        this.DesignFilesList = data;
+      });
     }
     MeetingFilesList: any=[];
   
@@ -1137,7 +1240,7 @@ dataSearch: any = {
     ListContractValue:[],
     customerId:null,
     contractChairperson:null,
-    contractStatusId:null,
+    documentStatus:null,
     showFilters:false
   },
 };
@@ -1186,9 +1289,9 @@ dataSearch: any = {
 
   FillListContractStatus(){
     this.dataSearch.filter.ListContractStatus= [
-      { id: 1, name: 'قيد الإنتظار' },
-      { id: 2, name: 'قيد التشغيل' },
-      { id: 3, name: 'منتهية' },
+      { id: 1, name: 'مبدئي' },
+      { id: 2, name: 'مراجع' },
+      { id: 3, name: 'نهائي' },
     ];
   }
 
@@ -1209,13 +1312,13 @@ dataSearch: any = {
     {
       this.dataSource.data = this.dataSource.data.filter((d: { customerId: any }) => d.customerId == this.dataSearch.filter.customerId);
     }
-    if(this.dataSearch.filter.contractChairperson!=null && this.dataSearch.filter.contractChairperson!="")
+    // if(this.dataSearch.filter.contractChairperson!=null && this.dataSearch.filter.contractChairperson!="")
+    // {
+    //   this.dataSource.data = this.dataSource.data.filter((d: { contractChairperson: any }) => d.contractChairperson == this.dataSearch.filter.contractChairperson);
+    // } 
+    if(this.dataSearch.filter.documentStatus!=null && this.dataSearch.filter.documentStatus!="")
     {
-      this.dataSource.data = this.dataSource.data.filter((d: { contractChairperson: any }) => d.contractChairperson == this.dataSearch.filter.contractChairperson);
-    } 
-    if(this.dataSearch.filter.contractStatusId!=null && this.dataSearch.filter.contractStatusId!="")
-    {
-      this.dataSource.data = this.dataSource.data.filter((d: { contractStatus: any }) => d.contractStatus == this.dataSearch.filter.contractStatusId);
+      this.dataSource.data = this.dataSource.data.filter((d: { documentStatus: any }) => d.documentStatus == this.dataSearch.filter.documentStatus);
     } 
    
   }
