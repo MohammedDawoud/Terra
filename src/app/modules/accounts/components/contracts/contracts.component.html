@@ -946,7 +946,8 @@
                     <div class="editable shadow mb-4">
                     <table
                         class="table table-responsive table-striped table-bordered text-center"
-                        style="vertical-align: middle; font-size: 14px"
+                        style="vertical-align: middle; font-size: 14px;
+                         "
                     >
                         <thead
                         class="bg-base text-white"
@@ -1182,13 +1183,104 @@
                 </button> -->
 
                 <button  [disabled]="disableButtonSave_Contract"
-                (click)="saveContractbtn(modal);"
+                (click)="saveContractbtn(modal,stepper);"
                  mat-button class="bg-base text-white">
                   {{ "save" | translate }}
                 </button>
                 </div>
             </form>
             </mat-step>
+            <mat-step [stepControl]="FormGroup03">
+              <form [formGroup]="FormGroup03">
+                  <ng-template matStepLabel>{{
+                  "الدفعات" | translate
+                  }}</ng-template>
+                  <div class="step-content">
+                  <div class="row mb-3">
+  
+                      <h3 class="flex items-center justify-start fw-bold">
+                      {{ "إضافة دفعة" | translate }}
+                      <button
+                          type="button "
+                          class="add-btn mx-2"
+                          (click)="open(AddPayment, null, 'AddPayment')"
+                          >
+                          <i class="fa fa-plus"></i>
+                      </button>
+                      </h3>
+      
+                      <div class="editable shadow mb-4">
+                      <table
+                          class="table table-responsive table-striped table-bordered text-center"
+                          style="vertical-align: middle; font-size: 14px;
+                           "
+                      >
+                          <thead
+                          class="bg-base text-white"
+                          style="line-height: 30px; font-size: 13px"
+                          >
+                          <tr>
+                              <th>{{ "رقم" | translate }}</th>
+                              <th>{{ "تاريخ الدفعة" | translate }}</th>
+                              <th>{{ "مبلغ الدفعة" | translate }}</th>
+                              <th>{{ "action" | translate }}</th>
+                              </tr>
+                          </thead>
+                          <tbody>
+                          <tr
+                          *ngFor="let item of ContractNewPayments; let i = index"
+                          style="line-height: 5px"
+                          >
+                          <td>{{ i+1 }}</td>
+                          <td>{{ item.paymentDate }}</td>
+                          <td>{{ item.amount }}</td>
+                          <td style="place-content: center;">
+                            <button 
+                            class="p-2 bg-orange-100 hover:bg-orange-500 rounded-lg duration-300 hover:text-white w-10"
+                            (click)="open(AddPayment, item, 'editPayment')"
+                            >
+                              <i class="fa-regular fa-pen-to-square"></i>
+                            </button>
+                              <button
+                              class="p-2 bg-red-100 hover:bg-red-500 rounded-lg duration-300 hover:text-white w-10"
+                              (click)="open(deletePaymentModal, item, 'deletepayment')"
+                              >
+                              <i class="fa-solid fa-trash-can"></i>
+                              </button>
+                          </td>
+                          </tr>
+                          </tbody>
+                      </table>
+                      </div>
+    
+                  </div>
+      
+                  </div>
+      
+                  <div class="d-flex w-100 justify-between items-center">
+                  <button
+                      mat-button
+                      matStepperPrevious
+                      class="btn btn-outline-secondary"
+                  >
+                      {{ "Previous" | translate }}
+                  </button>
+                  <!-- <button 
+                      mat-button
+                      matStepperNext
+                      class="btn bg-base text-white"
+                  >
+                      {{ "Next" | translate }}
+                  </button> -->
+  
+                  <!-- <button  [disabled]="disableButtonSave_Contract"
+                  (click)="saveContractbtn(modal);"
+                   mat-button class="bg-base text-white">
+                    {{ "save" | translate }}
+                  </button> -->
+                  </div>
+              </form>
+              </mat-step>
         </mat-stepper>
         </div>
     </ng-template>
@@ -1223,6 +1315,40 @@
         </div>
       </div>
     </ng-template>
+
+
+
+    <!-- deletePaymentModal -->
+    <ng-template #deletePaymentModal let-modal>
+      <div class="modal-body text-center">
+        <p
+          [translate]="'name'"
+          [translateParams]="{
+            ar: 'هل تريد بالتأكيد حذف هذا الصف',
+            en: 'Are you sure to delete this row ?'
+          }"
+        ></p>
+        <div class="flex gap-2 justify-center">
+          <button
+            type="button"
+            mat-raised-button
+            color="warn"
+            (click)="confirmDeletePayment();modal.dismiss()"
+          >
+            {{ "Yes" | translate }}
+          </button>
+          <button
+            type="button"
+            (click)="modal.dismiss()"
+            mat-raised-button
+            color="basic"
+          >
+            {{ "No" | translate }}
+          </button>
+        </div>
+      </div>
+    </ng-template>
+
     <!-- confirm convert -->
     <ng-template #convertModal>
       <div class="modal-body text-center">
@@ -1785,3 +1911,75 @@
       </div>
     </div>
   </ng-template>
+
+  <!-- AddPayment -->
+<ng-template #AddPayment let-modal>
+  <div
+    style="background-color: var(--base-color)"
+    class="modal-header text-white flex justify-between items-center"
+  >
+    <h4 class="m-0">
+      <span class="text-2xl"> إضافة دفعة </span>
+    </h4>
+    <button
+      type="button"
+      class="text-2xl text-white m-0"
+      (click)="modal?.dismiss()"
+    >
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+  <div class="modal-body text-center">
+    <form #addPreviewType="ngForm" class="grid grid-cols-1 md:grid-cols-2 gap-2">
+      <div class="form-group">
+        <label for="amount" class="text-right col-form-label block">
+          {{ "مبلغ الدفعة" | translate }}
+          <span class="text-danger">*</span></label
+        >
+        <input
+          required
+          #amount="ngModel"
+          [(ngModel)]="modalPayments.amount"
+          class="form-control"
+          type="number"
+          id="amount"
+          name="amount"
+          autocomplete="off"
+          placeholder=" {{ 'المبلغ' | translate }}"
+          />
+      </div>
+
+      <div class="form-group">
+        <label for="paymentDate" class="text-right col-form-label block">
+          {{ "تاريخ الدفعة" | translate }}
+        </label>
+        <input
+          placeholder="{{ 'Chose' | translate }}"
+          name="paymentDate"
+          type="text"
+          class="form-control"
+          bsDatepicker
+          #dpr="bsDatepicker"
+          autocomplete="off"
+          [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
+          [(ngModel)]="modalPayments.paymentDate"
+          [ngModelOptions]="{ standalone: true }"
+        />
+      </div>
+
+    </form>
+    <div class="flex gap-2 mt-3 pt-3 border-t border-neutral-300">
+      <button
+        class="btn bg-base text-white"
+        type="submit"
+        [disabled]="disableButtonSave_Payment"
+        (click)="SavePaymentbtn(modal)"
+      >
+        {{ "Save" | translate }}
+      </button>
+      <button (click)="modal.dismiss()" class="btn btn-secondary">
+        {{ "Back" | translate }}
+      </button>
+    </div>
+  </div>
+</ng-template>

@@ -25,13 +25,18 @@ export class ContractService {
   DeleteContract(ContractId:any) {
     return this.http.post<any>(this.apiEndPoint + 'Contract/DeleteContract?ContractId='+ContractId,{});
   }
+  DeletePayment(PaymentId:any) {
+    return this.http.post<any>(this.apiEndPoint + 'Contract/DeletePayment?PaymentId='+PaymentId,{});
+  }
   ConvertContract(ContractId:any) {
     return this.http.post<any>(this.apiEndPoint + 'Contract/ConvertContract?ContractId='+ContractId,{});
   }
   SaveContract(model: any) {
     return this.http.post<any>(this.apiEndPoint + 'Contract/SaveContract', model);
   }
-
+  SavePayment(model: any) {
+    return this.http.post<any>(this.apiEndPoint + 'Contract/SavePayment', model);
+  }
   GetCustMainAccByBranchId(BranchId:any) {
     var url=`${environment.apiEndPoint}Account/GetCustMainAccByBranchId?BranchId=${BranchId}`;
     return this.http.get<any>(url);
@@ -54,6 +59,10 @@ export class ContractService {
   }
   GetCategoriesByContractId(ContractId:any ) {
     var url=`${environment.apiEndPoint}Contract/GetCategoriesByContractId?ContractId=${ContractId}`;
+    return this.http.get<any>(url);
+  }
+  GetAllPaymentsByContractId(ContractId:any ) {
+    var url=`${environment.apiEndPoint}Contract/GetAllPaymentsByContractId?ContractId=${ContractId}`;
     return this.http.get<any>(url);
   }
   GenerateOrderBarcodeNumber() {

@@ -40,6 +40,7 @@ import { PreviewService } from 'src/app/core/services/project-services/preview.s
 import { HttpEventType } from '@angular/common/http';
 import { filesservice } from 'src/app/core/services/sys_Services/files.service';
 import { CategoryService } from 'src/app/core/services/acc_Services/category.service';
+import { MatStepper } from '@angular/material/stepper';
 
 
 @Component({
@@ -242,6 +243,9 @@ export class ContractsComponent implements OnInit {
     this.FormGroup02 = this._formBuilder.group({
       total_amount: [null],
     });
+    this.FormGroup03 = this._formBuilder.group({
+      total_payment: [null],
+    });
   }
 
   SetFormData(data:any){
@@ -265,6 +269,7 @@ export class ContractsComponent implements OnInit {
     this.modalDetailsContractNew.discountValue=data.discountValue;
     this.modalDetailsContractNew.discountPercentage=data.discountPercentage;
     this.GetCategoriesByContractId();
+    this.GetAllPaymentsByContractId();
   }
 
 
@@ -293,6 +298,118 @@ export class ContractsComponent implements OnInit {
       });    
     });
   }
+  ContractNewPayments: any = [];
+  modalPayments:any={
+    sumamountPayment:0,
+    counts:0,
+    paymentId:0,
+    amount:null,
+    notes:null,
+    paymentDate:null,
+  }
+  resetPayments(){
+    this.ContractNewPayments=[];
+    this.modalPayments={
+      sumamountPayment:0,
+      counts:0,
+      paymentId:0,
+      amount:null,
+      notes:null,
+      paymentDate:null,
+    }
+  }
+  resetPaymentsModel(){
+    this.modalPayments.paymentId=0;
+    this.modalPayments.amount=null;
+    this.modalPayments.notes=null;
+    this.modalPayments.paymentDate=null;
+  }
+  GetAllPaymentsByContractId(){
+    var contractId=(this.FormGroup01.controls['contractId'].value??0);
+    this.resetPayments();
+    this.service.GetAllPaymentsByContractId(contractId).subscribe(data=>{
+      this.ContractNewPayments=data; 
+      this.modalPayments.counts=this.ContractNewPayments.length;
+      debugger
+      this.ContractNewPayments.forEach((element: any) => {
+        this.modalPayments.sumamountPayment= +this.modalPayments.sumamountPayment + +parseFloat((element.amount??0)).toFixed(2);
+      });  
+    });
+  }
+  PaymentRow:any;
+  confirmDeletePayment(): void {
+    this.service.DeletePayment(this.PaymentRow.paymentId).subscribe((result) => {
+        if (result.statusCode == 200) {
+          this.toast.success(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
+          this.GetAllPaymentsByContractId();
+        } else {
+          this.toast.error(result.reasonPhrase, this.translate.instant('Message'));
+        }
+      });
+  }
+  
+
+  disableButtonSave_Payment=false;
+  SavePaymentbtn(modal:any){
+    debugger
+    var contractId=(this.FormGroup01.controls['contractId'].value??0);
+    var sumtotalAfterDisc=(this.modalDetailsContractNew.sumtotalAfterDisc??0);
+
+    if(this.modalPayments.paymentId>0){
+      this.modalPayments.sumamountPayment=0;
+      this.ContractNewPayments.forEach((element: any) => {
+        if(element.paymentId!=this.modalPayments.paymentId){
+          this.modalPayments.sumamountPayment= +this.modalPayments.sumamountPayment + +parseFloat((element.amount??0)).toFixed(2);
+        }
+      });  
+    }
+
+    if(+(sumtotalAfterDisc- +this.modalPayments.sumamountPayment) < +this.modalPayments.amount)
+    {
+      this.toast.error(this.translate.instant( "لقد تخطيت قيمة العقد"),this.translate.instant("Message"));
+      return;
+    }
+
+    if (this.modalPayments.paymentDate == null || this.modalPayments.paymentDate == ""){
+      this.toast.error(this.translate.instant( "من فضلك أدخل تاريخ الدفعة"),this.translate.instant("Message"));
+      return;
+    }
+    if (this.modalPayments.amount == null || this.modalPayments.amount == ""|| this.modalPayments.amount <=0){
+      this.toast.error(this.translate.instant( "من فضلك أدخل مبلغ الدفعة"),this.translate.instant("Message"));
+      return;
+    }
+
+    var PaymentObj:any = {};
+    PaymentObj.PaymentId = this.modalPayments.paymentId;
+    PaymentObj.ContractId = contractId;
+    PaymentObj.paymentNo = (this.modalPayments.counts+1);
+    PaymentObj.Amount = this.modalPayments.amount;
+    PaymentObj.notes = this.modalPayments.notes;
+    if (this.modalPayments.paymentDate != null) {
+      PaymentObj.paymentDate = this._sharedService.date_TO_String(this.modalPayments.paymentDate);
+    }
+    else
+    {
+      PaymentObj.paymentDate=null;
+    }
+    console.log("PaymentObj",PaymentObj);
+    this.disableButtonSave_Payment = true;
+    setTimeout(() => { this.disableButtonSave_Payment = false }, 15000);
+    this.service.SavePayment(PaymentObj).subscribe((result: any)=>{
+      debugger
+      if(result.statusCode==200){
+        this.toast.success(this.translate.instant(result.reasonPhrase),this.translate.instant("Message"));
+        this.GetAllPaymentsByContractId();
+        modal.dismiss();
+        this.disableButtonSave_Payment = false;
+      }
+      else{
+        this.toast.error(this.translate.instant(result.reasonPhrase),this.translate.instant("Message"));
+        this.disableButtonSave_Payment = false;
+      }
+    });
+  }
+
 
 
 
@@ -302,6 +419,8 @@ export class ContractsComponent implements OnInit {
 
   FormGroup01: FormGroup;
   FormGroup02: FormGroup;
+  FormGroup03: FormGroup;
+
   ContractNewServices: any = [];
   servicesListdisplayedColumns: string[] = ['categoryTypeName', 'nameAr', 'amount'];
 
@@ -459,7 +578,7 @@ export class ContractsComponent implements OnInit {
 
   disableButtonSave_Contract=false;
 
-  saveContractbtn(modal:any){
+  saveContractbtn(modal:any,stepper: MatStepper){
     debugger
     var contractId=(this.FormGroup01.controls['contractId'].value??0);
     var sumtotalAfterDisc=(this.modalDetailsContractNew.sumtotalAfterDisc??0);
@@ -563,7 +682,8 @@ export class ContractsComponent implements OnInit {
       if(result.statusCode==200){
         this.toast.success(this.translate.instant(result.reasonPhrase),this.translate.instant("Message"));
         this.getAllContracts();
-        modal?.hide();
+        this.goForward(stepper);
+        //modal?.hide();
         this.disableButtonSave_Contract = false ;
       }
       else{
@@ -572,7 +692,9 @@ export class ContractsComponent implements OnInit {
     });
   }
 
-
+  goForward(stepper: MatStepper){
+    stepper.next();
+}
   // ConvertNumToString_Contract(val:any){
   //   this._contractService.ConvertNumToString(val).subscribe(data=>{
   //     this.modalDetailsContractNew.total_amount_text=data?.reasonPhrase;
@@ -726,13 +848,10 @@ export class ContractsComponent implements OnInit {
   openModal(template: TemplateRef<any>, data?: any, modalType?: any) {
     this.resetModal();
     //this.GetAllPreviewsSelectBarcodeFinished();
-
-    debugger
     if (modalType == 'addContract') {     
       this.GetAllPreviewsCodeFinishedMeeting();
       //this.GenerateContractNumber(); 
     }
-
     if (data) {
       this.modalDetails = data;
       this.fillBranchByUserId();
@@ -803,6 +922,23 @@ export class ContractsComponent implements OnInit {
     }
     if (data) {
       this.modalDetails = data;
+    }
+    debugger
+    if (type == 'deletepayment') {     
+      this.PaymentRow=data;
+    }
+    if (type === 'AddPayment') {
+      this.resetPaymentsModel();
+    }
+    if (type === 'editPayment') {
+      this.resetPaymentsModel();
+      if(data.paymentDate!=null)
+      {
+        this.modalPayments.paymentDate = this._sharedService.String_TO_date(data.paymentDate);
+      }
+      this.modalPayments.paymentId=data.paymentId;
+      this.modalPayments.amount=data.amount;
+      this.modalPayments.notes=data.notes;
     }
     if (type === 'deleteModalPerm') {
       this.publicidRow = data.idRow;
