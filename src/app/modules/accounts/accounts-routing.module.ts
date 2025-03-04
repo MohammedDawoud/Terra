@@ -3,12 +3,14 @@ import { CategoriesComponent } from './components/categories/categories.componen
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ContractsComponent } from './components/contracts/contracts.component';
+import { RevoucherComponent } from './components/revoucher/revoucher.component';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'Sales_bill' },
   { path: 'Accounts_guide', component: AccountsGuideComponent },
   { path: 'Categories', component: CategoriesComponent },
   { path: 'contracts', component: ContractsComponent },
+  { path: 'revoucher', component: RevoucherComponent },
 ];
 
 @NgModule({

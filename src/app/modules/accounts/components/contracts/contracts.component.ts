@@ -462,6 +462,7 @@ export class ContractsComponent implements OnInit {
       unitName: null,
       qty: null,
       amount: null,
+      accamount:null,
       totalValue: null,
     });
   }
@@ -498,6 +499,8 @@ export class ContractsComponent implements OnInit {
     this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==this.selectedServiceRowContractNew)[0].unitName = element.unitName;
     this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==this.selectedServiceRowContractNew)[0].qty = 1;
     this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==this.selectedServiceRowContractNew)[0].amount = element.amount;
+    this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==this.selectedServiceRowContractNew)[0].accamount = element.amount;
+
     this.CalculateTotal_ContractNew();
   }
 
@@ -511,6 +514,7 @@ export class ContractsComponent implements OnInit {
     this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==indexRow)[0].unitName = item.unitName;
     this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==indexRow)[0].qty = item.qty;
     this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==indexRow)[0].amount = item.amount;
+    this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==indexRow)[0].accamount = item.amount;  
     this.CalculateTotal_ContractNew();
   }
 
@@ -655,7 +659,9 @@ export class ContractsComponent implements OnInit {
       if (element.amount == null || element.amount == 0 || element.amount == "") {
         input.valid = false; input.message = "من فضلك أختر مبلغ صحيح";return;
       }
-
+      if (element.amount <element.accamount) {
+        input.valid = false; input.message = "من فضلك أختر سعر يساوي سعر الصنف المحفوظ مسبقا او أكبر منه";return;
+      }
       var Contractserviceobj:any  = {};
 
       Contractserviceobj.CategoryTypeId = element.categoryTypeId;

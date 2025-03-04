@@ -25,12 +25,14 @@ import { NgxHijriGregorianDatepickerModule } from 'ngx-hijri-gregorian-datepicke
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CategoriesComponent } from './components/categories/categories.component';
 import { ContractsComponent } from './components/contracts/contracts.component';
+import { RevoucherComponent } from './components/revoucher/revoucher.component';
 
 @NgModule({
   declarations: [
     AccountsGuideComponent,
     CategoriesComponent,
     ContractsComponent,
+    RevoucherComponent,
   ],
   imports: [
     CommonModule,

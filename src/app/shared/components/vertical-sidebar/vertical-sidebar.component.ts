@@ -274,6 +274,14 @@ export class VerticalSidebarComponent implements OnInit {
             title:"5622321",
             show: this.userG?.pagesList.includes(5622321),
           },
+          {
+            name: { ar: 'استلام نقدية', en: 'Cash receipt' },
+            link: '/accounts/revoucher',
+            type: 'single',
+            icon: '/assets/sidebar-icons/md-paper.png',
+            title:"5711221",
+            show: this.userG?.pagesList.includes(5711221),
+          },
         ],
       },
       {

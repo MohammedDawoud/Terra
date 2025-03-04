@@ -1,0 +1,915 @@
+<div class="add-search pb-4">
+    <app-navigator [title]="title"></app-navigator>
+  
+    <div class="tables-data mt-3 overflow-hidden">
+      <!-- buttons -->
+      <div class="flex justify-between gap-2 items-center my-3 flex-wrap">
+        <!---------------------------------------------------------------------------->
+        <div class="flex gap-2 controler">
+          <button
+            class="flex gap-1 btn btn-primary"
+            (click)="openModal(dataModal, null, 'addVoucher')"
+          >
+            <span
+              class="hidden md:block"
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'سند إستلام جديد ',
+                en: 'New Voucher '
+              }"
+            ></span>
+            <i class="fa-solid fa-user-plus"></i>
+          </button>
+          <button class="flex gap-1 btn btn-danger" (click)="dataSearch.filter.showFilters = !dataSearch.filter.showFilters;">
+            <span
+              class="hidden md:block"
+              [translate]="'name'" [translateParams]="{ar: 'بحث ',en: 'Search '}"></span>
+            <i class="fa-solid fa-search"></i>
+            </button>
+          <button
+            class="flex gap-1 btn btn-warning"
+            (click)="exportData()"
+          >
+            <span
+              class="hidden md:block"
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'تصدير ملف إكسل',
+                en: 'Export To Excel'
+              }"
+            ></span>
+            <i class="fa-solid fa-file-export"></i>
+          </button>
+        </div>
+      </div>
+  
+      <div *ngIf="dataSearch.filter.showFilters" class="flex gap-6 flex-wrap items-end mb-4">
+  
+        <div class="max-w-xs">
+          <label class="col-form-label"> {{ "رقم سند إستلام" | translate }}</label>
+    
+          <ng-select
+            #CustomerName
+            [items]="dataSearch.filter.ListvoucherNo"
+            bindLabel="name"
+            bindValue="id"
+            [clearable]="true"
+            class="w-full p-0"
+            [(ngModel)]="dataSearch.filter.voucherId"
+            placeholder="{{ 'Chose' | translate }}"
+            (change)="RefreshData()"
+          >
+          </ng-select>
+        </div>
+        <div class="max-w-xs">
+          <label class="col-form-label"> {{ "رقم المستند (المنيوال)" | translate }}</label>
+    
+          <ng-select
+            #CustomerName
+            [items]="dataSearch.filter.ListdocumentNo"
+            bindLabel="name"
+            bindValue="id"
+            [clearable]="true"
+            class="w-full p-0"
+            [(ngModel)]="dataSearch.filter.voucherId"
+            placeholder="{{ 'Chose' | translate }}"
+            (change)="RefreshData()"
+          >
+          </ng-select>
+        </div>
+        <div class="max-w-xs">
+          <label class="col-form-label"> {{ "حالة الإذن" | translate }}</label>
+    
+          <ng-select
+            #CustomerName
+            [items]="dataSearch.filter.Liststatus"
+            bindLabel="name"
+            bindValue="id"
+            [clearable]="true"
+            class="w-full p-0"
+            [(ngModel)]="dataSearch.filter.status"
+            placeholder="{{ 'Chose' | translate }}"
+            (change)="RefreshData()"
+          >
+          </ng-select>
+        </div>
+        <button
+          class="btn btn-primary"
+          (click)="dataSearch.filter.enable = !dataSearch.filter.enable;ClearDate();"
+          [translate]="'name'"
+          [translateParams]="{
+            ar: 'فلترة بالوقت',
+            en: 'Time Filter'
+          }"
+        ></button>
+        <div class="form-group col-md-2 timeInput" *ngIf="dataSearch.filter.enable">
+          <input
+            placeholder="{{ 'Chose Date' | translate }}"
+            [(ngModel)]="dataSearch.filter.date"
+            type="text"
+            (ngModelChange)="CheckDate($event)"
+            class="form-control"
+            [bsConfig]="{ rangeInputFormat: 'DD/MM/YYYY' }"
+            bsDaterangepicker
+            #dpr="bsDaterangepicker"
+          />
+        </div>
+    
+        <div class="w-fit">
+          <input
+            class="form-control"
+            (keyup)="applyFilter($event)"
+            placeholder="{{ 'search' | translate }}"
+            #input
+          />
+        </div>
+      </div>
+  
+      <!-- table -->
+      <div class="overflow-auto">
+        <table
+          mat-table
+          [dataSource]="dataSource"
+          matSort
+          class="mat-elevation-z8 rounded-t-lg overflow-hidden w-max"
+        >
+          <!-- name Column -->
+          <ng-container matColumnDef="branchName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              <span>{{'الفرع'}}</span>
+  
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.branchName }}
+            </td>
+          </ng-container>
+  
+          <ng-container matColumnDef="voucherNo">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              <span>{{'رقم القيد الألي '}}</span>
+  
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.voucherNo }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="documentNo">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              <span>{{'رقم المستند (المنيوال) '}}</span>
+  
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.documentNo }}
+            </td>
+          </ng-container>
+  
+          <ng-container matColumnDef="date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              <span>{{'تاريخ السند'}}</span>
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.date | date : "yyyy-MM-dd" }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="notes">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              <span>{{'الملاحظات'}}</span>
+  
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.notes }}
+            </td>
+          </ng-container>  
+
+          <ng-container matColumnDef="statustxt">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              <span>{{'حالة الإذن'}}</span>
+  
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.statustxt }}
+            </td>
+          </ng-container>  
+
+
+  
+          <ng-container matColumnDef="addDate">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              <span>{{'تاريخ الإنشاء'}}</span>
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.addDate | date : " hh:mm yyyy-MM-dd" }}
+            </td>
+          </ng-container>
+          
+          <!-- operations Column -->
+          <ng-container matColumnDef="operations">
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              [translate]="'name'"
+              [translateParams]="{
+                ar: 'خيارات',
+                en: 'Operations'
+              }"
+            ></th>
+            <td mat-cell *matCellDef="let element">
+              <div class="flex gap-1 justify-center py-2">
+                <button *ngIf="element.status == 1 || element.status == 2"
+                  class="min-w-max p-2 bg-orange-100 hover:bg-orange-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+                  (click)="openModal(dataModal, element, 'editVoucher')"
+                >
+                  <i class="fa-regular fa-pen-to-square"></i>
+                </button>
+
+                <button *ngIf="element.status == 3"
+                class="btn btn-outline-warning btn-sm waves-effect mx-1"
+                title=" عرض القيد المحاسبي"
+                data-original-title=" عرض القيد المحاسبي"
+                (click)="open(accountingentry, element, 'accountingentry')"
+              >
+                <i class="fa-brands fa-stripe-s"></i>
+              </button>
+              <button *ngIf="element.status == 2 && userG?.userName=='tadmin'"
+              class="btn btn-outline-warning btn-sm waves-effect mx-1"
+              title="فك السند "
+              data-original-title="فك السند "
+              (click)="open(decodingPagingModal, element,'decodingPagingModal')"
+            >
+              <i class="fa-solid fa-share fa-flip-horizontal"></i>
+            </button>
+
+                <button *ngIf="element.status == 1"
+                  class="min-w-max p-2 bg-red-100 hover:bg-red-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+                  (click)="openModal(deleteModal, element, 'delete')"
+                >
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+  
+          <!-- Symbol Column -->
+  
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  
+          <tr
+            mat-row
+            *matRowDef="let row; columns: displayedColumns"
+            class="duration-300 hover:bg-slate-100"
+            (dblclick)="openModal(dataModal, row, 'VoucherView')"
+
+          ></tr>
+          <!-- Row shown when there is no matching data. -->
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" colspan="7">
+              {{ "لا يوجد نتائج" }}
+            </td>
+          </tr>
+        </table>
+      </div>
+      <mat-paginator [pageSizeOptions]="[10, 25, 100, dataSource.data.length]">
+      </mat-paginator>
+    </div>
+  
+    <!-- modals  -->
+    <ng-template #dataModal>
+      <div
+        style="background-color: var(--base-color)"
+        class="modal-header text-white flex justify-between items-center"
+      >
+        <h4 class="m-0">
+          <span class="text-2xl">{{ 'سند إستلام' | translate }}</span>
+        </h4>
+        <button
+          type="button"
+          class="text-2xl text-white m-0"
+          (click)="modal?.hide()"
+        >
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <ng-container>
+          <form class="modal-form" addForm="ngForm">
+            <div>
+
+              <!-- Branch  -->
+              <div>
+                <label class="col-form-label">
+                  {{ "فرع سند إستلام" | translate }}</label>
+                <ng-select
+                  style="min-width: max-content"
+                  id="branchId"
+                  #branchId="ngModel"
+                  required
+                  class="w-full p-0 form-control {{modalDetails.branchId == null ? 'errorInput': ''}}"
+                  [disabled]="load_BranchUserId?.length == 1"
+                  (change)="BranchChange(modalDetails.branchId,'addVoucher')"
+                  [clearable]="false"
+                  name="branchId"
+                  placeholder=" {{ 'فرع سند إستلام' | translate }}"
+                  [(ngModel)]="modalDetails.branchId"
+                  [ngModelOptions]="{ standalone: true }"
+                >
+                  <ng-option
+                    *ngFor="let branch of load_BranchUserId"
+                    [value]="branch.id"
+                    >{{ branch.name }}</ng-option
+                  >
+                </ng-select>
+              </div>
+
+              <div class="form-group">
+                <label class="col-form-label">
+                  {{ "الحساب الأساسي" | translate }}
+                </label>
+                <div class="flex">
+                  <ng-select
+                  class="w-full p-0 form-control {{modalDetails.mainAccountId == null ? 'errorInput': ''}}"
+                  placeholder="{{ 'الحساب الأساسي' | translate }}"
+                  [(ngModel)]="modalDetails.mainAccountId"
+                  [ngModelOptions]="{ standalone: true }"
+                  (change)="MainAccountChange()"
+                >
+                  <ng-option *ngFor="let type of MainAccountList" [value]="type.id">{{
+                    type.name
+                  }}</ng-option>
+                </ng-select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="col-form-label">
+                  {{ "الحساب الفرعي" | translate }}
+                </label>
+                <div class="flex">
+                  <ng-select
+                  class="w-full p-0 form-control {{modalDetails.subAccountId == null ? 'errorInput': ''}}"
+                  placeholder="{{ 'الحساب الفرعي' | translate }}"
+                  [(ngModel)]="modalDetails.subAccountId"
+                  [ngModelOptions]="{ standalone: true }"
+                  (change)="SubAccountChange()"
+                >
+                  <ng-option *ngFor="let type of SubAccountList" [value]="type.id">{{
+                    type.name
+                  }}</ng-option>
+                </ng-select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-form-label">{{ "حالة الإذن" | translate }}</label>
+                <ng-select
+                  style="min-width: max-content"
+                  id="status"
+                  #customerId="ngModel"
+                  [disabled]="modalDetails.vouchertype=='VoucherView'"
+                  class="w-full p-0 form-control {{modalDetails.status == null ? 'errorInput': ''}}"
+                  [clearable]="true"
+                  name="status"
+                  placeholder=" {{ 'حالة الإذن' | translate }}"
+                  [(ngModel)]="modalDetails.status"
+                  [ngModelOptions]="{ standalone: true }"
+                >
+                <ng-option *ngFor="let type of VoucherStatusList" [value]="type.id" [translate]="'name'"
+                  [translateParams]="{ar: type.name?.ar,en: type.name?.en}"></ng-option>
+                </ng-select>
+              </div>
+
+              <div class="form-group">
+                <label for="voucherNo" class="col-form-label">
+                  <ng-container>
+                    {{ "رقم القيد الألي" | translate }}
+                  </ng-container>
+                </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="voucherNo"
+                  autocomplete="off"
+                  #voucherNo="ngModel"
+                  required
+                  class="form-control"
+                  name="voucherNo"
+                  disabled
+                  placeholder="{{ 'Write' | translate }} {{
+                    'رقم القيد الألي' | translate
+                  }} "
+                  [(ngModel)]="modalDetails.voucherNo"
+                />
+              </div>
+  
+              <div class="form-group">
+                <label for="documentNo" class="col-form-label">
+                  <ng-container>
+                    {{ "رقم المستند (المنيوال)" | translate }}
+                  </ng-container>
+                </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="documentNo"
+                  autocomplete="off"
+                  #documentNo="ngModel"
+                  required
+                  class="form-control"
+                  name="documentNo"
+                  placeholder="{{ 'Write' | translate }} {{
+                    'رقم المستند (المنيوال)' | translate
+                  }} "
+                  [(ngModel)]="modalDetails.documentNo"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="date" class="text-right col-form-label block">
+                  {{ "التاريخ" | translate }}
+                </label>
+                <input
+                  placeholder="{{ 'Chose' | translate }}"
+                  name="date"
+                  type="text"
+                  class="form-control {{modalDetails.date == null ? 'errorInput': ''}}"
+                  [disabled]="modalDetails.vouchertype=='VoucherView'"
+                  bsDatepicker
+                  #dpr="bsDatepicker"
+                  autocomplete="off"
+                  [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
+                  [(ngModel)]="modalDetails.date"
+                  [ngModelOptions]="{ standalone: true }"
+                />
+              </div>
+            </div>
+
+          </form>
+
+          <div class="row mb-3 mx-3">
+            <h3 class="flex items-center justify-start fw-bold">
+              {{ "اضافة سطر" | translate }}
+              <button
+                [disabled]="!modalDetails.subAccountId"
+                  type="button "
+                  class="add-btn mx-2"
+                  (click)="addVoucherRow()"
+                  >
+                  <i class="fa fa-plus"></i>
+              </button>
+              </h3>
+
+            <div class="col-md-12">
+              <div class="editable shadow mb-4" style="overflow-x: auto">
+                <table class="table table-responsive table-striped table-bordered text-center"
+                style="vertical-align: middle; font-size: 14px;">
+                  <thead
+                    class="bg-base text-white"
+                    style="line-height: 30px; font-size: 13px"
+                  >
+                    <tr>
+                      <th>{{ "R_T" | translate }}</th>
+                      <th style="width: 10% !important">
+                        {{ "amount" | translate }}
+                      </th>
+                      <th style="width: 22% !important">
+                        {{ "الحساب الأساسي" | translate }}
+                      </th>
+                      <th style="width: 22% !important">
+                        {{ "الحساب الفرعي" | translate }}
+                      </th>
+                      <th style="width: 10% !important">
+                        {{ "credit_debit" | translate }}
+                      </th>
+                      <th>{{ "المحصل" | translate }}</th>
+                      <th>{{ "شرح السطر" | translate }}</th>
+                      <th>{{ "delete" | translate }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      class=" {{ backgroungColor(item) }}"
+                      *ngFor="let item of VoucherDetailsRows; let i = index"
+                      style="line-height: 5px">
+                      <td style="cursor: pointer;">{{ item.idRow }}</td>
+                      <td>
+                        <input
+                          type="number"
+                          [(ngModel)]="item.amount"
+                          name="os-amount{{ item.idRow }}"
+                          (keyup)="CalculateVoucher()"
+                          [disabled]="modalDetails.vouchertype=='VoucherView'"
+                          [readonly]="item.lineMain"
+                        />
+                      </td>
+                      <td
+                        (click)="modalDetails.vouchertype!='VoucherView' && item.lineMain==false &&open(AccountsListModal,item,'AccountsMainListModal',item.idRow)">
+                        <input
+                          type="text"
+                          name="os-Acc{{ item.idRow }}"
+                          [(ngModel)]="item.mainAccountIdtxt"
+                          readonly
+                        />
+                      </td>
+                      <td
+                      (click)="modalDetails.vouchertype!='VoucherView' && item.lineMain==false &&open(AccountsListModal,item,'AccountsSubListModal',item.idRow)">
+                      <input
+                        type="text"
+                        name="os-Acc{{ item.idRow }}"
+                        [(ngModel)]="item.subAccountIdtxt"
+                        readonly
+                      />
+                    </td>
+    
+                      <td>
+                        <select
+                          disabled
+                          (change)="CalculateVoucher()"
+                          class="form-select"
+                          name="os-balancejournalselect{{ item.idRow }}"
+                          aria-label="Default select example"
+                          [(ngModel)]="item.CreditDepitStatus"
+                        >
+                          <option value="D">{{ "debtor" | translate }}</option>
+                          <option value="C">{{ "Creditor" | translate }}</option>
+                        </select>
+                      </td>
+                      <td>
+                        <input
+                        [disabled]="modalDetails.vouchertype=='VoucherView'"
+                        [readonly]="item.lineMain"
+                          type="text"
+                          [(ngModel)]="item.collectorName"
+                          name="os-collectorName{{ item.idRow }}"
+                        />
+                      </td>
+                      <td>
+                        <input
+                        [disabled]="modalDetails.vouchertype=='VoucherView'"
+                        [readonly]="item.lineMain"
+                          type="text"
+                          [(ngModel)]="item.notes"
+                          name="os-notes{{ item.idRow }}"
+                        />
+                      </td>
+                      <td>
+                        <button
+                          *ngIf="modalDetails.vouchertype!='VoucherView' && item.lineMain==false"
+                          (click)="deleteVoucherRow(item.idRow)"
+                          class="p-2 bg-red-100 hover:bg-red-500 rounded-lg duration-300 hover:text-white w-10"
+                        >
+                          <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+    
+              <div class="boxContainer w-100 py-2 px-3">
+    
+                <div class="row">
+                  <div class="col-md-2">
+                    <label for="Notes" class=" " for="Notes">
+                      {{ "Notes" | translate }}
+                    </label>
+                  </div>
+                  <div class="col-md-10">
+                    <input
+                      id="Notes"
+                      placeholder="{{ 'AddNotesHere' | translate }}"
+                      required
+                      class="form-control text-center"
+                      type="text"
+                      autocomplete="off"
+                      [(ngModel)]="modalDetails.notes"
+                      [ngModelOptions]="{ standalone: true }"
+                      [disabled]="modalDetails.vouchertype=='VoucherView'"
+                    />
+                  </div>
+                </div>
+    
+                <div class="row justify-content-between">
+                  <div class="col-md-7 row">
+                    <div class="col-md-4">
+                      <label for="TotalCurrentLine" class="">
+                        {{ "مجموع السطور" | translate }}
+                      </label>
+                    </div>
+                    <div class="col-md-8">
+                      <input
+                        id="TotalCurrentLine"
+                        required
+                        class="form-control text-center"
+                        type="number"
+                        disabled
+                        [(ngModel)]="VoucherDetailsRows.length"
+                        [ngModelOptions]="{ standalone: true }"
+                      />
+                    </div>
+                  </div>
+    
+                  <div class="col-md-5">
+                    <div class="col-md-4">
+                      <label for="CreditorTotal" class="">
+                        {{ "CreditorTotal" | translate }}
+                      </label>
+                    </div>
+    
+                    <div class="col-md-8">
+                      <input
+                        id="CreditorTotal"
+                        required
+                        class="form-control text-center"
+                        type="number"
+                        disabled
+                        [(ngModel)]="modalDetails.totalCredit"
+                        [ngModelOptions]="{ standalone: true }"
+                      />
+                    </div>
+                  </div>
+                </div>
+    
+                <div class="row justify-content-between">
+                  <div class="col-md-7 row">
+                  </div>
+    
+                  <div class="col-md-5">
+                    <div class="col-md-4">
+                      <label for="totalDebit" class="text-gren" for="totalDebit">
+                        {{ "totalDebit" | translate }}
+                      </label>
+                    </div>
+    
+                    <div class="col-md-8">
+                      <input
+                        id="totalDebit"
+                        required
+                        class="form-control text-center"
+                        type="number"
+                        disabled
+                        [(ngModel)]="modalDetails.totalDepit"
+                        [ngModelOptions]="{ standalone: true }"
+                      />
+                    </div>
+                  </div>
+                </div>
+    
+                <div class="row justify-content-between">
+                  <div class="col-md-7 row">
+
+                  </div>
+    
+                  <div class="col-md-5">
+                    <div class="col-md-4">
+                      <label for="theDifference" class=" " for="theDifference">
+                        {{ "theDifference" | translate }}
+                      </label>
+                    </div>
+    
+                    <div class="col-md-8">
+                      <input
+                        id="theDifference"
+                        required
+                        class="form-control text-center"
+                        type="number"
+                        disabled
+                        [(ngModel)]="modalDetails.diff"
+                        [ngModelOptions]="{ standalone: true }"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="flex flex-wrap items-end border-t justify-between pt-2 border-neutral-300"
+          >
+          <div *ngIf="modalDetails.addDate != null && modalDetails.addDate != ''" class="flex gap-2 items-center">
+            <div class="flex flex-col gap-2">
+              <span>{{ "تاريخ إنشاء المستند" | translate }}</span>
+              <div class="flex flex-col">
+                <span>{{
+                  modalDetails?.addDate | date : " hh:mm yyyy-MM-dd"}}</span>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="modalDetails.updateDate != null && modalDetails.updateDate != ''" class="flex gap-2 items-center">
+            <div class="flex flex-col gap-2">
+              <span>{{ "تاريخ تعديل المستند" | translate }}</span>
+              <div class="flex flex-col">
+                <span>{{
+                  modalDetails?.updateDate | date : " hh:mm yyyy-MM-dd"}}</span>
+              </div>
+            </div>
+          </div>
+            <div class="flex gap-2">
+              <button
+                class="btn bg-base text-white"
+                (click)="addVoucher()"
+                [disabled]="disableButtonSave_Voucher"
+              >
+                {{ "save" | translate }}
+              </button>
+              <button (click)="modal?.hide()" class="btn btn-secondary">
+                {{ "Back" | translate }}
+              </button>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </ng-template>
+  
+    <!-- confirm delete -->
+    <ng-template #deleteModal>
+      <div class="modal-body text-center">
+        <p
+          [translate]="'name'"
+          [translateParams]="{
+            ar: 'هل تريد بالتأكيد حذف هذا الصف',
+            en: 'Are you sure to delete this row ?'
+          }"
+        ></p>
+        <div class="flex gap-2 justify-center">
+          <button
+            type="button"
+            mat-raised-button
+            color="warn"
+            (click)="confirm()"
+          >
+            {{ "Yes" | translate }}
+          </button>
+          <button
+            type="button"
+            (click)="decline()"
+            mat-raised-button
+            color="basic"
+          >
+            {{ "No" | translate }}
+          </button>
+        </div>
+      </div>
+    </ng-template>
+  
+  
+  </div>
+  
+  <!-- AccountsListModal -->
+<ng-template #AccountsListModal let-modal>
+  <div
+    style="background-color: var(--base-color)"
+    class="modal-header text-white flex justify-between items-center"
+  >
+    <h4 class="m-0">
+      <span class="text-2xl">{{ "accountName" | translate }}</span>
+    </h4>
+    <button
+      type="button"
+      class="text-2xl text-white m-0"
+      (click)="modal.dismiss()"
+    >
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+  <div class="modal-body" style="overflow-y: scroll; max-height: 600px">
+    <mat-form-field class="w-full">
+      <mat-label>{{ "search" | translate }}</mat-label>
+      <input matInput (keyup)="applyFilterAccountsList($event)" #input />
+    </mat-form-field>
+
+    <div class="table">
+      <table
+        mat-table
+        [dataSource]="AccountListDataSource"
+        matSort
+        class="mat-elevation-z8 table table-responsive table-striped table-bordered text-center"
+        style="vertical-align: middle; font-size: 14px"
+      >
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>
+            {{ "accountName" | translate }}
+          </th>
+          <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="AccountListdisplayedColumns"></tr>
+        <tr
+          mat-row
+          *matRowDef="
+            let row;
+            let i = index;
+            columns: AccountListdisplayedColumns
+          "
+          (dblclick)="setAccountRowValue(row); modal.dismiss()"
+        ></tr>
+
+        <!-- Row shown when there is no matching data. -->
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell" colspan="1">
+            {{ "noResult" | translate }} "{{ input.value }}"
+          </td>
+        </tr>
+      </table>
+    </div>
+    <!-- <mat-paginator  #paginatorAccount [pageSizeOptions]="[10, 25]"> </mat-paginator> -->
+
+    <div class="text-end mt-2">
+      <button (click)="modal?.dismiss()" class="btn btn-secondary">
+        {{ "Back" | translate }}
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<!-- عرض القيد المحاسبي  -->
+<!-- accountingentry -->
+<ng-template #accountingentry let-modal>
+  <div
+    style="background-color: var(--base-color)"
+    class="modal-header text-white flex justify-between items-center"
+  >
+    <h4 class="m-0">
+      <span class="text-2xl">{{ "View_accounting_entry" | translate }}</span>
+    </h4>
+    <button
+      type="button"
+      class="text-2xl text-white m-0"
+      (click)="modal.dismiss()"
+    >
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+  <div class="max-h-100 overflow-x-scroll overflow-y-scroll p-4">
+    <table
+      class="border border-gray-500"
+      style="width: 100%; text-align: center"
+    >
+      <thead>
+        <tr>
+          <th class="w-1/9 px-1 py-2">{{ "date" | translate }}</th>
+          <th class="w-1/9 px-1 py-2">{{ "Bond number" | translate }}</th>
+          <th class="w-1/9 px-1 py-2">{{ "Bond type" | translate }}</th>
+          <th class="w-1/9 px-1 py-2">{{ "الحساب الرئيسي" | translate }}</th>
+          <th class="w-1/9 px-1 py-2">{{ "الحساب الفرعي" | translate }}</th>
+          <th class="w-1/9 px-1 py-2">{{ "المحصل" | translate }}</th>
+          <th class="w-1/9 px-1 py-2">{{ "Statement" | translate }}</th>
+          <th class="w-1/9 px-1 py-2">{{ "debtor" | translate }}</th>
+          <th class="w-1/9 px-1 py-2">{{ "Creditor" | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let entry of AllJournalEntries">
+          <td class="w-1/9 border px-1 py-2">{{ entry.transactionDate }}</td>
+          <td class="w-1/9 border px-1 py-2">{{ entry.voucherNo }}</td>
+          <td class="w-1/9 border px-1 py-2">{{ entry.typeName }}</td>
+          <td class="w-1/9 border px-1 py-2">{{ entry.mainAccountIdtxt }}</td>
+          <td class="w-1/9 border px-1 py-2">{{ entry.subAccountIdtxt }}</td>
+          <td class="w-1/9 border px-1 py-2">{{ entry.collectorName }}</td>
+          <td class="w-1/9 border px-1 py-2">{{ entry.notes }}</td>
+          <td class="w-1/9 border px-1 py-2">{{ entry.depit }}</td>
+          <td class="w-1/9 border px-1 py-2">{{ entry.credit }}</td>
+        </tr>
+        <tr>
+          <td class="w-1/9 border px-1 py-2">{{ "total" | translate }}</td>
+          <td class="w-1/9 border px-1 py-2"></td>
+          <td class="w-1/9 border px-1 py-2"></td>
+          <td class="w-1/9 border px-1 py-2"></td>
+          <td class="w-1/9 border px-1 py-2"></td>
+          <td class="w-1/9 border px-1 py-2"></td>
+          <td class="w-1/9 border px-1 py-2"></td>
+          <td class="w-1/9 border px-1 py-2 bg-green-500">{{ totaldepit }}</td>
+          <td class="w-1/9 border px-1 py-2 bg-red-500">{{ totalcredit }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="flex justify-end p-3">
+    <button (click)="modal?.dismiss()" class="btn btn-secondary">
+      {{ "close" | translate }}
+    </button>
+  </div>
+</ng-template>
+
+<!-- فك الترحيل -->
+<!-- decodingPagingModal  -->
+<ng-template #decodingPagingModal let-modal>
+  <div class="text-center p-3">
+    {{ "هل تريد فك هذا السند و تحويلة لمسودة ؟" | translate }}
+  </div>
+
+  <div class="flex justify-center p-3">
+    <button
+      (click)="PostBackVoucher(); modal?.dismiss()"
+      class="btn text-white me-2"
+      style="background-color: var(--base-color)"
+    >
+      {{ "save" | translate }}
+    </button>
+
+    <button (click)="modal?.dismiss()" class="btn btn-secondary">
+      {{ "close" | translate }}
+    </button>
+  </div>
+</ng-template>

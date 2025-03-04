@@ -1,33 +1,19 @@
 
-import {
-  AfterViewInit,ChangeDetectorRef,Component,OnInit,TemplateRef,
-  ViewChild,HostListener,Pipe,PipeTransform,} from '@angular/core';
+import {AfterViewInit,ChangeDetectorRef,Component,OnInit,TemplateRef,ViewChild,HostListener,Pipe,PipeTransform,} from '@angular/core';
 import { EmailValidator, NgForm } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import {
-  FileUploadControl,
-  FileUploadValidators,
-} from '@iplab/ngx-file-upload';
-import {
-  BsModalService,
-  BsModalRef,
-  ModalDirective,
-} from 'ngx-bootstrap/modal';
+import {FileUploadControl,FileUploadValidators,} from '@iplab/ngx-file-upload';
+import {BsModalService,BsModalRef,ModalDirective,} from 'ngx-bootstrap/modal';
 import { BehaviorSubject, Subscription } from 'rxjs';
-
 import { ExportationService } from 'src/app/core/services/exportation-service/exportation.service';
 import { fade } from 'src/app/shared/animations/toggleBtn.animation';
 import { RestApiService } from 'src/app/shared/services/api.service';
 import { combineLatest } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
-import {
-  ModalDismissReasons,
-  NgbModal,
-  NgbModalOptions,
-} from '@ng-bootstrap/ng-bootstrap';
+import {ModalDismissReasons, NgbModal,NgbModalOptions,} from '@ng-bootstrap/ng-bootstrap';
 import { environment } from 'src/environments/environment';
 import { AuthenticationService } from 'src/app/core/services/authentication.service';
 import printJS from 'print-js';

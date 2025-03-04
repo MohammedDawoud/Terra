@@ -996,7 +996,7 @@
                             name="os-amount{{ item.idRow  }}"
                             [(ngModel)]="item.amount"
                             [ngModelOptions]="{standalone: true}"
-                            readonly
+                            [readonly]="modalDetails.type=='DesignView'"
                             (keyup)="CalculateTotal_ContractNew()"
                             />
                             <!-- <span *ngIf="item.Amounttxt" style="align-self: center;">ر.س</span> -->
