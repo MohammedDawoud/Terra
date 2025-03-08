@@ -41,6 +41,7 @@ import { HttpEventType } from '@angular/common/http';
 import { filesservice } from 'src/app/core/services/sys_Services/files.service';
 import { CategoryService } from 'src/app/core/services/acc_Services/category.service';
 import { MatStepper } from '@angular/material/stepper';
+import { NgxPrintElementService } from 'ngx-print-element';
 
 
 @Component({
@@ -148,6 +149,7 @@ export class ContractsComponent implements OnInit {
   constructor(
     private service: ContractService,
     private category: CategoryService,
+    private print: NgxPrintElementService,
     private previewservice: PreviewService,
     private modalService: BsModalService,
     private api: RestApiService,
@@ -167,7 +169,19 @@ export class ContractsComponent implements OnInit {
     this.subscription = this.control.valueChanges.subscribe(
       (values: Array<File>) => this.getImage(values[0])
     );
+    this.GetOrganizationData();
   }
+  OrganizationData: any;
+  environmentPho: any;
+  dateprint: any;
+  GetOrganizationData(){
+    this.api.GetOrganizationDataLogin().subscribe((data: any) => {
+      this.OrganizationData = data.result;
+      this.dateprint =this._sharedService.date_TO_String(new Date());
+      this.environmentPho =environment.PhotoURL + this.OrganizationData.logoUrl;
+    });
+  }
+
 
   //   ngAfterContentChecked() {
   //     this.fillBranchByUserId();
@@ -457,6 +471,7 @@ export class ContractsComponent implements OnInit {
       idRow: maxVal+1,
       categoryTypeId: null,
       categoryTypeName: null,
+      categoryId: null,
       nameAr: null,
       unitId: null,
       unitName: null,
@@ -484,6 +499,13 @@ export class ContractsComponent implements OnInit {
   selectedServiceRowContractNew: any;
 
   setServiceRowValue_ContractNew(element: any) {
+    debugger
+    var ItemCat= this.ContractNewServices.filter((d: { categoryId: any }) => (d.categoryId ==element.categoryId));
+    if(ItemCat.length>0)
+    {
+      this.toast.error(this.translate.instant("تم اختيار هذا الصنف مسبقا"),this.translate.instant("Message"));
+      return;
+    }
     this.modalDetailsContractNew={
       sumamount:null,
       sumtotal:null,
@@ -495,6 +517,7 @@ export class ContractsComponent implements OnInit {
     this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==this.selectedServiceRowContractNew)[0].categoryTypeId = element.categoryTypeId;
     this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==this.selectedServiceRowContractNew)[0].categoryTypeName = element.categoryTypeName;
     this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==this.selectedServiceRowContractNew)[0].nameAr = element.nameAr;
+    this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==this.selectedServiceRowContractNew)[0].categoryId = element.categoryId;
     this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==this.selectedServiceRowContractNew)[0].unitId = element.unitId;
     this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==this.selectedServiceRowContractNew)[0].unitName = element.unitName;
     this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==this.selectedServiceRowContractNew)[0].qty = 1;
@@ -510,6 +533,7 @@ export class ContractsComponent implements OnInit {
     this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==indexRow)[0].categoryTypeId = item.categoryTypeId;
     this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==indexRow)[0].categoryTypeName = item.categoryTypeName;
     this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==indexRow)[0].nameAr = item.nameAr;
+    this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==indexRow)[0].categoryId = item.categoryId;
     this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==indexRow)[0].unitId = item.unitId;
     this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==indexRow)[0].unitName = item.unitName;
     this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==indexRow)[0].qty = item.qty;
@@ -663,9 +687,10 @@ export class ContractsComponent implements OnInit {
         input.valid = false; input.message = "من فضلك أختر سعر يساوي سعر الصنف المحفوظ مسبقا او أكبر منه";return;
       }
       var Contractserviceobj:any  = {};
-
+      debugger
       Contractserviceobj.CategoryTypeId = element.categoryTypeId;
       Contractserviceobj.NameAr = element.nameAr;
+      Contractserviceobj.CategoryId = element.categoryId;
       Contractserviceobj.UnitId = element.unitId;
       Contractserviceobj.Amount = element.amount;
       Contractserviceobj.Status = element.status;
@@ -694,6 +719,7 @@ export class ContractsComponent implements OnInit {
       }
       else{
         this.toast.error(this.translate.instant(result.reasonPhrase),this.translate.instant("Message"));
+        this.disableButtonSave_Contract = false;
       }
     });
   }
@@ -1494,5 +1520,45 @@ dataSearch: any = {
   }
   //#endregion 
 //------------------------------Search--------------------------------------------------------
+
+
+//-------------------------------------------Print------------------------------------------
+
+ContractPrintData:any=null;
+resetCustomData2Contract(){
+  this.ContractPrintData=null;
+}
+serviceDetailsPrint: any;
+paymentDetailsPrint: any;
+
+serviceDetailsPrintObj:any=[];
+serviceDetailsList:any=[];
+
+GetDofAsaatContractsPrint(obj:any){
+  this.serviceDetailsPrintObj=[];
+  this.serviceDetailsList=[];
+  this.paymentDetailsPrint=[];
+
+  this.service.GetCategoriesByContractId(obj.contractId).subscribe(data=>{
+    this.serviceDetailsList=data;
+    console.log("this.serviceDetailsList",this.serviceDetailsList);
+  });
+  this.service.GetAllPaymentsByContractId(obj.contractId).subscribe(data=>{
+    this.paymentDetailsPrint=data;
+    console.log("this.paymentDetailsPrint",this.paymentDetailsPrint);
+  });
+  this.ContractPrintData=obj;
+  console.log("this.ContractPrintData",this.ContractPrintData);
+  console.log("this.OrganizationData",this.OrganizationData);
+
+}
+printDiv(id: any) {
+  this.print.print(id, environment.printConfig);
+}
+
+dateToday: any = new Date();
+
+//-------------------------------------------EndPrint----------------------------------------
+
 
 }
