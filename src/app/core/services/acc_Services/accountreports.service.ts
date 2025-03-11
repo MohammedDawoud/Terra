@@ -8,7 +8,7 @@ import { ExportationService } from '../exportation-service/exportation.service';
 @Injectable({
   providedIn: 'root'
 })
-export class VoucherService {
+export class AccountReportsService {
 
   private apiEndPoint: string = '';
   constructor(private http:HttpClient,
@@ -17,41 +17,18 @@ export class VoucherService {
   }
 
   //---------------------------------------------------------------------------------
-  GetAllVouchers_Branch(Type:any){
-    var url=`${environment.apiEndPoint}Voucher/GetAllVouchers_Branch?Type=${Type}`;
-    return this.http.get<any>(url);
+
+  GetAllTransSearch(data: any) {
+    data.dateTo = data.dateTo == (null) ? '' : data.dateTo;
+    data.dateFrom = data.dateFrom == (null) ? '' : data.dateFrom;
+    data.accountId =data.accountId == (null) ? '' : data.accountId;
+    const formData: FormData = new FormData();
+    formData.append('ToDate', data.dateTo);
+    formData.append('FromDate', data.dateFrom);
+    formData.append('AccountId', data.accountId);
+    return this.http.post(this.apiEndPoint + 'Voucher/GetAllTransSearch',formData);
   }
-  DeleteVoucher(VoucherId:any) {
-    return this.http.post<any>(this.apiEndPoint + 'Voucher/DeleteVoucher?VoucherId='+VoucherId,{});
-  }
-  SaveVoucher(model: any) {
-    return this.http.post<any>(this.apiEndPoint + 'Voucher/SaveVoucher', model);
-  }
-  GetAllVoucherTransactions(VoucherId: any) {
-    var url = `${environment.apiEndPoint}Voucher/GetAllVoucherTransactions?&VoucherId=${VoucherId}`;
-    return this.http.get<any>(url);
-  }
-  VoucherNumber_Reservation(Type:any,BranchId:any) {
-    var url=`${environment.apiEndPoint}Voucher/VoucherNumber_Reservation?Type=${Type}&&BranchId=${BranchId}`;
-    return this.http.get<any>(url);
-  }
-  PostBackVoucher(VoucherId:any){
-    return this.http.post(this.apiEndPoint+'Voucher/PostBackVoucher', {}, { params:{VoucherId:VoucherId}});
-  }
-  FillBranchByUserIdSelect(){
-    return this.http.get<any>(this.apiEndPoint + 'Branches/FillBranchByUserIdSelect');
-  }
-  
-  FillAllAccountsSelectAll(){
-    return this.http.get<any>(this.apiEndPoint + 'Account/FillAllAccountsSelectAll');
-  }
-  FillAllAccountsSelect(){
-    return this.http.get<any>(this.apiEndPoint + 'Account/FillAllAccountsSelect');
-  }
-  FillAllAccountsSelectByParentId(ParentId:any) {
-    var url=`${environment.apiEndPoint}Account/FillAllAccountsSelectByParentId?ParentId=${ParentId}`;
-    return this.http.get<any>(url);
-  }
+
   customExportExcel(dataExport: any, nameExport: any) {
 
     let exportation = JSON.parse(JSON.stringify(dataExport));

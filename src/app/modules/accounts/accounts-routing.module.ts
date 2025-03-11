@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ContractsComponent } from './components/contracts/contracts.component';
 import { RevoucherComponent } from './components/revoucher/revoucher.component';
+import { AccountstatementComponent } from './components/accountstatement/accountstatement.component';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'Sales_bill' },
@@ -11,6 +12,7 @@ const routes: Routes = [
   { path: 'Categories', component: CategoriesComponent },
   { path: 'contracts', component: ContractsComponent },
   { path: 'revoucher', component: RevoucherComponent },
+  { path: 'Account_Statement', component: AccountstatementComponent },
 ];
 
 @NgModule({

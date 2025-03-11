@@ -1,0 +1,356 @@
+<div class="account-statement">
+    <app-navigator [title]="title"></app-navigator>
+  
+    <!-- inputs -->
+    <div class="container-fluid">
+      <div class="head flex gap-2 flex-wrap items-end justify-between">
+        <div class="btns mb-3 w-100">
+          <div class="row flex flex-wrap w-100">
+  
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="col-form-label"> {{ "accountName" | translate }}</label>
+                <ng-select
+                  class="w-full p-0"
+                  placeholder="{{ 'Chose' | translate }}"
+                  [(ngModel)]="data.filter.search_accountId"
+                  name="accountName" (change)="changeAccount()"
+                >
+                  <ng-option *ngFor="let user of load_accountIds" [value]="user.id">{{
+                    user.name
+                  }}</ng-option>
+                </ng-select>
+              </div>
+            </div>
+      
+            <div style="margin-top: 2%;" class="col-md-3">
+              <div class="flex justify-content-center gap-3">
+                <button
+                  class="btn btn-primary"
+                  (click)="(data.filter.enable =! data.filter.enable);ResetSearchTime()"
+                  [translate]="'name'"
+                  [translateParams]="{
+                    ar: 'فلترة بالوقت',
+                    en: 'Time Filter'
+                  }"
+                ></button>
+                <div class="form-group timeInput" *ngIf="data.filter.enable">
+                  <input
+                    placeholder="{{ 'Chose Date' | translate }}"
+                    [(ngModel)]="data.filter.date"
+                    type="text"
+                    (ngModelChange)="CheckDate($event)"
+                    class="form-control"
+                    bsDaterangepicker
+                    #dpr="bsDaterangepicker"
+                  />
+                </div>
+              </div>
+            </div>   
+            <div style="margin-top: 2%;" class="col-md-2">
+                <div class="form-group">
+                <input type="text " placeholder="بحث" class="w-full p-2 inputType"autocomplete="off" name="search" (keyup)="applyFilter($event)"#input/>
+              </div>
+              </div>
+    
+              <!-- <button style="margin-top: 2%;"
+                type="button"(click)="getPrintdata('report')"
+                class="flex gap-1 btn btn-outline-secondary col-md-2"
+              >
+                {{ "Print" | translate }}
+                <i class="fa-solid fa-print"></i>
+              </button> -->
+    
+              <button style="margin-top: 2%;"
+                type="button"
+                class="flex gap-1 btn btn-success col-md-2"
+                (click)="exportData()"
+              >
+                {{ "exportExcel" | translate }}
+              </button>
+            
+          </div>
+        </div>
+      </div>
+  
+      <!-- table -->
+      <div class="overflow-auto mt-4">
+        <table
+          mat-table
+          [dataSource]="projectsDataSource"
+          matSort
+          class="mat-elevation-z8 rounded-t-lg overflow-hidden w-max"
+        >
+        <ng-container matColumnDef="addDate2">
+          <th mat-header-cell *matHeaderCellDef><span></span></th>
+        </ng-container>
+  
+          <ng-container matColumnDef="addDate">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              <span>{{ "OperationDate" | translate }}</span>
+            </th>
+            <td
+              mat-cell
+              *matCellDef="let element">
+              {{ element.addDate | date : "yyyy-MM-dd" }}
+            </td>
+            <td mat-footer-cell *matFooterCellDef class="bg-light"></td>
+          </ng-container>
+  
+          <ng-container matColumnDef="notes2">
+            <th mat-header-cell *matHeaderCellDef><span> {{ "Pre-period balance" | translate }}</span></th>
+          </ng-container>
+  
+          <ng-container matColumnDef="notes">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              <span>{{ "Statement" | translate }}</span>
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.notes }}
+            </td>
+  
+            <td mat-footer-cell *matFooterCellDef class="bg-light">
+              {{ "total" | translate }}
+            </td>
+          </ng-container>
+  
+          <ng-container matColumnDef="transactionDate2">
+            <th mat-header-cell *matHeaderCellDef><span></span></th>
+          </ng-container>
+          <ng-container matColumnDef="transactionDate">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              <span>{{ "BondDate" | translate }}</span>
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.transactionDate }}
+            </td>
+            <td mat-footer-cell *matFooterCellDef class="bg-light"></td>
+          </ng-container>
+  
+          <ng-container matColumnDef="voucherNo2">
+            <th mat-header-cell *matHeaderCellDef><span></span></th>
+          </ng-container>
+          <ng-container matColumnDef="voucherNo">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              <span>{{ "Bond number" | translate }}</span>
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.voucherNo }}
+            </td>
+            <td mat-footer-cell *matFooterCellDef class="bg-light"></td>
+          </ng-container>
+
+          <ng-container matColumnDef="subAccountIdtxt2">
+            <th mat-header-cell *matHeaderCellDef><span></span></th>
+          </ng-container>
+          <ng-container matColumnDef="subAccountIdtxt">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              <span>{{ "اسم الحساب" | translate }}</span>
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.subAccountIdtxt }}
+            </td>
+            <td mat-footer-cell *matFooterCellDef class="bg-light"></td>
+          </ng-container>
+  
+  
+          <ng-container matColumnDef="depit2">
+            <th mat-header-cell *matHeaderCellDef><span></span></th>
+          </ng-container>
+          <ng-container matColumnDef="depit">
+            <th
+              class="bg-green-100"
+              mat-header-cell
+              *matHeaderCellDef
+              mat-sort-header
+            >
+              <span class="text-green-900">{{ "debtor" | translate }}</span>
+            </th>
+            <td
+              class="bg-green-100 text-green-950 text-center"
+              mat-cell
+              *matCellDef="let element"
+            >
+              {{ element.depit }}
+            </td>
+            <td mat-footer-cell *matFooterCellDef class="bg-light">
+              {{totalexDepit}}
+            </td>
+          </ng-container>
+  
+  
+          <ng-container matColumnDef="credit2">
+            <th mat-header-cell *matHeaderCellDef><span></span></th>
+          </ng-container>
+          <ng-container matColumnDef="credit">
+            <th
+              class="bg-red-100"
+              mat-header-cell
+              *matHeaderCellDef
+              mat-sort-header
+            >
+              <span class="text-red-900">{{ "Creditor" | translate }}</span>
+            </th>
+            <td
+              class="bg-red-100 text-red-950 text-center"
+              mat-cell
+              *matCellDef="let element"
+            >
+            {{element.credit}}
+            </td>
+            <td mat-footer-cell *matFooterCellDef class="bg-light">
+              {{totalexCredit}}
+            </td>
+          </ng-container>
+  
+  
+          <ng-container matColumnDef="balance2">
+            <th mat-header-cell *matHeaderCellDef><span>{{BalanceBeforeObj.BalanceBefore}}</span></th>
+          </ng-container>
+          <ng-container matColumnDef="balance">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              <span>{{ "balance" | translate }}</span>
+            </th>
+            <td mat-cell *matCellDef="let element;let i = index">
+              {{ CurrentBalanceNew(i) }}
+            </td>
+            <td mat-footer-cell *matFooterCellDef class="bg-light">
+              {{totaltxt}}
+            </td>
+          </ng-container>
+  
+  
+          <ng-container matColumnDef="typeName2">
+            <th mat-header-cell *matHeaderCellDef><span></span></th>
+          </ng-container>
+          <ng-container matColumnDef="typeName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              <span>{{ "Type" | translate }}</span>
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.typeName }}
+            </td>
+            <td mat-footer-cell *matFooterCellDef class="bg-light"></td>
+          </ng-container>
+  
+  
+  
+          <tr mat-header-row *matHeaderRowDef="projectDisplayedColumns"></tr>
+          <tr [ngClass]="ChangeClassVis()" mat-header-row *matHeaderRowDef="displayedColumns2"></tr>
+  
+        <tr mat-row *matRowDef="let row; columns: projectDisplayedColumns" class="duration-300 hover:bg-slate-100"></tr>
+        <!-- Row shown when there is no matching data. -->
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell" colspan="7">
+            {{ "No result found for " }} "{{ input.value }}"
+          </td>
+        </tr>
+        <tr mat-footer-row *matFooterRowDef="projectDisplayedColumns"></tr>
+  
+        </table>
+      </div>
+      <mat-paginator [pageSizeOptions]="[10, 25,projectsDataSource.data.length]"> </mat-paginator>
+  
+      <div class="row">
+        <div class="col-md-4 Balance">
+          <div class="row">
+            <div class="col-md-6 name">
+              <img
+                src="../../../../../assets/VoucherValue.svg"
+                width="100"
+                height="100"
+                alt=""
+              />
+              <br />
+              <label for="" class="labelStyle">
+                {{ "balance" | translate }}
+              </label>
+            </div>
+            <div class="col-md-6 valueDiv" id="voucherValue">
+              <label for="" class="labelStyle d-md-inline d-none" id="balanceVal">
+                {{ AllBalance   | number:'1.2-2' }}
+              </label>
+              <br />
+              <img
+                src="../../../../../assets/VoucherValueHide.svg"
+                width="100"
+                height="100"
+                alt=""
+              />
+            </div>
+          </div>
+        </div>
+  
+        <div class="col-md-4 BeforeDate">
+          <div class="row">
+            <div class="col-md-6 name">
+              <img
+                src="../../../../../assets/VoucherValue.svg"
+                width="100"
+                height="100"
+                alt=""
+              />
+              <br />
+              <label for="" class="labelStyle">
+                {{ "balanceBefore" | translate }}
+              </label>
+            </div>
+            <div class="col-md-6 valueDiv" id="taxAmount">
+              <label
+                for=""
+                class="labelStyle d-md-inline d-none"
+                id="BbalanceVal"
+              >
+              <ng-container  *ngIf="BalanceBeforeObj.Show == true ">
+                {{BalanceBeforeObj.BalanceBefore   | number:'1.2-2' }}
+              </ng-container>
+              </label>
+              <br />
+              <img
+                src="../../../../../assets/noun_Discount.svg"
+                width="100"
+                height="100"
+                alt=""
+              />
+            </div>
+          </div>
+        </div>
+  
+        <div class="col-md-4 IncludeDate">
+          <div class="row">
+            <div class="col-md-6 name">
+              <img
+                src="../../../../../assets/VoucherValue.svg"
+                width="100"
+                height="100"
+                alt=""
+              />
+              <br />
+              <label for="" class="labelStyle">
+                {{ "balancePeriod" | translate }}
+              </label>
+            </div>
+            <div class="col-md-6 valueDiv" id="taxAmount">
+              <label
+                for=""
+                class="labelStyle d-md-inline d-none"
+                id="IbalanceVal"
+              >
+              <ng-container  *ngIf="BalanceBeforeObj.Show == true ">
+              {{ CurrentBalance  | number:'1.2-2' }}
+            </ng-container>
+  
+              </label>
+              <br />
+              <img
+                src="../../../../../assets/noun_Discount.svg"
+                width="100"
+                height="100"
+                alt=""
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

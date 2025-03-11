@@ -26,6 +26,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CategoriesComponent } from './components/categories/categories.component';
 import { ContractsComponent } from './components/contracts/contracts.component';
 import { RevoucherComponent } from './components/revoucher/revoucher.component';
+import { AccountstatementComponent } from './components/accountstatement/accountstatement.component';
 
 @NgModule({
   declarations: [
@@ -33,6 +34,7 @@ import { RevoucherComponent } from './components/revoucher/revoucher.component';
     CategoriesComponent,
     ContractsComponent,
     RevoucherComponent,
+    AccountstatementComponent,
   ],
   imports: [
     CommonModule,

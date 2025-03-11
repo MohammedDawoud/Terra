@@ -218,6 +218,8 @@ export class AddSearchComponent implements OnInit {
             d.address?.trim().toLowerCase().indexOf(val) !== -1) ||
           (d.mainPhoneNo &&
             d.mainPhoneNo?.trim().toLowerCase().indexOf(val) !== -1) ||
+            (d.subMainPhoneNo &&
+              d.subMainPhoneNo?.trim().toLowerCase().indexOf(val) !== -1) ||
             (d.socialMediaName &&
               d.socialMediaName?.trim().toLowerCase().indexOf(val) !== -1) ||
           (d.paytypeName &&
@@ -514,11 +516,11 @@ export class AddSearchComponent implements OnInit {
       this.ValidateObjMsg = { status: false, msg: 'ادخل تليفون العميل  الرئيسي' };
       return this.ValidateObjMsg;
     }
-    else if(this.modalDetails.mainPhoneNo.length<11)
-    {
-      this.ValidateObjMsg = { status: false, msg: 'لا يمكنك الحفظ أقل من 11 رقم' };
-      return this.ValidateObjMsg;
-    }
+    // else if(this.modalDetails.mainPhoneNo.length<11)
+    // {
+    //   this.ValidateObjMsg = { status: false, msg: 'لا يمكنك الحفظ أقل من 11 رقم' };
+    //   return this.ValidateObjMsg;
+    // }
     else if ((this.modalDetails.address == null ||this.modalDetails.address == '')
     ) {
       this.ValidateObjMsg = { status: false, msg: 'ادخل العنوان' };

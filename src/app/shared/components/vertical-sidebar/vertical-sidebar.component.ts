@@ -282,6 +282,25 @@ export class VerticalSidebarComponent implements OnInit {
             title:"5711221",
             show: this.userG?.pagesList.includes(5711221),
           },
+          {
+            name: { ar: 'تقارير  الحسابات', en: 'Project Reports' },
+            link: null,
+            type: 'multiple',
+            icon: '/assets/sidebar-icons/report-data-4.png',
+            show: this.userG?.pagesList.includes(9212110),
+            children: [
+              {
+                name: { ar: 'كشف حساب', en: 'Account Statement' },
+                link: '/accounts/Account_Statement',
+                type: 'single',
+                icon:
+                  this.lang == 'ar'
+                    ? '/assets/sidebar-icons/Group 40278.png'
+                    : '/assets/sidebar-icons/Group 40280.png',
+                show: this.userG?.pagesList.includes(9212111),
+              },
+            ],
+          },
         ],
       },
       {
