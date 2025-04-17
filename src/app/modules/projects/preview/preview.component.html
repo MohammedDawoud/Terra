@@ -508,7 +508,7 @@
                 required
                 class="w-full p-0 form-control {{modalDetails.customerId == null ? 'errorInput': ''}}"
                 [clearable]="true"
-                [disabled]="modalDetails.type=='PreviewView'"
+                [disabled]="modalDetails.type=='PreviewView' || TransbarcodeActive"
                 name="customerId"
                 (change)="CustomerChange(modalDetails.customerId)"
                 placeholder=" {{ 'كود العميل' | translate }}"
@@ -529,7 +529,7 @@
                 style="min-width: max-content"
                 id="customerId"
                 #customerId="ngModel"
-                [disabled]="modalDetails.type=='PreviewView'"
+                [disabled]="modalDetails.type=='PreviewView' || TransbarcodeActive"
                 class="w-full p-0 form-control {{modalDetails.customerId == null ? 'errorInput': ''}}"
                 [clearable]="true"
                 name="customerId"
@@ -1045,13 +1045,23 @@
   <!-- confirm addPreviewMessage -->
   <ng-template #addPreviewMessage let-modal>
     <div class="modal-body text-center">
-      <p
+      <div class="row">
+        <p class="col-md-11"
         [translate]="'name'"
         [translateParams]="{
           ar: 'هل تريد اضافة معاينة بباركود عمليات قديم ؟',
           en: 'Do you want to add a preview with an old transaction barcode?'
         }"
       ></p>
+      <button
+      type="button"
+      style="color: #080808;"
+      class="text-2xl m-0 col-md-1"
+      (click)="modal.dismiss();">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+      </div>
+
       <div class="flex gap-2 justify-center">
         <button
           type="button"

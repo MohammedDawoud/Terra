@@ -611,6 +611,7 @@ dataSearch: any = {
     ListName:[],
     ListCode:[],
     ListPhone:[],
+    ListPhone2:[],
     ListCity:[],
     customerId:null,
     cityId:null,
@@ -622,6 +623,7 @@ dataSearch: any = {
     this.FillCustomerListName(dataT);
     this.FillCustomerListCode(dataT);
     this.FillCustomerListPhone(dataT);
+    this.FillCustomerListPhone2(dataT);
     this.FillCustomerListCity(dataT);
   }
 
@@ -648,6 +650,16 @@ dataSearch: any = {
     const key = 'id';
     const arrayUniqueByKey = [...new Map(ListLoad.map((item: { [x: string]: any; }) => [item[key], item])).values()];
     this.dataSearch.filter.ListPhone=arrayUniqueByKey;
+  }
+  FillCustomerListPhone2(dataT:any){
+    const ListLoad = dataT.map((item: { customerId: any; subMainPhoneNo: any; }) => {
+      const container:any = {}; container.id = item.customerId; container.name = item.subMainPhoneNo; return container;
+    })
+    const key = 'id';
+    const arrayUniqueByKey = [...new Map(ListLoad.map((item: { [x: string]: any; }) => [item[key], item])).values()];
+    this.dataSearch.filter.ListPhone2=arrayUniqueByKey;
+    this.dataSearch.filter.ListPhone2 = this.dataSearch.filter.ListPhone2.filter((d: { name: any }) => (d.name !=null && d.name!=""));
+
   }
   FillCustomerListCity(dataT:any){
     const ListLoad = dataT.map((item: { cityId: any; cityName: any; }) => {

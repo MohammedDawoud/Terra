@@ -97,6 +97,22 @@
         </ng-select>
       </div>
       <div class="max-w-xs">
+        <label class="col-form-label"> {{ "رقم تليفون العميل الفرعي" | translate }}</label>
+  
+        <ng-select
+          #CustomerName
+          [items]="dataSearch.filter.ListPhone2"
+          bindLabel="name"
+          bindValue="id"
+          [clearable]="true"
+          class="w-full p-0"
+          [(ngModel)]="dataSearch.filter.customerId"
+          placeholder="{{ 'Chose' | translate }}"
+          (change)="RefreshData()"
+        >
+        </ng-select>
+      </div>
+      <div class="max-w-xs">
         <label class="col-form-label"> {{ "المنطقة" | translate }}</label>
   
         <ng-select
