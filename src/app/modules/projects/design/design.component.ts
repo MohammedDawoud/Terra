@@ -402,6 +402,8 @@ export class DesignComponent implements OnInit {
 
   InvoiceModelPublic: any;
   ConvertToContract:boolean=false;
+  modalDetailsPublic: any = {};
+
   open(content: any, data?: any, type?: any, idRow?: any, model?: any) {
     this.ConvertToContract=false;
     this.publicidRow = 0;
@@ -417,6 +419,9 @@ export class DesignComponent implements OnInit {
     }
     if(type === 'ShowDesignFiles')
     {
+      if (data) {
+        this.modalDetailsPublic = data;
+      }
       this.GetAllDesignFiles(this.modalDetails.designId,this.modalDetails.meetingId,this.modalDetails.previewId);
     }
     this.ngbModalService
@@ -922,7 +927,7 @@ export class DesignComponent implements OnInit {
       this.files.DeleteFiles(this. DesignFileRowSelected.fileId).subscribe((result) => {
           if (result.statusCode == 200) {
             this.toast.success(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
-            this.GetAllDesignFiles(this.DesignFileRowSelected.designId,this.DesignFileRowSelected.meetingId,this.DesignFileRowSelected.previewId);
+            this.GetAllDesignFiles(this.modalDetailsPublic.designId,this.modalDetailsPublic.meetingId,this.modalDetailsPublic.previewId);
             this.modal?.hide();
           } else {
             this.toast.error(result.reasonPhrase, this.translate.instant('Message'));

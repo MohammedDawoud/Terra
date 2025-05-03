@@ -245,6 +245,8 @@ export class ContractsComponent implements OnInit {
       conDateTime: [null],
       deliveryDate: [null],
       delDateTime: [null],
+      deliveryDateFinal: [null],
+      delDateTimeFinal: [null],
       storageDate: [null],
       stoDateTime: [null],
       notes: [null],
@@ -274,6 +276,8 @@ export class ContractsComponent implements OnInit {
     this.FormGroup01.controls['conDateTime'].setValue(data.conDateTime);
     this.FormGroup01.controls['deliveryDate'].setValue(data.deliveryDate);
     this.FormGroup01.controls['delDateTime'].setValue(data.delDateTime);
+    this.FormGroup01.controls['deliveryDateFinal'].setValue(data.deliveryDateFinal);
+    this.FormGroup01.controls['delDateTimeFinal'].setValue(data.delDateTimeFinal);
     this.FormGroup01.controls['storageDate'].setValue(data.storageDate);
     this.FormGroup01.controls['stoDateTime'].setValue(data.stoDateTime);
     this.FormGroup01.controls['documentNo'].setValue(data.documentNo);
@@ -521,7 +525,16 @@ export class ContractsComponent implements OnInit {
     this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==this.selectedServiceRowContractNew)[0].unitId = element.unitId;
     this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==this.selectedServiceRowContractNew)[0].unitName = element.unitName;
     this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==this.selectedServiceRowContractNew)[0].qty = 1;
-    this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==this.selectedServiceRowContractNew)[0].amount = element.amount;
+   
+    debugger
+    if(this.CategoryPriceStatus)
+    {
+      this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==this.selectedServiceRowContractNew)[0].amount = element.amount;
+    }
+    else
+    {
+      this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==this.selectedServiceRowContractNew)[0].amount = null;
+    }  
     this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==this.selectedServiceRowContractNew)[0].accamount = element.amount;
 
     this.CalculateTotal_ContractNew();
@@ -629,6 +642,12 @@ export class ContractsComponent implements OnInit {
     }
     if (this.FormGroup01.controls['delDateTime'].value != null) {
       ContractObj.delDateTime = this._sharedService.formatAMPM(this.FormGroup01.controls['delDateTime'].value);
+    }
+    if (this.FormGroup01.controls['deliveryDateFinal'].value != null) {
+      ContractObj.deliveryDateFinal = this._sharedService.date_TO_String(this.FormGroup01.controls['deliveryDateFinal'].value);
+    }
+    if (this.FormGroup01.controls['delDateTimeFinal'].value != null) {
+      ContractObj.delDateTimeFinal = this._sharedService.formatAMPM(this.FormGroup01.controls['delDateTimeFinal'].value);
     }
     if (this.FormGroup01.controls['storageDate'].value != null) {
       if(this.modalDetails.storageDateStatus)
@@ -899,6 +918,11 @@ export class ContractsComponent implements OnInit {
           this.modalDetails.deliveryDate = this._sharedService.String_TO_date(this.modalDetails.deliveryDate);
           this.modalDetails.delDateTime = this.modalDetails.deliveryDate;
         }
+        if(this.modalDetails.deliveryDateFinal!=null)
+        {
+          this.modalDetails.deliveryDateFinal = this._sharedService.String_TO_date(this.modalDetails.deliveryDateFinal);
+          this.modalDetails.delDateTimeFinal = this.modalDetails.deliveryDateFinal;
+        }
         if(this.modalDetails.storageDate!=null)
         {
           this.modalDetails.storageDate = this._sharedService.String_TO_date(this.modalDetails.storageDate);
@@ -945,6 +969,7 @@ export class ContractsComponent implements OnInit {
   publicidRow: any;
 
   InvoiceModelPublic: any;
+  modalDetailsPublic: any = {};
 
   open(content: any, data?: any, type?: any, idRow?: any, model?: any) {
     this.publicidRow = 0;
@@ -977,7 +1002,10 @@ export class ContractsComponent implements OnInit {
     }
     if(type === 'ShowContractFiles')
     {
-      this.GetAllContractFiles(this.modalDetails.contreactId,this.modalDetails.designId,this.modalDetails.meetingId,this.modalDetails.previewId);
+      if (data) {
+        this.modalDetailsPublic = data;
+      }
+      this.GetAllContractFiles(this.modalDetails.contractId,this.modalDetails.designId,this.modalDetails.meetingId,this.modalDetails.previewId);
     }
     if (idRow != null) {
       this.selectedServiceRowContractNew = idRow;
@@ -1052,6 +1080,7 @@ export class ContractsComponent implements OnInit {
         address: this.dataSourceTemp[index].address,
         date: this.dataSourceTemp[index].date,
         deliveryDate: this.dataSourceTemp[index].deliveryDate,
+        deliveryDateFinal: this.dataSourceTemp[index].deliveryDateFinal,
         storageDate: this.dataSourceTemp[index].storageDate,
         addDate: this.dataSourceTemp[index].addDate,
         contractStatustxt: this.dataSourceTemp[index].contractStatustxt,
@@ -1228,298 +1257,304 @@ export class ContractsComponent implements OnInit {
     this.subscription?.unsubscribe();
   }
 
-      //--------------------------------UploadFiles---------------------------------------
-      //#region 
-    public uploadedFiles: Array<File> = [];
-    selectedFiles?: FileList;
-    currentFile?: File;
-    
-    progress = 0;
-    uploading=false;
-    disableButtonSave_File = false;
-    dataFile:any={
-      FileId:0,
-      FileName:null,
+  CategoryPriceStatus:any=true;
+  CategoryPriceStatusChange(){
+  }
+
+
+  //--------------------------------UploadFiles---------------------------------------
+    //#region 
+  public uploadedFiles: Array<File> = [];
+  selectedFiles?: FileList;
+  currentFile?: File;
+  
+  progress = 0;
+  uploading=false;
+  disableButtonSave_File = false;
+  dataFile:any={
+    FileId:0,
+    FileName:null,
+  }
+  resetprog(){
+    this.disableButtonSave_File = false;
+    this.progress = 0;
+    this.uploading=false;
+  }
+  
+    selectFile(event: any): void {
+      this.selectedFiles = event.target.files;
     }
-    resetprog(){
-      this.disableButtonSave_File = false;
+    SaveprojectFiles(type:any,dataFile:any,uploadtype:any) {
+    if(this.dataFile.FileName==null)
+    {
+      this.toast.error("من فضلك أكمل البيانات ", 'رسالة');
+      return;
+    }
+    if(this.control?.value.length>0){
+    }
+    debugger
+      var _Files: any = {};
+      _Files.fileId=0;
+      _Files.contractId=this.modalDetails.contractId;
+      _Files.fileName=this.dataFile.FileName;
+      _Files.transactionTypeId=40;
+      _Files.notes=null;
       this.progress = 0;
-      this.uploading=false;
+      this.disableButtonSave_File = true;
+      this.uploading=true;
+      setTimeout(() => {
+        this.resetprog();
+      }, 60000);
+  
+      if (this.control?.value.length>0) {
+        var obj=_Files;
+        this.files.UploadFiles(this.control?.value[0],obj).subscribe((result: any)=>{
+          if (result.type === HttpEventType.UploadProgress) {
+            this.progress = Math.round(100 * result.loaded / result.total);
+          }
+          debugger
+          if(result?.body?.statusCode==200){
+            this.control.removeFile(this.control?.value[0]);
+            this.toast.success(this.translate.instant(result?.body?.reasonPhrase),'رسالة');
+            this.getAllContracts();
+            this.ClearField();
+            this.resetprog();
+          }
+          else if(result?.body?.statusCode>200){
+            this.toast.error(this.translate.instant(result?.body?.reasonPhrase), 'رسالة');
+            this.resetprog();
+          }
+          else if(result?.type>=0)
+          {}
+          else{this.toast.error(this.translate.instant(result?.body?.reasonPhrase), 'رسالة');this.resetprog();}
+  
+        });
+      }
+      else{this.toast.error("من فضلك أختر ملف", 'رسالة');}
+  
+  
     }
-    
-      selectFile(event: any): void {
-        this.selectedFiles = event.target.files;
-      }
-      SaveprojectFiles(type:any,dataFile:any,uploadtype:any) {
-      if(this.dataFile.FileName==null)
-      {
-        this.toast.error("من فضلك أكمل البيانات ", 'رسالة');
-        return;
-      }
-      if(this.control?.value.length>0){
-      }
-        var _Files: any = {};
-        _Files.fileId=0;
-        _Files.contractId=this.modalDetails.contractId;
-        _Files.fileName=this.dataFile.FileName;
-        _Files.transactionTypeId=39;
-        _Files.notes=null;
-        this.progress = 0;
-        this.disableButtonSave_File = true;
-        this.uploading=true;
-        setTimeout(() => {
-          this.resetprog();
-        }, 60000);
-    
-        if (this.control?.value.length>0) {
-          var obj=_Files;
-          this.files.UploadFiles(this.control?.value[0],obj).subscribe((result: any)=>{
-            if (result.type === HttpEventType.UploadProgress) {
-              this.progress = Math.round(100 * result.loaded / result.total);
-            }
-            debugger
-            if(result?.body?.statusCode==200){
-              this.control.removeFile(this.control?.value[0]);
-              this.toast.success(this.translate.instant(result?.body?.reasonPhrase),'رسالة');
-              this.getAllContracts();
-              this.ClearField();
-              this.resetprog();
-            }
-            else if(result?.body?.statusCode>200){
-              this.toast.error(this.translate.instant(result?.body?.reasonPhrase), 'رسالة');
-              this.resetprog();
-            }
-            else if(result?.type>=0)
-            {}
-            else{this.toast.error(this.translate.instant(result?.body?.reasonPhrase), 'رسالة');this.resetprog();}
-    
-          });
+  ClearField(){
+    this.dataFile.FileId=0;
+    this.dataFile.FileName=null;
+    this.selectedFiles = undefined;
+    this.uploadedFiles=[];
+  }
+  
+  clickfile(evenet:any)
+  {
+    console.log(evenet);
+  }
+  focusfile(evenet:any)
+  {
+    console.log(evenet);
+  }
+  blurfile(evenet:any)
+  {
+    console.log(evenet);
+  }
+  
+  downloadFile(data: any) {
+    try
+    {
+      debugger
+      //var link=environment.PhotoURL+"/Uploads/Users/img1.jpg";
+      var link=environment.PhotoURL+data.fileUrl;
+      console.log(link);
+      window.open(link, '_blank');
+    }
+    catch (error)
+    {
+      this.toast.error("تأكد من الملف",this.translate.instant("Message"));
+    }
+  }
+
+  ContractFileRowSelected: any;
+  
+  getContractFileRow(row: any) {
+    this. ContractFileRowSelected = row;
+  }
+  confirmDeleteContractFile(): void {
+    this.files.DeleteFiles(this. ContractFileRowSelected.fileId).subscribe((result) => {
+        if (result.statusCode == 200) {
+          this.toast.success(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
+          debugger
+          this.GetAllContractFiles(this.modalDetailsPublic.contractId,this.modalDetailsPublic.designId,this.modalDetailsPublic.meetingId,this.modalDetailsPublic.previewId);
+          this.modal?.hide();
+        } else {
+          this.toast.error(result.reasonPhrase, this.translate.instant('Message'));
         }
-        else{this.toast.error("من فضلك أختر ملف", 'رسالة');}
-    
-    
-      }
-    ClearField(){
-      this.dataFile.FileId=0;
-      this.dataFile.FileName=null;
-      this.selectedFiles = undefined;
-      this.uploadedFiles=[];
+      });
+  }
+  
+  ContractFilesList: any=[];
+  
+  GetAllContractFiles(ContractId:any,DesignId:any,MeetingId:any,PreviewId:any) {
+    this.ContractFilesList=[];
+    this.files.GetAllContractFiles(ContractId).subscribe((data: any) => {
+      this.ContractFilesList = data;
+    });
+    this.GetAllDesignFiles(DesignId);
+    this.GetAllMeetingFiles(MeetingId);
+    this.GetAllPreviewFiles(PreviewId);
+  }
+  DesignFilesList: any=[];
+
+  GetAllDesignFiles(DesignId:any) {
+    this.DesignFilesList=[];
+    this.files.GetAllDesignFiles(DesignId).subscribe((data: any) => {
+      this.DesignFilesList = data;
+    });
+  }
+  MeetingFilesList: any=[];
+
+  GetAllMeetingFiles(MeetingId:any) {
+    this.MeetingFilesList=[];
+    this.files.GetAllMeetingFiles(MeetingId).subscribe((data: any) => {
+      this.MeetingFilesList = data;
+    });
+  }
+  PreviewFilesList: any=[];
+
+  GetAllPreviewFiles(PreviewId:any) {
+    this.PreviewFilesList=[];
+    this.files.GetAllPreviewFiles(PreviewId).subscribe((data: any) => {
+      this.PreviewFilesList = data;
+    });
+  }
+  
+  
+//#endregion
+  //-------------------------------EndUploadFiles-------------------------------------
+
+  //------------------------------Search--------------------------------------------------------
+  //#region 
+
+  dataSearch: any = {
+    filter: {
+      enable: false,
+      date: null,
+      isChecked: false,
+      ListName:[],
+      ListCode:[],
+      ListPhone:[],
+      ListEmployee:[],
+      ListContractStatus:[],
+      ListContractValue:[],
+      customerId:null,
+      contractChairperson:null,
+      documentStatus:null,
+      showFilters:false
+    },
+  };
+
+    FillSerachLists(dataT:any){
+      this.FillCustomerListName(dataT);
+      this.FillCustomerListCode(dataT);
+      this.FillCustomerListPhone(dataT);
+      this.FillCustomerListEmployee(dataT);
+      this.FillListContractStatus();
     }
-    
-    clickfile(evenet:any)
-    {
-      console.log(evenet);
+
+    FillCustomerListName(dataT:any){
+      const ListLoad = dataT.map((item: { customerId: any; customerName: any; }) => {
+        const container:any = {}; container.id = item.customerId; container.name = item.customerName; return container;
+      })
+      const key = 'id';
+      const arrayUniqueByKey = [...new Map(ListLoad.map((item: { [x: string]: any; }) => [item[key], item])).values()];
+      this.dataSearch.filter.ListName=arrayUniqueByKey;
     }
-    focusfile(evenet:any)
-    {
-      console.log(evenet);
+    FillCustomerListCode(dataT:any){
+      const ListLoad = dataT.map((item: { customerId: any; customerCode: any; }) => {
+        const container:any = {}; container.id = item.customerId; container.name = item.customerCode; return container;
+      })
+      const key = 'id';
+      const arrayUniqueByKey = [...new Map(ListLoad.map((item: { [x: string]: any; }) => [item[key], item])).values()];
+      this.dataSearch.filter.ListCode=arrayUniqueByKey;
     }
-    blurfile(evenet:any)
-    {
-      console.log(evenet);
+    FillCustomerListPhone(dataT:any){
+      const ListLoad = dataT.map((item: { customerId: any; mainPhoneNo: any; }) => {
+        const container:any = {}; container.id = item.customerId; container.name = item.mainPhoneNo; return container;
+      })
+      const key = 'id';
+      const arrayUniqueByKey = [...new Map(ListLoad.map((item: { [x: string]: any; }) => [item[key], item])).values()];
+      this.dataSearch.filter.ListPhone=arrayUniqueByKey;
     }
-    
-    downloadFile(data: any) {
-      try
+    FillCustomerListEmployee(dataT:any){
+      const ListLoad = dataT.map((item: { contractChairperson: any; chairpersonName: any; }) => {
+        const container:any = {}; container.id = item.contractChairperson; container.name = item.chairpersonName; console.log("container",container); return container;   
+      })
+      const key = 'id';
+      const arrayUniqueByKey = [...new Map(ListLoad.map((item: { [x: string]: any; }) => [item[key], item])).values()];
+      this.dataSearch.filter.ListEmployee=arrayUniqueByKey;
+      this.dataSearch.filter.ListEmployee = this.dataSearch.filter.ListEmployee.filter((d: { id: any }) => (d.id !=null && d.id!=0));
+    }
+
+    FillListContractStatus(){
+      this.dataSearch.filter.ListContractStatus= [
+        { id: 1, name: 'مبدئي' },
+        { id: 2, name: 'مراجع' },
+        { id: 3, name: 'نهائي' },
+      ];
+    }
+
+    RefreshDataCheck(from: any, to: any){
+      this.dataSource.data=this.dataSourceTemp;
+      if(!(from==null || from=="" || to==null || to==""))
       {
         debugger
-        //var link=environment.PhotoURL+"/Uploads/Users/img1.jpg";
-        var link=environment.PhotoURL+data.fileUrl;
-        console.log(link);
-        window.open(link, '_blank');
+        this.dataSource.data = this.dataSource.data.filter((item: any) => {
+          var AccDate=new Date(item.date);
+          var AccFrom=new Date(from);
+          var AccTo=new Date(to);
+          return AccDate.getTime() >= AccFrom.getTime() &&
+          AccDate.getTime() <= AccTo.getTime();
+      });
       }
-      catch (error)
+      if(this.dataSearch.filter.customerId!=null && this.dataSearch.filter.customerId!="")
       {
-        this.toast.error("تأكد من الملف",this.translate.instant("Message"));
+        this.dataSource.data = this.dataSource.data.filter((d: { customerId: any }) => d.customerId == this.dataSearch.filter.customerId);
+      }
+      // if(this.dataSearch.filter.contractChairperson!=null && this.dataSearch.filter.contractChairperson!="")
+      // {
+      //   this.dataSource.data = this.dataSource.data.filter((d: { contractChairperson: any }) => d.contractChairperson == this.dataSearch.filter.contractChairperson);
+      // } 
+      if(this.dataSearch.filter.documentStatus!=null && this.dataSearch.filter.documentStatus!="")
+      {
+        this.dataSource.data = this.dataSource.data.filter((d: { documentStatus: any }) => d.documentStatus == this.dataSearch.filter.documentStatus);
+      } 
+    
+    }
+
+    ClearDate(){
+      if(this.dataSearch.filter.enable==false){ 
+        this.dataSearch.filter.date=null;   
+        this.RefreshDataCheck(null,null);
       }
     }
-  
-    ContractFileRowSelected: any;
-    
-    getContractFileRow(row: any) {
+    CheckDate(event: any) {
       debugger
-      this. ContractFileRowSelected = row;
+      if (event != null) {
+        var from = this._sharedService.date_TO_String(event[0]);
+        var to = this._sharedService.date_TO_String(event[1]);
+        this.RefreshDataCheck(from, to);
+      } else {    
+        this.RefreshDataCheck(null,null);
+      }
     }
-    confirmDeleteContractFile(): void {
-      this.files.DeleteFiles(this. ContractFileRowSelected.fileId).subscribe((result) => {
-          if (result.statusCode == 200) {
-            this.toast.success(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
-            this.GetAllContractFiles(this.ContractFileRowSelected.contractId,this.ContractFileRowSelected.designId,this.ContractFileRowSelected.meetingId,this.ContractFileRowSelected.previewId);
-            this.modal?.hide();
-          } else {
-            this.toast.error(result.reasonPhrase, this.translate.instant('Message'));
-          }
-        });
-    }
-    
-    ContractFilesList: any=[];
-    
-    GetAllContractFiles(ContractId:any,DesignId:any,MeetingId:any,PreviewId:any) {
-      // this.ContractFilesList=[];
-      // this.files.GetAllContractFiles(ContractId).subscribe((data: any) => {
-      //   this.ContractFilesList = data;
-      // });
-      this.GetAllDesignFiles(DesignId);
-      this.GetAllMeetingFiles(MeetingId);
-      this.GetAllPreviewFiles(PreviewId);
-    }
-    DesignFilesList: any=[];
-  
-    GetAllDesignFiles(DesignId:any) {
-      this.DesignFilesList=[];
-      this.files.GetAllDesignFiles(DesignId).subscribe((data: any) => {
-        this.DesignFilesList = data;
-      });
-    }
-    MeetingFilesList: any=[];
-  
-    GetAllMeetingFiles(MeetingId:any) {
-      this.MeetingFilesList=[];
-      this.files.GetAllMeetingFiles(MeetingId).subscribe((data: any) => {
-        this.MeetingFilesList = data;
-      });
-    }
-    PreviewFilesList: any=[];
-
-    GetAllPreviewFiles(PreviewId:any) {
-      this.PreviewFilesList=[];
-      this.files.GetAllPreviewFiles(PreviewId).subscribe((data: any) => {
-        this.PreviewFilesList = data;
-      });
-    }
-    
-    
-    //#endregion
-      //-------------------------------EndUploadFiles-------------------------------------
-
-      //------------------------------Search--------------------------------------------------------
-//#region 
-
-dataSearch: any = {
-  filter: {
-    enable: false,
-    date: null,
-    isChecked: false,
-    ListName:[],
-    ListCode:[],
-    ListPhone:[],
-    ListEmployee:[],
-    ListContractStatus:[],
-    ListContractValue:[],
-    customerId:null,
-    contractChairperson:null,
-    documentStatus:null,
-    showFilters:false
-  },
-};
-
-  FillSerachLists(dataT:any){
-    this.FillCustomerListName(dataT);
-    this.FillCustomerListCode(dataT);
-    this.FillCustomerListPhone(dataT);
-    this.FillCustomerListEmployee(dataT);
-    this.FillListContractStatus();
-  }
-
-  FillCustomerListName(dataT:any){
-    const ListLoad = dataT.map((item: { customerId: any; customerName: any; }) => {
-      const container:any = {}; container.id = item.customerId; container.name = item.customerName; return container;
-    })
-    const key = 'id';
-    const arrayUniqueByKey = [...new Map(ListLoad.map((item: { [x: string]: any; }) => [item[key], item])).values()];
-    this.dataSearch.filter.ListName=arrayUniqueByKey;
-  }
-  FillCustomerListCode(dataT:any){
-    const ListLoad = dataT.map((item: { customerId: any; customerCode: any; }) => {
-      const container:any = {}; container.id = item.customerId; container.name = item.customerCode; return container;
-    })
-    const key = 'id';
-    const arrayUniqueByKey = [...new Map(ListLoad.map((item: { [x: string]: any; }) => [item[key], item])).values()];
-    this.dataSearch.filter.ListCode=arrayUniqueByKey;
-  }
-  FillCustomerListPhone(dataT:any){
-    const ListLoad = dataT.map((item: { customerId: any; mainPhoneNo: any; }) => {
-      const container:any = {}; container.id = item.customerId; container.name = item.mainPhoneNo; return container;
-    })
-    const key = 'id';
-    const arrayUniqueByKey = [...new Map(ListLoad.map((item: { [x: string]: any; }) => [item[key], item])).values()];
-    this.dataSearch.filter.ListPhone=arrayUniqueByKey;
-  }
-  FillCustomerListEmployee(dataT:any){
-    const ListLoad = dataT.map((item: { contractChairperson: any; chairpersonName: any; }) => {
-      const container:any = {}; container.id = item.contractChairperson; container.name = item.chairpersonName; console.log("container",container); return container;   
-    })
-    const key = 'id';
-    const arrayUniqueByKey = [...new Map(ListLoad.map((item: { [x: string]: any; }) => [item[key], item])).values()];
-    this.dataSearch.filter.ListEmployee=arrayUniqueByKey;
-    this.dataSearch.filter.ListEmployee = this.dataSearch.filter.ListEmployee.filter((d: { id: any }) => (d.id !=null && d.id!=0));
-  }
-
-  FillListContractStatus(){
-    this.dataSearch.filter.ListContractStatus= [
-      { id: 1, name: 'مبدئي' },
-      { id: 2, name: 'مراجع' },
-      { id: 3, name: 'نهائي' },
-    ];
-  }
-
-  RefreshDataCheck(from: any, to: any){
-    this.dataSource.data=this.dataSourceTemp;
-    if(!(from==null || from=="" || to==null || to==""))
-    {
+    RefreshData(){
       debugger
-      this.dataSource.data = this.dataSource.data.filter((item: any) => {
-        var AccDate=new Date(item.date);
-        var AccFrom=new Date(from);
-        var AccTo=new Date(to);
-        return AccDate.getTime() >= AccFrom.getTime() &&
-        AccDate.getTime() <= AccTo.getTime();
-    });
-    }
-    if(this.dataSearch.filter.customerId!=null && this.dataSearch.filter.customerId!="")
-    {
-      this.dataSource.data = this.dataSource.data.filter((d: { customerId: any }) => d.customerId == this.dataSearch.filter.customerId);
-    }
-    // if(this.dataSearch.filter.contractChairperson!=null && this.dataSearch.filter.contractChairperson!="")
-    // {
-    //   this.dataSource.data = this.dataSource.data.filter((d: { contractChairperson: any }) => d.contractChairperson == this.dataSearch.filter.contractChairperson);
-    // } 
-    if(this.dataSearch.filter.documentStatus!=null && this.dataSearch.filter.documentStatus!="")
-    {
-      this.dataSource.data = this.dataSource.data.filter((d: { documentStatus: any }) => d.documentStatus == this.dataSearch.filter.documentStatus);
-    } 
-   
-  }
-
-  ClearDate(){
-    if(this.dataSearch.filter.enable==false){ 
-      this.dataSearch.filter.date=null;   
+      if( this.dataSearch.filter.date==null)
+      {
       this.RefreshDataCheck(null,null);
+      }
+      else
+      {
+      this.RefreshDataCheck(this.dataSearch.filter.date[0],this.dataSearch.filter.date[1]);
+      }
     }
-  }
-  CheckDate(event: any) {
-    debugger
-    if (event != null) {
-      var from = this._sharedService.date_TO_String(event[0]);
-      var to = this._sharedService.date_TO_String(event[1]);
-      this.RefreshDataCheck(from, to);
-    } else {    
-      this.RefreshDataCheck(null,null);
-    }
-  }
-  RefreshData(){
-    debugger
-    if( this.dataSearch.filter.date==null)
-    {
-    this.RefreshDataCheck(null,null);
-    }
-    else
-    {
-    this.RefreshDataCheck(this.dataSearch.filter.date[0],this.dataSearch.filter.date[1]);
-    }
-  }
-  //#endregion 
-//------------------------------Search--------------------------------------------------------
+    //#endregion 
+  //------------------------------Search--------------------------------------------------------
 
 
 //-------------------------------------------Print------------------------------------------

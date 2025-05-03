@@ -307,12 +307,11 @@
                   (click)="openModal(dataModal, element, 'editContract')">
                   <i class="fa-regular fa-pen-to-square"></i>
                 </button>
-  
-                <!-- <button
+                <button
                 class="min-w-max p-2 bg-green-100 hover:bg-green-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
                 (click)="open(uploadFileModal, element, 'uploadFile')" >
                 <i class="fa fa-upload"></i>
-                </button> -->
+                </button>
                 <button 
                 class="min-w-max p-2 bg-blue-100 hover:bg-blue-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
                 (click)="open(ShowContractFilesModal, element, 'ShowContractFiles')" >
@@ -789,11 +788,11 @@
                           </div>
                         </div>
                       </div>
-                      <!-- <div class="form-group col-md-3">
-                      </div> -->
+                      <div class="form-group col-md-6">
+                      </div>
                       <div class="form-group col-md-3" style="padding-bottom: 20px;">
                         <label for="date" class="text-right col-form-label block">
-                          {{ "تاريخ التسليم" | translate }}
+                          {{ "تاريخ التسليم المبدئي" | translate }}
                         </label>
                         <input
                           placeholder="{{ 'Chose' | translate }}"
@@ -824,6 +823,44 @@
                               id="delDateTime"
                               name="delDateTime"
                               formControlName="delDateTime"
+                            ></timepicker>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="form-group col-md-3" style="padding-bottom: 20px;">
+                        <label for="date" class="text-right col-form-label block">
+                          {{ "تاريخ التسليم النهائي" | translate }}
+                        </label>
+                        <input
+                          placeholder="{{ 'Chose' | translate }}"
+                          type="text"
+                          class="form-control"
+                          bsDatepicker
+                          #dpr="bsDatepicker"
+                          autocomplete="off"
+                          [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
+                          id="deliveryDateFinal"
+                          name="deliveryDateFinal"
+                          formControlName="deliveryDateFinal"
+                        />
+                      </div>
+          
+                      <div class="col-md-3">
+                        <div class="form-group">
+                          <span style="padding-right: 28%; color: #cd2a2a">{{
+                            "minute" | translate
+                          }}</span>
+                          <span style="padding-right: 15%; color: #cd2a2a">{{
+                            "hour" | translate
+                          }}</span>
+                          <div class="form-group timeInput">
+                            <timepicker
+                              style="direction: ltr"
+                              autocomplete="off"
+                              id="delDateTimeFinal"
+                              name="delDateTimeFinal"
+                              formControlName="delDateTimeFinal"
                             ></timepicker>
                           </div>
                         </div>
@@ -939,7 +976,7 @@
                 <div class="step-content">
                 <div class="row mb-3">
 
-                    <h3 class="flex items-center justify-start fw-bold">
+                    <h3 class="flex items-center justify-start fw-bold col-md-2">
                     {{ "الأصناف" | translate }}
                     <button
                         type="button "
@@ -949,7 +986,15 @@
                         <i class="fa fa-plus"></i>
                     </button>
                     </h3>
-    
+                    <mat-slide-toggle
+                        color="primary"
+                        class="col-md-1"
+                        [(ngModel)]="CategoryPriceStatus"
+                        [ngModelOptions]="{ standalone: true }"
+                        (change)="CategoryPriceStatusChange()"
+                      >
+                        <span></span>
+                      </mat-slide-toggle>
                     <div class="editable shadow mb-4">
                     <table
                         class="table table-responsive table-striped table-bordered text-center"
@@ -1516,9 +1561,9 @@
       </button>
     </div>
     <div class="modal-body text-center">
-      <h3 style="display: none;text-align: right;color: red;font-weight: bold;text-decoration-line: underline;">ملفات العقد</h3>
+      <h3 style="text-align: right;color: red;font-weight: bold;text-decoration-line: underline;">ملفات العقد</h3>
   
-      <div style="display: none;" class="max-h-80 overflow-auto px-2">
+      <div class="max-h-80 overflow-auto px-2">
         <table class="table table-hover">
           <thead>
             <tr>
@@ -1861,6 +1906,7 @@
         <mat-label>{{ "search" | translate }}</mat-label>
         <input matInput (keyup)="applyFilterServiceList_ContractNew($event)" #input />
       </mat-form-field>
+
   
       <div class="table">
         <table
@@ -1886,9 +1932,13 @@
           </ng-container>
   
           <!-- price Column -->
-          <ng-container matColumnDef="amount">
+          <ng-container *ngIf="CategoryPriceStatus"  matColumnDef="amount">
             <th mat-header-cell *matHeaderCellDef>{{ "السعر" | translate }}</th>
-            <td mat-cell *matCellDef="let element">{{ element.amount }}</td>
+            <td  mat-cell *matCellDef="let element">{{ element.amount }}</td>
+          </ng-container>
+          <ng-container *ngIf="!CategoryPriceStatus"  matColumnDef="amount">
+            <th mat-header-cell *matHeaderCellDef>{{ "السعر" | translate }}</th>
+            <td mat-cell *matCellDef="let element">{{ 0 }}</td>
           </ng-container>
   
           <tr mat-header-row *matHeaderRowDef="servicesListdisplayedColumns"></tr>

@@ -37,6 +37,10 @@ export class filesservice {
     {
       formData.append('DesignId',String(_file.designId));
     }
+    if(!(_file.contractId==undefined || _file.contractId==null))
+    {
+      formData.append('ContractId',String(_file.contractId));
+    }
     formData.append('Notes',String(_file.notes));
 
     const req = new HttpRequest('POST', `${this.apiEndPoint}Files/UploadFiles`, formData, {

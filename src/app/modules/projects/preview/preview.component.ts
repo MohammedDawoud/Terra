@@ -506,6 +506,7 @@ export class PreviewComponent implements OnInit {
   publicidRow: any;
 
   InvoiceModelPublic: any;
+  modalDetailsPublic: any = {};
 
   open(content: any, data?: any, type?: any, idRow?: any, model?: any) {
     this.publicidRow = 0;
@@ -521,6 +522,9 @@ export class PreviewComponent implements OnInit {
     }
     if(type === 'ShowPreviewFiles')
     {
+      if (data) {
+        this.modalDetailsPublic = data;
+      }
       this.GetAllPreviewFiles(this.modalDetails.previewId);
     }
     this.ngbModalService
@@ -1107,7 +1111,7 @@ confirmDeletePreviewFile(): void {
   this.files.DeleteFiles(this.PreviewFileRowSelected.fileId).subscribe((result) => {
       if (result.statusCode == 200) {
         this.toast.success(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
-        this.GetAllPreviewFiles(this.PreviewFileRowSelected.previewId);
+        this.GetAllPreviewFiles(this.modalDetailsPublic.previewId);
         this.modal?.hide();
       } else {
         this.toast.error(result.reasonPhrase, this.translate.instant('Message'));

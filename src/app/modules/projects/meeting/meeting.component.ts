@@ -429,6 +429,7 @@ export class MeetingComponent implements OnInit {
   publicidRow: any;
 
   InvoiceModelPublic: any;
+  modalDetailsPublic: any = {};
 
   open(content: any, data?: any, type?: any, idRow?: any, model?: any) {
     this.publicidRow = 0;
@@ -443,9 +444,12 @@ export class MeetingComponent implements OnInit {
       this.publicidRow = data.idRow;
     }
     if(type === 'ShowMeetingFiles')
-      {
-        this.GetAllMeetingFiles(this.modalDetails.meetingId,this.modalDetails.previewId);
+    {
+      if (data) {
+        this.modalDetailsPublic = data;
       }
+      this.GetAllMeetingFiles(this.modalDetails.meetingId,this.modalDetails.previewId);
+    }
     this.ngbModalService
       .open(content, {
         ariaLabelledBy: 'modal-basic-title',
@@ -945,7 +949,7 @@ export class MeetingComponent implements OnInit {
     this.files.DeleteFiles(this.MeetingFileRowSelected.fileId).subscribe((result) => {
         if (result.statusCode == 200) {
           this.toast.success(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
-          this.GetAllMeetingFiles(this.MeetingFileRowSelected.meetingId,this.MeetingFileRowSelected.previewId);
+          this.GetAllMeetingFiles(this.modalDetailsPublic.meetingId,this.modalDetailsPublic.previewId);
           this.modal?.hide();
         } else {
           this.toast.error(result.reasonPhrase, this.translate.instant('Message'));

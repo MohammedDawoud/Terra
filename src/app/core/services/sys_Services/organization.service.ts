@@ -17,14 +17,11 @@ export class OrganizationService {
     );
   }
   SaveOrganizations(modal: any): Observable<any> {
-    // const headers = { 'content-type': 'application/json' }
-    // const body = JSON.stringify(modal);
-    return this.http.post(
-      this.apiEndPoint + 'Organizations/SaveOrganizations',
-      modal
-    );
+    return this.http.post(this.apiEndPoint + 'Organizations/SaveOrganizations',modal);
   }
-
+  SaveBranchPart(modal: any): Observable<any> {
+    return this.http.post(this.apiEndPoint + 'Branches/SaveBranchPart',modal);
+  }
   GetAllBranches() {
     return this.http.get<any>(this.apiEndPoint + 'Branches/GetAllBranches');
   }
@@ -90,6 +87,11 @@ export class OrganizationService {
   }
   DeleteJob(JobId: number): Observable<any> {
     return this.http.post(`${this.apiEndPoint}Organizations/DeleteJob?JobId=` + JobId, {});
+  }
+
+
+  FillAllAccountsSelectAll(){
+    return this.http.get<any>(this.apiEndPoint + 'Account/FillAllAccountsSelectAll');
   }
 
 

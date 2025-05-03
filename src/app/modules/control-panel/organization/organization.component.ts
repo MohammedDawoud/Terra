@@ -41,7 +41,6 @@ export class OrganizationComponent implements OnInit {
 
   mainInfoForm: FormGroup;
   BranchInfoForm: FormGroup;
-  branchesAccForm: FormGroup;
   staffTimeForm: FormGroup;
   vacationForm: FormGroup;
   staffTimeDetailsForm: FormGroup;
@@ -115,25 +114,13 @@ export class OrganizationComponent implements OnInit {
     ]
   );
 
-  public readonly controlNewsModaImage = new FileUploadControl(
-    {
-      listVisible: true,
-      // accept: ['image/*'],
-      discardInvalid: true,
-      multiple: false,
-    },
-    [
-      // FileUploadValidators.accept(['image/*']),
-      FileUploadValidators.filesLimit(1),
-    ]
-  );
-
   private subscription?: Subscription;
 
   displayedColumns: string[] = [
     'code',
     'nameAr',
     'nameEn',
+    'operations',
   ];
 
   newsDisplayedColumns: string[] = ['nameAr', 'nameEn', 'operations'];
@@ -182,9 +169,9 @@ export class OrganizationComponent implements OnInit {
         this.getImage(values[0]);
       }
     );
-    this.subscription = this.controlNewsModaImage.valueChanges.subscribe(
+    this.subscription = this.controlImgUrlfile.valueChanges.subscribe(
       (values: Array<File>) => {
-        this.NewsModaImage(values[0]);
+        this.controlImgUrlfilegetImage(values[0]);
       }
     );
 
@@ -222,10 +209,11 @@ export class OrganizationComponent implements OnInit {
   ngOnInit(): void {
 
     this.intialModel();
+    this.intialModelBranchInfoForm();
     this.GetOrganizationData();
-    this.intialNewsModalForm();
     this.FillCitySelect();
     this.GetAllBranches();
+    this.FillAllAccountsSelectAll();
     this.branches = [
     ];
 
@@ -255,21 +243,14 @@ export class OrganizationComponent implements OnInit {
         }
       );
 
+    if (data && type == 'editBranch') {
+      this.setBranchData(data);
+      this.editeBransh = true;
+      this.branchname = data?.branchName;
+    }
+
     if (data && type == 'citydeleted') {
       this.cityiddelete = data.cityId;
-    }
-    if (type == 'addNews') {
-      this.intialNewsModalForm();
-      this.NewsBodyArError = false;
-      this.NewsBodyEnError = false;
-      this.NewsTitleArError = false;
-      this.NewsTitleEnError = false;
-      this.uploadedFileImgNewsModal.next('');
-      this.controlNewsModaImage.clear();
-      this.GetAllNews();
-    }
-    if (type == 'deleteNewsModal') {
-      this.deleteNewsModalId = data.newsId;
     }
   }
 
@@ -329,21 +310,6 @@ export class OrganizationComponent implements OnInit {
       this.imageFileOutputreq = false;
     }
   }
-  NewsModalimageFileOutput: any = null;
-  private NewsModaImage(file: File): void {
-    if (FileReader && file) {
-      const fr = new FileReader();
-      fr.onload = (e: any) => {
-        this.NewsModalForm.controls['UploadedImage'].setValue(null);
-        this.uploadedFileImgNewsModal.next(e.target.result);
-      };
-      this.NewsModalimageFileOutput = file;
-      fr.readAsDataURL(file);
-    } else {
-      this.NewsModalimageFileOutput = null;
-      this.uploadedFileImgNewsModal.next('');
-    }
-  }
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -355,6 +321,8 @@ export class OrganizationComponent implements OnInit {
       organizationId: [0, [Validators.required]],
       nameAr: [null, [Validators.required]],
       nameEn: [null, [Validators.required]],
+      code: [null, []],
+      previewPath: [null, []],
       mobile: [null, [Validators.required]],
       fax: [null, [Validators.required]],
       cityId: [null, [Validators.required]],
@@ -439,116 +407,6 @@ export class OrganizationComponent implements OnInit {
     });
   }
 
-  AllNewsList: any;
-  GetAllNews() {
-    this.organizationService.GetAllNews().subscribe((result: any) => {
-      this.AllNewsList = result.result;
-    });
-  }
-
-  intialNewsModalForm() {
-    this.NewsModalForm = this.formBuilder.group({
-      UploadedImage: [null, []],
-      NewsId: ['0', []],
-      NewsTitleAr: [null, [Validators.required]],
-      NewsTitleEn: [null, [Validators.required]],
-      NewsBodyAr: [null, [Validators.required]],
-      NewsBodyEn: [null, [Validators.required]],
-    });
-  }
-  NewsBodyArError: any = false;
-  NewsBodyEnError: any = false;
-  NewsTitleArError: any = false;
-  NewsTitleEnError: any = false;
-  editNewsModal(item: any) {
-    this.NewsModalForm.controls['UploadedImage'].setValue(
-      item?.newsImg == '' ? null : item?.newsImg
-    );
-    this.NewsModalForm.controls['NewsId'].setValue(item?.newsId);
-    this.NewsModalForm.controls['NewsTitleAr'].setValue(item?.newsTitleAr);
-    this.NewsModalForm.controls['NewsTitleEn'].setValue(item?.newsTitleEn);
-    this.NewsModalForm.controls['NewsBodyAr'].setValue(item?.newsBodyAr);
-    this.NewsModalForm.controls['NewsBodyEn'].setValue(item?.newsBodyEn);
-  }
-  saveNews() {
-    if (
-      this.NewsBodyArError == false &&
-      this.NewsBodyEnError == false &&
-      this.NewsTitleArError == false &&
-      this.NewsTitleEnError == false &&
-      this.NewsModalForm.controls['NewsId'].value != null &&
-      this.NewsModalForm.controls['NewsTitleAr'].value != null &&
-      this.NewsModalForm.controls['NewsTitleEn'].value != null &&
-      this.NewsModalForm.controls['NewsBodyAr'].value != null &&
-      this.NewsModalForm.controls['NewsBodyEn'].value != null
-    ) {
-      const formData = new FormData();
-
-      if (
-        this.NewsModalForm.controls['UploadedImage'].value == null &&
-        this.NewsModalimageFileOutput != null
-      ) {
-        formData.append('postedFiles', this.NewsModalimageFileOutput);
-      }
-      formData.append('NewsId', this.NewsModalForm.controls['NewsId'].value);
-      formData.append(
-        'NewsTitleAr',
-        this.NewsModalForm.controls['NewsTitleAr'].value
-      );
-      formData.append(
-        'NewsTitleEn',
-        this.NewsModalForm.controls['NewsTitleEn'].value
-      );
-      formData.append(
-        'NewsBodyAr',
-        this.NewsModalForm.controls['NewsBodyAr'].value
-      );
-      formData.append(
-        'NewsBodyEn',
-        this.NewsModalForm.controls['NewsBodyEn'].value
-      );
-
-      this.organizationService.SaveNews(formData).subscribe(
-        (result: any) => {
-          if (result.statusCode == 200) {
-            this.toast.success(
-              this.translate.instant(result.reasonPhrase),
-              this.translate.instant('Message')
-            );
-            this.intialNewsModalForm();
-            this.controlNewsModaImage.clear();
-            this.NewsBodyArError = false;
-            this.NewsBodyEnError = false;
-            this.NewsTitleArError = false;
-            this.NewsTitleEnError = false;
-            this.GetAllNews();
-            this.uploadedFileImgNewsModal.next('');
-            this.NewsModalimageFileOutput = null;
-          } else {
-            this.toast.error(
-              this.translate.instant(result.reasonPhrase),
-              this.translate.instant('Message')
-            );
-          }
-        },
-        (error) => {
-          this.toast.error(
-            this.translate.instant(error.reasonPhrase),
-            this.translate.instant('Message')
-          );
-        }
-      );
-    }
-  }
-
-  deleteNewsModalId: any;
-  DeleteNews() {
-    this.organizationService
-      .deleteNews(this.deleteNewsModalId)
-      .subscribe((result: any) => {
-        this.GetAllNews();
-      });
-  }
 
   goDash() {
     this.router.navigate(['/dash/home']);
@@ -584,5 +442,99 @@ export class OrganizationComponent implements OnInit {
       });
     }
   }
+
+
+
+  //---------------------branch----------------------------------
+
+  branchesAcc: any;
+  setBranchData(item: any) {
+    this.controlImgUrlfile.clear();
+    this.BranchInfoForm.controls['BranchId'].setValue(item?.branchId);
+    this.BranchInfoForm.controls['NameAr'].setValue(item?.nameAr);
+    this.BranchInfoForm.controls['NameEn'].setValue(item?.nameEn);
+    this.BranchInfoForm.controls['BranchNamePrint'].setValue(item?.branchNamePrint);
+    this.BranchInfoForm.controls['BoxAccId'].setValue(item?.boxAccId);
+    this.BranchInfoForm.controls['CustomersAccId'].setValue(item?.customersAccId);
+    this.BranchInfoForm.controls['EmployeesAccId'].setValue(item?.employeesAccId);
+    this.BranchInfoForm.controls['CustomerPhone'].setValue(item?.customerPhone);
+    this.BranchInfoForm.controls['CustomerPhone2'].setValue(item?.customerPhone2);
+    this.BranchInfoForm.controls['ComplaintsNumber'].setValue(item?.complaintsNumber);
+
+    if(item.logoUrl == '' || item.logoUrl == null)
+    {
+      this.BranchInfoForm.controls['uploadedFile'].setValue(null)
+    }
+    else
+    {
+      this.BranchInfoForm.controls['uploadedFile'].setValue(item?.logoUrl);
+    }
+  }
+
+  FillAllAccountsSelectAll() {
+    this.organizationService.FillAllAccountsSelectAll().subscribe((data) => {
+      this.branchesAcc = data;
+    });
+  }
+  intialModelBranchInfoForm() {
+    this.BranchInfoForm = this.formBuilder.group({
+      BranchId: [null, []],
+      NameAr: [null, [Validators.required]],
+      NameEn: [null, [Validators.required]],
+      BranchNamePrint: [null, [Validators.required]],
+      BoxAccId: [null, [Validators.required]],
+      CustomersAccId: [null, [Validators.required]],
+      EmployeesAccId: [null, [Validators.required]],
+      CustomerPhone: [null, []],
+      CustomerPhone2: [null, []],
+      ComplaintsNumber: [null, []],
+      uploadedFile: [null, []],
+    });
+  }
+  imageFileOutputImgUrlfile: any = null;
+  private controlImgUrlfilegetImage(file: File): void {
+    if (FileReader && file) {
+      const fr = new FileReader();
+      fr.onload = (e: any) => {
+        this.BranchInfoForm.controls['uploadedFile'].setValue(null);
+        this.uploadedFileOutputImg.next(e.target.result);
+      };
+      this.imageFileOutputImgUrlfile = file;
+      fr.readAsDataURL(file);
+    } else {
+      this.uploadedFileOutputImg.next('');
+      this.imageFileOutputImgUrlfile = null;
+    }
+  }
+  saveBranchInfoForm(modal: any) {
+
+    const formData = new FormData();
+    if (
+      this.BranchInfoForm.controls['uploadedFile'].value == null && this.imageFileOutputImgUrlfile != null) {
+      formData.append('UploadedFile', this.imageFileOutputImgUrlfile);
+    }
+    formData.append('BranchId', this.BranchInfoForm.controls['BranchId'].value);
+    formData.append('NameAr', this.BranchInfoForm.controls['NameAr'].value);
+    formData.append('NameEn', this.BranchInfoForm.controls['NameEn'].value);
+    formData.append('BranchNamePrint', this.BranchInfoForm.controls['BranchNamePrint'].value);
+    formData.append('BoxAccId', this.BranchInfoForm.controls['BoxAccId'].value);
+    formData.append('CustomersAccId', this.BranchInfoForm.controls['CustomersAccId'].value);
+    formData.append('EmployeesAccId', this.BranchInfoForm.controls['EmployeesAccId'].value);
+    formData.append('CustomerPhone', this.BranchInfoForm.controls['CustomerPhone'].value);
+    formData.append('CustomerPhone2', this.BranchInfoForm.controls['CustomerPhone2'].value);
+    formData.append('ComplaintsNumber', this.BranchInfoForm.controls['ComplaintsNumber'].value);
+
+    this.organizationService.SaveBranchPart(formData).subscribe((result: any) => {
+        if (result.statusCode == 200) {
+          this.toast.success(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
+          modal.dismiss();
+          this.GetAllBranches();
+        } else {
+          this.toast.error(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
+        }
+      }
+    );
+  }
+  //-------------------end branch--------------------------------
 
 }

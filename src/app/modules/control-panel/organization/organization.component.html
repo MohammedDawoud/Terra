@@ -435,6 +435,22 @@
                       <span>{{ element?.nameEn }}</span>
                     </td>
                   </ng-container>
+                  <!-- operations Column -->
+                  <ng-container matColumnDef="operations">
+                    <th mat-header-cell *matHeaderCellDef>
+                      {{ "operations" | translate }}
+                    </th>
+                    <td mat-cell *matCellDef="let element">
+                      <div class="flex gap-1 justify-center py-2">
+                        <button
+                          class="p-2 bg-green-100 hover:bg-green-500 rounded-lg duration-300 hover:text-white w-10"
+                          (click)="open(BranchModal, element, 'editBranch')"
+                        >
+                          <i class="fa fa-edit"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </ng-container>
                   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
 
                   <tr
@@ -572,338 +588,356 @@
   </div>
 </ng-template>
 
-<!-- latestNewsModal -->
-<ng-template #latestNewsModal let-modal>
+
+<!-- BranchModal-->
+<ng-template #BranchModal let-modal>
   <div class="modal-header bg-base text-white">
     <h4 class="modal-title mb-0" id="modal-basic-title">
-      {{ "latest news" | translate }}
+      {{ "تعديل الفرع" | translate }}
     </h4>
     <button type="button" class="m-0" (click)="modal.dismiss('Cross click')">
       <i class="fa fa-close"></i>
     </button>
   </div>
 
-  <div class="modal-body text-center">
-    <form [formGroup]="NewsModalForm">
+  <div class="modal-body">
+    <form [formGroup]="BranchInfoForm">
       <div class="row">
-        <div class="col-md-6 mb-3">
+
+        <div class="col-lg-4">
           <div class="form-group">
-            <label class="text-right col-form-label block">
-              {{ "The address is Arabic" | translate }}
+            <label for="NameAr" class="text-right col-form-label block mx-2">
+              {{ "Branch name (Arabic)" | translate }}
               <span class="text-danger">*</span>
             </label>
             <input
+              formControlName="NameAr"
+              autocomplete="off"
               class="form-control"
               type="text"
-              [placeholder]="'The address is Arabic' | translate"
-              name="addressAr"
-              formControlName="NewsTitleAr"
-              autocomplete="off"
-              (blur)="
-                this.NewsModalForm.controls['NewsTitleAr'].value.length < 10
-                  ? (NewsTitleArError = true)
-                  : (NewsTitleArError = false)
-              "
+              id="NameAr"
+              name="NameAr"
             />
-            <!-- this.NewsModalForm.controls['NewsTitleAr'].value.length != 10 && -->
             <div
               class="fieldrequired"
               *ngIf="
-                (NewsModalForm.get('NewsTitleAr')?.hasError('required') &&
-                  NewsModalForm.get('NewsTitleAr')?.touched) ||
-                NewsTitleArError == true
+                BranchInfoForm.controls['NameAr']?.hasError('required') &&
+                BranchInfoForm.controls['NameAr'].touched
               "
             >
-              {{ "This field is required length 10" | translate }}
+              {{ "This field is required" | translate }}
             </div>
           </div>
         </div>
-        <div class="col-md-6 mb-3">
+        <div class="col-lg-4">
           <div class="form-group">
-            <label class="text-right col-form-label block">
-              {{ "The address is English" | translate }}
+            <label for="nameEn" class="text-right col-form-label block mx-2">
+              {{ "Branch name (English)" | translate }}
               <span class="text-danger">*</span>
             </label>
             <input
+              formControlName="NameEn"
+              autocomplete="off"
               class="form-control"
               type="text"
-              [placeholder]="'The address is English' | translate"
-              name="addressEn"
-              formControlName="NewsTitleEn"
-              autocomplete="off"
-              (blur)="
-                this.NewsModalForm.controls['NewsTitleEn'].value.length < 10
-                  ? (NewsTitleEnError = true)
-                  : (NewsTitleEnError = false)
-              "
+              id="NameEn"
+              name="NameEn"
             />
-            <!-- this.NewsModalForm.controls['NewsTitleEn'].value.length != 10 && -->
             <div
               class="fieldrequired"
               *ngIf="
-                (NewsModalForm.get('NewsTitleEn')?.hasError('required') &&
-                  NewsModalForm.get('NewsTitleEn')?.touched) ||
-                NewsTitleEnError == true
+                BranchInfoForm.controls['NameEn']?.hasError('required') &&
+                BranchInfoForm.controls['NameEn'].touched
               "
             >
-              {{ "This field is required length 10" | translate }}
+              {{ "This field is required" | translate }}
             </div>
           </div>
         </div>
-        <div class="col-md-6 mb-3">
+        <div class="col-lg-4">
           <div class="form-group">
-            <label class="text-right col-form-label block">
-              {{ "The text is Arabic" | translate }}
+            <label for="BranchNamePrint" class="text-right col-form-label block mx-2">
+              {{ "أسم الفرع في الطباعة" | translate }}
               <span class="text-danger">*</span>
             </label>
             <input
+              formControlName="BranchNamePrint"
+              autocomplete="off"
               class="form-control"
               type="text"
-              [placeholder]="'The text is Arabic' | translate"
-              name="textAr"
-              formControlName="NewsBodyAr"
-              autocomplete="off"
-              (blur)="
-                this.NewsModalForm.controls['NewsBodyAr'].value.length < 10
-                  ? (NewsBodyArError = true)
-                  : (NewsBodyArError = false)
-              "
+              id="BranchNamePrint"
+              name="BranchNamePrint"
             />
-            <!-- this.NewsModalForm.controls['NewsBodyAr'].value.length != 10 && -->
             <div
               class="fieldrequired"
               *ngIf="
-                (NewsModalForm.get('NewsBodyAr')?.hasError('required') &&
-                  NewsModalForm.get('NewsBodyAr')?.touched) ||
-                NewsBodyArError == true
+                BranchInfoForm.controls['BranchNamePrint']?.hasError('required') &&
+                BranchInfoForm.controls['BranchNamePrint'].touched
               "
             >
-              {{ "This field is required length 10" | translate }}
+              {{ "This field is required" | translate }}
             </div>
           </div>
         </div>
-        <div class="col-md-6 mb-3">
+        <div class="col-lg-4">
           <div class="form-group">
-            <label class="text-right col-form-label block">
-              {{ "The text is English" | translate }}
+            <label for="CustomerPhone" class="text-right col-form-label block mx-2">
+              {{ "رقم خدمة العملاء" | translate }}
               <span class="text-danger">*</span>
             </label>
             <input
+              formControlName="CustomerPhone"
+              autocomplete="off"
               class="form-control"
               type="text"
-              [placeholder]="'The text is English' | translate"
-              name="textEn"
-              formControlName="NewsBodyEn"
-              autocomplete="off"
-              (blur)="
-                this.NewsModalForm.controls['NewsBodyEn'].value.length < 10
-                  ? (NewsBodyEnError = true)
-                  : (NewsBodyEnError = false)
-              "
+              id="CustomerPhone"
+              name="CustomerPhone"
             />
-            <!-- this.NewsModalForm.controls['NewsBodyEn'].value.length != 10 && -->
             <div
               class="fieldrequired"
               *ngIf="
-                (NewsModalForm.get('NewsBodyEn')?.hasError('required') &&
-                  NewsModalForm.get('NewsBodyEn')?.touched) ||
-                NewsBodyEnError == true
+                BranchInfoForm.controls['CustomerPhone']?.hasError('required') &&
+                BranchInfoForm.controls['CustomerPhone'].touched
               "
             >
-              {{ "This field is required length 10" | translate }}
+              {{ "This field is required" | translate }}
             </div>
           </div>
         </div>
-        <div class="col-md-6 mb-3">
-          <div class="upload">
-            <file-upload [control]="controlNewsModaImage">
-              <ng-template
-                let-isFileDragDropAvailable="isFileDragDropAvailable"
-                #placeholder
-                let-file="file"
-                *ngIf="this.NewsModalimageFileOutput == null"
-              >
-                <div
-                  *ngIf="NewsModalForm.controls['UploadedImage'].value == null"
+        <div class="col-lg-4">
+          <div class="form-group">
+            <label for="CustomerPhone2" class="text-right col-form-label block mx-2">
+              {{ "رقم خدمة العملاء2" | translate }}
+              <span class="text-danger">*</span>
+            </label>
+            <input
+              formControlName="CustomerPhone2"
+              autocomplete="off"
+              class="form-control"
+              type="text"
+              id="CustomerPhone2"
+              name="CustomerPhone2"
+            />
+            <div
+              class="fieldrequired"
+              *ngIf="
+                BranchInfoForm.controls['CustomerPhone2']?.hasError('required') &&
+                BranchInfoForm.controls['CustomerPhone2'].touched
+              "
+            >
+              {{ "This field is required" | translate }}
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group">
+            <label for="ComplaintsNumber" class="text-right col-form-label block mx-2">
+              {{ "رقم الشكاوي" | translate }}
+              <span class="text-danger">*</span>
+            </label>
+            <input
+              formControlName="ComplaintsNumber"
+              autocomplete="off"
+              class="form-control"
+              type="text"
+              id="ComplaintsNumber"
+              name="ComplaintsNumber"
+            />
+            <div
+              class="fieldrequired"
+              *ngIf="
+                BranchInfoForm.controls['ComplaintsNumber']?.hasError('required') &&
+                BranchInfoForm.controls['ComplaintsNumber'].touched
+              "
+            >
+              {{ "This field is required" | translate }}
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group">
+            <label for="BoxAccId"
+              class="text-right col-form-label block mx-2">
+              {{ "حساب الخزنة" | translate }}
+              <span class="text-danger">*</span>
+            </label>
+            <ng-select
+              formControlName="BoxAccId" id="BoxAccId" name="BoxAccId">
+              <ng-option *ngFor="let item of branchesAcc" [value]="item.id">{{
+                item.name
+              }}</ng-option></ng-select
+            >
+            <div
+              class="fieldrequired" *ngIf="
+                BranchInfoForm.get('BoxAccId')?.hasError('required') &&
+                BranchInfoForm.get('BoxAccId')?.touched">
+              {{ "This field is required" | translate }}
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group">
+            <label for="CustomersAccId"
+              class="text-right col-form-label block mx-2">
+              {{ "حساب العملاء" | translate }}
+              <span class="text-danger">*</span>
+            </label>
+            <ng-select
+              formControlName="CustomersAccId" id="CustomersAccId" name="CustomersAccId">
+              <ng-option *ngFor="let item of branchesAcc" [value]="item.id">{{
+                item.name
+              }}</ng-option></ng-select
+            >
+            <div
+              class="fieldrequired" *ngIf="
+                BranchInfoForm.get('CustomersAccId')?.hasError('required') &&
+                BranchInfoForm.get('CustomersAccId')?.touched">
+              {{ "This field is required" | translate }}
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group">
+            <label for="EmployeesAccId"
+              class="text-right col-form-label block mx-2">
+              {{ "حساب الموظفين" | translate }}
+              <span class="text-danger">*</span>
+            </label>
+            <ng-select
+              formControlName="EmployeesAccId" id="EmployeesAccId" name="EmployeesAccId">
+              <ng-option *ngFor="let item of branchesAcc" [value]="item.id">{{
+                item.name
+              }}</ng-option></ng-select
+            >
+            <div
+              class="fieldrequired" *ngIf="
+                BranchInfoForm.get('EmployeesAccId')?.hasError('required') &&
+                BranchInfoForm.get('EmployeesAccId')?.touched">
+              {{ "This field is required" | translate }}
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="form-group col-span-1 md:col-span-2">
+            <label for="formFile" class="form-label">
+              {{ "لوجو الفرع" | translate }}</label
+            >
+            <div class="upload">
+              <file-upload [control]="controlImgUrlfile">
+                <ng-template
+                  let-isFileDragDropAvailable="isFileDragDropAvailable"
+                  #placeholder
+                  let-file="file"
                 >
-                  <div class="icon">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      height="0.5em"
-                      viewBox="0 0 640 512"
+                  <div
+                    *ngIf="
+                      controlImgUrlfile.size === 0 &&
+                      BranchInfoForm.controls['uploadedFile'].value == null
+                    "
+                  >
+                    <div class="icon">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="0.5em"
+                        viewBox="0 0 640 512"
+                      >
+                        <path
+                          d="M144 480C64.5 480 0 415.5 0 336c0-62.8 40.2-116.2 96.2-135.9c-.1-2.7-.2-5.4-.2-8.1c0-88.4 71.6-160 160-160c59.3 0 111 32.2 138.7 80.2C409.9 102 428.3 96 448 96c53 0 96 43 96 96c0 12.2-2.3 23.8-6.4 34.6C596 238.4 640 290.1 640 352c0 70.7-57.3 128-128 128H144zm79-217c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l39-39V392c0 13.3 10.7 24 24 24s24-10.7 24-24V257.9l39 39c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-80-80c-9.4-9.4-24.6-9.4-33.9 0l-80 80z"
+                        />
+                      </svg>
+                    </div>
+
+                    <div class="upload-text">
+                      {{ "رفع صورة للفرع" | translate }}
+                    </div>
+                  </div>
+                  <div
+                    class="overlay"
+                    *ngIf="
+                      BranchInfoForm.controls['uploadedFile'].value != null
+                    "
+                  >
+                    <span
+                      class="delete-button"
+                      (click)="
+                        controlImgUrlfile.clear();
+                        BranchInfoForm.controls['uploadedFile'].setValue(null)
+                      "
                     >
-                      <path
-                        d="M144 480C64.5 480 0 415.5 0 336c0-62.8 40.2-116.2 96.2-135.9c-.1-2.7-.2-5.4-.2-8.1c0-88.4 71.6-160 160-160c59.3 0 111 32.2 138.7 80.2C409.9 102 428.3 96 448 96c53 0 96 43 96 96c0 12.2-2.3 23.8-6.4 34.6C596 238.4 640 290.1 640 352c0 70.7-57.3 128-128 128H144zm79-217c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l39-39V392c0 13.3 10.7 24 24 24s24-10.7 24-24V257.9l39 39c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-80-80c-9.4-9.4-24.6-9.4-33.9 0l-80 80z"
-                      />
-                    </svg>
+                      <svg viewBox="0 0 448 512">
+                        <path
+                          d="M32 464a48 48 0 0 0 48 48h288a48 48 0 0 0 48-48V128H32zm272-256a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zM432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16z"
+                        ></path>
+                      </svg>
+                    </span>
+                    <img
+                      *ngIf="
+                        BranchInfoForm.controls['uploadedFile'].value != null
+                      "
+                      src="{{
+                        environmenturl +
+                          BranchInfoForm.controls['uploadedFile'].value
+                      }}"
+                    />
                   </div>
+                </ng-template>
 
-                  <div class="upload-text">
-                    {{ "Determine the image of the news" | translate }}
-                  </div>
-                </div>
-                <div
-                  class="overlay"
-                  *ngIf="NewsModalForm.controls['UploadedImage'].value != null"
+                <ng-template
+                  let-i="index"
+                  let-file="file"
+                  let-control="control"
+                  #item
+                  *ngIf="BranchInfoForm.controls['uploadedFile'].value == null"
                 >
-                  <span
-                    class="delete-button"
-                    (click)="
-                      controlNewsModaImage.clear();
-                      NewsModalForm.controls['UploadedImage'].setValue(null)
-                    "
-                  >
-                    <svg viewBox="0 0 448 512">
-                      <path
-                        d="M32 464a48 48 0 0 0 48 48h288a48 48 0 0 0 48-48V128H32zm272-256a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zM432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16z"
-                      ></path>
-                    </svg>
-                  </span>
-                  <img
-                    src="{{
-                      environmenturl +
-                        NewsModalForm.controls['UploadedImage'].value
-                    }}"
-                  />
-                </div>
-              </ng-template>
-
-              <ng-template
-                let-i="index"
-                *ngIf="this.NewsModalimageFileOutput != null"
-                let-file="file"
-                let-control="control"
-                #item
-              >
-                <div class="overlay">
-                  <span
-                    class="delete-button"
-                    (click)="
-                      control.clear();
-                      NewsModalForm.controls['UploadedImage'].setValue(null)
-                    "
-                  >
-                    <svg viewBox="0 0 448 512">
-                      <path
-                        d="M32 464a48 48 0 0 0 48 48h288a48 48 0 0 0 48-48V128H32zm272-256a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zM432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16z"
-                      ></path>
-                    </svg>
-                  </span>
-                  <img
-                    *ngIf="control.valid"
-                    [src]="uploadedFileImgNewsModal | async"
-                  />
-                </div>
-              </ng-template>
-            </file-upload>
+                  <div class="overlay">
+                    <span
+                      class="delete-button"
+                      (click)="
+                        control.clear();
+                        BranchInfoForm.controls['uploadedFile'].setValue(null)
+                      "
+                    >
+                      <svg viewBox="0 0 448 512">
+                        <path
+                          d="M32 464a48 48 0 0 0 48 48h288a48 48 0 0 0 48-48V128H32zm272-256a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zM432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16z"
+                        ></path>
+                      </svg>
+                    </span>
+                    <img
+                      *ngIf="control.valid"
+                      [src]="uploadedFileOutputImg | async"
+                    />
+                  </div>
+                </ng-template>
+              </file-upload>
+            </div>
           </div>
         </div>
+
       </div>
     </form>
-    <div class="modal-footer justify-content-end mt-3" style="border-top: none">
-      <button
-        type="button"
-        class="btn submit-btn bg-base text-white py-2 px-3 mt-0"
-        (click)="
-          intialNewsModalForm();
-          controlNewsModaImage.clear();
-          NewsBodyArError = false;
-          NewsBodyEnError = false;
-          NewsTitleArError = false;
-          this.uploadedFileImgNewsModal.next('');
-          this.NewsModalimageFileOutput = null;
-          NewsTitleEnError = false
-        "
-      >
-        {{ "new" | translate }}
-      </button>
-      <button
-        type="button"
-        class="btn submit-btn bg-base text-white py-2 px-3 mt-0"
-        (click)="saveNews()"
-        [disabled]="
-          this.NewsModalForm.controls['NewsTitleAr'].value == null ||
-          this.NewsModalForm.controls['NewsTitleEn'].value == null ||
-          this.NewsModalForm.controls['NewsBodyAr'].value == null ||
-          this.NewsModalForm.controls['NewsBodyEn'].value == null ||
-          NewsBodyArError == true ||
-          NewsBodyEnError == true ||
-          NewsTitleArError == true ||
-          NewsTitleEnError == true
-        "
-      >
-        {{ "save" | translate }}
-      </button>
-      <button
-        type="button"
-        class="btn btn-outline-secondary py-2 px-3 mt-0"
-        (click)="modal.dismiss(); controlNewsModaImage.clear()"
-      >
-        {{ "close" | translate }}
-      </button>
-    </div>
-
-    <div class="tables-data mt-3 overflow-hidden">
-      <div class="overflow-auto">
-        <table
-          mat-table
-          [dataSource]="AllNewsList"
-          matSort
-          class="mat-elevation-z8 rounded-t-lg overflow-hidden w-max"
-        >
-          <!-- nameAr column -->
-          <ng-container matColumnDef="nameAr">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              <span>{{ "nameAr" | translate }}</span>
-            </th>
-            <td mat-cell *matCellDef="let element">
-              <span>{{ element?.newsTitleAr }}</span>
-            </td>
-          </ng-container>
-          <!-- nameEn column -->
-          <ng-container matColumnDef="nameEn">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              <span>{{ "nameEn" | translate }}</span>
-            </th>
-            <td mat-cell *matCellDef="let element">
-              <span>{{ element?.newsTitleEn }}</span>
-            </td>
-          </ng-container>
-          <!-- operations Column -->
-          <ng-container matColumnDef="operations">
-            <th mat-header-cell *matHeaderCellDef>
-              {{ "operations" | translate }}
-            </th>
-            <td mat-cell *matCellDef="let element">
-              <div class="flex gap-1 justify-center py-2">
-                <button
-                  class="p-2 bg-green-100 hover:bg-green-500 rounded-lg duration-300 hover:text-white w-10"
-                  (click)="editNewsModal(element)"
-                >
-                  <i class="fa fa-edit"></i>
-                </button>
-
-              </div>
-            </td>
-          </ng-container>
-
-          <tr mat-header-row *matHeaderRowDef="newsDisplayedColumns"></tr>
-
-          <tr
-            mat-row
-            *matRowDef="let row; columns: newsDisplayedColumns"
-            class="duration-300 hover:bg-slate-100"
-          ></tr>
-
-          <tr class="mat-row" *matNoDataRow>
-            <td class="mat-cell" colspan="4">
-              {{ "noResult" | translate }} "{{ input.value }}"
-            </td>
-          </tr>
-        </table>
-      </div>
-      <mat-paginator [pageSizeOptions]="[10, 25]"> </mat-paginator>
-    </div>
+  </div>
+  <div class="modal-footer justify-content-end" style="border-top: none">
+    <button
+      type="button"
+      class="btn btn-light py-2 px-3 mt-0"
+      (click)="modal.dismiss('Cross click')"
+    >
+      {{ "close" | translate }}
+    </button>
+    <button
+      type="button"
+      class="btn submit-btn bg-base text-white py-2 px-3 mt-0"
+      [disabled]="
+        this.BranchInfoForm.controls['NameAr'].value == null ||
+        this.BranchInfoForm.controls['NameEn'].value == null ||
+        this.BranchInfoForm.controls['BranchNamePrint'].value == null ||
+        this.BranchInfoForm.controls['BoxAccId'].value == null ||
+        this.BranchInfoForm.controls['CustomersAccId'].value == null ||
+        this.BranchInfoForm.controls['EmployeesAccId'].value == null"
+      (click)="saveBranchInfoForm(modal)">
+      {{ "Save" | translate }}
+    </button>
   </div>
 </ng-template>
-
