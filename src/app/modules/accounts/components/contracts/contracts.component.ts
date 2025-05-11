@@ -170,6 +170,7 @@ export class ContractsComponent implements OnInit {
       (values: Array<File>) => this.getImage(values[0])
     );
     this.GetOrganizationData();
+    this.GetBranchData();
   }
   OrganizationData: any;
   environmentPho: any;
@@ -179,6 +180,14 @@ export class ContractsComponent implements OnInit {
       this.OrganizationData = data.result;
       this.dateprint =this._sharedService.date_TO_String(new Date());
       this.environmentPho =environment.PhotoURL + this.OrganizationData.logoUrl;
+    });
+  }
+  BranchData: any;
+  environmentPhoBranch: any;
+  GetBranchData(){
+    this.api.GetBranchByBranchId().subscribe((data: any) => {
+      this.BranchData = data;
+      this.environmentPhoBranch =environment.PhotoURL + this.BranchData.logoUrl;
     });
   }
 
@@ -1585,6 +1594,8 @@ GetDofAsaatContractsPrint(obj:any){
   this.ContractPrintData=obj;
   console.log("this.ContractPrintData",this.ContractPrintData);
   console.log("this.OrganizationData",this.OrganizationData);
+  console.log("this.BranchData",this.BranchData);
+  
 
 }
 printDiv(id: any) {

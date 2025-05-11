@@ -34,8 +34,7 @@ export class RestApiService {
     return this.http.get<any>(this.apiEndPoint + 'Login/GetOrganizationDataLogin');
   }
   GetBranchByBranchId() {
-        return this.http.get<any>(this.apiEndPoint + 'Branches/GetBranchByBranchId');
-
+     return this.http.get<any>(this.apiEndPoint + 'Branches/GetBranchByBranchId');
   }
   GetAllNews() {
     return this.http.get<any>(this.apiEndPoint + 'ContactUs/GetAllNews');
