@@ -117,7 +117,7 @@ export class AccountsGuideComponent implements OnInit {
   };
 
   lang: any = 'ar';
-
+  userG: any = {};
   startDate = new Date();
   endDate = new Date();
   constructor(
@@ -135,6 +135,8 @@ export class AccountsGuideComponent implements OnInit {
     api.lang.subscribe((res) => {
       this.lang = res;
     });
+    this.userG = this.authenticationService.userGlobalObj;
+
   }
   accountsDataSource = new MatTableDataSource();
   ngOnInit(): void {

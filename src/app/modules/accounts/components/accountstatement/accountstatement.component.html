@@ -61,7 +61,8 @@
                 <i class="fa-solid fa-print"></i>
               </button> -->
     
-              <button style="margin-top: 2%;"
+              <button *ngIf="userG?.userPrivileges.includes(15040101)"
+                style="margin-top: 2%;"
                 type="button"
                 class="flex gap-1 btn btn-success col-md-2"
                 (click)="exportData()"

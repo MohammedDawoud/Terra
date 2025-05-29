@@ -174,15 +174,10 @@ export class OrganizationComponent implements OnInit {
         this.controlImgUrlfilegetImage(values[0]);
       }
     );
-
-    this.userG = this.authenticationService.userGlobalObj;
-
     api.lang.subscribe((res) => {
       this.lang = res;
     });
     this.userG = this.authenticationService.userGlobalObj;
-    console.log('user data', this.userG);
-
     this.useradmin = this.userG.userName;
   }
   CityList: any = [];

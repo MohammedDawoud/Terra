@@ -6,7 +6,7 @@
     <div class="flex justify-between gap-2 items-center my-3 flex-wrap">
       <!---------------------------------------------------------------------------->
       <div class="flex gap-2 controler">
-        <button
+        <button *ngIf="userG?.userPrivileges.includes(150001)"
           class="flex gap-1 btn btn-primary"
           (click)="openModal(dataModal, null, 'addCategory')"
         >
@@ -20,13 +20,14 @@
           ></span>
           <i class="fa-solid fa-user-plus"></i>
         </button>
-        <button class="flex gap-1 btn btn-danger" (click)="dataSearch.filter.showFilters = !dataSearch.filter.showFilters;">
+        <button  *ngIf="userG?.userPrivileges.includes(150004)"
+        class="flex gap-1 btn btn-danger" (click)="dataSearch.filter.showFilters = !dataSearch.filter.showFilters;">
           <span
             class="hidden md:block"
             [translate]="'name'" [translateParams]="{ar: 'بحث ',en: 'Search '}"></span>
           <i class="fa-solid fa-search"></i>
           </button>
-        <button
+        <button *ngIf="userG?.userPrivileges.includes(150005)"
           class="flex gap-1 btn btn-warning"
           (click)="exportData()"
         >
@@ -255,13 +256,13 @@
           ></th>
           <td mat-cell *matCellDef="let element">
             <div class="flex gap-1 justify-center py-2">
-              <button
+              <button *ngIf="userG?.userPrivileges.includes(150002)"
                 class="min-w-max p-2 bg-orange-100 hover:bg-orange-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
                 (click)="openModal(dataModal, element, 'editCategory')"
               >
                 <i class="fa-regular fa-pen-to-square"></i>
               </button>
-              <button
+              <button *ngIf="userG?.userPrivileges.includes(150003)"
                 class="min-w-max p-2 bg-red-100 hover:bg-red-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
                 (click)="openModal(deleteModal, element, 'delete')"
               >

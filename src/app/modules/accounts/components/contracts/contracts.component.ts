@@ -25,14 +25,6 @@ import { SafePipe } from 'src/app/shared/pipes/safe.pipe';
 import { TranslateService } from '@ngx-translate/core';
 import 'hijri-date';
 import { DateType } from 'ngx-hijri-gregorian-datepicker';
-import {
-  CdkDragDrop,
-  CdkDrag,
-  CdkDropList,
-  CdkDropListGroup,
-  moveItemInArray,
-  transferArrayItem,
-} from '@angular/cdk/drag-drop';
 import { SharedService } from 'src/app/core/services/shared.service';
 import { CustomerService } from 'src/app/core/services/customer-services/customer.service';
 import { EmployeeService } from 'src/app/core/services/employee-services/employee.service';
@@ -1019,6 +1011,28 @@ export class ContractsComponent implements OnInit {
     if (idRow != null) {
       this.selectedServiceRowContractNew = idRow;
     }
+
+
+
+    if(type=="servicesList_Contract"){
+      var input = { valid: true, message: "" }
+      this.ContractNewServices.forEach((element: any) => {
+        if (element.amount <element.accamount) {
+          console.log("element",element);
+          input.valid = false; input.message = "من فضلك أختر سعر يساوي سعر الصنف المحفوظ مسبقا او أكبر منه" 
+          +" "+ "الصنف "+"("+element.nameAr+")" +" رقم "+element.idRow +" "+"تصنيف "+element.categoryTypeName;
+          return;
+        }
+      });
+      if (!input.valid) {
+        this.toast.error(input.message);return;
+      }
+    }
+
+
+
+
+
     this.ngbModalService
       .open(content, {
         ariaLabelledBy: 'modal-basic-title',

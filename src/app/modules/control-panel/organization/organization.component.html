@@ -369,7 +369,7 @@
               >
                 {{ "Maintenance" | translate }}
               </button>
-              <button
+              <button *ngIf="userG?.userPrivileges.includes(16000101)"
                 type="button"
                 class="btn submit-btn bg-base text-white py-2 px-3 mt-0"
                 (click)="saveMainInfo()"
@@ -442,7 +442,7 @@
                     </th>
                     <td mat-cell *matCellDef="let element">
                       <div class="flex gap-1 justify-center py-2">
-                        <button
+                        <button *ngIf="userG?.userPrivileges.includes(16000102)"
                           class="p-2 bg-green-100 hover:bg-green-500 rounded-lg duration-300 hover:text-white w-10"
                           (click)="open(BranchModal, element, 'editBranch')"
                         >

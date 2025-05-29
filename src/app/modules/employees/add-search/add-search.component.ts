@@ -68,7 +68,6 @@ export class AddSearchComponent implements OnInit {
   modalRef?: BsModalRef;
   subscriptions: Subscription[] = [];
 
-  userG: any = {};
   selectedDateType = DateType.Hijri;
 
   title: any = {
@@ -137,6 +136,7 @@ export class AddSearchComponent implements OnInit {
     nameAr: null,
     nameEn: null,
   };
+  userG: any = {};
 
   constructor(
     private service: EmployeeService,
@@ -956,11 +956,9 @@ AddDataType: any = {
   },
 };
 
-  //-----------------------------------SaveCity-------------------------------
+  //-----------------------------------SaveJob-------------------------------
   //#region 
   selectedJob: any;
-
-
   JobRowSelected: any;
   getJobRow(row: any) {
     this.JobRowSelected = row;
@@ -1009,7 +1007,7 @@ AddDataType: any = {
     this.AddDataType.Jobdata.nameen = null;
   }
   //#endregion
-  //----------------------------------EndSaveCity-----------------------------
+  //----------------------------------EndSaveJob-----------------------------
 
 
 }

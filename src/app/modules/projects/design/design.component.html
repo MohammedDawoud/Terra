@@ -7,7 +7,7 @@
 
       <!---------------------------------------------------------------------------->
       <div class="flex gap-2 controler">
-        <button
+        <button *ngIf="userG?.userPrivileges.includes(140201)"
           class="flex gap-1 btn btn-primary"
           (click)="openModal(dataModal, null, 'addDesign')">
           <span
@@ -20,13 +20,14 @@
           ></span>
           <i class="fa-solid fa-user-plus"></i>
         </button>
-        <button class="flex gap-1 btn btn-danger" (click)="dataSearch.filter.showFilters = !dataSearch.filter.showFilters;">
+        <button  *ngIf="userG?.userPrivileges.includes(140204)"
+        class="flex gap-1 btn btn-danger" (click)="dataSearch.filter.showFilters = !dataSearch.filter.showFilters;">
           <span
             class="hidden md:block"
             [translate]="'name'" [translateParams]="{ar: 'بحث ',en: 'Search '}"></span>
           <i class="fa-solid fa-search"></i>
           </button>
-        <button
+        <button *ngIf="userG?.userPrivileges.includes(140205)"
           class="flex gap-1 btn btn-warning"
           (click)="exportData()"
         >
@@ -308,19 +309,19 @@
           ></th>
           <td mat-cell *matCellDef="let element">
             <div class="flex gap-1 justify-center py-2">
-              <button *ngIf="!element.designConvert"
+              <button *ngIf="!element.designConvert && userG?.userPrivileges.includes(140202)"
               class="min-w-max p-2 bg-orange-100 hover:bg-orange-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
                 (click)="openModal(dataModal, element, 'editDesign')"
               >
                 <i class="fa-regular fa-pen-to-square"></i>
               </button>
 
-              <button
+              <button *ngIf="userG?.userPrivileges.includes(140206)"
               class="min-w-max p-2 bg-green-100 hover:bg-green-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
               (click)="open(uploadFileModal, element, 'uploadFile')" >
               <i class="fa fa-upload"></i>
               </button>
-              <button 
+              <button  *ngIf="userG?.userPrivileges.includes(140207)"
               class="min-w-max p-2 bg-blue-100 hover:bg-blue-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
               (click)="open(ShowDesignFilesModal, element, 'ShowDesignFiles')" >
               <!-- <i class="fa fa-eye"></i> -->
@@ -333,7 +334,7 @@
             >
             <i class="fa-solid fa-arrow-rotate-right"></i>
             </button> -->
-            <button *ngIf="!element.designConvert"
+            <button *ngIf="!element.designConvert && userG?.userPrivileges.includes(140203)"
                 class="min-w-max p-2 bg-red-100 hover:bg-red-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
                 (click)="openModal(deleteModal, element, 'delete')"
               >

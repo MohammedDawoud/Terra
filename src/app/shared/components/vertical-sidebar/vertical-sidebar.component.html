@@ -36,7 +36,7 @@
       <mat-sidenav #sidenav class="example-sidenav" mode="side" opened="true">
         <mat-nav-list>
           <ng-container *ngFor="let item of menu; let i = index">
-            <ng-container *ngIf="item.type == 'single' && item.show">
+            <ng-container *ngIf="item.type == 'single' && item.show && item.showP">
               <a class="aClass"
                 [routerLinkActive]="'activeLink'"
                 [routerLink]="item.link"
@@ -56,7 +56,7 @@
               </a>
             </ng-container>
 
-            <ng-container *ngIf="item.type == 'multiple' && item.show">
+            <ng-container *ngIf="item.type == 'multiple' && item.show && item.showP">
               <a class="aClass" [title]="item.title"
                 (click)="showSubmenu = !showSubmenu; activeIndex = i"
                 class="parent {{ linkName == item.link ? 'activeLink' : '' }}"
@@ -89,7 +89,7 @@
                 <ng-container
                   *ngFor="let child of item?.children; let childIndex = index"
                 >
-                  <ng-container *ngIf="child.type == 'single' && child.show">
+                  <ng-container *ngIf="child.type == 'single' && child.show && child.showP">
                     <a class="aClass"
                       [routerLink]="child.link"
                       [routerLinkActive]="'activeLink'"
@@ -113,7 +113,7 @@
                     </a>
                   </ng-container>
 
-                  <ng-container *ngIf="child.type == 'multiple'&& child.show">
+                  <ng-container *ngIf="child.type == 'multiple'&& child.show && child.showP">
                     <a class="aClass" [title]="child.title"
                       (click)="
                         showSubSubMenu = !showSubSubMenu;
@@ -160,7 +160,7 @@
                       *ngIf="showSubSubMenu && activeChildIndex == childIndex"
                     >
                       <ng-container *ngFor="let xchild of child?.children">
-                        <ng-container *ngIf="xchild.type == 'single' && xchild.show">
+                        <ng-container *ngIf="xchild.type == 'single' && xchild.show && xchild.showP">
                           <a class="aClass"
                             [routerLink]="xchild.link"
                             [routerLinkActive]="'activeLink'"

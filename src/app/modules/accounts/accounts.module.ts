@@ -27,6 +27,7 @@ import { CategoriesComponent } from './components/categories/categories.componen
 import { ContractsComponent } from './components/contracts/contracts.component';
 import { RevoucherComponent } from './components/revoucher/revoucher.component';
 import { AccountstatementComponent } from './components/accountstatement/accountstatement.component';
+import { OffersComponent } from './components/offers/offers.component';
 
 @NgModule({
   declarations: [
@@ -35,6 +36,7 @@ import { AccountstatementComponent } from './components/accountstatement/account
     ContractsComponent,
     RevoucherComponent,
     AccountstatementComponent,
+    OffersComponent,
   ],
   imports: [
     CommonModule,

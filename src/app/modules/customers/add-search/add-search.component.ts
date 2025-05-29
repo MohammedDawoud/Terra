@@ -98,7 +98,6 @@ export class AddSearchComponent implements OnInit {
   subscriptions: Subscription[] = [];
   customer = new Customer();
 
-  userG: any = {};
   selectedDateType = DateType.Hijri;
 
   title: any = {
@@ -152,7 +151,7 @@ export class AddSearchComponent implements OnInit {
     nameAr: null,
     nameEn: null,
   };
-
+  userG: any = {};
   constructor(
     private service: CustomerService,
     private _organization: OrganizationService,

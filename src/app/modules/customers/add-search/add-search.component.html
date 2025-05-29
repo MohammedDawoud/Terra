@@ -7,7 +7,7 @@
 
       <!---------------------------------------------------------------------------->
       <div class="flex gap-2 controler">
-        <button
+        <button *ngIf="userG?.userPrivileges.includes(120001)"
           class="flex gap-1 btn btn-primary"
           (click)="openModal(dataModal, null, 'addClient')"
         >
@@ -22,14 +22,15 @@
           <i class="fa-solid fa-user-plus"></i>
         </button>
 
-        <button class="flex gap-1 btn btn-danger" (click)="dataSearch.filter.showFilters = !dataSearch.filter.showFilters;">
+        <button *ngIf="userG?.userPrivileges.includes(120004)"
+         class="flex gap-1 btn btn-danger" (click)="dataSearch.filter.showFilters = !dataSearch.filter.showFilters;">
         <span
           class="hidden md:block"
           [translate]="'name'" [translateParams]="{ar: 'بحث ',en: 'Search '}"></span>
         <i class="fa-solid fa-search"></i>
         </button>
 
-        <button
+        <button *ngIf="userG?.userPrivileges.includes(120005)"
           class="flex gap-1 btn btn-warning"
           (click)="exportData()"
         >
@@ -271,13 +272,13 @@
           ></th>
           <td mat-cell *matCellDef="let element">
             <div class="flex gap-1 justify-center py-2">
-              <button
+              <button  *ngIf="userG?.userPrivileges.includes(120002)"
                 class="min-w-max p-2 bg-orange-100 hover:bg-orange-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
                 (click)="openModal(dataModal, element, 'editClient')"
               >
                 <i class="fa-regular fa-pen-to-square"></i>
               </button>
-              <button
+              <button *ngIf="userG?.userPrivileges.includes(120003)"
                 class="min-w-max p-2 bg-red-100 hover:bg-red-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
                 (click)="openModal(deleteModal, element, 'delete')"
               >

@@ -6,7 +6,7 @@
     <div class="flex justify-between gap-2 items-center my-3 flex-wrap">
       <!---------------------------------------------------------------------------->
       <div class="flex gap-2 controler">
-        <button
+        <button *ngIf="userG?.userPrivileges.includes(130001)"
           class="flex gap-1 btn btn-primary"
           (click)="openModal(dataModal, null, 'addEmployee')"
         >
@@ -20,13 +20,14 @@
           ></span>
           <i class="fa-solid fa-user-plus"></i>
         </button>
-        <button class="flex gap-1 btn btn-danger" (click)="dataSearch.filter.showFilters = !dataSearch.filter.showFilters;">
+        <button *ngIf="userG?.userPrivileges.includes(130004)"
+         class="flex gap-1 btn btn-danger" (click)="dataSearch.filter.showFilters = !dataSearch.filter.showFilters;">
           <span
             class="hidden md:block"
             [translate]="'name'" [translateParams]="{ar: 'بحث ',en: 'Search '}"></span>
           <i class="fa-solid fa-search"></i>
           </button>
-        <button
+        <button *ngIf="userG?.userPrivileges.includes(130005)"
           class="flex gap-1 btn btn-warning"
           (click)="exportData()"
         >
@@ -261,25 +262,25 @@
           ></th>
           <td mat-cell *matCellDef="let element">
             <div class="flex gap-1 justify-center py-2">
-              <button
+              <button *ngIf="userG?.userPrivileges.includes(130002)"
                 class="min-w-max p-2 bg-orange-100 hover:bg-orange-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
                 (click)="openModal(dataModal, element, 'editEmployee')"
               >
                 <i class="fa-regular fa-pen-to-square"></i>
               </button>
-              <button 
+              <button  *ngIf="userG?.userPrivileges.includes(130006)"
               class="min-w-max p-2 bg-green-100 hover:bg-green-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
               (click)="open(uploadFileModal, element, 'uploadFile')" >
               <i class="fa fa-upload"></i>
               </button>
-              <button
+              <button *ngIf="userG?.userPrivileges.includes(130007)"
               class="min-w-max p-2 bg-blue-100 hover:bg-blue-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
               (click)="open(ShowEmployeeFilesModal, element, 'ShowEmployeeFiles')" >
               <!-- <i class="fa fa-eye"></i> -->
               <i class="fa-solid fa-download"></i>
 
             </button>
-              <button
+              <button *ngIf="userG?.userPrivileges.includes(130003)"
                 class="min-w-max p-2 bg-red-100 hover:bg-red-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
                 (click)="openModal(deleteModal, element, 'delete')"
               >
