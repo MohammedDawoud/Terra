@@ -162,7 +162,6 @@ export class ContractsComponent implements OnInit {
       (values: Array<File>) => this.getImage(values[0])
     );
     this.GetOrganizationData();
-    this.GetBranchData();
   }
   OrganizationData: any;
   environmentPho: any;
@@ -176,8 +175,8 @@ export class ContractsComponent implements OnInit {
   }
   BranchData: any;
   environmentPhoBranch: any;
-  GetBranchData(){
-    this.api.GetBranchByBranchId().subscribe((data: any) => {
+  GetBranchData(BranchId:any){
+    this.api.GetBranchByBranchIdNew(BranchId).subscribe((data: any) => {
       this.BranchData = data;
       this.environmentPhoBranch =environment.PhotoURL + this.BranchData.logoUrl;
     });
@@ -1596,19 +1595,23 @@ GetDofAsaatContractsPrint(obj:any){
   this.serviceDetailsPrintObj=[];
   this.serviceDetailsList=[];
   this.paymentDetailsPrint=[];
-
+  this.ContractPrintData=obj;
+  console.log("this.ContractPrintData",this.ContractPrintData);
+  this.modalDetailsContractNew_Print.discountValue=this.ContractPrintData.discountValue;
+    this.modalDetailsContractNew_Print.discountPercentage=this.ContractPrintData.discountPercentage;
   this.service.GetCategoriesByContractId(obj.contractId).subscribe(data=>{
     this.serviceDetailsList=data;
     console.log("this.serviceDetailsList",this.serviceDetailsList);
+    this.CalcSumTotal_ContractNew_Print(this.serviceDetailsList);
+    this.CalcDisc_Print(1)
   });
   this.service.GetAllPaymentsByContractId(obj.contractId).subscribe(data=>{
     this.paymentDetailsPrint=data;
     console.log("this.paymentDetailsPrint",this.paymentDetailsPrint);
   });
-  this.ContractPrintData=obj;
-  console.log("this.ContractPrintData",this.ContractPrintData);
+  debugger
+  this.GetBranchData(obj.branchId);
   console.log("this.OrganizationData",this.OrganizationData);
-  console.log("this.BranchData",this.BranchData);
   
 
 }
@@ -1617,6 +1620,63 @@ printDiv(id: any) {
 }
 
 dateToday: any = new Date();
+
+  modalDetailsContractNew_Print:any={
+    sumamount:null,
+    sumtotal:null,
+    sumqty:null,
+    discountValue:null,
+    discountPercentage:null,
+    sumtotalAfterDisc:null,
+  }
+
+  CalcSumTotal_ContractNew_Print(serviceDetailsList:any){
+    let sumamount=0;
+    let sumtotal=0;
+    let sumqty=0;
+    debugger
+    serviceDetailsList.forEach((element: any) => {
+      sumamount= +sumamount + +parseFloat((element.amount??0)).toFixed(2);
+      sumtotal= +sumtotal + +parseFloat((element.totalValue??0)).toFixed(2);
+      sumqty= +sumqty + +parseFloat((element.qty??0)).toFixed(2);
+    });
+    this.modalDetailsContractNew_Print.sumamount=parseFloat(sumamount.toString()).toFixed(2);
+    this.modalDetailsContractNew_Print.sumtotal=parseFloat(sumtotal.toString()).toFixed(2);
+    this.modalDetailsContractNew_Print.sumqty=parseFloat(sumqty.toString()).toFixed(2);
+  }
+
+  CalcDisc_Print(type:any){
+    var ValueAmount = parseFloat((this.modalDetailsContractNew_Print.sumtotal ?? 0).toString()).toFixed(2);
+    var DiscountValue_Det;
+    if (type == 1)
+       {
+        DiscountValue_Det = parseFloat((this.modalDetailsContractNew_Print.discountValue ?? 0).toString()).toFixed(2);
+    } else {
+      var Discountper_Det = parseFloat((this.modalDetailsContractNew_Print.discountPercentage ?? 0).toString()).toFixed(2);
+      DiscountValue_Det = parseFloat(((+Discountper_Det * +ValueAmount) / 100).toString()).toFixed(2);
+      this.modalDetailsContractNew_Print.discountValue= parseFloat(DiscountValue_Det.toString()).toFixed(2);
+    }
+    var Value = parseFloat( (+ValueAmount - +DiscountValue_Det).toString()).toFixed(2);
+    if (!(+Value >= 0)) {
+      this.modalDetailsContractNew_Print.discountValue=0;
+      this.modalDetailsContractNew_Print.discountPercentage=0;
+      DiscountValue_Det = 0;
+      Value = parseFloat((+ValueAmount - +DiscountValue_Det).toString()).toFixed(2);
+    }
+    if (type == 1) {
+      var DiscountPercentage_Det;
+      if (+ValueAmount > 0) 
+        { DiscountPercentage_Det = (+DiscountValue_Det * 100) / +ValueAmount;
+      } else {
+        DiscountPercentage_Det = 0;
+      }
+      DiscountPercentage_Det = parseFloat( DiscountPercentage_Det.toString()).toFixed(2);
+      this.modalDetailsContractNew_Print.discountPercentage=DiscountPercentage_Det;
+    }
+
+    this.modalDetailsContractNew_Print.sumtotalAfterDisc = parseFloat((Value).toString()).toFixed(2);
+  }
+
 
 //-------------------------------------------EndPrint----------------------------------------
 

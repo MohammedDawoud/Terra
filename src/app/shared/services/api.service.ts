@@ -36,6 +36,10 @@ export class RestApiService {
   GetBranchByBranchId() {
      return this.http.get<any>(this.apiEndPoint + 'Branches/GetBranchByBranchId');
   }
+  GetBranchByBranchIdNew(BranchId:any) {
+    var url=`${environment.apiEndPoint}Branches/GetBranchByBranchIdNew?BranchId=${BranchId}`;
+    return this.http.get<any>(url);
+  }
   GetAllNews() {
     return this.http.get<any>(this.apiEndPoint + 'ContactUs/GetAllNews');
   }
