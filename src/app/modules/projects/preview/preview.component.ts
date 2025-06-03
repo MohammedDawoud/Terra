@@ -726,23 +726,38 @@ export class PreviewComponent implements OnInit {
     this.ValidateObjMsg = { status: true, msg: null };
     return this.ValidateObjMsg;
   }
-
+  locale = 'en-US';
+  options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+    formatMatcher:"basic"
+  };
   exportData() {
     let x = [];
-
-    for (let index = 0; index < this.dataSourceTemp.length; index++) {
+    var AccDataSource=this.dataSource.data;
+    for (let index = 0; index < AccDataSource.length; index++) {
+      const formatter = new Intl.DateTimeFormat(this.locale, this.options);
       x.push({
-        branchName: this.dataSourceTemp[index].branchName,
-        orderBarcode: this.dataSourceTemp[index].orderBarcode,
-        previewCode: this.dataSourceTemp[index].previewCode,
-        customerName: this.dataSourceTemp[index].customerName,
-        mainPhoneNo: this.dataSourceTemp[index].mainPhoneNo,
-        address: this.dataSourceTemp[index].address,
-        chairpersonName: this.dataSourceTemp[index].chairpersonName,
-        date: this.dataSourceTemp[index].date,
-        previewStatus: this.dataSourceTemp[index].previewStatustxt,
-        previewConvert: this.dataSourceTemp[index].previewConverttxt,
-        addDate: this.dataSourceTemp[index].addDate,
+        branchName: AccDataSource[index].branchName,
+        orderBarcode: AccDataSource[index].orderBarcode,
+        previewCode: AccDataSource[index].previewCode,
+        previewTypeName: AccDataSource[index].previewTypeName,
+        customerCode: AccDataSource[index].customerCode,
+        customerName: AccDataSource[index].customerName,
+        mainPhoneNo: AccDataSource[index].mainPhoneNo,
+        subMainPhoneNo: AccDataSource[index].subMainPhoneNo,
+        cityName: AccDataSource[index].cityName,
+        address: AccDataSource[index].address,
+        socialMediaName: AccDataSource[index].socialMediaName,
+        chairpersonName: AccDataSource[index].chairpersonName,
+        date: formatter.format(new Date(AccDataSource[index].date)),
+        previewStatus: AccDataSource[index].previewStatustxt,
+        previewConvert: AccDataSource[index].previewConverttxt,
+        addDate: formatter.format(new Date(AccDataSource[index].addDate)),
       });
     }
     this.service.customExportExcel(x, 'Previews');

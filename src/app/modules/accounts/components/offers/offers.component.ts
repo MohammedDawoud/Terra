@@ -980,20 +980,20 @@ getcustomerdata(){
 
   exportData() {
     let x = [];
-
-    for (let index = 0; index < this.dataSourceTemp.length; index++) {
+    var AccDataSource=this.dataSource.data;
+    for (let index = 0; index < AccDataSource.length; index++) {
       x.push({
-        branchName: this.dataSourceTemp[index].branchName,
-        offerCode: this.dataSourceTemp[index].offerCode,
-        nameAr: this.dataSourceTemp[index].nameAr,      
-        mainPhoneNo: this.dataSourceTemp[index].mainPhoneNo,
-        cityName: this.dataSourceTemp[index].cityName,
-        address: this.dataSourceTemp[index].address,
-        paytypeName: this.dataSourceTemp[index].paytypeName,
-        customerName: this.dataSourceTemp[index].customerName,
-        socialMediaName: this.dataSourceTemp[index].socialMediaName,
-        date: this.dataSourceTemp[index].date,
-        addDate: this.dataSourceTemp[index].addDate,
+        branchName: AccDataSource[index].branchName,
+        offerCode: AccDataSource[index].offerCode,
+        nameAr: AccDataSource[index].nameAr,      
+        mainPhoneNo: AccDataSource[index].mainPhoneNo,
+        cityName: AccDataSource[index].cityName,
+        address: AccDataSource[index].address,
+        paytypeName: AccDataSource[index].paytypeName,
+        customerName: AccDataSource[index].customerName,
+        socialMediaName: AccDataSource[index].socialMediaName,
+        date: AccDataSource[index].date,
+        addDate: AccDataSource[index].addDate,
       });
     }
     this.service.customExportExcel(x, 'Offers');

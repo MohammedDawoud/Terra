@@ -374,6 +374,24 @@
               />
             </div>
             <div>
+              <label for="password" class="col-form-label">{{ "الباسورد" | translate }}</label>
+              <span class="text-danger">*</span>
+              <div class="flex">
+              <input
+                id="password"
+                [type]="text ? 'text' : 'password'"
+                class="form-control"
+                autocomplete="off"
+                placeholder="{{ 'Password' | translate }} "
+                formControlName="Password"
+              />
+              <i style="padding-top: 4%;"
+                class="fa fa-{{ text ? 'eye' : 'eye-slash' }}"
+                (click)="text = !text"
+              ></i>
+              </div>
+            </div>
+            <div>
               <label class="col-form-label">{{ "Email" | translate }}</label>
               <span class="text-danger">*</span>
               <input

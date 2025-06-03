@@ -450,6 +450,7 @@ export class OrganizationComponent implements OnInit {
     this.BranchInfoForm.controls['NameEn'].setValue(item?.nameEn);
     this.BranchInfoForm.controls['BranchNamePrint'].setValue(item?.branchNamePrint);
     this.BranchInfoForm.controls['BoxAccId'].setValue(item?.boxAccId);
+    this.BranchInfoForm.controls['SalesAccId'].setValue(item?.salesAccId);
     this.BranchInfoForm.controls['CustomersAccId'].setValue(item?.customersAccId);
     this.BranchInfoForm.controls['EmployeesAccId'].setValue(item?.employeesAccId);
     this.BranchInfoForm.controls['CustomerPhone'].setValue(item?.customerPhone);
@@ -478,6 +479,7 @@ export class OrganizationComponent implements OnInit {
       NameEn: [null, [Validators.required]],
       BranchNamePrint: [null, [Validators.required]],
       BoxAccId: [null, [Validators.required]],
+      SalesAccId: [null, [Validators.required]],
       CustomersAccId: [null, [Validators.required]],
       EmployeesAccId: [null, [Validators.required]],
       CustomerPhone: [null, []],
@@ -513,6 +515,7 @@ export class OrganizationComponent implements OnInit {
     formData.append('NameEn', this.BranchInfoForm.controls['NameEn'].value);
     formData.append('BranchNamePrint', this.BranchInfoForm.controls['BranchNamePrint'].value);
     formData.append('BoxAccId', this.BranchInfoForm.controls['BoxAccId'].value);
+    formData.append('SalesAccId', this.BranchInfoForm.controls['SalesAccId'].value);
     formData.append('CustomersAccId', this.BranchInfoForm.controls['CustomersAccId'].value);
     formData.append('EmployeesAccId', this.BranchInfoForm.controls['EmployeesAccId'].value);
     formData.append('CustomerPhone', this.BranchInfoForm.controls['CustomerPhone'].value);

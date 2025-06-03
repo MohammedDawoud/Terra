@@ -457,22 +457,21 @@ export class CategoriesComponent implements OnInit {
 
   exportData() {
     let x = [];
-
-    for (let index = 0; index < this.dataSourceTemp.length; index++) {
-      let date = new Date(this.dataSourceTemp[index].addDate);
+    var AccDataSource=this.dataSource.data;
+    for (let index = 0; index < AccDataSource.length; index++) {
+      let date = new Date(AccDataSource[index].addDate);
       const formatter = new Intl.DateTimeFormat(this.locale, this.options);
       const formattedDate = formatter.format(date);
       x.push({
-        branchName: this.dataSourceTemp[index].branchName,
-        code: this.dataSourceTemp[index].code,
-        categoryName: this.dataSourceTemp[index].nameAr,
-        amount: this.dataSourceTemp[index].amount,
-        statusName: this.dataSourceTemp[index].statusName,
-        categoryTypeName: this.dataSourceTemp[index].categoryTypeName,
-        categoryTypeStatusName: this.dataSourceTemp[index].categoryTypeStatusName,
-        unitName: this.dataSourceTemp[index].unitName,
+        branchName: AccDataSource[index].branchName,
+        code: AccDataSource[index].code,
+        categoryName: AccDataSource[index].nameAr,
+        amount: AccDataSource[index].amount,
+        statusName: AccDataSource[index].statusName,
+        categoryTypeName: AccDataSource[index].categoryTypeName,
+        categoryTypeStatusName: AccDataSource[index].categoryTypeStatusName,
+        unitName: AccDataSource[index].unitName,
         addDate: formattedDate,
-
       });
     }
     debugger;

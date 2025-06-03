@@ -531,18 +531,18 @@ export class RevoucherComponent implements OnInit {
 
   exportData() {
     let x = [];
-
-    for (let index = 0; index < this.dataSourceTemp.length; index++) {
-      let date = new Date(this.dataSourceTemp[index].addDate);
+    var AccDataSource=this.dataSource.data;
+    for (let index = 0; index < AccDataSource.length; index++) {
+      let date = new Date(AccDataSource[index].addDate);
       const formatter = new Intl.DateTimeFormat(this.locale, this.options);
       const formattedDate = formatter.format(date);
       x.push({
-        branchName: this.dataSourceTemp[index].branchName,
-        voucherNo: this.dataSourceTemp[index].voucherNo,
-        documentNo: this.dataSourceTemp[index].documentNo,
-        date: this.dataSourceTemp[index].date,
-        notes: this.dataSourceTemp[index].notes,
-        statustxt: this.dataSourceTemp[index].statustxt,
+        branchName: AccDataSource[index].branchName,
+        voucherNo: AccDataSource[index].voucherNo,
+        documentNo: AccDataSource[index].documentNo,
+        date: AccDataSource[index].date,
+        notes: AccDataSource[index].notes,
+        statustxt: AccDataSource[index].statustxt,
         addDate: formattedDate,
 
       });

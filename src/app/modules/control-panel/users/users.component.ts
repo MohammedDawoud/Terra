@@ -55,6 +55,8 @@ export class UsersComponent implements OnInit {
   users: any;
 
   modalDetails: any;
+  
+  text = false;
 
   UserSelectIdFilter: any;
   modal?: BsModalRef;
@@ -334,7 +336,7 @@ export class UsersComponent implements OnInit {
     //formData.append('GroupId', this.userForm.controls['GroupId'].value);
     formData.append('BranchId', this.userForm.controls['BranchId'].value);
     formData.append('UserName', this.userForm.controls['UserName'].value);
-    //formData.append('Password', this.userForm.controls['Password'].value);
+    formData.append('Password', this.userForm.controls['Password'].value);
     //formData.append('Session', this.userForm.controls['Session'].value);
     formData.append('Notes', this.userForm.controls['Notes'].value);
 
@@ -813,7 +815,12 @@ export class UsersComponent implements OnInit {
     this.userForm.controls['BranchId'].setValue(data.branchId);
     this.userForm.controls['Mobile'].setValue(data.mobile);
     this.userForm.controls['UserName'].setValue(data.userName);
-    this.userForm.controls['Password'].setValue(data.password);
+    // this.userForm.controls['Password'].setValue(data.password);
+    debugger
+    this.api.DecryptPassword(data.password.toString()).subscribe((result: any) => {
+      debugger
+      this.userForm.controls['Password'].setValue(result.reasonPhrase);
+    });
     this.userForm.controls['Notes'].setValue(data.notes);
     this.userForm.controls['Status'].setValue(data.status);
     this.userForm.controls['UserName'].disable();
@@ -1088,15 +1095,15 @@ export class UsersComponent implements OnInit {
 
   exportData() {
     let x = [];
-
-    for (let index = 0; index < this.dataSourceTemp.length; index++) {
+    var AccDataSource=this.data.users.data;
+    for (let index = 0; index < AccDataSource.length; index++) {
       x.push({
-        fullName: this.dataSourceTemp[index].fullName,
-        branchName: this.dataSourceTemp[index].branchName,
-        jobName: this.dataSourceTemp[index].jobName,      
-        email: this.dataSourceTemp[index].email,
-        mobile: this.dataSourceTemp[index].mobile,
-        statusName: this.dataSourceTemp[index].statusName,
+        fullName: AccDataSource[index].fullName,
+        branchName: AccDataSource[index].branchName,
+        jobName: AccDataSource[index].jobName,      
+        email: AccDataSource[index].email,
+        mobile: AccDataSource[index].mobile,
+        statusName: AccDataSource[index].statusName,
       });
     }
     this._sysServicesService.customExportExcel(x, 'Users');

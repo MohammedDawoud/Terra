@@ -574,21 +574,21 @@ export class AddSearchComponent implements OnInit {
 
   exportData() {
     let x = [];
-
-    for (let index = 0; index < this.dataSourceTemp.length; index++) {
-      let date = new Date(this.dataSourceTemp[index].addDate);
+    var AccDataSource=this.dataSource.data;
+    for (let index = 0; index < AccDataSource.length; index++) {
+      let date = new Date(AccDataSource[index].addDate);
       const formatter = new Intl.DateTimeFormat(this.locale, this.options);
       const formattedDate = formatter.format(date);
       x.push({
-        branchName: this.dataSourceTemp[index].branchName,
-        employeeCode: this.dataSourceTemp[index].employeeCode,
-        employeeName: this.dataSourceTemp[index].nameAr,
-        mainPhoneNo: this.dataSourceTemp[index].mainPhoneNo,
-        salary: this.dataSourceTemp[index].salary,
-        address: this.dataSourceTemp[index].address,
-        jobName: this.dataSourceTemp[index].jobName,
-        managerName: this.dataSourceTemp[index].managerName,
-        statusName: this.dataSourceTemp[index].statusName,
+        branchName: AccDataSource[index].branchName,
+        employeeCode: AccDataSource[index].employeeCode,
+        employeeName: AccDataSource[index].nameAr,
+        mainPhoneNo: AccDataSource[index].mainPhoneNo,
+        salary: AccDataSource[index].salary,
+        address: AccDataSource[index].address,
+        jobName: AccDataSource[index].jobName,
+        managerName: AccDataSource[index].managerName,
+        statusName: AccDataSource[index].statusName,
         addDate: formattedDate,
 
       });

@@ -43,8 +43,8 @@ export class RestApiService {
   GetAllNews() {
     return this.http.get<any>(this.apiEndPoint + 'ContactUs/GetAllNews');
   }
-  DecryptValue(value:any) {
-    var url=`${environment.apiEndPoint}Login/DecryptValue?value=${value}`;
+  DecryptPassword(value:any) {
+    var url=`${environment.apiEndPoint}Login/DecryptPassword?value=${value}`;
     return this.http.get<any>(url);
   }
 

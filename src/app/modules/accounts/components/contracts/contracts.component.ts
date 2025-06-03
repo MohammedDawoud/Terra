@@ -178,7 +178,14 @@ export class ContractsComponent implements OnInit {
   GetBranchData(BranchId:any){
     this.api.GetBranchByBranchIdNew(BranchId).subscribe((data: any) => {
       this.BranchData = data;
-      this.environmentPhoBranch =environment.PhotoURL + this.BranchData.logoUrl;
+      if(!(this.BranchData.logoUrl==null || this.BranchData.logoUrl==""))
+      {
+        this.environmentPhoBranch =environment.PhotoURL + this.BranchData.logoUrl;
+      }
+      else
+      {
+        this.environmentPhoBranch=this.environmentPho;
+      }
     });
   }
 
@@ -1084,29 +1091,44 @@ export class ContractsComponent implements OnInit {
     console.log('this.ContractIdPublic');
     console.log(this.ContractIdPublic);
   }
-
+  locale = 'en-US';
+  options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+    formatMatcher:"basic"
+  };
   exportData() {
     let x = [];
-
-    for (let index = 0; index < this.dataSourceTemp.length; index++) {
+    var AccDataSource=this.dataSource.data;
+    for (let index = 0; index < AccDataSource.length; index++) {
+      const formatter = new Intl.DateTimeFormat(this.locale, this.options);
       x.push({
-        branchName: this.dataSourceTemp[index].branchName,
-        orderBarcode: this.dataSourceTemp[index].orderBarcode,
-        previewCode: this.dataSourceTemp[index].previewCode,      
-        previewTypeName: this.dataSourceTemp[index].previewTypeName,
-        designCode: this.dataSourceTemp[index].designCode,
-        contractCode: this.dataSourceTemp[index].contractCode,
-        customerCode: this.dataSourceTemp[index].customerCode,
-        customerName: this.dataSourceTemp[index].customerName,
-        mainPhoneNo: this.dataSourceTemp[index].mainPhoneNo,
-        address: this.dataSourceTemp[index].address,
-        date: this.dataSourceTemp[index].date,
-        deliveryDate: this.dataSourceTemp[index].deliveryDate,
-        deliveryDateFinal: this.dataSourceTemp[index].deliveryDateFinal,
-        storageDate: this.dataSourceTemp[index].storageDate,
-        addDate: this.dataSourceTemp[index].addDate,
-        contractStatustxt: this.dataSourceTemp[index].contractStatustxt,
-
+        branchName: AccDataSource[index].branchName,
+        orderBarcode: AccDataSource[index].orderBarcode,
+        previewCode: AccDataSource[index].previewCode,      
+        previewTypeName: AccDataSource[index].previewTypeName,
+        meetingCode: AccDataSource[index].meetingCode,
+        designCode: AccDataSource[index].designCode,
+        contractCode: AccDataSource[index].contractCode,
+        customerCode: AccDataSource[index].customerCode,
+        customerName: AccDataSource[index].customerName,
+        mainPhoneNo: AccDataSource[index].mainPhoneNo,
+        subMainPhoneNo: AccDataSource[index].subMainPhoneNo,
+        cityName: AccDataSource[index].cityName,
+        address: AccDataSource[index].address,
+        nationalId: AccDataSource[index].nationalId,
+        paytypeName: AccDataSource[index].paytypeName,
+        socialMediaName: AccDataSource[index].socialMediaName,
+        date:AccDataSource[index].date!=null? formatter.format(new Date(AccDataSource[index].date)):null,
+        deliveryDate: AccDataSource[index].deliveryDate!=null?formatter.format(new Date(AccDataSource[index].deliveryDate)):null,
+        deliveryDateFinal:AccDataSource[index].deliveryDateFinal!=null? formatter.format(new Date(AccDataSource[index].deliveryDateFinal)):null,
+        storageDate:AccDataSource[index].storageDate!=null? formatter.format(new Date(AccDataSource[index].storageDate)):null,
+        addDate:AccDataSource[index].addDate!=null? formatter.format(new Date(AccDataSource[index].addDate)):null,
+        contractStatustxt: AccDataSource[index].contractStatustxt,
       });
     }
     this.service.customExportExcel(x, 'Contracts');

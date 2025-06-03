@@ -565,23 +565,23 @@ export class AddSearchComponent implements OnInit {
 
   exportData() {
     let x = [];
-
-    for (let index = 0; index < this.dataSourceTemp.length; index++) {
-      let date = new Date(this.dataSourceTemp[index].addDate);
+    var AccDataSource=this.dataSource.data;
+    for (let index = 0; index < AccDataSource.length; index++) {
+      let date = new Date(AccDataSource[index].addDate);
       const formatter = new Intl.DateTimeFormat(this.locale, this.options);
       const formattedDate = formatter.format(date);
       x.push({
-        branchName: this.dataSourceTemp[index].branchName,
-        customerCode: this.dataSourceTemp[index].customerCode,
-        customerName: this.dataSourceTemp[index].nameAr,
-        mainPhoneNo: this.dataSourceTemp[index].mainPhoneNo,
-        subMainPhoneNo: this.dataSourceTemp[index].subMainPhoneNo,
-        email: this.dataSourceTemp[index].email,
-        cityName: this.dataSourceTemp[index].cityName,
-        address: this.dataSourceTemp[index].address,
-        paytypeName: this.dataSourceTemp[index].paytypeName,
-        socialMediaName: this.dataSourceTemp[index].socialMediaName,
-        statusName: this.dataSourceTemp[index].statusName,
+        branchName: AccDataSource[index].branchName,
+        customerCode: AccDataSource[index].customerCode,
+        customerName: AccDataSource[index].nameAr,
+        mainPhoneNo: AccDataSource[index].mainPhoneNo,
+        subMainPhoneNo: AccDataSource[index].subMainPhoneNo,
+        email: AccDataSource[index].email,
+        cityName: AccDataSource[index].cityName,
+        address: AccDataSource[index].address,
+        paytypeName: AccDataSource[index].paytypeName,
+        socialMediaName: AccDataSource[index].socialMediaName,
+        statusName: AccDataSource[index].statusName,
         addDate:formattedDate,
       });
     }
