@@ -297,6 +297,15 @@ export class VerticalSidebarComponent implements OnInit {
             showP: this.userG?.userPrivileges.includes(1503),
           },
           {
+            name: { ar: 'صرف نقدية', en: 'Cash receipt' },
+            link: '/accounts/payvoucher',
+            type: 'single',
+            icon: '/assets/sidebar-icons/md-paper.png',
+            title:"1505",
+            show: this.userG?.pagesList.includes(1505),
+            showP: this.userG?.userPrivileges.includes(1505),
+          },
+          {
             name: { ar: 'تقارير  الحسابات', en: 'Project Reports' },
             link: null,
             type: 'multiple',

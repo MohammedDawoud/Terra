@@ -231,14 +231,14 @@
                 (click)="open(ShowOfferFilesModal, element, 'ShowOfferFiles')" >
                 <i class="fa-solid fa-download"></i>
                 </button> -->
-                <!-- <button
+                <button
                 class="min-w-max p-2 bg-green-100 hover:bg-green-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
                 title="  طباعة طلب التسعير"
                 data-original-title="  طباعة طلب التسعير"
-                (click)="GetDofAsaatOffersPrint(element);open(printDivOffers_DofAsaatModal);"
+                (click)="GetDofAsaatOffersPrint(element);open(printDivOffer);"
               >
                 <i class="fa-solid fa-print"></i>
-              </button> -->
+              </button>
               <button *ngIf="userG?.userPrivileges.includes(150103)"
                   class="min-w-max p-2 bg-red-100 hover:bg-red-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
                   (click)="openModal(deleteModal, element, 'delete')"
@@ -1366,7 +1366,7 @@
   </ng-template>
 
 
-<ng-template #printDivOffers_DofAsaatModal let-modal>
+<ng-template #printDivOffer let-modal>
   <div class="modal-body">
 
     <div id="report2Offer" [ngStyle]="{ direction: 'rtl' }">
@@ -1374,51 +1374,88 @@
         <div class="card main-card">
             <div class="grid-container" style="background: cadetblue;">
                 <div class="grid-item">
-                        <img *ngIf="environmentPho"
-                        src="{{environmentPho}}"
-                          alt="logo"
-                          style="width: 270px;height: 110px;background: #fff;border-bottom-left-radius: 40px;"
-                        />
-                    <h1 style="margin: 0;font-size: 22px;color:#fff;">{{OrganizationData?.nameAr}} <span style="font-size: 18px;color: #950101;">({{OfferPrintData?.branchName}})</span></h1>
-                    <h4 style="margin: 0px;font-size: 14px;">خدمة العملاء : 01029898218 - 01111936230</h4>
-                    <h4 style="margin: 0px;font-size: 14px;">الشكاوي : 01000565686</h4>
-                    <!-- <h5 style="margin: 0;color:#fff;"> {{OrganizationData.nameAr}}</h5> -->
+                    <h1 style="margin: 0;font-size: 22px;color:#fff;">{{BranchData?.branchNamePrint}}</h1>
+                    <h4 style="margin: 0px;font-size: 14px;">خدمة العملاء : {{BranchData?.customerPhone}} - {{BranchData?.customerPhone2}}</h4>
+                    <h4 style="margin: 0px;font-size: 14px;">الشكاوي : {{BranchData?.complaintsNumber}}</h4>
                 </div>
                 <div class="grid-item text-center">
-                    <h2 style="margin: 0;color:#fff;font-size: 20px;" class="text-center">طلب تسعير اتفاق </h2>
-                    <table class="table totals text-center" style="background-color: #fff;border: 1px dashed;padding: 0;
-                    color: black;font-weight: bold;font-size:13px">
-                        <tbody>
-                            <tr>
-                                <td>رقم طلب التسعير</td>
-                                <td>{{OfferPrintData?.offerCode}}</td>
-                            </tr>
-                            <tr>
-                                <td>التاريخ</td>
-                                <td>{{ dateToday  | hijriDate }} </td>
-                            </tr>
-                            <tr>
-                                <td>الموافق</td>
-                                {{ dateToday | date : " hh:mm yyyy-MM-dd" }}
-
-                            </tr>
-                        </tbody>
-                    </table>
+                        <img *ngIf="environmentPho"
+                        src="{{environmentPhoBranch}}"
+                          alt="logo"
+                          style="width: 160px;height: 110px;float: left;"
+                        />
                 </div>
             </div>
 
-            <!-- <p>تم بعونه تعالى في يوم {{OfferPrintData?.dayname}} الموافق {{OfferPrintData?.date}} م الاتفاق بين كل من الطرفين : </p>
-            <p>الطرف الاول: {{OfferPrintData?.nameAr}} ويمثلها السيد {{OfferPrintData?.employeeNameAr}}، بطاقة هويه {{OfferPrintData?.nationalId}}، بصفته {{OfferPrintData?.jobName}}</p>
-            <p>ويشار اليه فيما بعد ........... بالطرف الاول</p>
-            <p>الطرف الثاني: المكرم/ {{OfferPrintData?.customerName}}, بطاقة الهوية: {{OfferPrintData?.customerNationalId}} المالك لقطعة الارض رقم .... ويشار اليه فيما بعد ..... بالطرف الثاني</p> -->
+            <div style="text-align: center;margin-bottom: 7%;">
+                <img *ngIf="environmentPho"
+                src="{{environmentPhoBranch}}"
+                  alt="logo"
+                  style="width: 800px;height: 940px;"
+                />
+            </div>
 
 
-            <p>انه في يوم............................................. . الموافق ...... ..... .\............. .\............. .</p>
-            <p>تم الاتفاق بين شركة <span style="color: #bb1818;font-weight: bold;">{{OrganizationData?.nameAr}}</span> ومقرها : <span>{{OrganizationData?.address}}</span>.  <span style="font-weight: bold;padding-right: 5%;">(طرف أول الشركة)</span></p>
-              <p>السيد العميل : <span style="color: #000000;font-weight: bold;">{{OfferPrintData?.customerName}}</span> بطاقة رقم : <span>{{OfferPrintData?.nationalId}}</span></p>
-            <p>مكان تركيب الوحدات محل التعاقد : ................................................. موبايل <span>{{OfferPrintData?.mainPhoneNo}}</span> <span style="font-weight: bold;padding-right: 5%;">(طرف ثاني العميل)</span></p>
+                <div class="row align-items-end mb-4">
+                    <div class="form-group col-md-3">
+                        <label class="col-form-label">{{ "فرع طلب التسعير" | translate }}</label>
+                        <p>{{OfferPrintData.branchName}}</p>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label class="col-form-label">{{ "رقم طلب التسعير" | translate }}</label>
+                        <p>{{OfferPrintData.offerCode}}</p>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label class="col-form-label">{{ "كود العميل" | translate }}</label>
+                        <p>{{OfferPrintData.customerCode}}</p>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label class="col-form-label">{{ "اسم العميل" | translate }}</label>
+                        <p>{{OfferPrintData.customerName}}</p>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label class="col-form-label">{{ "رقم التليفون" | translate }}</label>
+                        <p>{{OfferPrintData.mainPhoneNo}}</p>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label class="col-form-label">{{ "رقم التليفون 2" | translate }}</label>
+                        <p>{{OfferPrintData.subMainPhoneNo}}</p>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label class="col-form-label">{{ "منطقة العميل" | translate }}</label>
+                        <p>{{OfferPrintData.cityName}}</p>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label class="col-form-label">{{ "العنوان" | translate }}</label>
+                        <p>{{OfferPrintData.address}}</p>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label class="col-form-label">{{ "عرفتنا عن طريق" | translate }}</label>
+                        <p>{{OfferPrintData.socialMediaName}}</p>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label class="col-form-label">{{ "رقم الهوية" | translate }}</label>
+                        <p>{{OfferPrintData.nationalId}}</p>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label class="col-form-label">{{ "طريقة الدفع" | translate }}</label>
+                        <p>{{OfferPrintData.paytypeName}}</p>
+                    </div>
 
-          <div class="content" style="min-width: max-content">
+                    <div class="form-group col-md-3">
+                        <label class="col-form-label">{{ "تاريخ الطلب" | translate }}</label>
+                        <p>{{ OfferPrintData.date | date : " hh:mm yyyy-MM-dd" }}</p>
+                    </div>
+                </div>
+
+            <!-- <div style="height: 730px;">
+            </div> -->
+             <div style="height: 800px;">
+            </div>
+
+            <div class="content" style="min-width: max-content;height: 1060px;">
+            <h4 *ngIf="serviceDetailsList.length>0" style="background: rgba(0, 0, 0, 0.05) !important;border-bottom: 2px solid #000000;font-weight: 600;padding: 6px;">جدول الأصناف: </h4>
+
             <table  *ngIf="serviceDetailsList.length>0"
               style="text-align: center;vertical-align: middle;width: 100%;min-width: max-content;">
               <thead>
@@ -1480,66 +1517,59 @@
                 </tr>
               </tbody>
             </table>
+
+
+              <div class="boxContainer w-80 py-3 px-3">
+                  <div class="row">
+                      <div class="col-md-12">
+                      <div class="col-md-2">
+                          <label for="sumtotal" class="text-gren">{{ "إجمالي طلب التسعير" | translate }}</label>
+                      </div>
+                      <div class="col-md-10" style="justify-content: center;">
+                        <span>
+                          {{modalDetailsOfferNew_Print.sumtotal}}
+                        </span>
+                      </div>
+                      </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-12">
+                    <div class="col-md-2">
+                        <label for="discountValue" class="text-gren">{{ "الخصم" | translate }}</label>
+                    </div>
+                    <div class="col-md-4" style="justify-content: center;">
+                        <span>
+                          {{modalDetailsOfferNew_Print.discountValue}}
+                        </span>
+                    </div>
+                    <div class="col-md-2" style="padding-right: 6%;">
+                      <label for="discountPercentage" class="text-gren">{{ "نسبة" | translate }}</label>
+                  </div>
+                  <div class="col-md-4" style="justify-content: center;">
+                        <span>
+                          {{modalDetailsOfferNew_Print.discountPercentage}}
+                        </span>
+                      <span style="font-size: 20px;padding-top: 0px;padding-right: 6px;">%</span>
+                  </div>
+                    </div>
+                </div>
+
+                  <div class="row">
+                    <div class="col-md-12">
+                    <div class="col-md-2">
+                        <label for="sumtotalAfterDisc" class="text-gren">{{ "الإجمالي بعد الخصم" | translate }}</label>
+                    </div>
+                    <div class="col-md-10" style="justify-content: center;">
+                        <span>
+                          {{modalDetailsOfferNew_Print.sumtotalAfterDisc}}
+                        </span>
+                    </div>
+                    </div>
+                </div>
+             </div>
+
           </div>
-
-          <p>اولا : اتفاق الطرفان على ان يقوم الطرف الاول بتصنيع مطبخ المبين والموضح بالتفاصيل بورقه الملاحظات .</p>
-          <p>ثانيا : اتفاق الطرفان على ان يكون مبلغ التعاقد ..................................................................</p>
-          <p>وأن يتم السداد عن طريق الدفعات الموضحة بالأسفل</p>
-                   
-          
-          <p>ثالثا : يقوم الطرف الاول بالتصنيع في اليوم الثاني للتعاقد فاذا رغب العميل با جراء اي تعديل بعد بدايه التصنيع فانه يتحمل تكلفه التعديل المطلوب فاذا
-            رغب العميل خلال يومين في الغاء التعاقد يتم خصم نصف المقدم واذا رغب العميل في الغاء التعاقد بعد ثلاثه ايام من التعاقد لن يتم استرداد المقدم
-            المدفوع بالكامل – وفي حالة استلام العميل التصميم الخاص به ورغب في الغاء التعاقد في نفس اليوم يتم خصم " 2000 جنيه " قيمة التصميم .</p>
-          
-          <p>رابعا : اتفاق الطرفان على الالتزام المتبادل بينهم من حيث العلم بأن تأخير سداد الدفعات يوثر علة التزام الطرف الأول بالتسليم في الموعد المتفق عليه
-            بمده قد تتعدى ضعف فترة التأخير في سداد الدفعة .</p>
-          
-          <p>خامسا : تلتزم الشركة بتنفيذ بنود طلب التسعير تفصيليا بمشتملاته وتوريد القطع في موعد أقصاه ............ .\................. . \............... .</p>
-          
-          <p>سادسا : في حالة تأخير الشركة بتوريد القطع بالموعد المحدد تلتزم بسداد غرامة قدرها " 500 جنيه " وذلك بدايه من اليوم السابع كما يلتزم العميل
-            ايضا بسداد غرامة قدرها " 500 جنيه " في حاله تأخيره عن سداد الدفعات في الموعد المتفق عليها لاستحقاق الدفعات .</p>
-          
-          <p>سابعا : في حالة تأخير العميل عن استلام القطع موضوع طلب التسعير خلال فترة اقصاها " 14 يوما " من موعد الاستلام تكون الشركه غير مسؤله عن حدوث
-            اي اضرار بالقطع وذلك نتيجه الت خزين علما بان تخزين المطبخ خلال هذه الفترة يكون بتكلفة قيمتها " 3 % " من اجمالي المطبخ ويتضاعف كل " 14
-            يوما " من التأخير بالمثل .</p>
-          <p>ثامنا : يرجى العلم بأن التركيب يتم على ثلاث زيارات من تاريخ التوريد طبقا لطبيعه الوحدات والتصميم – وفي حالة حدوث استكمال تتعهد الشركة
-            بانهاؤه في خلال 7:10 ايام من تا ريخ الاستلام .</p>
-          <p>تاسعا : الشركة غير مسئولة عن اي اتفاق شفوي بين العميل والمهندس المسئول عن التصميم واثناء التركيب لا يتم التعامل الا مع الشخص الذي قام
-            بالاتفاق على التصميم .</p>
-          <p>عاشرا : لا يعتد بالسداد القيمه التعاقدات الا بايصالات موقعه من ادارة التسويق والحسابات ومختومه بختم <span style="color: #bb1818;font-weight: bold;">{{OrganizationData?.nameAr}}</span> او رقم حساب الشركة.</p>
-          <p>الحادي عشر : مرفق بهذا طلب التسعير ورقة ملاحظات موضح بها تفاصيل القطع وهي جزء لا يتجزا من هذا طلب التسعير وبها اي ملاحظات اخر يتم الاتفاق عليها</p>
-          
-          <p>الثاني عشر : الشركة مسئولة عن ضمان على القطع ضد عيوب الصناعه لمدة 5 سنوات من تاريخ الاستلام .</p>
-          <p>الثالث عشر : في حالة رفض العميل استلام المطبخ لاي اسباب بعد انتهاء التصنيع ودون وجود اي عيوب في الصناعه يتحمل العميل 80% تكلفة المطبخ
-            من اجمالي.</p>
-          <p>الرابع عشر : وفي حالة لقدر الله نشوء اي خلاف بهذا طلب التسعير يكون الفصل فيها لمحاكم القاهره فقط دون غيرها .</p>
-
-
-            <div class="grid-container text-center">
-                <div class="grid-item">
-                    <p style="font-size: 19px;font-weight: bold;">الطرف الأول:</p>
-                    <p>الاسم: <span style="color: #bb1818;font-weight: bold;">{{OrganizationData?.nameAr}}</span></p>
-                    <p>التوقيع:</p>
-                    <p>.............</p>
-                </div>
-                <div class="grid-item">
-                    <p style="font-size: 19px;font-weight: bold;">الطرف الثاني:</p>
-                    <p>الاسم: <span style="color: #000000;font-weight: bold;">{{OfferPrintData?.customerName}}</span></p>
-                    <p>التوقيع:</p>
-                    <p>.............</p>
-                </div>
-                <div class="grid-item">
-                  <p style="font-size: 19px;font-weight: bold;">توقيع المهندس</p>
-                  <p>الاسم: </p>
-                  <p>التوقيع:</p>
-                  <p>.............</p>
-              </div>
-              <div class="grid-item">
-                <p style="font-size: 19px;font-weight: bold;">الختم</p>
-
-            </div>
-            </div>
-
         </div>
     </div>
     </div>

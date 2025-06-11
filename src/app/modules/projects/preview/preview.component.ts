@@ -757,6 +757,7 @@ export class PreviewComponent implements OnInit {
         date: formatter.format(new Date(AccDataSource[index].date)),
         previewStatus: AccDataSource[index].previewStatustxt,
         previewConvert: AccDataSource[index].previewConverttxt,
+        totalValue: AccDataSource[index].totalValue,
         addDate: formatter.format(new Date(AccDataSource[index].addDate)),
       });
     }

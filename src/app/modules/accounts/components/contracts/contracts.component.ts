@@ -1602,7 +1602,7 @@ export class ContractsComponent implements OnInit {
 
 
 //-------------------------------------------Print------------------------------------------
-
+//#region 
 ContractPrintData:any=null;
 resetCustomData2Contract(){
   this.ContractPrintData=null;
@@ -1698,7 +1698,7 @@ dateToday: any = new Date();
 
     this.modalDetailsContractNew_Print.sumtotalAfterDisc = parseFloat((Value).toString()).toFixed(2);
   }
-
+//#endregion
 
 //-------------------------------------------EndPrint----------------------------------------
 

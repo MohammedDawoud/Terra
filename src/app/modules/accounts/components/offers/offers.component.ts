@@ -161,7 +161,6 @@ export class OffersComponent implements OnInit {
       (values: Array<File>) => this.getImage(values[0])
     );
     this.GetOrganizationData();
-    this.GetBranchData();
   }
   OrganizationData: any;
   environmentPho: any;
@@ -175,10 +174,17 @@ export class OffersComponent implements OnInit {
   }
   BranchData: any;
   environmentPhoBranch: any;
-  GetBranchData(){
-    this.api.GetBranchByBranchId().subscribe((data: any) => {
+  GetBranchData(BranchId:any){
+    this.api.GetBranchByBranchIdNew(BranchId).subscribe((data: any) => {
       this.BranchData = data;
-      this.environmentPhoBranch =environment.PhotoURL + this.BranchData.logoUrl;
+      if(!(this.BranchData.logoUrl==null || this.BranchData.logoUrl==""))
+      {
+        this.environmentPhoBranch =environment.PhotoURL + this.BranchData.logoUrl;
+      }
+      else
+      {
+        this.environmentPhoBranch=this.environmentPho;
+      }
     });
   }
 
@@ -1373,12 +1379,13 @@ getcustomerdata(){
 
 
 //-------------------------------------------Print------------------------------------------
-
+//#region 
 OfferPrintData:any=null;
 resetCustomData2Offer(){
   this.OfferPrintData=null;
 }
 serviceDetailsPrint: any;
+paymentDetailsPrint: any;
 
 serviceDetailsPrintObj:any=[];
 serviceDetailsList:any=[];
@@ -1386,15 +1393,20 @@ serviceDetailsList:any=[];
 GetDofAsaatOffersPrint(obj:any){
   this.serviceDetailsPrintObj=[];
   this.serviceDetailsList=[];
-
+  this.paymentDetailsPrint=[];
+  this.OfferPrintData=obj;
+  console.log("this.OfferPrintData",this.OfferPrintData);
+  this.modalDetailsOfferNew_Print.discountValue=this.OfferPrintData.discountValue;
+    this.modalDetailsOfferNew_Print.discountPercentage=this.OfferPrintData.discountPercentage;
   this.service.GetCategoriesByOfferId(obj.offerId).subscribe(data=>{
     this.serviceDetailsList=data;
     console.log("this.serviceDetailsList",this.serviceDetailsList);
+    this.CalcSumTotal_OfferNew_Print(this.serviceDetailsList);
+    this.CalcDisc_Print(1)
   });
-  this.OfferPrintData=obj;
-  console.log("this.OfferPrintData",this.OfferPrintData);
+  debugger
+  this.GetBranchData(obj.branchId);
   console.log("this.OrganizationData",this.OrganizationData);
-  console.log("this.BranchData",this.BranchData);
   
 
 }
@@ -1404,7 +1416,65 @@ printDiv(id: any) {
 
 dateToday: any = new Date();
 
+  modalDetailsOfferNew_Print:any={
+    sumamount:null,
+    sumtotal:null,
+    sumqty:null,
+    discountValue:null,
+    discountPercentage:null,
+    sumtotalAfterDisc:null,
+  }
+
+  CalcSumTotal_OfferNew_Print(serviceDetailsList:any){
+    let sumamount=0;
+    let sumtotal=0;
+    let sumqty=0;
+    debugger
+    serviceDetailsList.forEach((element: any) => {
+      sumamount= +sumamount + +parseFloat((element.amount??0)).toFixed(2);
+      sumtotal= +sumtotal + +parseFloat((element.totalValue??0)).toFixed(2);
+      sumqty= +sumqty + +parseFloat((element.qty??0)).toFixed(2);
+    });
+    this.modalDetailsOfferNew_Print.sumamount=parseFloat(sumamount.toString()).toFixed(2);
+    this.modalDetailsOfferNew_Print.sumtotal=parseFloat(sumtotal.toString()).toFixed(2);
+    this.modalDetailsOfferNew_Print.sumqty=parseFloat(sumqty.toString()).toFixed(2);
+  }
+
+  CalcDisc_Print(type:any){
+    var ValueAmount = parseFloat((this.modalDetailsOfferNew_Print.sumtotal ?? 0).toString()).toFixed(2);
+    var DiscountValue_Det;
+    if (type == 1)
+       {
+        DiscountValue_Det = parseFloat((this.modalDetailsOfferNew_Print.discountValue ?? 0).toString()).toFixed(2);
+    } else {
+      var Discountper_Det = parseFloat((this.modalDetailsOfferNew_Print.discountPercentage ?? 0).toString()).toFixed(2);
+      DiscountValue_Det = parseFloat(((+Discountper_Det * +ValueAmount) / 100).toString()).toFixed(2);
+      this.modalDetailsOfferNew_Print.discountValue= parseFloat(DiscountValue_Det.toString()).toFixed(2);
+    }
+    var Value = parseFloat( (+ValueAmount - +DiscountValue_Det).toString()).toFixed(2);
+    if (!(+Value >= 0)) {
+      this.modalDetailsOfferNew_Print.discountValue=0;
+      this.modalDetailsOfferNew_Print.discountPercentage=0;
+      DiscountValue_Det = 0;
+      Value = parseFloat((+ValueAmount - +DiscountValue_Det).toString()).toFixed(2);
+    }
+    if (type == 1) {
+      var DiscountPercentage_Det;
+      if (+ValueAmount > 0) 
+        { DiscountPercentage_Det = (+DiscountValue_Det * 100) / +ValueAmount;
+      } else {
+        DiscountPercentage_Det = 0;
+      }
+      DiscountPercentage_Det = parseFloat( DiscountPercentage_Det.toString()).toFixed(2);
+      this.modalDetailsOfferNew_Print.discountPercentage=DiscountPercentage_Det;
+    }
+
+    this.modalDetailsOfferNew_Print.sumtotalAfterDisc = parseFloat((Value).toString()).toFixed(2);
+  }
+//#endregion
+
 //-------------------------------------------EndPrint----------------------------------------
+
 
   AddDataType: any = {
     Citydata: {

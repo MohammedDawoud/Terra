@@ -6,6 +6,7 @@ import { ContractsComponent } from './components/contracts/contracts.component';
 import { RevoucherComponent } from './components/revoucher/revoucher.component';
 import { AccountstatementComponent } from './components/accountstatement/accountstatement.component';
 import { OffersComponent } from './components/offers/offers.component';
+import { PayvoucherComponent } from './components/payvoucher/payvoucher.component';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'Sales_bill' },
@@ -14,6 +15,7 @@ const routes: Routes = [
   { path: 'contracts', component: ContractsComponent },
   { path: 'offers', component: OffersComponent },
   { path: 'revoucher', component: RevoucherComponent },
+  { path: 'payvoucher', component: PayvoucherComponent },
   { path: 'Account_Statement', component: AccountstatementComponent },
 ];
 
