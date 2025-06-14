@@ -798,6 +798,27 @@
         </div>
         <div class="col-lg-4">
           <div class="form-group">
+            <label for="DiscountAccId"
+              class="text-right col-form-label block mx-2">
+              {{ "حساب الخصوم" | translate }}
+              <span class="text-danger">*</span>
+            </label>
+            <ng-select
+              formControlName="DiscountAccId" id="DiscountAccId" name="DiscountAccId">
+              <ng-option *ngFor="let item of branchesAcc" [value]="item.id">{{
+                item.name
+              }}</ng-option></ng-select
+            >
+            <div
+              class="fieldrequired" *ngIf="
+                BranchInfoForm.get('DiscountAccId')?.hasError('required') &&
+                BranchInfoForm.get('DiscountAccId')?.touched">
+              {{ "This field is required" | translate }}
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group">
             <label for="CustomersAccId"
               class="text-right col-form-label block mx-2">
               {{ "حساب العملاء" | translate }}
@@ -956,6 +977,7 @@
         this.BranchInfoForm.controls['BranchNamePrint'].value == null ||
         this.BranchInfoForm.controls['BoxAccId'].value == null ||
         this.BranchInfoForm.controls['SalesAccId'].value == null ||
+        this.BranchInfoForm.controls['DiscountAccId'].value == null ||
         this.BranchInfoForm.controls['CustomersAccId'].value == null ||
         this.BranchInfoForm.controls['EmployeesAccId'].value == null"
       (click)="saveBranchInfoForm(modal)">
