@@ -470,6 +470,183 @@
             </div>
           </div>
         </tab>
+
+
+        <tab heading="{{ 'Financial years' | translate }}">
+          <div class="row align-items-center">
+                <div class="col-xxl-4 col-md-4 col-sm-6 mb-3">
+                  <div class="form-group">
+                    <label class="col-form-label">
+                      {{ "Name" | translate }}</label>
+
+                    <input autocomplete="off" type="text " class="form-control" name="yearName"
+                    [(ngModel)]="FisicalYearMode.yearName"/>
+                  </div>
+                </div>
+
+                <div class="col-xxl-4 col-md-4 col-sm-6 mb-3">
+                  <div class="form-group">
+                    <label class="col-form-label">
+                      {{ "year" | translate }}</label>
+                    <div class="container">
+                      <input
+                        autocomplete="off"
+                        class="form-control"
+                        name="yearId"
+                        [(ngModel)]="FisicalYearMode.yearId"
+                        bsDatepicker
+                        [bsConfig]="{
+                          dateInputFormat: 'YYYY',
+                          minMode: 'year'
+                        }"
+                        (onShown)="onOpenCalendar($event)"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- <div class="col-xxl-4 col-md-4 col-sm-6 mb-3">
+                  <div class="form-group">
+                    <label class="col-form-label">
+                      {{ "search" | translate }}</label>
+                    <input type="text " autocomplete="off"
+                      class="form-control"  name="search"
+                      (keyup)="Fiscalyearssearchtext($event)"/>
+                  </div>
+                </div> -->
+
+                <!-- all buttons  -->
+                <div class="btns mb-3 w-100">
+                  <div class="row d-md-flex justify-content-end">
+                    <button
+                      type="button"
+                      class="flex gap-1 btn bg-base text-white mb-3 col-md-2 ms-2"
+                      (click)="open(SaveYearsConfirmModal,null,'SaveYearsConfirmModal')"
+                    >
+                      {{ "save" | translate }}
+                    </button>
+
+                    <button
+                      type="button" (click)="refreshfisical();"
+                      class="flex gap-1 btn bg-danger text-white mb-3 col-md-2 ms-3"
+                    >
+                      {{ "close" | translate }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- table -->
+              <div class="overflow-auto mt-4">
+                <table
+                  mat-table
+                  [dataSource]="FisicalYear"
+                  matSort
+                  class="mat-elevation-z8 rounded-t-lg overflow-hidden w-max"
+                >
+                  <ng-container matColumnDef="Name">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                      <span>{{ "Name" | translate }}</span>
+                    </th>
+                    <td mat-cell *matCellDef="let element">
+                      {{ element.yearName }}
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="year">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                      <span>{{ "year" | translate }}</span>
+                    </th>
+                    <td mat-cell *matCellDef="let element">
+                      {{ element.yearId }}
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="operations">
+                    <th
+                      mat-header-cell
+                      *matHeaderCellDef
+                      [translate]="'name'"
+                      [translateParams]="{
+                        ar: 'خيارات',
+                        en: 'Operations'
+                      }"
+                    ></th>
+                    <td mat-cell *matCellDef="let element">
+                      <div class="flex gap-1 justify-center py-2">
+                        <button
+                          class="min-w-max p-2 bg-orange-100 hover:bg-orange-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+                        (click)="setdatatoedit(element)"
+                          >
+                          <i class="fa-regular fa-pen-to-square"></i>
+                        </button>
+                        <button
+                          class="min-w-max p-2 bg-red-100 hover:bg-red-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+                          (click)="getYearRow_File(element);open(deleteYearModal,element,'deleteYear')"
+
+                        >
+                          <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </ng-container>
+
+                  <tr
+                    mat-header-row
+                    *matHeaderRowDef="projectDisplayedColumns"
+                  ></tr>
+                  <tr
+                    mat-row
+                    *matRowDef="
+                      let row;
+                      columns: projectDisplayedColumns;
+                      let i = index
+                    "
+                    [class.bg-gray-100]="i % 2 === 0"
+                    [class.bg-white]="i % 2 === 1"
+                  ></tr>
+                </table>
+              </div>
+              <mat-paginator #paginatorFisicalYear [pageSizeOptions]="[5]">
+              </mat-paginator>
+
+              <div class="container-fluid">
+                <h3 class="mt-3">{{ "ChooseFiscalYear" | translate }}</h3>
+                <div class="row align-items-center me-3">
+                  <div class="col-xxl-3 col-md-4 col-sm-6 mb-0 mb-md-3">
+                    <div class="form-group text-center">
+                      <label class="col-form-label">
+                        {{ "current active year" | translate }}</label
+                      >
+                      <ng-select
+                        class="w-full p-0"
+                        placeholder="{{ 'Chose' | translate }}"
+                        [(ngModel)]="YearIdActive"
+                        name="FiscalYear"
+                      >
+                        <ng-option
+                          *ngFor="let user of YearselectedList"
+                          [value]="user.id"
+                          >{{ user.name }}</ng-option
+                        >
+                      </ng-select>
+                    </div>
+                  </div>
+                  <div class="col-xxl-3 col-md-4 col-sm-6 mb-0 mb-md-3">
+                    <button
+                      type="button"
+                      class="flex gap-1 btn bg-base text-white mt-5 mb-2"
+                      (click)="ActivateFiscalYear()"
+
+                    >
+                      {{ "confirem" | translate }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+        </tab>
+
+
       </tabset>
     </div>
   </div>
@@ -779,7 +956,7 @@
           <div class="form-group">
             <label for="SalesAccId"
               class="text-right col-form-label block mx-2">
-              {{ "حساب المبيعات" | translate }}
+              {{ "حساب مبيعات التعاقد" | translate }}
               <span class="text-danger">*</span>
             </label>
             <ng-select
@@ -792,6 +969,27 @@
               class="fieldrequired" *ngIf="
                 BranchInfoForm.get('SalesAccId')?.hasError('required') &&
                 BranchInfoForm.get('SalesAccId')?.touched">
+              {{ "This field is required" | translate }}
+            </div>
+          </div>
+        </div>
+         <div class="col-lg-4">
+          <div class="form-group">
+            <label for="SalesAccId2"
+              class="text-right col-form-label block mx-2">
+              {{ "حساب الإيرادات" | translate }}
+              <span class="text-danger">*</span>
+            </label>
+            <ng-select
+              formControlName="SalesAccId2" id="SalesAccId2" name="SalesAccId2">
+              <ng-option *ngFor="let item of branchesAcc" [value]="item.id">{{
+                item.name
+              }}</ng-option></ng-select
+            >
+            <div
+              class="fieldrequired" *ngIf="
+                BranchInfoForm.get('SalesAccId2')?.hasError('required') &&
+                BranchInfoForm.get('SalesAccId2')?.touched">
               {{ "This field is required" | translate }}
             </div>
           </div>
@@ -983,5 +1181,71 @@
       (click)="saveBranchInfoForm(modal)">
       {{ "Save" | translate }}
     </button>
+  </div>
+</ng-template>
+
+<!-- SaveYearsConfirmModal -->
+<ng-template #SaveYearsConfirmModal let-modal>
+  <div
+    class="modal-body text-center"
+    style="background-color: #cdcdcd !important"
+  >
+    <p
+      [translate]="'name'"
+      [translateParams]="{
+        ar: 'هل تريد الحفظ ',
+        en: 'Are you sure to save ?'
+      }"
+    ></p>
+    <div class="flex gap-2 justify-center mt-3">
+      <button
+        type="button"
+        mat-raised-button
+        color="warn"
+        (click)="Savevervice(); modal.dismiss()"
+      >
+        {{ "Yes" | translate }}
+      </button>
+      <button
+        type="button"
+        (click)="modal.dismiss()"
+        mat-raised-button
+        color="basic"
+      >
+        {{ "No" | translate }}
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<!-- deleteYearModal -->
+<ng-template #deleteYearModal let-modal>
+  <div class="modal-body text-center">
+    <p
+      [translate]="'name'"
+      [translateParams]="{
+        ar: 'هل تريد حذف هذا العنصر ؟',
+        en: 'Do you want to delete this item?'
+      }"
+    ></p>
+    <div class="flex gap-2 justify-center">
+      <button
+        type="button"
+        (click)="modal.dismiss()"
+        mat-raised-button
+        color="basic"
+      >
+        {{ "close" | translate }}
+      </button>
+
+      <button
+        type="button"
+        mat-raised-button
+        color="warn"
+        (click)="confirmDeleteYear(); modal.dismiss()"
+      >
+        {{ "confirem" | translate }}
+      </button>
+    </div>
   </div>
 </ng-template>

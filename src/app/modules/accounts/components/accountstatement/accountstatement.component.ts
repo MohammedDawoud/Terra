@@ -61,6 +61,8 @@ export class AccountstatementComponent {
       DateFrom_P: null,
       DateTo_P: null,
       isChecked: false,
+      isCheckedYear: false,
+      isCheckedBranch: false,
     }
   };
   projectsDataSourceTemp: any = [];

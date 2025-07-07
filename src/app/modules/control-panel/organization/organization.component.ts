@@ -209,6 +209,9 @@ export class OrganizationComponent implements OnInit {
     this.FillCitySelect();
     this.GetAllBranches();
     this.FillAllAccountsSelectAll();
+    this.GetAllFiscalyears();
+    this.FillYearSelect();
+    this.GetActiveYear();
     this.branches = [
     ];
 
@@ -451,6 +454,7 @@ export class OrganizationComponent implements OnInit {
     this.BranchInfoForm.controls['BranchNamePrint'].setValue(item?.branchNamePrint);
     this.BranchInfoForm.controls['BoxAccId'].setValue(item?.boxAccId);
     this.BranchInfoForm.controls['SalesAccId'].setValue(item?.salesAccId);
+    this.BranchInfoForm.controls['SalesAccId2'].setValue(item?.salesAccId2);
     this.BranchInfoForm.controls['DiscountAccId'].setValue(item?.discountAccId);
     this.BranchInfoForm.controls['CustomersAccId'].setValue(item?.customersAccId);
     this.BranchInfoForm.controls['EmployeesAccId'].setValue(item?.employeesAccId);
@@ -481,6 +485,7 @@ export class OrganizationComponent implements OnInit {
       BranchNamePrint: [null, [Validators.required]],
       BoxAccId: [null, [Validators.required]],
       SalesAccId: [null, [Validators.required]],
+      SalesAccId2: [null, [Validators.required]],
       DiscountAccId: [null, [Validators.required]],
       CustomersAccId: [null, [Validators.required]],
       EmployeesAccId: [null, [Validators.required]],
@@ -518,6 +523,7 @@ export class OrganizationComponent implements OnInit {
     formData.append('BranchNamePrint', this.BranchInfoForm.controls['BranchNamePrint'].value);
     formData.append('BoxAccId', this.BranchInfoForm.controls['BoxAccId'].value);
     formData.append('SalesAccId', this.BranchInfoForm.controls['SalesAccId'].value);
+    formData.append('SalesAccId2', this.BranchInfoForm.controls['SalesAccId2'].value);
     formData.append('DiscountAccId', this.BranchInfoForm.controls['DiscountAccId'].value);
     formData.append('CustomersAccId', this.BranchInfoForm.controls['CustomersAccId'].value);
     formData.append('EmployeesAccId', this.BranchInfoForm.controls['EmployeesAccId'].value);
@@ -537,5 +543,135 @@ export class OrganizationComponent implements OnInit {
     );
   }
   //-------------------end branch--------------------------------
+
+
+
+  //----------------------------Fisical Year--------------------
+  //#region 
+  projectDisplayedColumns: string[] = ['Name', 'year', 'operations'];
+  FisicalYear = new MatTableDataSource();
+  @ViewChild('paginatorFisicalYear') paginatorFisicalYear: MatPaginator;
+  FisicalYearMode: any = {
+    fiscalId: null,
+    yearName: null,
+    yearId: null,
+    yeartype: 1,
+  };
+  fisicalyears: any;
+  GetAllFiscalyears() {
+    this.organizationService.GetAllFiscalyears().subscribe((data) => {
+      this.fisicalyears = data.result;
+      this.FisicalYear = new MatTableDataSource(data.result);
+      this.FisicalYear.paginator = this.paginatorFisicalYear;
+    });
+  }
+  Fiscalyearssearchtext(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.FisicalYear.filter = filterValue.trim().toLowerCase();
+  }
+
+  refreshfisical() {
+    this.FisicalYearMode.fiscalId = null;
+    this.FisicalYearMode.yearName = null;
+    this.FisicalYearMode.yearId = null;
+    this.FisicalYearMode.yeartype = 1;
+  }
+
+  setdatatoedit(data: any) {
+    this.FisicalYearMode.fiscalId = data.fiscalId;
+    this.FisicalYearMode.yearName = data.yearName;
+    const year = data.yearId;
+    const date = new Date(year, 0, 1);
+    this.FisicalYearMode.yearId = date;
+    this.FisicalYearMode.yeartype = 2;
+  }
+
+  Savevervice() {
+    var _ficical:any = {};
+    if (
+      this.FisicalYearMode.yearName == null || this.FisicalYearMode.yearName == '' ||
+      this.FisicalYearMode.yearId == null || this.FisicalYearMode.yearId == ''
+    ) {
+      this.toast.error('من فضلك اكمل البيانات',this.translate.instant('Message'));
+      return;
+    }
+    debugger;
+    _ficical.fiscalId = this.FisicalYearMode.fiscalId ?? 0;
+    _ficical.yearName = this.FisicalYearMode.yearName;
+    _ficical.yearId = this.FisicalYearMode.yearId.getFullYear();
+    // if (this.FisicalYearMode.yeartype == 2) {
+    //   _ficical.yearId = this.FisicalYearMode.yearId;
+    // } else {
+    //   _ficical.yearId = this.FisicalYearMode.yearId.getFullYear();
+    // }
+
+    this.organizationService.SaveFiscalyears(_ficical).subscribe((data) => {
+        if (data.statusCode == 200) {
+          this.GetAllFiscalyears();
+          this.FillYearSelect();
+          this.refreshfisical();
+          this.toast.success(this.translate.instant(data.reasonPhrase),this.translate.instant('Message'));
+        } else {
+          this.toast.error(this.translate.instant(data.reasonPhrase),this.translate.instant('Message') );
+        }
+      }
+    );
+  }
+  ActivateFiscalYear() {
+    this.organizationService.ActivateFiscalYear(this.YearIdActive, 1).subscribe((data) => {
+          if (data.statusCode == 200) {
+            this.refreshfisical();
+            this.GetActiveYear();
+            var yeatid = this.getItemNameById(this.YearIdActive);
+            this._sharedService.setStoYear(yeatid);
+            this._sharedService.setStofiscalId(this.YearIdActive);
+            location.reload();
+            this.toast.success(this.translate.instant(data.reasonPhrase),this.translate.instant('Message'));
+          } else {
+            this.toast.error(this.translate.instant(data.reasonPhrase),this.translate.instant('Message'));
+          }
+        }
+      );
+  }
+  getItemNameById(itemId: number): string {
+    const item = this.YearselectedList.find((item) => item.id === itemId);
+    return item ? item.name : 'Not Found';
+  }
+  YearIdActive: any;
+  GetActiveYear() {
+    this.organizationService.GetActiveYear().subscribe((data) => {
+      this.YearIdActive = data.fiscalId;
+    });
+  }
+  YearselectedList: any[];
+  FillYearSelect() {
+    this.organizationService.FillYearSelect().subscribe((data) => {
+      this.YearselectedList = data;
+    });
+  }
+    YearRowSelected_File: any;
+  getYearRow_File(row: any) {
+    this.YearRowSelected_File = row;
+  }
+  confirmDeleteYear(){
+    this.organizationService.DeleteFiscalyears(this.YearRowSelected_File.fiscalId).subscribe((result: any) => {
+      if (result.statusCode == 200) {
+        this.toast.success(
+          this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
+        this.GetAllFiscalyears();
+      } else {
+        this.toast.error(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
+      }
+    });
+  }
+  onOpenCalendar(container: any) {
+    container.monthSelectHandler = (event: any): void => {
+      container._store.dispatch(container._actions.select(event.date));
+    };
+    container.setViewMode('year');
+  }
+  //#endregion
+  //--------------------------End Fisical Year------------------
+
 
 }

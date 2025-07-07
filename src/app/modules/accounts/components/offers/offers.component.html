@@ -216,7 +216,7 @@
             ></th>
             <td mat-cell *matCellDef="let element">
               <div class="flex gap-1 justify-center py-2">
-                <button *ngIf="element.offerStatus!=3 && userG?.userPrivileges.includes(150102)"
+                <button *ngIf="userG?.userPrivileges.includes(150102)"
                 class="min-w-max p-2 bg-orange-100 hover:bg-orange-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
                   (click)="openModal(dataModal, element, 'editOffer')">
                   <i class="fa-regular fa-pen-to-square"></i>
@@ -1387,69 +1387,178 @@
                 </div>
             </div>
 
-            <div style="text-align: center;margin-bottom: 7%;">
+            <div style="text-align: center;margin-bottom: 10%;">
                 <img *ngIf="environmentPho"
                 src="{{environmentPhoBranch}}"
                   alt="logo"
-                  style="width: 800px;height: 940px;"
+                  style="width: 800px;height: 960px;"
                 />
             </div>
 
 
-                <div class="row align-items-end mb-4">
-                    <div class="form-group col-md-3">
-                        <label class="col-form-label">{{ "فرع طلب التسعير" | translate }}</label>
-                        <p>{{OfferPrintData.branchName}}</p>
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label class="col-form-label">{{ "رقم طلب التسعير" | translate }}</label>
-                        <p>{{OfferPrintData.offerCode}}</p>
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label class="col-form-label">{{ "اسم العميل" | translate }}</label>
-                        <p>{{OfferPrintData.customerName}}</p>
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label class="col-form-label">{{ "رقم التليفون" | translate }}</label>
-                        <p>{{OfferPrintData.mainPhoneNo}}</p>
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label class="col-form-label">{{ "رقم التليفون 2" | translate }}</label>
-                        <p>{{OfferPrintData.subMainPhoneNo}}</p>
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label class="col-form-label">{{ "منطقة العميل" | translate }}</label>
-                        <p>{{OfferPrintData.cityName}}</p>
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label class="col-form-label">{{ "العنوان" | translate }}</label>
-                        <p>{{OfferPrintData.address}}</p>
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label class="col-form-label">{{ "عرفتنا عن طريق" | translate }}</label>
-                        <p>{{OfferPrintData.socialMediaName}}</p>
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label class="col-form-label">{{ "رقم الهوية" | translate }}</label>
-                        <p>{{OfferPrintData.nationalId}}</p>
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label class="col-form-label">{{ "طريقة الدفع" | translate }}</label>
-                        <p>{{OfferPrintData.paytypeName}}</p>
-                    </div>
+            <div class="content" style="min-width: max-content;height: 1140px;">
+            <h4  style="background: rgba(0, 0, 0, 0.05) !important;border-bottom: 2px solid #000000;font-weight: 600;padding: 6px;">بيانات العقد: </h4>
 
-                    <div class="form-group col-md-3">
-                        <label class="col-form-label">{{ "تاريخ الطلب" | translate }}</label>
-                        <p>{{ OfferPrintData.date | date : " hh:mm yyyy-MM-dd" }}</p>
-                    </div>
-                </div>
+            <table 
+              style="text-align: center;vertical-align: middle;width: 100%;min-width: max-content;">
+              <!-- <thead>
+                <tr>
+                  <td
+                  style=" font-size: 14px;background-color: #0f9c9b;padding: 3px;text-align: center;
+                    color: #000;word-wrap: break-word;">فرع العقد</td>
+                <td
+                  style="font-size: 14px;background-color: #0f9c9b;padding: 3px;text-align: center;
+                    color: #000;word-wrap: break-word;">رقم المعاينة</td>
+                <td
+                  style="font-size: 14px;background-color: #0f9c9b;padding: 3px;text-align: center;
+                    color: #000;word-wrap: break-word;">نوع المعاينة</td>
+                <td
+                style="font-size: 14px;background-color: #0f9c9b;padding: 3px;text-align: center;
+                  color: #000;word-wrap: break-word;">رقم الإجتماع</td>
+                </tr>
+              </thead> -->
+              <tbody >
+                <tr >
+                  <td
+                  style="background-color: #fff;font-size: 14px;padding: 3px;color: #000;
+                    border-inline-start: 2px dashed #0c8191;border-bottom: 2px dashed #757879;">
+                <span style="font-weight: 700;">
+                 {{ "فرع طلب التسعير" | translate }}
+                </span>
+                </td>
+                <td style="background-color: #fff;font-size: 14px;padding: 3px;color: #000;
+                border-inline-start: 2px dashed #0c8191;border-bottom: 2px dashed #0c8191;">
+                {{OfferPrintData.branchName}}
+                </td>
+                <td style="background-color: #fff;font-size: 14px;padding: 3px;color: #000;
+                    border-inline-start: 2px dashed #0c8191;border-bottom: 2px dashed #0c8191;">
+                <span style="font-weight: 700;">
+                  {{ "رقم طلب التسعير" | translate }}
+                </span>
+                </td>
+                <td style="background-color: #fff;font-size: 14px;padding: 3px;color: #000;
+                    border-inline-start: 2px dashed #0c8191;border-bottom: 2px dashed #0c8191;">
+                {{OfferPrintData.offerCode}}
+                </td>
+                </tr>
+               <tr >
+               <td
+                  style="background-color: #fff;font-size: 14px;padding: 3px;color: #000;
+                    border-inline-start: 2px dashed #0c8191;border-bottom: 2px dashed #757879;">
+                <span style="font-weight: 700;">
+                  اسم العميل
+                </span>
+                </td>
+                <td style="background-color: #fff;font-size: 14px;padding: 3px;color: #000;
+                border-inline-start: 2px dashed #0c8191;border-bottom: 2px dashed #0c8191;">
+                {{OfferPrintData.customerName}}
+                </td>
+                <td style="background-color: #fff;font-size: 14px;padding: 3px;color: #000;
+                    border-inline-start: 2px dashed #0c8191;border-bottom: 2px dashed #0c8191;">
+                <span style="font-weight: 700;">
+                  رقم التليفون
+                </span>
+                </td>
+                <td style="background-color: #fff;font-size: 14px;padding: 3px;color: #000;
+                    border-inline-start: 2px dashed #0c8191;border-bottom: 2px dashed #0c8191;">
+                {{OfferPrintData.mainPhoneNo}}
+                </td>
+                </tr>
+               <tr >
+               <td
+                  style="background-color: #fff;font-size: 14px;padding: 3px;color: #000;
+                    border-inline-start: 2px dashed #0c8191;border-bottom: 2px dashed #757879;">
+                <span style="font-weight: 700;">
+                  رقم التليفون 2
+                </span>
+                </td>
+                <td style="background-color: #fff;font-size: 14px;padding: 3px;color: #000;
+                border-inline-start: 2px dashed #0c8191;border-bottom: 2px dashed #0c8191;">
+                {{OfferPrintData.subMainPhoneNo}}
+                </td>
+                <td style="background-color: #fff;font-size: 14px;padding: 3px;color: #000;
+                    border-inline-start: 2px dashed #0c8191;border-bottom: 2px dashed #0c8191;">
+                <span style="font-weight: 700;">
+                  منطقة العميل
+                </span>
+                </td>
+                <td style="background-color: #fff;font-size: 14px;padding: 3px;color: #000;
+                    border-inline-start: 2px dashed #0c8191;border-bottom: 2px dashed #0c8191;">
+                {{OfferPrintData.cityName}}
+                </td>
+                </tr>
+               <tr >
+               <td
+                  style="background-color: #fff;font-size: 14px;padding: 3px;color: #000;
+                    border-inline-start: 2px dashed #0c8191;border-bottom: 2px dashed #757879;">
+                <span style="font-weight: 700;">
+                  العنوان
+                </span>
+                </td>
+                <td style="background-color: #fff;font-size: 14px;padding: 3px;color: #000;
+                border-inline-start: 2px dashed #0c8191;border-bottom: 2px dashed #0c8191;">
+                {{OfferPrintData.address}}
+                </td>
+                <td style="background-color: #fff;font-size: 14px;padding: 3px;color: #000;
+                    border-inline-start: 2px dashed #0c8191;border-bottom: 2px dashed #0c8191;">
+                <span style="font-weight: 700;">
+                  عرفتنا عن طريق
+                </span>
+                </td>
+                <td style="background-color: #fff;font-size: 14px;padding: 3px;color: #000;
+                    border-inline-start: 2px dashed #0c8191;border-bottom: 2px dashed #0c8191;">
+                {{OfferPrintData.socialMediaName}}
+                </td>
+                </tr>
+               <tr >
+               <td
+                  style="background-color: #fff;font-size: 14px;padding: 3px;color: #000;
+                    border-inline-start: 2px dashed #0c8191;border-bottom: 2px dashed #757879;">
+                <span style="font-weight: 700;">
+                  رقم الهوية
+                </span>
+                </td>
+                <td style="background-color: #fff;font-size: 14px;padding: 3px;color: #000;
+                border-inline-start: 2px dashed #0c8191;border-bottom: 2px dashed #0c8191;">
+                {{OfferPrintData.nationalId}}
+                </td>
+                <td style="background-color: #fff;font-size: 14px;padding: 3px;color: #000;
+                    border-inline-start: 2px dashed #0c8191;border-bottom: 2px dashed #0c8191;">
+                <span style="font-weight: 700;">
+                  طريقة الدفع
+                </span>
+                </td>
+                <td style="background-color: #fff;font-size: 14px;padding: 3px;color: #000;
+                    border-inline-start: 2px dashed #0c8191;border-bottom: 2px dashed #0c8191;">
+                {{OfferPrintData.paytypeName}}
+                </td>
+                </tr>
+               <tr >
+               <td
+                  style="background-color: #fff;font-size: 14px;padding: 3px;color: #000;
+                    border-inline-start: 2px dashed #0c8191;border-bottom: 2px dashed #757879;">
+                <span style="font-weight: 700;">
+                 {{ "تاريخ الطلب" | translate }}
+                </span>
+                </td>
+                <td style="background-color: #fff;font-size: 14px;padding: 3px;color: #000;
+                border-inline-start: 2px dashed #0c8191;border-bottom: 2px dashed #0c8191;">
+                {{ OfferPrintData.date | date : " hh:mm yyyy-MM-dd" }}
+                </td>
+                <td style="background-color: #fff;font-size: 14px;padding: 3px;color: #000;
+                    border-inline-start: 2px dashed #0c8191;border-bottom: 2px dashed #0c8191;">
+                <span style="font-weight: 700;">
+                
+                </span>
+                </td>
+                </tr>
 
-            <!-- <div style="height: 730px;">
-            </div> -->
-             <div style="height: 800px;">
+              </tbody>
+            </table>
             </div>
 
-            <div class="content" style="min-width: max-content;height: 1060px;">
+
+            <div class="content" style="min-width: max-content;height: 1100px;">
             <h4 *ngIf="serviceDetailsList.length>0" style="background: rgba(0, 0, 0, 0.05) !important;border-bottom: 2px solid #000000;font-weight: 600;padding: 6px;">جدول الأصناف: </h4>
 
             <table  *ngIf="serviceDetailsList.length>0"
@@ -1514,56 +1623,81 @@
               </tbody>
             </table>
 
+            <table 
+              style="text-align: center;vertical-align: middle;width: 100%;min-width: max-content;place-self: center; margin-top: 4%;">
+              <tbody >
+                <tr >
+                  <td
+                  style="background-color: #fff;font-size: 17px;padding: 3px;color: #000;
+                    border-inline-start: 2px dashed #0c8191;border-bottom: 2px dashed #757879;">
+                <span style="font-weight: 700;">
+                  {{ "إجمالي طلب التسعير" | translate }}
+                </span>
+                </td>
+                <td style="background-color: #fff;font-size: 17px;padding: 3px;color: #000;
+                border-inline-start: 2px dashed #0c8191;border-bottom: 2px dashed #0c8191;">
+                {{modalDetailsOfferNew_Print.sumtotal}}
+                </td>
+                <td style="background-color: #fff;font-size: 17px;padding: 3px;color: #000;
+                    border-bottom: 2px dashed #0c8191;">
+                <span style="font-weight: 700;">
+                  
+                </span>
+                </td>
+                <td style="background-color: #fff;font-size: 17px;padding: 3px;color: #000;
+                    border-bottom: 2px dashed #0c8191;">
+                
+                </td>
+                </tr>
+                <tr >
+                  <td
+                  style="background-color: #fff;font-size: 17px;padding: 3px;color: #000;
+                    border-inline-start: 2px dashed #0c8191;border-bottom: 2px dashed #757879;">
+                <span style="font-weight: 700;">
+                  الخصم
+                </span>
+                </td>
+                <td style="background-color: #fff;font-size: 17px;padding: 3px;color: #000;
+                border-inline-start: 2px dashed #0c8191;border-bottom: 2px dashed #0c8191;">
+                {{modalDetailsOfferNew_Print.discountValue}}
+                </td>
+                <td style="background-color: #fff;font-size: 17px;padding: 3px;color: #000;
+                    border-inline-start: 2px dashed #0c8191;border-bottom: 2px dashed #0c8191;">
+                <span style="font-weight: 700;">
+                  نسبة
+                </span>
+                </td>
+                <td style="background-color: #fff;font-size: 17px;padding: 3px;color: #000;
+                    border-inline-start: 2px dashed #0c8191;border-bottom: 2px dashed #0c8191;">
+                {{modalDetailsOfferNew_Print.discountPercentage}}
+                </td>
+                </tr>
+                <tr >
+                  <td
+                  style="background-color: #fff;font-size: 17px;padding: 3px;color: #000;
+                    border-inline-start: 2px dashed #0c8191;border-bottom: 2px dashed #757879;">
+                <span style="font-weight: 700;">
+                  الإجمالي بعد الخصم
+                </span>
+                </td>
+                <td style="background-color: #fff;font-size: 17px;padding: 3px;color: #000;
+                border-inline-start: 2px dashed #0c8191;border-bottom: 2px dashed #0c8191;">
+                {{modalDetailsOfferNew_Print.sumtotalAfterDisc}}
+                </td>
+                <td style="background-color: #fff;font-size: 17px;padding: 3px;color: #000;
+                    border-bottom: 2px dashed #0c8191;">
+                <span style="font-weight: 700;">
+                  
+                </span>
+                </td>
+                <td style="background-color: #fff;font-size: 17px;padding: 3px;color: #000;
+                    border-bottom: 2px dashed #0c8191;">
+               
+                </td>
+                </tr>
+              </tbody>
+            </table>
 
-              <div class="boxContainer w-80 py-3 px-3">
-                  <div class="row">
-                      <div class="col-md-12">
-                      <div class="col-md-2">
-                          <label for="sumtotal" class="text-gren">{{ "إجمالي طلب التسعير" | translate }}</label>
-                      </div>
-                      <div class="col-md-10" style="justify-content: center;">
-                        <span>
-                          {{modalDetailsOfferNew_Print.sumtotal}}
-                        </span>
-                      </div>
-                      </div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-md-12">
-                    <div class="col-md-2">
-                        <label for="discountValue" class="text-gren">{{ "الخصم" | translate }}</label>
-                    </div>
-                    <div class="col-md-4" style="justify-content: center;">
-                        <span>
-                          {{modalDetailsOfferNew_Print.discountValue}}
-                        </span>
-                    </div>
-                    <div class="col-md-2" style="padding-right: 6%;">
-                      <label for="discountPercentage" class="text-gren">{{ "نسبة" | translate }}</label>
-                  </div>
-                  <div class="col-md-4" style="justify-content: center;">
-                        <span>
-                          {{modalDetailsOfferNew_Print.discountPercentage}}
-                        </span>
-                      <span style="font-size: 20px;padding-top: 0px;padding-right: 6px;">%</span>
-                  </div>
-                    </div>
-                </div>
-
-                  <div class="row">
-                    <div class="col-md-12">
-                    <div class="col-md-2">
-                        <label for="sumtotalAfterDisc" class="text-gren">{{ "الإجمالي بعد الخصم" | translate }}</label>
-                    </div>
-                    <div class="col-md-10" style="justify-content: center;">
-                        <span>
-                          {{modalDetailsOfferNew_Print.sumtotalAfterDisc}}
-                        </span>
-                    </div>
-                    </div>
-                </div>
-             </div>
 
           </div>
         </div>

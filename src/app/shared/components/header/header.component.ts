@@ -123,9 +123,9 @@ export class HeaderComponent implements OnInit {
   lastLoginDate: any;
   OrganizationData: any;
   ngOnInit(): void {
-    this.sharedService.calling$.subscribe(() => {
-      this.GetUnReadUserNotificationcount();
-    });
+    // this.sharedService.calling$.subscribe(() => {
+    //   this.GetUnReadUserNotificationcount();
+    // });
 
     this.userService.user.subscribe((res) => {
       this.user = res;
@@ -147,7 +147,7 @@ export class HeaderComponent implements OnInit {
     });
 
     this.GetAllBranchesByUserIdDrop();
-    // this.GetAllYearsDrop();
+    this.GetAllYearsDrop();
     // this.GetAllOpenSupportResquestsWithReplay();
     // this.GetUnReadUserNotificationcount();
   }

@@ -29,6 +29,7 @@ import { RevoucherComponent } from './components/revoucher/revoucher.component';
 import { AccountstatementComponent } from './components/accountstatement/accountstatement.component';
 import { OffersComponent } from './components/offers/offers.component';
 import { PayvoucherComponent } from './components/payvoucher/payvoucher.component';
+import { OpenvoucherComponent } from './components/openvoucher/openvoucher.component';
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import { PayvoucherComponent } from './components/payvoucher/payvoucher.componen
     AccountstatementComponent,
     OffersComponent,
     PayvoucherComponent,
+    OpenvoucherComponent,
   ],
   imports: [
     CommonModule,

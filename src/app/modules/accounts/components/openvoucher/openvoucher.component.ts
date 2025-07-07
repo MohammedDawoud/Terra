@@ -28,11 +28,11 @@ import { OrganizationService } from 'src/app/core/services/sys_Services/organiza
 import { VoucherService } from 'src/app/core/services/acc_Services/voucher.service';
 
 @Component({
-  selector: 'app-payvoucher',
-  templateUrl: './payvoucher.component.html',
-  styleUrls: ['./payvoucher.component.scss']
+  selector: 'app-openvoucher',
+  templateUrl: './openvoucher.component.html',
+  styleUrls: ['./openvoucher.component.scss']
 })
-export class PayvoucherComponent implements OnInit {
+export class OpenvoucherComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   dataSourceTemp: any = [];
@@ -58,7 +58,7 @@ export class PayvoucherComponent implements OnInit {
   title: any = {
     main: {
       name: {
-        ar: 'صرف نقدية',
+        ar: 'قيد افتتاحي',
         en: 'Voucher',
       },
       link: '/accounts',
@@ -160,7 +160,7 @@ export class PayvoucherComponent implements OnInit {
   //
 
   VoucherModels:any={
-    type:5,
+    type:10,
   }
 
   users: any;
@@ -250,7 +250,6 @@ export class PayvoucherComponent implements OnInit {
     //this.getEmailOrganization();
     debugger
     if (modalType == 'addVoucher') {
-      this.FillMainAccountSelect();
       // this.GenerateVoucherNumber();
     }
     console.log('this.modalDetails');
@@ -258,14 +257,7 @@ export class PayvoucherComponent implements OnInit {
 
     if (data) {
       this.modalDetails = data;
-      var MainAcc=this.modalDetails.mainAccountId; 
-      var SubAcc=this.modalDetails.subAccountId;
-
       if (modalType == 'editVoucher'|| modalType == 'VoucherView') {
-        this.FillMainAccountSelect();
-        this.modalDetails.mainAccountId = MainAcc;
-        this.FillSubAccountSelect();
-        this.modalDetails.subAccountId = SubAcc;
         if(this.modalDetails.date!=null)
           {
             this.modalDetails.date = this._sharedService.String_TO_date(this.modalDetails.date);
@@ -403,8 +395,6 @@ export class PayvoucherComponent implements OnInit {
     voucObj.voucherNo = this.modalDetails.voucherNo;
     voucObj.documentNo = this.modalDetails.documentNo;
     voucObj.type = this.modalDetails.type;
-    voucObj.mainAccountId = this.modalDetails.mainAccountId;
-    voucObj.subAccountId = this.modalDetails.subAccountId;
     voucObj.totalValue = this.modalDetails.totalCredit;
     voucObj.branchId = this.modalDetails.branchId;
     if (this.modalDetails.date != null) {
@@ -483,16 +473,7 @@ export class PayvoucherComponent implements OnInit {
   validateForm() {
     this.ValidateObjMsg = { status: true, msg: null };
 
-    if (
-      this.modalDetails.mainAccountId == null ||this.modalDetails.mainAccountId == '') {
-      this.ValidateObjMsg = { status: false, msg: 'أختر الحساب الرئيسي' };
-      return this.ValidateObjMsg;
-    }
-    else if ((this.modalDetails.subAccountId == null ||this.modalDetails.subAccountId == '')) {
-    this.ValidateObjMsg = {status: false, msg: 'أختر الحساب الفرعي',};
-    return this.ValidateObjMsg;
-  } 
-  else if (this.modalDetails.branchId == null) {
+   if (this.modalDetails.branchId == null) {
       this.ValidateObjMsg = { status: false, msg: 'اختر فرع السند' };
       return this.ValidateObjMsg;
     }  
@@ -570,7 +551,7 @@ export class PayvoucherComponent implements OnInit {
     this.isSubmit = false;
     this.control.clear();
     this.modalDetails = {
-      type:5,
+      type:10,
       vouchertype: 'addVoucher',
       voucherNo: null,
       documentNo: null,
@@ -696,7 +677,6 @@ export class PayvoucherComponent implements OnInit {
   journalCreditNmRows = 0;
   
   CalculateVoucher() {
-    this.CalculateVoucherMain();  
     var totalDebit = 0,totalCredit = 0, totalBalance = 0;
     this.journalDebitNmRows = 0;this.journalCreditNmRows = 0;
     this.VoucherDetailsRows.forEach((element: any, index: any) => {
@@ -704,7 +684,7 @@ export class PayvoucherComponent implements OnInit {
       Value = element.amount;
       if (element.CreditDepitStatus == 'D') {
         this.journalDebitNmRows += 1;
-        totalDebit += +Value
+        totalDebit += +Value;
         totalBalance = +parseFloat((+totalDebit - +totalCredit).toString()).toFixed(2);
       } else {
         this.journalCreditNmRows += 1;
@@ -716,25 +696,6 @@ export class PayvoucherComponent implements OnInit {
     this.modalDetails.totalDepit = +parseFloat(totalDebit.toString()).toFixed(2);
     this.modalDetails.diff = +parseFloat((+totalDebit - +totalCredit).toString()).toFixed(2);
   }
-
-  CalculateVoucherMain() {
-    debugger
-    var totalCredit = 0;
-    this.VoucherDetailsRows.forEach((element: any, index: any) => {
-      var Value = 0;
-      Value = element.amount;
-      if (element.CreditDepitStatus == 'D') {
-        totalCredit += Value
-      } 
-    });
-    var row=this.VoucherDetailsRows.filter((a: { CreditDepitStatus: any }) => a.CreditDepitStatus == "C");
-    if(row.length>0)
-    {
-      row[0].amount=parseFloat(totalCredit.toString()).toFixed(0);
-    }
-
-  }
-
 
 
 
@@ -871,102 +832,6 @@ RefreshData(){
 //#endregion 
 //------------------------------Search--------------------------------------------------------
 
-MainAccountList:any;
-SubAccountList:any;
-
-FillMainAccountSelect() {
-  this.MainAccountList=[];
-  this.SubAccountList=[];
-  this.modalDetails.mainAccountId=null;
-  this.modalDetails.subAccountId=null;
-  this.service.FillAllAccountsSelect().subscribe((data) => {
-    console.log(data);
-    this.MainAccountList = data;
-  });
-}
-FillSubAccountSelect() {
-  this.SubAccountList=[];
-  this.modalDetails.subAccountId=null;
-  if(this.modalDetails.mainAccountId!=null)
-  {
-
-    this.service.FillAllAccountsSelectByParentId(this.modalDetails.mainAccountId).subscribe((data) => {
-      console.log(data);
-      this.SubAccountList = data;
-    });
-
-    //this.SubAccountList = this.MainAccountList.filter((d: { parentId: any }) => d.parentId == this.modalDetails.mainAccountId);
-  }
-}
-MainAccountChange(){ 
-  this.FillSubAccountSelect();
-}
-SubAccountChange(){
-  debugger
-  if(this.modalDetails.subAccountId!=null)    
-  {
-    this.deleteVoucherRowMain();
-    this.addVoucherRowMain();
-      // if(this.VoucherDetailsRows.length>0)
-      // {
-      //   this.VoucherDetailsRows.sort((a: { CreditDepitStatus: string; },b: { CreditDepitStatus: string; }) => a.CreditDepitStatus > b.CreditDepitStatus ? 1 : -1)
-      // }
-  }
-  else
-  {
-    this.deleteVoucherRowMain();
-  }
-  
-}
-
-deleteVoucherRowMain(){
-  debugger
-  if(this.VoucherDetailsRows.length>0)
-  {
-    var row=this.VoucherDetailsRows.filter((a: { CreditDepitStatus: any }) => a.CreditDepitStatus == "C");
-    if(row.length>0)
-    {
-      this.deleteVoucherRow(row[0].idRow);
-    }
-  }
-}
-
-addVoucherRowMain() {
-  var Maintxt=this.MainAccountList.filter((a: { id: any }) => a.id == this.modalDetails.mainAccountId)[0].name;
-  var Subtxt=this.SubAccountList.filter((a: { id: any }) => a.id == this.modalDetails.subAccountId)[0].name;
-
-  var maxVal = 0;
-  if (this.VoucherDetailsRows.length > 0) {
-    maxVal = Math.max(
-      ...this.VoucherDetailsRows.map((o: { idRow: any }) => o.idRow)
-    );
-  } else {
-    maxVal = 0;
-  }
-  this.VoucherDetailsRows?.push({
-    idRow: maxVal + 1,
-    amount: null,
-    mainAccountId: this.modalDetails.mainAccountId,
-    mainAccountIdtxt: Maintxt,
-    subAccountId: this.modalDetails.subAccountId,
-    subAccountIdtxt: Subtxt,
-    CreditDepitStatus: 'C',
-    collectorName: null,
-    notes: null,
-    lineMain:true,
-  });
-}
-
-backgroungColor(row: any) {
-  if (Object.keys(row).length === 0) return '';
-  if ((row.lineMain ==true)) {
-    return 'MainColor';
-  } else if (row.lineMain ==false) {
-    return '';
-  }
-  return '';
-}
-
 get totaldepit() {
   var sum = 0;
   this.AllJournalEntries.forEach((element: any) => {
@@ -1043,3 +908,4 @@ PostBackVoucher() {
 }
 
 }
+

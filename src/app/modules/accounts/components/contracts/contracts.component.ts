@@ -34,6 +34,7 @@ import { filesservice } from 'src/app/core/services/sys_Services/files.service';
 import { CategoryService } from 'src/app/core/services/acc_Services/category.service';
 import { MatStepper } from '@angular/material/stepper';
 import { NgxPrintElementService } from 'ngx-print-element';
+import { VoucherService } from 'src/app/core/services/acc_Services/voucher.service';
 
 
 @Component({
@@ -155,6 +156,7 @@ export class ContractsComponent implements OnInit {
     private customerService: CustomerService,
     private employeeService: EmployeeService,
     private translate: TranslateService,
+    private _voucherService: VoucherService,
     private domSanitizer: DomSanitizer
   ) {
     this.userG = this.authenticationService.userGlobalObj;
@@ -217,6 +219,11 @@ export class ContractsComponent implements OnInit {
   ContractStatusList: any;
 
   ngOnInit(): void {
+    this.VoucherStatusList = [
+      { id: 1, name: { ar: 'مسودة', en: 'draft' } },
+      { id: 2, name: { ar: 'مراجع', en: 'References' } },
+      { id: 3, name: { ar: 'نهائي', en: 'finished' } },
+    ];
     this.ContractStatusList = [
       { id: 1, name: 'مبدئي' },
       { id: 2, name: 'مراجع' },
@@ -320,7 +327,9 @@ export class ContractsComponent implements OnInit {
           maxVal=0;
         }
         this.setServiceRowValueNew_ContractNew(maxVal+1,element);
-      });    
+      }); 
+      this.CalculateTotal_ContractNew();
+   
     });
   }
   ContractNewPayments: any = [];
@@ -559,7 +568,7 @@ export class ContractsComponent implements OnInit {
     this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==indexRow)[0].qty = item.qty;
     this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==indexRow)[0].amount = item.amount;
     this.ContractNewServices.filter((a: { idRow: any; })=>a.idRow==indexRow)[0].accamount = item.amount;  
-    this.CalculateTotal_ContractNew();
+    //this.CalculateTotal_ContractNew();
   }
 
   CalculateTotal_ContractNew() {
@@ -622,6 +631,23 @@ export class ContractsComponent implements OnInit {
     }
 
     this.modalDetailsContractNew.sumtotalAfterDisc = parseFloat((Value).toString()).toFixed(2);
+  }
+
+  ContractRowSelected: any;
+  
+  getContractRow(row: any) {
+    this. ContractRowSelected = row;
+  }
+  confirmReturnContract(): void {
+    this.service.ReturnContract(this.modalDetails.contractId).subscribe((result) => {
+        if (result.statusCode == 200) {
+          this.toast.success(this.translate.instant(result.reasonPhrase),this.translate.instant('Message'));
+          this.getAllContracts();
+          this.modal?.hide();
+        } else {
+          this.toast.error(result.reasonPhrase, this.translate.instant('Message'));
+        }
+      });
   }
 
   disableButtonSave_Contract=false;
@@ -910,6 +936,7 @@ export class ContractsComponent implements OnInit {
       this.GetAllPreviewsCodeFinishedMeeting();
       //this.GenerateContractNumber(); 
     }
+
     if (data) {
       this.modalDetails = data;
       this.fillBranchByUserId();
@@ -984,6 +1011,27 @@ export class ContractsComponent implements OnInit {
     if (idRow != null) {
 
     }
+    if(model=='addVoucherRe')
+    {
+      this.fillBranchByUserIdReVoucher(model);
+      this.setReVoucherData(data);
+    }
+    if (idRow != null && type == 'AccountsMainListModal') {
+      this.selectedAccountRowTable = idRow;
+      this.FillMainAccountLoadTable();
+      this.OpenType=1;
+    }
+    
+    else if (idRow != null && type == 'AccountsSubListModal') {
+      this.selectedAccountRowTable = idRow;
+      if(!(data.mainAccountId==null || data.mainAccountId==""))
+      {
+        this.FillSubAccountLoadTable(data.mainAccountId);
+      }
+      this.OpenType=2;
+    }
+
+
     if (data) {
       this.modalDetails = data;
     }
@@ -994,6 +1042,9 @@ export class ContractsComponent implements OnInit {
     if (type === 'AddPayment') {
       this.resetPaymentsModel();
     }
+    if (type == 'accountingentry') {
+      this.GetAllVoucherTransactions_Contract(data.contractId);
+    } 
     if (type === 'editPayment') {
       this.resetPaymentsModel();
       if(data.paymentDate!=null)
@@ -1430,6 +1481,7 @@ export class ContractsComponent implements OnInit {
         }
       });
   }
+
   
   ContractFilesList: any=[];
   
@@ -1701,6 +1753,369 @@ dateToday: any = new Date();
 //#endregion
 
 //-------------------------------------------EndPrint----------------------------------------
+
+
+get totaldepit() {
+  var sum = 0;
+  this.AllJournalEntries.forEach((element: any) => {
+    sum = +parseFloat(sum.toString()).toFixed(2) + +parseFloat(element.depit.toString()).toFixed(2);
+  });
+  return parseFloat(sum.toString()).toFixed(2);
+}
+
+get totalcredit() {
+  var sum = 0;
+  this.AllJournalEntries.forEach((element: any) => {
+    sum =+parseFloat(sum.toString()).toFixed(2) + +parseFloat(element.credit.toString()).toFixed(2);
+  });
+  return parseFloat(sum.toString()).toFixed(2);
+}
+
+AllJournalEntries: any = [];
+GetAllVoucherTransactions_Contract(voucherId: any) {
+  this._voucherService.GetAllVoucherTransactions_Contract(voucherId).subscribe((data) => {
+      this.AllJournalEntries = data;
+    });
+}
+
+
+  //---------------------------------AddReVoucher-----------------------------------
+  //#region 
+  modalDetailsReVoucher: any = {};
+  VoucherStatusList: any;
+  OpenType:any=1;
+  VoucherModels:any={
+    type:6,
+  }
+  fillBranchByUserIdReVoucher(modalType:any) {
+    this.service.FillBranchByUserIdSelect().subscribe((data) => {
+      this.load_BranchUserId = data;
+      var BranchId=this.FormGroup01.controls['branchId'].value;
+      this.modalDetailsReVoucher.branchId = parseInt(BranchId);
+      this.BranchChange(this.modalDetailsReVoucher.branchId,modalType);
+    });
+  }
+
+  BranchChange(BranchId: any,modalType:any) {
+    debugger
+    if(modalType == 'addVoucherRe')
+    {
+      this.VoucherNumber_Reservation(BranchId);
+    }
+  }
+
+  VoucherNumber_Reservation(BranchId:any){
+    this._voucherService.VoucherNumber_Reservation(this.VoucherModels.type,BranchId).subscribe(data=>{
+      this.modalDetailsReVoucher.voucherNo=data.reasonPhrase;
+    });
+  }
+
+  VoucherDetailsRows: any = [];
+
+  deleteVoucherRow(idRow: any) {
+    let index = this.VoucherDetailsRows.findIndex(
+      (d: { idRow: any }) => d.idRow == idRow
+    );
+    this.VoucherDetailsRows.splice(index, 1);
+    this.CalculateVoucher();
+  }
+  addVoucherRow() {
+    var maxVal = 0;
+    if (this.VoucherDetailsRows.length > 0) {
+      maxVal = Math.max(
+        ...this.VoucherDetailsRows.map((o: { idRow: any }) => o.idRow)
+      );
+    } else {
+      maxVal = 0;
+    }
+    this.VoucherDetailsRows?.push({
+      idRow: maxVal + 1,
+      amount: null,
+      mainAccountId: null,
+      mainAccountIdtxt: null,
+      subAccountId: null,
+      subAccountIdtxt: null,
+      CreditDepitStatus: 'D',
+      collectorName: null,
+      notes: null,
+      lineMain:false,
+    });
+  }
+
+  AccountListDataSource = new MatTableDataSource();
+  AccountListDataSourceTemp: any;
+  AccountList: any;
+  RowEntryVouvherData: any;
+  selectedAccountRowTable: any;
+  AccountListdisplayedColumns: string[] = ['name'];
+  @ViewChild('paginatorAccount') paginatorAccount: MatPaginator;
+
+  FillMainAccountLoadTable() {
+    this._voucherService.FillAllAccountsSelect().subscribe((data) => {
+      this.AccountListDataSource = new MatTableDataSource(data);
+      this.AccountListDataSource.paginator = this.paginatorAccount;
+      this.AccountList = data;
+      this.AccountListDataSourceTemp = data;
+    });
+  }
+
+  FillSubAccountLoadTable(parentId:any) {
+    this._voucherService.FillAllAccountsSelectByParentId(parentId).subscribe((data) => {
+      this.AccountListDataSource = new MatTableDataSource(data);
+      this.AccountListDataSource.paginator = this.paginatorAccount;
+      this.AccountList = data;
+      this.AccountListDataSourceTemp = data;
+    });
+  }
+
+
+  setAccountRowValue(element: any) {
+    if(this.OpenType==1)
+    {
+      this.VoucherDetailsRows.filter(
+        (a: { idRow: any }) => a.idRow == this.selectedAccountRowTable)[0].mainAccountId = element.id;
+      this.VoucherDetailsRows.filter(
+        (a: { idRow: any }) => a.idRow == this.selectedAccountRowTable)[0].mainAccountIdtxt = element.name;
+    }
+    else{
+      this.VoucherDetailsRows.filter(
+        (a: { idRow: any }) => a.idRow == this.selectedAccountRowTable)[0].subAccountId = element.id;
+      this.VoucherDetailsRows.filter(
+        (a: { idRow: any }) => a.idRow == this.selectedAccountRowTable)[0].subAccountIdtxt = element.name;
+    }
+
+  }
+  applyFilterAccountsList(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.AccountListDataSource.filter = filterValue.trim().toLowerCase();
+  }
+  journalDebitNmRows = 0;
+  journalCreditNmRows = 0;
+  
+  CalculateVoucher() {
+    var totalDebit = 0,totalCredit = 0, totalBalance = 0;
+    this.journalDebitNmRows = 0;this.journalCreditNmRows = 0;
+    this.VoucherDetailsRows.forEach((element: any, index: any) => {
+      var Value = 0;
+      Value = element.amount;
+      if (element.CreditDepitStatus == 'D') {
+        this.journalDebitNmRows += 1;
+        totalDebit += +Value;
+        totalBalance = +parseFloat((+totalDebit - +totalCredit).toString()).toFixed(2);
+      } else {
+        this.journalCreditNmRows += 1;
+        totalCredit += +Value;
+        totalBalance = +parseFloat((+totalDebit - +totalCredit).toString()).toFixed(2);
+      }
+    });
+    this.modalDetailsReVoucher.totalCredit = +parseFloat(totalCredit.toString()).toFixed(2);
+    this.modalDetailsReVoucher.totalDepit = +parseFloat(totalDebit.toString()).toFixed(2);
+    this.modalDetailsReVoucher.diff = +parseFloat((+totalDebit - +totalCredit).toString()).toFixed(2);
+  }
+
+    disableButtonSave_Voucher = false;
+
+  addVoucher() {
+    debugger;
+    var val = this.validateForm();
+    if (val.status == false) {
+      this.toast.error(val.msg, 'رسالة');
+      return;
+    }
+    if(this.modalDetails.diff>0)
+    {
+      this.toast.error("من فضلك أدخل قيد موزون", 'رسالة');
+      return;
+    }
+    var voucObj: any = {};
+    voucObj.voucherId = this.modalDetailsReVoucher.voucherId;
+    voucObj.voucherNo = this.modalDetailsReVoucher.voucherNo;
+    voucObj.documentNo = this.modalDetailsReVoucher.documentNo;
+    voucObj.type = this.modalDetailsReVoucher.type;
+    voucObj.totalValue = this.modalDetailsReVoucher.totalCredit;
+    voucObj.branchId = this.modalDetailsReVoucher.branchId;
+    if (this.modalDetailsReVoucher.date != null) {
+      voucObj.date = this._sharedService.date_TO_String(this.modalDetailsReVoucher.date);
+    }
+    voucObj.paymentId = this.modalDetailsReVoucher.paymentId;
+    voucObj.status = this.modalDetailsReVoucher.status;
+    voucObj.notes = this.modalDetailsReVoucher.notes;
+    console.log('voucObj');
+    console.log(voucObj);
+
+    var input = { valid: true, message: "" }
+    var TransactionDetailsObjList:any = [];
+    this.VoucherDetailsRows.forEach((element: any) => {
+
+      if(element.mainAccountId == null || element.mainAccountId == null || element.mainAccountId == "") {
+        input.valid = false; input.message = "من فضلك أختر الحساب الرئيسي ";return;
+      }
+      if(element.subAccountId == null || element.subAccountId == null || element.subAccountId == "") {
+        input.valid = false; input.message = "من فضلك أختر الحساب الفرعي ";return;
+      }
+      if (element.amount == null || element.amount == 0 || element.amount == "") {
+        input.valid = false; input.message = "من فضلك أختر مبلغ صحيح";return;
+      }
+
+      var Transobj:any  = {};
+      debugger
+      Transobj.mainAccountId = element.mainAccountId;
+     
+      Transobj.subAccountId = element.subAccountId;
+      if(element.CreditDepitStatus=="C")
+      {
+        Transobj.credit = element.amount;
+        Transobj.depit = 0;
+      }
+      else
+      {
+        Transobj.credit = 0;
+        Transobj.depit = element.amount;
+      }
+      if(this.modalDetailsReVoucher.voucherId>0)
+      {
+        Transobj.voucherId = this.modalDetailsReVoucher.voucherId;
+      }
+      Transobj.Type = this.modalDetailsReVoucher.type;
+      Transobj.Status = this.modalDetailsReVoucher.status;
+      Transobj.collectorName = element.collectorName;
+      Transobj.notes = element.notes;
+      TransactionDetailsObjList.push(Transobj);
+
+    });
+    if (!input.valid) {
+      this.toast.error(input.message);return;
+    }
+    voucObj.TransactionDetails = TransactionDetailsObjList;
+    console.log("voucObj",voucObj);
+
+    this.disableButtonSave_Voucher = true;
+    setTimeout(() => {
+      this.disableButtonSave_Voucher = false;
+    }, 5000);
+    this._voucherService.SaveVoucher(voucObj).subscribe((result: any) => {
+      if (result.statusCode == 200) {
+        this.toast.success(
+          this.translate.instant(result.reasonPhrase),
+          this.translate.instant('Message')
+        );
+        //this.decline();
+        this.GetAllPaymentsByContractId();
+        this.ngbModalService.dismissAll();
+      } else {
+        this.toast.error(result.reasonPhrase, 'رسالة');
+      }
+    });
+  }
+  ValidateObjMsg: any = { status: true, msg: null };
+  validateForm() {
+    this.ValidateObjMsg = { status: true, msg: null };
+
+   if (this.modalDetailsReVoucher.branchId == null) {
+      this.ValidateObjMsg = { status: false, msg: 'اختر فرع السند' };
+      return this.ValidateObjMsg;
+    }  
+    else if ((this.modalDetailsReVoucher.status == null ||this.modalDetailsReVoucher.status == '')
+    ) {
+      this.ValidateObjMsg = { status: false, msg: 'اختر حالة الإذن' };
+      return this.ValidateObjMsg;
+    }
+    else if ((this.modalDetailsReVoucher.date == null ||this.modalDetailsReVoucher.date == '')
+    ) {
+      this.ValidateObjMsg = { status: false, msg: 'أختر التاريخ' };
+      return this.ValidateObjMsg;
+    }
+    this.ValidateObjMsg = { status: true, msg: null };
+    return this.ValidateObjMsg;
+  }
+
+  setReVoucherData(data:any)
+  {
+    console.log("data",data);
+    var contractId=(this.FormGroup01.controls['contractId'].value??0);
+    this.VoucherDetailsRows = [];
+
+    this.modalDetailsReVoucher = {
+      type:6,
+      vouchertype: 'addVoucherRe',
+      documentNo: null,
+      id: null,
+      name: null,
+      voucherId: 0,
+      mainAccountId: null,
+      subAccountId: null,
+      date: new Date(),
+      journalNo: null,
+      totalValue: null,
+      isPost: null,
+      postDate: null,
+      yearId: null,
+      status: 3,
+      notes: null,
+      addDate: null,
+      addUser: null,
+      addedvoucherImg: null,
+      totalCredit:0.00,
+      totalDepit:0.00,
+      diff:0.00,
+      paymentId:data.paymentId,
+    };
+    this.GetReVoucherAccounts(data);
+    console.log("modalDetailsReVoucher",this.modalDetailsReVoucher);
+  }
+
+  addVoucherRow_Re(data:any,AccountData:any) {
+    console.log("data",data);
+    console.log("AccountData",AccountData);
+    this.VoucherDetailsRows?.push({
+      idRow: 1,
+      amount: data.amount,
+      mainAccountId: AccountData.salesAccIdParentId,
+      mainAccountIdtxt:  AccountData.salesAccIdParentName,
+      subAccountId: AccountData.salesAccId,
+      subAccountIdtxt: AccountData.salesAccIdName,
+      CreditDepitStatus: 'D',
+      collectorName: null,
+      notes: null,
+      lineMain:false,
+    });
+    this.VoucherDetailsRows?.push({
+      idRow: 2,
+      amount: data.amount,
+      mainAccountId: AccountData.salesAccId2ParentId,
+      mainAccountIdtxt:  AccountData.salesAccId2ParentName,
+      subAccountId: AccountData.salesAccId2,
+      subAccountIdtxt: AccountData.salesAccId2Name,
+      CreditDepitStatus: 'C',
+      collectorName: null,
+      notes: null,
+      lineMain:false,
+    });
+
+    this.CalculateVoucher();
+  }
+
+  GetReVoucherAccounts(ItemData:any) {
+    var branchId=(this.FormGroup01.controls['branchId'].value??0);
+    this.service.GetReVoucherAccounts(branchId).subscribe((data) => {
+      debugger
+      var Result = data.result;
+      this.addVoucherRow_Re(ItemData,Result);
+    });
+  }
+  backgroungColor(row: any) {
+    if (Object.keys(row).length === 0) return '';
+    if ((row.isPaid ==true)) {
+      return 'PaymentColor';
+    } else if (row.lineMain ==false) {
+      return '';
+    }
+    return '';
+  }
+
+  //#endregion
+  //------------------------------End ReVocuher-------------------------------------
+
 
 
 }

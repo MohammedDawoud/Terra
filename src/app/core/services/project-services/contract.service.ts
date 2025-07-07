@@ -25,6 +25,9 @@ export class ContractService {
   DeleteContract(ContractId:any) {
     return this.http.post<any>(this.apiEndPoint + 'Contract/DeleteContract?ContractId='+ContractId,{});
   }
+  ReturnContract(ContractId:any) {
+    return this.http.post<any>(this.apiEndPoint + 'Contract/ReturnContract?ContractId='+ContractId,{});
+  }
   DeletePayment(PaymentId:any) {
     return this.http.post<any>(this.apiEndPoint + 'Contract/DeletePayment?PaymentId='+PaymentId,{});
   }
@@ -94,7 +97,10 @@ export class ContractService {
   FillBranchByUserIdSelect(){
     return this.http.get<any>(this.apiEndPoint + 'Branches/FillBranchByUserIdSelect');
   }
-
+  GetReVoucherAccounts(BranchId:any ) {
+    var url=`${environment.apiEndPoint}Voucher/GetReVoucherAccounts?BranchId=${BranchId}`;
+    return this.http.get<any>(url);
+  }
   GetAllContractsSelectBarcode(){
     return this.http.get<any>(this.apiEndPoint + 'Contract/GetAllContractsSelectBarcode');
   }

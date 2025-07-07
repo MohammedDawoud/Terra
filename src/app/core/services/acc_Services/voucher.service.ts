@@ -31,6 +31,10 @@ export class VoucherService {
     var url = `${environment.apiEndPoint}Voucher/GetAllVoucherTransactions?&VoucherId=${VoucherId}`;
     return this.http.get<any>(url);
   }
+  GetAllVoucherTransactions_Contract(ContractId: any) {
+    var url = `${environment.apiEndPoint}Voucher/GetAllVoucherTransactions_Contract?&ContractId=${ContractId}`;
+    return this.http.get<any>(url);
+  }
   VoucherNumber_Reservation(Type:any,BranchId:any) {
     var url=`${environment.apiEndPoint}Voucher/VoucherNumber_Reservation?Type=${Type}&&BranchId=${BranchId}`;
     return this.http.get<any>(url);

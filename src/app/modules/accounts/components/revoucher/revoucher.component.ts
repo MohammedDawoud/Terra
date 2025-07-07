@@ -704,17 +704,17 @@ export class RevoucherComponent implements OnInit {
       Value = element.amount;
       if (element.CreditDepitStatus == 'D') {
         this.journalDebitNmRows += 1;
-        totalDebit += Value
-        totalBalance = +parseFloat((totalDebit - totalCredit).toString()).toFixed(2);
+        totalDebit += +Value
+        totalBalance = +parseFloat((+totalDebit - +totalCredit).toString()).toFixed(2);
       } else {
         this.journalCreditNmRows += 1;
-        totalCredit += Value;
-        totalBalance = +parseFloat((totalDebit - totalCredit).toString()).toFixed(2);
+        totalCredit += +Value;
+        totalBalance = +parseFloat((+totalDebit - +totalCredit).toString()).toFixed(2);
       }
     });
-    this.modalDetails.totalCredit = parseFloat(totalCredit.toString()).toFixed(2);
-    this.modalDetails.totalDepit = parseFloat(totalDebit.toString()).toFixed(2);
-    this.modalDetails.diff = parseFloat((totalDebit - totalCredit).toString()).toFixed(2);
+    this.modalDetails.totalCredit = +parseFloat(totalCredit.toString()).toFixed(2);
+    this.modalDetails.totalDepit = +parseFloat(totalDebit.toString()).toFixed(2);
+    this.modalDetails.diff = +parseFloat((+totalDebit - +totalCredit).toString()).toFixed(2);
   }
 
   CalculateVoucherMain() {

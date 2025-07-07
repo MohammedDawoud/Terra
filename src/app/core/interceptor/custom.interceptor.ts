@@ -40,7 +40,7 @@ export class CustomInterceptor implements HttpInterceptor {
 
         request = request.clone({ headers: request.headers.set('BranchId', this.sharedService.getStoBranch()) });
         request = request.clone({ headers: request.headers.set('Lang', "rtl") });
-        //request = request.clone({ headers: request.headers.set('YearId', this.sharedService.getStoYear()) });
+        request = request.clone({ headers: request.headers.set('YearId', this.sharedService.getStoYear()) });
 
 
       }
@@ -57,7 +57,7 @@ export class CustomInterceptor implements HttpInterceptor {
 
         request = request.clone({ headers: request.headers.set('BranchId', this.sharedService.getStoBranch()) });
         request = request.clone({ headers: request.headers.set('Lang', "rtl") });
-       // request = request.clone({ headers: request.headers.set('YearId', this.sharedService.getStoYear()) });
+        request = request.clone({ headers: request.headers.set('YearId', this.sharedService.getStoYear()) });
       }
       else {
 

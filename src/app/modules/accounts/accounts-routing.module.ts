@@ -7,6 +7,7 @@ import { RevoucherComponent } from './components/revoucher/revoucher.component';
 import { AccountstatementComponent } from './components/accountstatement/accountstatement.component';
 import { OffersComponent } from './components/offers/offers.component';
 import { PayvoucherComponent } from './components/payvoucher/payvoucher.component';
+import { OpenvoucherComponent } from './components/openvoucher/openvoucher.component';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'Sales_bill' },
@@ -16,6 +17,7 @@ const routes: Routes = [
   { path: 'offers', component: OffersComponent },
   { path: 'revoucher', component: RevoucherComponent },
   { path: 'payvoucher', component: PayvoucherComponent },
+  { path: 'openvoucher', component: OpenvoucherComponent },
   { path: 'Account_Statement', component: AccountstatementComponent },
 ];
 

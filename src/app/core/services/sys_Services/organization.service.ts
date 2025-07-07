@@ -95,4 +95,28 @@ export class OrganizationService {
   }
 
 
+
+  GetAllFiscalyears() {
+    return this.http.get<any>(this.apiEndPoint + 'Fiscalyears/GetAllFiscalyears');
+  }
+  SaveFiscalyears(_Fiscal:any): Observable<any> {
+    const headers = { 'content-type': 'application/json'}
+    const body=JSON.stringify(_Fiscal);
+    return this.http.post(this.apiEndPoint + 'Fiscalyears/SaveFiscalyears', body,{'headers':headers});
+  }
+  FillYearSelect(){
+    return this.http.get<any>(this.apiEndPoint + 'Fiscalyears/FillYearSelect');
+  }
+  ActivateFiscalYear(FiscalId:any,SystemSettingId:any){
+    return this.http.post<any>(this.apiEndPoint + 'Fiscalyears/ActivateFiscalYear?FiscalId='+FiscalId+'&SystemSettingId='+SystemSettingId+'',null);
+
+  }
+  GetActiveYear(){
+    return this.http.get<any>(this.apiEndPoint + 'Fiscalyears/GetActiveYear');
+
+  }
+  DeleteFiscalyears(FiscalId:any){
+    return this.http.post(this.apiEndPoint+'Fiscalyears/DeleteFiscalyears', {}, { params:{FiscalId:FiscalId}});
+  }
+
 }
