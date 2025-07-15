@@ -232,6 +232,7 @@ export class RevoucherComponent implements OnInit {
     if(modalType == 'addVoucher')
     {
       this.VoucherNumber_Reservation(BranchId);
+      this.GetReVoucherAccounts(BranchId);
     }
   }
 
@@ -240,6 +241,29 @@ export class RevoucherComponent implements OnInit {
       this.modalDetails.voucherNo=data.reasonPhrase;
     });
   }
+  GetReVoucherAccounts(branchId:any) {
+    this.service.GetReVoucherAccounts(branchId).subscribe((data) => {
+      debugger
+      var Result = data.result;
+      this.modalDetails.mainAccountId=Result.boxAccIdParentId;
+      this.FillSubAccountSelect_Check(Result.boxAccId);
+    });
+  }
+
+FillSubAccountSelect_Check(subAccountId:any) {
+  this.SubAccountList=[];
+  this.modalDetails.subAccountId=subAccountId;
+  if(this.modalDetails.mainAccountId!=null)
+  {
+
+    this.service.FillAllAccountsSelectByParentId(this.modalDetails.mainAccountId).subscribe((data) => {
+      console.log(data);
+      this.SubAccountList = data;
+      this.SubAccountChange();
+    });
+  }
+}
+
 
   //-----------------------OPEN MODAL--------------------------------------------------
 

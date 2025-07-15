@@ -87,6 +87,7 @@ export class AccountstatementComponent {
   ) {
     this.userG = this.authenticationService.userGlobalObj;
   }
+  SearchAccountList:any=[];
 
   ngOnInit(): void {
     this.FillAccountsSelect()
@@ -137,7 +138,11 @@ export class AccountstatementComponent {
   RefreshData_ByDate(FromDate: any, ToDate: any) {
     //debugger
 
-    if(this.data.filter.search_accountId==null)
+    // if(this.data.filter.search_accountId==null)
+    // {
+    //   return;
+    // }
+    if(this.SearchAccountList.length == 0)
     {
       return;
     }
@@ -153,6 +158,7 @@ export class AccountstatementComponent {
     _voucherFilterVM.isCheckedBranch = this.data.filter.isCheckedBranch;
     _voucherFilterVM.accountId = this.data.filter.search_accountId;
     _voucherFilterVM.customerId = this.data.filter.search_costCenterId;
+    _voucherFilterVM.accountList = this.SearchAccountList;
     _voucherFilterVM.dateFrom = '';
     _voucherFilterVM.dateTo = '';
     var objdata = _voucherFilterVM;

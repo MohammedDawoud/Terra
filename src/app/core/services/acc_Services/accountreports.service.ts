@@ -26,6 +26,7 @@ export class AccountReportsService {
     formData.append('ToDate', data.dateTo);
     formData.append('FromDate', data.dateFrom);
     formData.append('AccountId', data.accountId);
+    formData.append('AccountList', data.accountList);
     return this.http.post(this.apiEndPoint + 'Voucher/GetAllTransSearch',formData);
   }
 

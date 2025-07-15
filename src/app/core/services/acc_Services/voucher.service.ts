@@ -39,6 +39,10 @@ export class VoucherService {
     var url=`${environment.apiEndPoint}Voucher/VoucherNumber_Reservation?Type=${Type}&&BranchId=${BranchId}`;
     return this.http.get<any>(url);
   }
+  GetReVoucherAccounts(BranchId:any ) {
+    var url=`${environment.apiEndPoint}Voucher/GetReVoucherAccounts?BranchId=${BranchId}`;
+    return this.http.get<any>(url);
+  }
   PostBackVoucher(VoucherId:any){
     return this.http.post(this.apiEndPoint+'Voucher/PostBackVoucher', {}, { params:{VoucherId:VoucherId}});
   }

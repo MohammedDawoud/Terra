@@ -7,7 +7,7 @@
         <div class="btns mb-3 w-100">
           <div class="row flex flex-wrap w-100">
   
-            <div class="col-md-4">
+            <!-- <div class="col-md-4">
               <div class="form-group">
                 <label class="col-form-label"> {{ "accountName" | translate }}</label>
                 <ng-select
@@ -21,7 +21,19 @@
                   }}</ng-option>
                 </ng-select>
               </div>
+            </div> -->
+        <div class="col-md-4">
+              <div class="form-group">
+              <label class="col-form-label"> {{ "accountName" | translate }}</label>
+              <ng-select style="min-width: 250px !important" [multiple]="true"
+              [items]="load_accountIds" bindLabel="name" bindValue="id" [clearable]="true"
+              class="w-full p-0" [(ngModel)]="SearchAccountList"  placeholder="{{ 'Chose' | translate }}"
+              (change)="changeAccount()">
+            </ng-select>
             </div>
+        </div>
+
+
       
             <div style="margin-top: 2%;" class="col-md-3">
               <div class="flex justify-content-center gap-3">

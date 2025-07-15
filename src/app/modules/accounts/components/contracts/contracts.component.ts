@@ -269,6 +269,8 @@ export class ContractsComponent implements OnInit {
       designNotes: [null],
       type: [null],   
       check:[false],
+      customerAccountId: [null],
+      customerAccountIdName: [null],
     });
     this.FormGroup02 = this._formBuilder.group({
       total_amount: [null],
@@ -297,6 +299,9 @@ export class ContractsComponent implements OnInit {
     this.FormGroup01.controls['documentNo'].setValue(data.documentNo);
     this.FormGroup01.controls['documentStatus'].setValue(data.documentStatus);
     this.FormGroup01.controls['notes'].setValue(data.notes);
+    this.FormGroup01.controls['customerAccountId'].setValue(data.customerAccountId);
+    this.FormGroup01.controls['customerAccountIdName'].setValue(data.customerAccountIdName);
+
     this.resetmodalDetailsContractNew();
     this.modalDetailsContractNew.discountValue=data.discountValue;
     this.modalDetailsContractNew.discountPercentage=data.discountPercentage;
@@ -2067,6 +2072,9 @@ GetAllVoucherTransactions_Contract(voucherId: any) {
   addVoucherRow_Re(data:any,AccountData:any) {
     console.log("data",data);
     console.log("AccountData",AccountData);
+    debugger
+    var customerAccountId=this.FormGroup01.controls['customerAccountId'].value;
+    var customerAccountIdName=this.FormGroup01.controls['customerAccountIdName'].value;
     this.VoucherDetailsRows?.push({
       idRow: 1,
       amount: data.amount,
@@ -2087,6 +2095,30 @@ GetAllVoucherTransactions_Contract(voucherId: any) {
       subAccountId: AccountData.salesAccId2,
       subAccountIdtxt: AccountData.salesAccId2Name,
       CreditDepitStatus: 'C',
+      collectorName: null,
+      notes: null,
+      lineMain:false,
+    });
+    this.VoucherDetailsRows?.push({
+      idRow: 3,
+      amount: data.amount,
+      mainAccountId: AccountData.customersAccId,
+      mainAccountIdtxt:  AccountData.customersAccIdName,
+      subAccountId: customerAccountId,
+      subAccountIdtxt: customerAccountIdName,
+      CreditDepitStatus: 'C',
+      collectorName: null,
+      notes: null,
+      lineMain:false,
+    });
+    this.VoucherDetailsRows?.push({
+      idRow: 4,
+      amount: data.amount,
+      mainAccountId: AccountData.boxAccIdParentId,
+      mainAccountIdtxt:  AccountData.boxAccIdParentName,
+      subAccountId: AccountData.boxAccId,
+      subAccountIdtxt: AccountData.boxAccIdName,
+      CreditDepitStatus: 'D',
       collectorName: null,
       notes: null,
       lineMain:false,
