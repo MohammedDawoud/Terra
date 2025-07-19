@@ -26,6 +26,7 @@ import { filesservice } from 'src/app/core/services/sys_Services/files.service';
 import { HttpEventType } from '@angular/common/http';
 import { OrganizationService } from 'src/app/core/services/sys_Services/organization.service';
 import { VoucherService } from 'src/app/core/services/acc_Services/voucher.service';
+import { NgxPrintElementService } from 'ngx-print-element';
 
 @Component({
   selector: 'app-payvoucher',
@@ -123,6 +124,7 @@ export class PayvoucherComponent implements OnInit {
     private service: VoucherService,
     private files: filesservice,
     private _organization: OrganizationService,
+    private print: NgxPrintElementService,
     private modalService: BsModalService,
     private api: RestApiService,
     private changeDetection: ChangeDetectorRef,
@@ -134,9 +136,36 @@ export class PayvoucherComponent implements OnInit {
     private domSanitizer: DomSanitizer
   ) {
     this.userG = this.authenticationService.userGlobalObj;
+    this.GetOrganizationData();
     this.subscription = this.control.valueChanges.subscribe(
       (values: Array<File>) => this.getImage(values[0])
     );
+  }
+
+  OrganizationData: any;
+  environmentPho: any;
+  dateprint: any;
+  GetOrganizationData(){
+    this.api.GetOrganizationDataLogin().subscribe((data: any) => {
+      this.OrganizationData = data.result;
+      this.dateprint =this._sharedService.date_TO_String(new Date());
+      this.environmentPho =environment.PhotoURL + this.OrganizationData.logoUrl;
+    });
+  }
+  BranchData: any;
+  environmentPhoBranch: any;
+  GetBranchData(BranchId:any){
+    this.api.GetBranchByBranchIdNew(BranchId).subscribe((data: any) => {
+      this.BranchData = data;
+      if(!(this.BranchData.logoUrl==null || this.BranchData.logoUrl==""))
+      {
+        this.environmentPhoBranch =environment.PhotoURL + this.BranchData.logoUrl;
+      }
+      else
+      {
+        this.environmentPhoBranch=this.environmentPho;
+      }
+    });
   }
 
   //   ngAfterContentChecked() {
@@ -1064,5 +1093,73 @@ PostBackVoucher() {
       }
     });
 }
+
+
+  //--------------------------------Print-------------------------------------------------------
+  //#region 
+  EntryVoucherPrintData: any = null;
+  CustomData: any = {
+    date: null,
+  };
+  resetCustomData() {
+    this.CustomData = {
+      date: null,
+    };
+  }
+  dateToday: any = new Date();
+  GetReport(obj: any) {
+    this.resetCustomData();
+    this.EntryVoucherPrintData = obj;
+    this.GetAllTransByVoucherIdPrint(obj.voucherId);
+    this.GetBranchData(obj.branchId);
+  }
+  printDiv(id: any) {
+    this.print.print(id, environment.printConfig);
+  }
+  VoucherDetailsRowsPrint: any = [];
+  GetAllTransByVoucherIdPrint(voucherId: any) {
+    this.VoucherDetailsRowsPrint = [];
+    this.service.GetAllVoucherTransactions(voucherId).subscribe((data) => {
+      var TotalCredit = 0;var TotalDepit = 0;
+      if (data.length > 0) {
+        data.forEach((element: any) => {
+          this.CustomData.date=element.voucherDate;
+          var Credit = 0;var Depit = 0;
+          if (element.depit < element.credit) {
+            Credit = parseFloat(element.credit);
+            Depit = 0;
+            TotalCredit = TotalCredit + Credit;
+          }
+          if (element.credit < element.depit) {
+            Credit = 0;
+            Depit = parseFloat(element.depit);
+            TotalDepit = TotalDepit + Depit;
+          }
+          this.VoucherDetailsRowsPrint?.push({
+            // idRow: maxVal + 1,
+            idRow: element.lineNumber,
+            amount: Credit > Depit ? element.credit : element.depit,
+            mainAccountId: element.mainAccountId,
+            mainAccountIdtxt: element.mainAccountIdtxt,
+            subAccountId: element.subAccountId,
+            subAccountIdtxt: element.subAccountIdtxt,
+            CreditDepitStatus: Credit > Depit ? 'C' : 'D',
+            CreditDepitStatustxt: Credit > Depit ? 'دائن' : 'مدين',
+            collectorName: element.collectorName,
+            notes: element.notes,
+            lineMain:Credit > Depit ? false: true,
+          });
+        this.VoucherDetailsRowsPrint.sort((a: { idRow: number }, b: { idRow: number }) =>(a.idRow ?? 0) - (b.idRow ?? 0)); });
+        this.EntryVoucherPrintData.totalCredit = parseFloat(TotalCredit.toString()).toFixed(2);
+        this.EntryVoucherPrintData.totalDepit = parseFloat(TotalDepit.toString()).toFixed(2);
+        this.EntryVoucherPrintData.diff = parseFloat((TotalDepit - TotalCredit).toString()).toFixed(2);
+
+      } else {
+        this.VoucherDetailsRowsPrint = [];
+      }
+    });
+  }
+  //#endregion
+  //--------------------------------END Print---------------------------------------------------
 
 }

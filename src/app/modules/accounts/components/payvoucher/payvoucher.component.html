@@ -248,6 +248,12 @@
                 >
                   <i class="fa-solid fa-trash-can"></i>
                 </button>
+
+                 <button *ngIf="userG?.userPrivileges.includes(150507)"
+                  class="min-w-max p-2 bg-green-100 hover:bg-green-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+                  (click)="GetReport(element); open(printDivModal)">
+                  <i class="fa-solid fa-print"></i>
+                </button>
               </div>
             </td>
           </ng-container>
@@ -911,6 +917,500 @@
 
     <button (click)="modal?.dismiss()" class="btn btn-secondary">
       {{ "close" | translate }}
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #printDivModal let-modal>
+  <div class="modal-body">
+    <div id="report" style="direction:rtl">
+      <div
+        class="report-header"
+        style="
+          display: flex;
+          align-items: center;
+          gap: 100px;
+          padding: 3px 0px;
+          margin-bottom: 20px;
+        "
+      >
+        <div class="headerNe-right-side">
+          <img
+          *ngIf="environmentPhoBranch"
+          src="{{ environmentPhoBranch }}"
+          alt="logo"
+          style="
+            height: 80px;
+            width: 140px;
+            max-width: 200px;
+            object-fit: fill;
+          "
+        />
+        </div>
+
+        <div class="headerNe-lefy-side" style="width: 100%">
+          <h1
+            style="
+              letter-spacing: 0.25px;
+              font-size: 23px;
+              margin: 0;
+              margin-bottom: 5px;
+            "
+          >
+            {{ BranchData?.branchNamePrint }}
+          </h1>
+          <div class="line" style="position: relative; padding: 5px 0px 10px">
+            <span
+              style="
+                position: absolute;
+                right: 0;
+                width: 100%;
+                height: 2px;
+                background-color: #e5e5e5;
+                z-index: 1;
+              "
+            ></span>
+            <span
+              style="
+                position: absolute;
+                right: 0;
+                width: 70%;
+                height: 2px;
+                background-color: #ec1c24;
+                z-index: 2;
+              "
+            ></span>
+          </div>
+
+          <h1
+            style="
+              margin-bottom: 0;
+              font-size: 34px;
+              color: #0c8191;
+              margin-bottom: 0;
+              margin-top: 30px;
+              font-weight: 500;
+            "
+            [translate]="'name'"
+            [translateParams]="{
+              ar: ' سند صرف         ',
+              en: ' Exchange Voucher '
+            }"
+          ></h1>
+        </div>
+      </div>
+      <div style="margin-bottom: 10px">
+        <p>
+          <span
+            [translate]="'name'"
+            [translateParams]="{
+              ar: 'التاريخ: ',
+              en: 'Date: '
+            }"
+          ></span>
+          <span> {{dateToday | date : " hh:mm yyyy-MM-dd"}}</span>
+        </p>
+      </div>
+
+      <div class="info" style="overflow: auto; margin-bottom: 20px">
+        <table
+          class="table table-bordered m-0"
+          style="
+            width: 100%;
+            color: white;
+            text-align: center;
+            vertical-align: middle;
+            min-width: max-content;
+          "
+        >
+          <tr>
+            <td
+              style="
+                padding-inline: 0px !important;
+                background-color: #f7f7f7;
+                font-size: 18px;
+                color: #21403f;
+                font-weight: 600;
+                border: 1px solid #dce0e4;
+              "
+            >
+              {{ "Operation type" | translate }}
+            </td>
+            <td
+              style="
+                padding-inline: 0px !important;
+                background-color: #f7f7f7;
+                font-size: 18px;
+                color: #21403f;
+                font-weight: 600;
+                border: 1px solid #dce0e4;
+              "
+            >
+              {{ "Bond number" | translate }}
+            </td>
+            <td
+              style="
+                line-height: 0 !important;
+                padding: 0px !important;
+                background-color: #f7f7f7;
+                border: 1px solid #dce0e4;
+                font-size: 18px;
+                color: #21403f;
+                font-weight: 600;
+                border: 1px solid #dce0e4;
+              "
+            >
+              <span
+                style="
+                  border: none;
+                  display: inline-block;
+                  padding: 10px 0px;
+                  border: 1px solid #dce0e4;
+                  width: 100%;
+
+                  line-height: 24px;
+                "
+                [translate]="'name'"
+                [translateParams]="{ ar: 'تاريخ السند', en: 'Vouvher Date' }"
+              ></span>
+            </td>
+          </tr>
+
+          <tr>
+            <td
+              style="
+                width: 25%;
+                padding-inline: 0px !important;
+                background-color: #f7f7f7;
+                font-size: 18px;
+                color: #21403f;
+                font-weight: 500;
+                border: 1px solid #dce0e4;
+                padding: 10px 0px;
+              "
+            >
+              {{ "صرف نقدية" | translate }}
+            </td>
+            <td
+              style="
+                width: 25%;
+                padding-inline: 0px !important;
+                background-color: #f7f7f7;
+                font-size: 18px;
+                color: #21403f;
+                font-weight: 500;
+                border: 1px solid #dce0e4;
+                padding: 10px 0px;
+              "
+            >
+              <span
+                style="border: none">
+                {{ EntryVoucherPrintData?.voucherNo }}
+              </span>
+            </td>
+            <td
+              style="
+                width: 25%;
+                padding-inline: 0px !important;
+                background-color: #f7f7f7;
+                font-size: 18px;
+                color: #21403f;
+                font-weight: 500;
+                border: 1px solid #dce0e4;
+                padding: 10px 0px;
+              "
+            >
+              <span
+                style="border: none">
+                {{ CustomData.date }}
+              </span>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="services" style="width: 100%; margin-bottom: 20px">
+        <div class="content">
+          <table
+            style="text-align: center; vertical-align: middle; width: 100%"
+          >
+            <thead>
+              <td
+                style="
+                  font-size: 16px;
+                  background-color: #fff;
+                  padding: 14px 4px;
+                  text-align: center;
+                  color: #272727;
+                  word-wrap: break-word;
+                  border-inline-start: 1px dashed #0c8191;
+                  border: 1px dashed #272727;
+                  font-weight: 600;
+                "
+              >
+                {{ "R_T" | translate }}
+              </td>
+              <td
+                style="
+                  font-size: 16px;
+                  background-color: #fff;
+                  padding: 14px 4px;
+                  text-align: center;
+                  color: #272727;
+                  word-wrap: break-word;
+                  border-inline-start: 1px dashed #0c8191;
+                  border: 1px dashed #272727;
+                  font-weight: 600;
+                "
+              >
+                {{ "amount" | translate }}
+              </td>
+              <td
+                style="
+                  font-size: 16px;
+                  background-color: #f7f7f7;
+                  padding: 14px 4px;
+                  text-align: center;
+                  color: #272727;
+                  word-wrap: break-word;
+                  border-inline-start: 1px dashed #0c8191;
+                  border: 1px dashed #272727;
+                  font-weight: 600;
+                "
+              >
+                {{ "الحساب الأساسي" | translate }}
+              </td>
+              <td
+                style="
+                  font-size: 16px;
+                  background-color: #f7f7f7;
+                  padding: 14px 4px;
+                  text-align: center;
+                  color: #272727;
+                  word-wrap: break-word;
+                  border-inline-start: 1px dashed #0c8191;
+                  border: 1px dashed #272727;
+                  font-weight: 600;
+                "
+              >
+                {{ "الحساب الفرعي" | translate }}
+              </td>
+              <td
+                style="
+                  font-size: 16px;
+                  background-color: #f7f7f7;
+                  padding: 14px 4px;
+                  text-align: center;
+                  color: #272727;
+                  word-wrap: break-word;
+                  border-inline-start: 1px dashed #0c8191;
+                  border: 1px dashed #272727;
+                  font-weight: 600;
+                "
+              >
+                {{ "credit_debit" | translate }}
+              </td>
+              <td
+                style="
+                  font-size: 16px;
+                  background-color: #f7f7f7;
+                  padding: 14px 4px;
+                  text-align: center;
+                  color: #272727;
+                  word-wrap: break-word;
+                  border-inline-start: 1px dashed #0c8191;
+                  border: 1px dashed #272727;
+                  font-weight: 600;
+                "
+              >
+                {{ "المحصل" | translate }}
+              </td>
+              <td
+                style="
+                  font-size: 16px;
+                  background-color: #fff;
+                  padding: 14px 4px;
+                  text-align: center;
+                  color: #272727;
+                  word-wrap: break-word;
+                  border-inline-start: 1px dashed #0c8191;
+                  border: 1px dashed #272727;
+                  font-weight: 600;
+                "
+              >
+                {{ "شرح السطر" | translate }}
+              </td>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of VoucherDetailsRowsPrint">
+                <td
+                  style="
+                    background-color: #fff;
+                    font-size: 15px;
+                    font-weight: 500;
+                    padding: 10px 0px;
+                    color: #272727;
+                    border-inline-start: 1px dashed #272727;
+                    border-bottom: 1px dashed #272727;
+                  "
+                >
+                  {{ item.idRow }}
+                </td>
+                <td
+                  style="
+                    background-color: #fff;
+                    font-size: 15px;
+                    font-weight: 500;
+                    padding: 10px 0px;
+                    color: #272727;
+                    border-inline-start: 1px dashed #272727;
+                    border-bottom: 1px dashed #272727;
+                  "
+                >
+                  {{ item.amount  }}
+                </td>
+                <td
+                  style="
+                    background-color: #fff;
+                    font-size: 15px;
+                    font-weight: 500;
+                    padding: 10px 0px;
+                    color: #272727;
+                    border-inline-start: 1px dashed #272727;
+                    border-bottom: 1px dashed #272727;
+                  "
+                >
+                  {{ item.mainAccountIdtxt }}
+
+                </td>
+                <td
+                  style="
+                    background-color: #fff;
+                    font-size: 15px;
+                    font-weight: 500;
+                    padding: 10px 0px;
+                    color: #272727;
+                    border-inline-start: 1px dashed #272727;
+                    border-bottom: 1px dashed #272727;
+                  "
+                >
+                  {{ item.subAccountIdtxt }}
+
+                </td>
+                <td
+                  style="
+                    background-color: #fff;
+                    font-size: 15px;
+                    font-weight: 500;
+                    padding: 10px 0px;
+                    color: #272727;
+                    border-inline-start: 1px dashed #272727;
+                    border-bottom: 1px dashed #272727;
+                  "
+                >
+                  {{ item.CreditDepitStatustxt }}
+
+                </td>
+                <td
+                  style="
+                    background-color: #fff;
+                    font-size: 15px;
+                    font-weight: 500;
+                    padding: 10px 0px;
+                    color: #272727;
+                    border-inline-start: 1px dashed #272727;
+                    border-bottom: 1px dashed #272727;
+                  "
+                >
+                  {{ item.collectorName }}
+
+                </td>
+                <td
+                  style="
+                    background-color: #fff;
+                    font-size: 15px;
+                    font-weight: 500;
+                    padding: 10px 0px;
+                    color: #272727;
+                    border-inline-start: 1px dashed #272727;
+                    border-bottom: 1px dashed #272727;
+                  "
+                >
+                  {{ item.notes }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div style="margin-top: 10px">
+            <p>
+              <span
+                style="font-weight: 700; margin: 10px"
+                [translate]="'name'"
+                [translateParams]="{
+                  ar: 'اجمالي المدين: ',
+                  en: 'Total Depit: '
+                }"
+              ></span>
+              <span> {{ EntryVoucherPrintData?.totalDepit }}</span>
+            </p>
+          </div>
+          <div style="margin-bottom: 10px">
+            <p>
+              <span
+                style="font-weight: 700; margin: 10px"
+                [translate]="'name'"
+                [translateParams]="{
+                  ar: 'اجمالي الدائن: ',
+                  en: 'Total Credit: '
+                }"
+              ></span>
+              <span style="padding-right: 6px">
+                {{ EntryVoucherPrintData?.totalCredit }}</span
+              >
+            </p>
+          </div>
+          <div
+            style="
+              display: grid;
+              grid-template-columns: auto auto auto auto;
+              padding-top: 20px;
+            "
+            class="text-center"
+          >
+            <div class="grid-item">
+              <p>
+                المحاسب<br />Accountant<br />......................................
+              </p>
+            </div>
+            <div class="grid-item">
+              <p>.</p>
+            </div>
+            <div class="grid-item">
+              <p>
+                المدير المالي
+                <br />Manger<br />......................................
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button
+      (click)="printDiv('report')"
+      class="min-w-max p-2 bg-sky-100 hover:bg-sky-500 rounded-lg duration-300 hover:text-white aspect-square w-10"
+    >
+      <i class="fa fa-print"></i>
+    </button>
+    <button
+      type="button"
+      (click)="modal.dismiss()"
+      mat-raised-button
+      color="basic"
+    >
+      {{ "No" | translate }}
     </button>
   </div>
 </ng-template>
